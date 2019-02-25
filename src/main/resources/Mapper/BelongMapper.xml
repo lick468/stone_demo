@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.BelongDao">
+	<resultMap type="com.nenu.domain.Belong" id="BelongMap">
+		<result column="belong_ID" property="belong_ID"/>
+		
+		<result column="belong_name" property="belong_name"/>
+		<result column="counter_name" property="counter_name"/>
+		
+	</resultMap>
+	
+	<parameterMap type="com.nenu.domain.Belong" id="Belong"/>
+
+<select id="findBelongById"   resultMap="BelongMap" parameterType="java.lang.Integer" >
+		select * from tb_belong where belong_ID=#{belong_ID} 
+	</select>
+	
+	<select id="findAllBelong"   resultMap="BelongMap">
+		select * from tb_belong order by belong_ID
+	</select>
+	<select id="findAllBelongByBelongName"   resultMap="BelongMap" parameterType="string">
+		select * from tb_belong 
+		where belong_name = #{belong_name}
+	</select>
+	<select id="findAllBelongAndCounter"   resultMap="BelongMap">
+		select b.*,bc.bc_counter_name as counter_name 
+		from tb_belong b LEFT JOIN tb_belongAndCounter bc 
+		on b.belong_name = bc.bc_belong_name 
+	</select>
+	
+	<insert id="insertBelong" parameterMap="Belong" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_belong(belong_ID,belong_name)
+		values 
+		(#{belong_ID},#{belong_name})
+	</insert>
+	
+	<update id="updateBelong" parameterMap="Belong">
+		update
+		tb_belong
+		set
+		<if test="belong_name!=null">
+			belong_name = #{belong_name}
+		</if>		
+		where 
+		belong_ID=#{belong_ID}
+	</update>
+	
+	<delete id="deleteBelong" parameterType="java.lang.Integer">
+		delete from
+		tb_belong
+		where
+		belong_ID=#{belong_ID}
+	</delete>
+
+</mapper>

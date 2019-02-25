@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>客户端</title>
+<meta charset="utf-8" />
+<meta http-equiv="Access-Control-Allow-Origin" content="*">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+<link rel="stylesheet" href="/css/styleAnalysis.css" media="screen" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+.main {
+	width: 100%;
+	margin: 0 auto;
+	height: 100%;
+}
+
+html, body {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	
+}
+.logout {
+
+
+font-size: 20px;
+text-align: center;
+color:blue;
+
+
+
+}
+.grid_4{
+display: none;
+}
+</style>
+</head>
+<body id="page11">
+<div id="roleList" th:text="${session.employeeRoleList}" style="display: none;"> </div>
+	<div class="main">
+		<!-- header -->
+		<header>
+			<div class="row-3">
+				<div class="container_12">
+					<div style="color: #fff; text-align: center; font-size: 30px; text-shadow: 1px 1px 0 #000, 2px 2px 0 #777; margin-top: 10px">宇泰珠宝销售分析系统</div>
+					<div class="logout" style="float:right;"><a href="/analysis/logout">退出</a></div>
+				</div>
+			</div>
+		</header>
+		<!-- end header -->
+		<!-- content -->
+		<section id="content">
+			<div class="container_12">
+				<div class="wrapper">
+					<div class="grid_4" id="index1">
+						<div class="box10">
+							<div class="imgs">
+								<img src="/images/icons/supplier.png" alt="" class="img-1" />
+								<img src="/images/icons/supplier-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>供应商分析模型</h3>
+							<a href="/analysis/index">供应商单品分析</a>
+							<p>分析单品的销售情况和销售走势</p>
+							<a href="/analysis/productnum">供应商品群分析</a>
+							<p>供应商品牌群体的销售情况和销售走势</p>
+							<a href="/analysis/source">来源分析</a>
+							<p>不同来源销售情况</p>
+						</div>
+					</div>
+
+					<div class="grid_4" id="index2">
+
+						<div class="box10">
+							<div class="imgs">
+								<img src="/images/icons/1page_img1.png" alt="" class="img-1" />
+								<img src="/images/icons/1page_img1-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>销售排名分析模型</h3>
+							<a href="/analysis/index11">供应商销售排名</a>
+							<p>不同供应商销售排名分析</p>
+							<a href="/analysis/index722">按款式分析</a>
+							<p>款式销售排名分析</p>
+							<a href="/analysis/index723">按镶嵌方式分析</a>
+							<p>镶嵌方式销售排名分析</p>
+							<a href="/analysis/index724">按主石区间分析</a>
+							<p>主石区间销售排名分析</p>
+							<a href="/analysis/index726">按圈口分析</a>
+							<p>圈口销售排名分析</p>
+							
+						</div>
+
+					</div>
+
+					<div class="grid_4" id="index3">
+
+						<div class="box10">
+							<div class="imgs">
+								<img src="/images/icons/series.png" alt="" class="img-1" />
+								<img src="/images/icons/series-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>系列商品分析模型</h3>
+							<a href="/analysis/seriesproduct">系列商品成长分析</a>
+							<p>分析某一系列商品的成长性，为挖掘潜力、确定配额提供依据</p>
+							<a href="/analysis/index7">系列商品贡献度分析</a>
+							<p>分析重点关注品牌在销售方面的贡献情况</p>
+							<a href="/analysis/index3">兑换销售排名</a>
+							<p>兑换销售排名分析</p>
+						</div>
+
+					</div>
+
+					<div class="grid_4" id="index4">
+
+						<div class="box10">
+							<div class="imgs">
+								<img src="/images/icons/1page_img2.png" alt="" class="img-1" />
+								<img src="/images/icons/1page_img2-hover.png" class="img-2" />
+							</div>
+							<h3>管理分析模型</h3>
+							<a href="/analysis/s75">商品系列TOPN分析模型</a>
+							<p>某商品系列的销售排名分析.</p>
+							<a href="/analysis/s752">销量趋势成长分析模型</a>
+							<p>分析对比某（柜台或商品）在某时间段销量趋势与历史相同时间段的销量情况做比较，以判断销量指标的演变趋势</p>
+						</div>
+					</div>
+
+
+
+					<div class="grid_4" id="index5">
+						<div class="box10">
+							<div class="imgs">
+								<img src="/images/icons/1page_img2.png" alt="" class="img-1" />
+								<img src="/images/icons/1page_img2-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>销售分析模型</h3>
+							<a href="/analysis/plan">销售计划分析模型</a>
+							<p>对各地区销售计划执行情况进行跟踪，检查销售计划的完成情况，为制定未来销售计划提供直接依据</p>
+							<a href="/analysis/index5">销售趋势分析模型</a>
+							<p>分析各地区销售增减趋势</p>
+							<a href="/analysis/s743">销售结构分析模型</a>
+							<p>同一柜台不同类别分析</p>
+							<a href="/analysis/s744">区域分析模型</a>
+							<p>分析各地区的综合销售情况</p>
+						</div>
+
+					</div>
+
+					<div class="grid_4" id="index6">
+
+						<div class="box10">
+							<div class="imgs">
+								<img src="/images/icons/1page_img2.png" alt="" class="img-1" />
+								<img src="/images/icons/1page_img2-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>分类销售数据汇总</h3>
+							<a href="/analysis/index811">周销售统计数据</a>
+							<p>明确销售数量、同类比较</p>
+							<a href="/analysis/index812">月销售统计数据</a>
+							<p>明确销售数量、同类比较</p>
+							<a href="/analysis/index813">季度销售统计数据</a>
+							<p>明确销售数量、同类比较</p>
+							<a href="/analysis/index814">年销售统计数据</a>
+							<p>明确销售数量、同类比较</p>
+						</div>
+
+					</div>
+
+					<div class="grid_4" id="index7">
+
+						<div class="box10">
+							<div class="imgs">
+								<img src="/images/icons/1page_img2.png" alt="" class="img-1" />
+								<img src="/images/icons/1page_img2-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>销售汇总数据分析</h3>
+							<a href="/analysis/index821">月销售汇总数据同比分析</a>
+							<p>销售汇总数据同比分析</p>
+							<a href="/analysis/index822">年销售汇总数据同比分析</a>
+							<p>销售汇总数据同比分析</p>
+							<a href="/analysis/index831">月销售汇总数据环比分析</a>
+							<p>销售汇总数据环比分析</p>
+							<a href="/analysis/index832">年销售汇总数据环比分析</a>
+							<p>销售汇总数据环比分析</p>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- end content -->
+		<!-- footer -->
+		
+	</div>
+	<script type="text/javascript">
+		var list = ["index1","index2","index3","index4","index5","index6","index7"]; 
+		var roleList =  document.getElementById("roleList").innerHTML; 
+		for(var i=0;i<list.length;i++) { 
+			if(roleList.indexOf(list[i])!=-1) {
+				document.getElementById(list[i]).style.display="table"; 
+	 	} 
+		}
+	
+	</script>
+</body>
+</html>

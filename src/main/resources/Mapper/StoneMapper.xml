@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.StoneDao">
+	<resultMap type="com.nenu.domain.Stone" id="BaseResultMapStone">
+		<result column="stone_ID" property="stone_ID"/>
+		<result column="stone_purchdate" property="stone_purchdate" />
+		<result column="stone_seqno" property="stone_seqno"/>
+		<result column="stone_loosdofty" property="stone_loosdofty"/>
+		<result column="stone_supplierName" property="stone_supplierName"/>
+		<result column="stone_mainName" property="stone_mainName"/>
+		<result column="stone_mainStoneNo" property="stone_mainStoneNo"/>
+		<result column="stone_spec" property="stone_spec"/>
+		<result column="stone_mainNumber" property="stone_mainNumber"/>
+		<result column="stone_mainWeight" property="stone_mainWeight"/>
+		<result column="stone_mainPrperct" property="stone_mainPrperct"/>
+		<result column="stone_mainPramt" property="stone_mainPramt"/>
+		<result column="stone_substoNo" property="stone_substoNo"/>
+		<result column="stone_substoName" property="stone_substoName"/>
+		<result column="stone_substoWgt" property="stone_substoWgt"/>
+		<result column="stone_substoNumber" property="stone_substoNumber"/>
+		<result column="stone_substoPrperct" property="stone_substoPrperct"/>
+		<result column="stone_substoPramt" property="stone_substoPramt"/>
+		<result column="stone_shape" property="stone_shape"/>
+		<result column="stone_color" property="stone_color"/>
+		<result column="stone_clarity" property="stone_clarity"/>
+		<result column="stone_color2" property="stone_color2"/>
+		<result column="stone_clarity2" property="stone_clarity2"/>
+		<result column="stone_cut" property="stone_cut"/>
+		<result column="stone_fluorescence" property="stone_fluorescence"/>
+		<result column="stone_symmetry" property="stone_symmetry"/>
+		<result column="stone_polish" property="stone_polish"/>
+		<result column="stone_diameter" property="stone_diameter"/>
+		<result column="stone_height" property="stone_height"/>
+		<result column="stone_tablewidth" property="stone_tablewidth"/>
+		<result column="stone_preparer" property="stone_preparer"/>
+		<result column="stone_porter" property="stone_porter"/>
+		<result column="stone_comments" property="stone_comments"/>
+		<result column="stone_channelNo" property="stone_channelNo"/>
+		<result column="stone_reserved1" property="stone_reserved1"/>
+		<result column="stone_reserved2" property="stone_reserved2"/>
+		<result column="stone_GIA" property="stone_GIA"/>
+		
+
+	</resultMap>
+	
+	<parameterMap type="com.nenu.domain.Stone" id="Stone"/>
+	
+	<sql id="Base_Column_List_Stone">
+		stone_ID,stone_purchdate,stone_seqno,stone_loosdofty,stone_mainName,stone_mainStoneNo,stone_spec,
+		stone_mainNumber,stone_mainWeight,stone_mainPrperct,stone_mainPramt,stone_substoNo,stone_substoName,stone_substoWgt,stone_substoNumber,
+		stone_substoPrperct,stone_substoPramt,stone_shape,stone_color,stone_clarity,stone_color2,stone_clarity2,stone_cut,
+		stone_fluorescence,stone_symmetry,stone_polish,stone_diameter,stone_height,stone_tablewidth,stone_preparer,stone_porter,stone_comments,
+		stone_channelNo,stone_reserved1,stone_reserved2,stone_GIA
+	</sql>
+
+	<select id="findAllStone" resultMap="BaseResultMapStone">
+		select 
+		<include refid="Base_Column_List_Stone"/>
+		from tb_stone 
+		where (stone_mainNumber <![CDATA[ > ]]> 0 || stone_substoNumber <![CDATA[ > ]]> 0) and stone_reserved1=0
+		ORDER BY stone_seqno,stone_purchdate
+	</select>
+	<select id="findAllStoneForPath" resultMap="BaseResultMapStone">
+		select 
+		<include refid="Base_Column_List_Stone"/>
+		from tb_stone 
+	</select>
+	
+	<select id="findAllStoneNum" resultMap="BaseResultMapStone">
+		select 
+		<include refid="Base_Column_List_Stone"/>
+		from tb_stone 
+		where stone_reserved1=0 and (stone_mainNumber <![CDATA[ > ]]> 0 || stone_substoNumber <![CDATA[ > ]]> 0)  
+	</select>
+	<select id="findAllStoneNumWithTime" resultMap="BaseResultMapStone" parameterType="java.util.Map">
+		select 
+		<include refid="Base_Column_List_Stone"/>
+		from tb_stone 
+		where stone_purchdate=#{stone_purchdate} and (stone_mainNumber <![CDATA[ > ]]> 0 || stone_substoNumber <![CDATA[ > ]]> 0) and stone_reserved1=0
+	</select>
+	<select id="findStoneID" resultMap="BaseResultMapStone">
+		select 
+		stone_ID
+		from tb_stone
+	</select>
+	<select id="findStoneByStoneID" resultMap="BaseResultMapStone" parameterType="String">
+		select 
+		<include refid="Base_Column_List_Stone"/>
+		from tb_stone
+		where stone_ID=#{stone_ID}
+	</select>
+	<select id="findStoneByStoneIDAJAX" resultMap="BaseResultMapStone" parameterType="String">
+		select 
+		<include refid="Base_Column_List_Stone"/>
+		from tb_stone
+		where stone_ID=#{stone_ID}
+	</select>
+	<select id="findStoneByMainNo" resultMap="BaseResultMapStone" parameterType="String">
+		select 
+		<include refid="Base_Column_List_Stone"/>
+		from tb_stone
+		where stone_mainStoneNo=#{stone_mainStoneNo}
+	</select>
+	<!-- 石库管理查询  主石-->
+	<select id="findStoneByMainNoForManage" resultMap="BaseResultMapStone" parameterType="String">
+		select 
+		<include refid="Base_Column_List_Stone"/>
+		from tb_stone
+		where stone_mainNumber <![CDATA[ > ]]> 0  and stone_reserved1=0 and stone_mainStoneNo=#{stone_mainStoneNo}
+	</select>
+	<!-- 石库管理查询  副石-->
+	<select id="findStoneBySubNoForManage" resultMap="BaseResultMapStone" parameterType="long">
+		select 
+		<include refid="Base_Column_List_Stone"/>
+		from tb_stone
+		where stone_substoNumber <![CDATA[ > ]]>  0 and stone_reserved1=0 and  stone_substoNo=#{stone_substoNo}
+	</select>
+	<select id="findStoneBySubNo" resultMap="BaseResultMapStone" parameterType="long">
+		select 
+		<include refid="Base_Column_List_Stone"/>
+		from tb_stone
+		where stone_substoNo=#{stone_substoNo}
+	</select>
+	<select id="findStoneBySupplierName" resultMap="BaseResultMapStone" >
+		select 
+		<include refid="Base_Column_List_Stone"/>
+		from tb_stone
+		where stone_supplierName=#{stone_supplierName}
+	</select>
+	<select id="findStoneByLoosdofty" resultMap="BaseResultMapStone" >
+		select 
+		<include refid="Base_Column_List_Stone"/>
+		from tb_stone
+		where stone_loosdofty=#{stone_loosdofty} 
+		and stone_reserved1=0 and (stone_mainNumber<![CDATA[ > ]]> 0 || stone_substoNumber<![CDATA[ > ]]> 0)
+	</select>
+	<select id="findStoneByPurchdate" resultMap="BaseResultMapStone" parameterType="java.util.Map" >
+		select 
+		<include refid="Base_Column_List_Stone"/>
+		from tb_stone
+		where 
+		<if test="purchdateStart != null  " >
+		stone_purchdate <![CDATA[ >= ]]>  #{purchdateStart}
+		</if>
+		<if test="purchdateEnd != null  " >
+		 and stone_purchdate <![CDATA[ <= ]]>  #{purchdateEnd}
+		</if>
+		and stone_reserved1=0 and (stone_mainNumber<![CDATA[ > ]]> 0 || stone_substoNumber<![CDATA[ > ]]> 0)
+	</select>
+	<select id="findAllNo" resultMap="BaseResultMapStone">
+		select 
+		stone_mainStoneNo,stone_substoNo
+		from tb_stone
+	</select>
+	
+	<insert id="insertStoneByExcel" parameterMap="Stone"  keyProperty="id">
+		insert into
+		tb_stone(stone_ID,stone_purchdate,stone_seqno,stone_loosdofty,stone_mainName,stone_mainStoneNo,stone_spec,
+		stone_mainNumber,stone_mainWeight,stone_mainPrperct,stone_mainPramt,stone_substoNo,stone_substoName,stone_substoWgt,stone_substoNumber,
+		stone_substoPrperct,stone_substoPramt,stone_shape,stone_color,stone_clarity,stone_color2,stone_clarity2,stone_cut,
+		stone_fluorescence,stone_symmetry,stone_polish,stone_diameter,stone_height,stone_tablewidth,stone_preparer,stone_porter,stone_comments,
+		stone_channelNo,stone_reserved1,stone_GIA)
+		values 
+		(#{stone_ID},#{stone_purchdate},#{stone_seqno},#{stone_loosdofty},#{stone_mainName},#{stone_mainStoneNo},#{stone_spec},
+		#{stone_mainNumber},#{stone_mainWeight},#{stone_mainPrperct},#{stone_mainPramt},#{stone_substoNo},#{stone_substoName},#{stone_substoWgt},#{stone_substoNumber},
+		#{stone_substoPrperct},#{stone_substoPramt},#{stone_shape},#{stone_color},#{stone_clarity},#{stone_color2},#{stone_clarity2},#{stone_cut},
+		#{stone_fluorescence},#{stone_symmetry},#{stone_polish},#{stone_diameter},#{stone_height},#{stone_tablewidth},#{stone_preparer},#{stone_porter},#{stone_comments},
+		#{stone_channelNo},#{stone_reserved1},#{stone_GIA})
+	</insert>
+	<insert id="insertStone" parameterMap="Stone"  keyProperty="id">
+		insert into
+		tb_stone(stone_ID,stone_purchdate,stone_seqno,stone_loosdofty,stone_mainName,stone_mainStoneNo,stone_spec,
+		stone_mainNumber,stone_mainWeight,stone_mainPrperct,stone_mainPramt,stone_substoNo,stone_substoName,stone_substoWgt,stone_substoNumber,
+		stone_substoPrperct,stone_substoPramt,stone_shape,stone_color,stone_clarity,stone_color2,stone_clarity2,stone_cut,
+		stone_fluorescence,stone_symmetry,stone_polish,stone_diameter,stone_height,stone_tablewidth,stone_preparer,stone_porter,stone_comments,
+		stone_channelNo,stone_reserved1,stone_GIA)
+		values 
+		(#{stone_ID},#{stone_purchdate},#{stone_seqno},#{stone_loosdofty},#{stone_mainName},#{stone_mainStoneNo},#{stone_spec},
+		#{stone_mainNumber},#{stone_mainWeight},#{stone_mainPrperct},#{stone_mainPramt},#{stone_substoNo},#{stone_substoName},#{stone_substoWgt},#{stone_substoNumber},
+		#{stone_substoPrperct},#{stone_substoPramt},#{stone_shape},#{stone_color},#{stone_clarity},#{stone_color2},#{stone_clarity2},#{stone_cut},
+		#{stone_fluorescence},#{stone_symmetry},#{stone_polish},#{stone_diameter},#{stone_height},#{stone_tablewidth},#{stone_preparer},#{stone_porter},#{stone_comments},
+		#{stone_channelNo},#{stone_reserved1},#{stone_GIA})
+	</insert>
+	
+	<update id="updateMainStoneNumber" parameterMap="Stone" parameterType="String">
+		update
+		tb_stone
+		set
+		<if test="stone_mainNumber!=null">
+			stone_mainNumber = #{stone_mainNumber}
+		</if>
+		<if test="stone_comments!=null">
+			 ,stone_comments = #{stone_comments}
+		</if>		
+		where 
+		stone_mainStoneNo=#{stone_mainStoneNo}
+	</update>
+	<update id="updateSubStoneNumber" parameterMap="Stone" parameterType="long">
+		update
+		tb_stone
+		set
+		<if test="stone_substoNumber!=null">
+			stone_substoNumber = #{stone_substoNumber}
+		</if>
+		<if test="stone_comments!=null">
+			 ,stone_comments = #{stone_comments}
+		</if>		
+		where 
+		stone_substoNo=#{stone_substoNo}
+	</update>
+	<update id="updateStone" parameterMap="Stone" >
+		update
+		tb_stone
+		set
+		<if test="stone_purchdate!=null">
+			stone_purchdate = #{stone_purchdate},
+		</if>
+		<if test="stone_seqno!=null">
+			stone_seqno = #{stone_seqno},
+		</if>
+		<if test="stone_loosdofty!=null">
+			stone_loosdofty = #{stone_loosdofty},
+		</if>
+		<if test="stone_mainName!=null">
+			stone_mainName = #{stone_mainName},
+		</if>
+		<if test="stone_mainStoneNo!=null">
+			stone_mainStoneNo = #{stone_mainStoneNo},
+		</if>
+		<if test="stone_spec!=null">
+			stone_spec = #{stone_spec},
+		</if>
+		<if test="stone_mainNumber!=null">
+			stone_mainNumber = #{stone_mainNumber},
+		</if>
+		<if test="stone_mainWeight!=null">
+			stone_mainWeight = #{stone_mainWeight},
+		</if>
+		<if test="stone_mainPrperct!=null">
+			stone_mainPrperct = #{stone_mainPrperct},
+		</if>
+		<if test="stone_mainPramt!=null">
+			stone_mainPramt = #{stone_mainPramt},
+		</if>
+		<if test="stone_substoNo!=null">
+			stone_substoNo = #{stone_substoNo},
+		</if>
+		<if test="stone_substoName!=null">
+			stone_substoName = #{stone_substoName},
+		</if>
+		<if test="stone_substoWgt!=null">
+			stone_substoWgt = #{stone_substoWgt},
+		</if>
+		<if test="stone_substoNumber!=null">
+			stone_substoNumber = #{stone_substoNumber},
+		</if>
+		<if test="stone_substoPrperct!=null">
+			stone_substoPrperct = #{stone_substoPrperct},
+		</if>
+		<if test="stone_substoPramt!=null">
+			stone_substoPramt = #{stone_substoPramt},
+		</if>
+		<if test="stone_shape!=null">
+			stone_shape = #{stone_shape},
+		</if>
+		<if test="stone_color!=null">
+			stone_color = #{stone_color},
+		</if>
+		<if test="stone_clarity!=null">
+			stone_clarity = #{stone_clarity},
+		</if>
+		<if test="stone_color2!=null">
+			stone_color2 = #{stone_color2},
+		</if>
+		<if test="stone_clarity2!=null">
+			stone_clarity2 = #{stone_clarity2},
+		</if>
+		<if test="stone_cut!=null">
+			stone_cut = #{stone_cut},
+		</if>
+		<if test="stone_fluorescence!=null">
+			stone_fluorescence = #{stone_fluorescence},
+		</if>
+		<if test="stone_symmetry!=null">
+			stone_symmetry = #{stone_symmetry},
+		</if>
+		<if test="stone_polish!=null">
+			stone_polish = #{stone_polish},
+		</if>
+		<if test="stone_diameter!=null">
+			stone_diameter = #{stone_diameter},
+		</if>
+		<if test="stone_height!=null">
+			stone_height = #{stone_height},
+		</if>
+		<if test="stone_tablewidth!=null">
+			stone_tablewidth = #{stone_tablewidth},
+		</if>
+		<if test="stone_porter!=null">
+			stone_porter = #{stone_porter},
+		</if>
+		<if test="stone_comments!=null">
+			stone_comments = #{stone_comments},
+		</if>
+		<if test="stone_preparer!=null">
+			stone_preparer = #{stone_preparer},
+		</if>	
+		<if test="stone_channelNo!=null">
+			stone_channelNo = #{stone_channelNo},
+		</if>
+		<if test="stone_GIA!=null">
+			stone_GIA = #{stone_GIA}
+		</if>	
+		where 
+		stone_ID=#{stone_ID}
+	</update>
+	<update id="deleteStoneByStoneIDAJAX" parameterMap="Stone">
+	update
+	tb_stone
+	set
+	<if test="stone_reserved1!=null">
+		stone_reserved1 = #{stone_reserved1}
+	</if>
+	where 
+	stone_ID=#{stone_ID}
+	
+	
+	</update>
+	
+	<select id="findStoneByTableInfo" parameterType="java.util.Map" resultMap="BaseResultMapStone">
+		select * from tb_stone where (stone_mainNumber <![CDATA[ > ]]> 0 || stone_substoNumber <![CDATA[ > ]]> 0) and stone_reserved1=0 
+		ORDER BY stone_purchdate DESC,stone_seqno DESC limit #{sEcho},#{len}
+	</select>
+
+</mapper>

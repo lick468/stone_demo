@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+   <head>
+       <meta charset="utf-8">
+   </head>
+   <body style="height: 100%; margin: 0">
+       <div id="container" style="height: 100%"></div>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-gl/echarts-gl.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
+       <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
+       <script type="text/javascript">
+var dom = document.getElementById("container");
+var myChart = echarts.init(dom);
+var app = {};
+option = null;
+option = {
+    legend: {},
+    tooltip: {},
+    dataset: {
+        dimensions: ['product', '项链', '戒指', '手环'],
+        source: [
+            {product: '一月', '项链': 43.3, '戒指': 85.8, '手环': 93.7},
+            {product: '二月', '项链': 83.1, '戒指': 73.4, '手环': 55.1},
+            {product: '三月', '项链': 86.4, '戒指': 65.2, '手环': 82.5},
+            {product: '四月', '项链': 172.4, '戒指': 353.9, '手环': 329.1},
+            {product: '五月', '项链': 272.4, '戒指': 253.9, '手环': 319.1},
+            {product: '六月', '项链': 372.4, '戒指': 153.9, '手环': 139.1},
+            {product: '七月', '项链': 172.4, '戒指': 453.9, '手环': 139.1},
+            {product: '八月', '项链': 712.4, '戒指': 253.9, '手环': 339.1},
+        ]
+    },
+    xAxis: {type: 'category'},
+    yAxis: {},
+    dataZoom: [
+        {
+            type: 'slider',
+            show: true,
+            start: 94,
+            end: 100,
+            handleSize: 8
+        },
+        {
+            type: 'inside',
+            start: 94,
+            end: 100
+        },
+        {
+            type: 'slider',
+            show: true,
+            yAxisIndex: 0,
+            filterMode: 'empty',
+            width: 12,
+            height: '70%',
+            handleSize: 8,
+            showDataShadow: false,
+            left: '93%'
+        }
+    ],
+    // Declare several bar series, each will be mapped
+    // to a column of dataset.source by default.
+    series: [
+        {type: 'bar'},
+        {type: 'bar'},
+        {type: 'bar'}
+    ]
+};
+;
+if (option && typeof option === "object") {
+    myChart.setOption(option, true);
+}
+       </script>
+   </body>
+</html>

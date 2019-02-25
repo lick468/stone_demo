@@ -1,0 +1,620 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0" />
+<link rel="stylesheet" href="/css/styleAnalysis.css" media="screen" />
+<script src="/js/jquery-1.7.2.min.js"></script>
+<script src="/js/echarts.js"></script>
+<script type="text/javascript" src="/js/plugins/layer/laydate/laydate.js"></script>
+<link href="/css/bootstrap.min.css" rel="stylesheet" />
+<link href="/css/laydate.css" rel="stylesheet" />
+<link href="/css/bootstrap-theme.min.css" rel="stylesheet" />
+<link href="/css/jquery-editable-select.min.css" rel="stylesheet" />
+<link th:href="@{/css/loading.css}" rel="stylesheet"/>
+<title>销售趋势分析模型</title>
+<style type="text/css">
+* {
+	margin: 0;
+	padding: 0;
+}
+
+.mian-div {
+	width: 100%;
+	margin: 0 auto;
+	height: 100%;
+}
+
+.top-div {
+	width: 95%;
+	margin: 0 auto;
+	height: 6%;
+}
+
+.left-div {
+	width: 20%;
+	height: 94%;
+	float: left;
+	text-align: center;
+}
+
+.left-div-inner {
+	width: 80%;
+	margin: 0 auto;
+}
+
+select {
+	display: block;
+	margin: 1rem auto;
+	width: 100%;
+	height: 2rem;
+	background-color: green;
+	color: white;
+	border-radius: 0.5rem;
+}
+
+.selector {
+	margin: 0 auto;
+	text-align: left;
+}
+
+.style-selector {
+	display: inline-block;
+	width: 100%;
+}
+
+.btn {
+	width: 60%;
+	margin: 1rem auto;
+	line-height: 2rem;
+	height: 3rem;
+	color: white;
+	border-radius: 0.5rem;
+}
+
+.blue {
+	background-color: rgb(36, 135, 207);
+}
+
+.red {
+	background-color: rgb(230, 80, 70);
+}
+
+.right-div {
+	width: 80%;
+	height: 94%;
+	float: right;
+}
+
+.right-inner {
+	height: 500px;
+}
+
+.right-inner-top {
+	height: 70%;
+}
+
+.right-inner-down {
+	height: 20%;
+}
+
+table {
+	border-collapse: collapse;
+	margin: 1rem auto;
+}
+
+.displayNone {
+	display: none;
+}
+
+html, body {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+</style>
+</head>
+
+
+<body>
+<!-- 遮罩层 开始-->
+ <div id="loading" style="display:none;">
+    <img src="/img/loading.gif" alt="正在加载中，请耐心等待" >
+    <span >正在加载中，请耐心等待</span>
+</div>
+<!-- 遮罩层结束 -->
+	<div id="listdate" class="displayNone"></div>
+	<div id="listnum" class="displayNone"></div>
+	<div id="dateSet" th:text="${result}" class="displayNone"></div>
+	<div id="titleList" th:text="${titleList}" class="displayNone"></div>
+	<div class="mian-div">
+		<!-- header -->
+		<header>
+			<div class="row-3">
+
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<span class="button-border">
+					<a class="button-red" href="/analysis/main">返回主菜单</a>
+				</span>
+
+				<div class="slogan-index">销售趋势分析</div>
+
+			</div>
+		</header>
+		<!-- end header -->
+		<div class="left-div">
+			<div class="left-div-inner">
+				<div class="selector">
+					<div class="style-selector" >
+						<br>
+						<p>请选择起止时间：</p>
+						<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control layer-date" id="starttime"  style="background-color: green; color: black;" />
+						<br>
+						<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control layer-date" id="endtime"  style="background-color: green; color: black;" />
+					</div>
+				</div>
+				<br>
+				<select id="listType" class="form-control" onchange=" return areachange();" name="stone_AreaName" style="background-color: green; color: black;">
+					<option  selected="selected"  value="地区">地区</option>
+					<option value="柜台">柜台</option>
+					<option value="门店">门店</option>
+					
+					
+				</select>
+				<br>
+				<div>
+					   <input type="radio" name="selectTpye" value="数量" checked>
+						数量
+						<input type="radio" value="标价" name="selectTpye">
+						标价
+						<input type="radio" value="结算价" name="selectTpye">
+						结算价
+						<input type="radio" value="金重" name="selectTpye">
+						金重
+						<input type="radio" value="主石" name="selectTpye">
+						主石
+				</div>
+				<br>
+				<div class="btn blue" onclick="return button_post();">提交</div>
+				<div class="btn red" onclick="javascript:rest();">重置</div>
+				<div >
+					<form action="/analysis/downloadGraphExcelForIndex5" method="post" >
+						<input type="hidden"  value="" name="context" id="conGraph"/>
+						<input type="submit" class = " btn red" value="导出图表数据">
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="right-div">
+			<div class="right-inner">
+				<div class="right-inner-top">
+					<div id="container" style="height: 750px; width: 100%;"></div>
+					<div id="container_search" style="height: 900px; width: 100%;"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="/js/jquery-1.12.4.js" type="text/javascript"></script>
+	<script src="/js/bootstrap.min.js" type="text/javascript"></script>
+	<script src="/js/jquery.min.js" type="text/javascript"></script>
+	<script src="/js/jquery-editable-select.min.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+		tt();
+		function tt() {
+			var dom = document.getElementById("container");
+			var myChart = echarts.init(dom);
+			var app = {};
+			option = null;
+
+			setTimeout(function () {
+
+				    option = {
+			        legend: {},
+			        
+		
+			        tooltip: {
+			            trigger: 'axis',
+			            showContent: false
+			        },
+			        dataset: {
+			            source: [
+			                ['product', '2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06'],
+			                ['长春地区', 41.1, 30.4, 65.1, 53.3, 83.8, 98.7],
+			                ['白城地区', 86.5, 92.1, 85.7, 83.1, 73.4, 55.1],
+			                ['通化地区', 24.1, 67.2, 79.5, 86.4, 65.2, 82.5],
+			               ['辽源地区', 55.2, 67.1, 69.2, 72.4, 53.9, 39.1],
+			            ]
+			        },
+			        xAxis: {type: 'category'},
+			        yAxis: {gridIndex: 0},
+			        grid: {top: '55%'},
+			        series: [
+			            {type: 'line', smooth: true, seriesLayoutBy: 'row'},
+			            {type: 'line', smooth: true, seriesLayoutBy: 'row'},
+			            {type: 'line', smooth: true, seriesLayoutBy: 'row'},
+			            {type: 'line', smooth: true, seriesLayoutBy: 'row'},
+			            {
+			                type: 'pie',
+			                id: 'pie',
+			                radius: '30%',
+			                center: ['50%', '25%'],
+			                label: {
+			                    formatter: '{b}: {@2012} ({d}%)'
+			                },
+			                encode: {
+			                    itemName: 'product',
+			                    value: '2012',
+			                    tooltip: '2012'
+			                }
+			            }
+			        ]
+			    };
+			        
+			   
+			    myChart.on('updateAxisPointer', function (event) {
+			        var xAxisInfo = event.axesInfo[0];
+					
+			        if (xAxisInfo) {
+			            var dimension = xAxisInfo.value + 1;
+			            myChart.setOption({
+			                series: {
+			                    id: 'pie',
+			                    label: {
+			                        formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+			                    },
+			                    encode: {
+			                        value: dimension,
+			                        tooltip: dimension
+			                    }
+			                }
+			            });
+			        }
+			    });
+
+			    myChart.setOption(option);
+
+			});;
+			if (option && typeof option === "object") {
+			    myChart.setOption(option, true);
+			}
+		}
+		function rest() {
+			location.reload();
+		}
+		function button_post() {
+			var start = document.getElementById("starttime").value;
+			var end = document.getElementById("endtime").value;
+			var type = document.getElementById("listType").value;
+			
+			var selectType = $('input:radio:checked').val();
+			//alert(selectType);
+			if (start.length == 0) {
+				alert("请选择开始时间！");
+				return false;
+			} else if (end.length == 0) {
+				alert("请选择结束时间！");
+				return false;
+			}
+			$('#loading').show();
+			$.ajax({
+				url : "/analysis/saleTrendFind",
+				type : "post",
+				data : {
+					type : type,
+					start : start,
+					end : end,
+					selectType : selectType,
+				},
+				dateType : "json",
+				success : function(result) {
+					var dom = document.getElementById("container_search");
+					var myChart = echarts.init(dom);
+					var app = {};
+					option = null;
+
+					setTimeout(function () {
+
+						    option = {
+					        legend: {},
+					        
+					        tooltip: {
+					            trigger: 'axis',
+					            showContent: true
+					        },
+					        dataset: {
+					            source: [
+					                
+					            ]
+					        },
+					        xAxis: {type: 'category'},
+					        yAxis: {gridIndex: 0},
+					        grid: {top: '55%'},
+					       				            
+					        
+					    };
+
+					    myChart.on('updateAxisPointer', function (event) {
+					        var xAxisInfo = event.axesInfo[0];
+							
+					        if (xAxisInfo) {
+					            var dimension = xAxisInfo.value + 1;
+					            myChart.setOption({
+					                series: {
+					                    id: 'pie',
+					                    label: {
+					                        formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+					                    },
+					                    encode: {
+					                        value: dimension,
+					                        tooltip: dimension
+					                    }
+					                }
+					            });
+					        }
+					    });
+
+					    myChart.setOption(option);
+
+					});;
+					if (option && typeof option === "object") {
+					    myChart.setOption(option, true);
+					}
+					 $('#loading').hide();
+					//alert(result);
+					$("#container").hide();
+					$("#container_search").show();
+					var dom = document.getElementById("container_search");
+					var myChart = echarts.init(dom);
+					var app = {};
+					option = null;
+					var tit = result.split("#");
+					//填充下载图表数据
+					document.getElementById("conGraph").value=result;
+					var source = new Array();
+					var title1 = tit[1].substring(1, tit[1].length - 1).split(",");
+					var title = [];
+					for (var i = 0; i < title1.length; i++) {
+						title.push(title1[i]);
+					}
+					source.push(title);				
+					var res = tit[0].split("@");				
+					var mytitle = new Array();				
+					for(var i=0;i<res.length;i++) {
+						mytitle[i]=[];
+						var s = res[i].substring(0, res[i].length).split(",");
+						for (var j = 0; j < s.length; j++) {
+							mytitle[i].push(s[j]);
+						}
+						source.push(mytitle[i]);
+					}	
+							
+					setTimeout(function() {
+						option = {
+							legend : {},
+							
+							tooltip : {
+								trigger : 'axis',
+								showContent : false
+							},
+							dataset : {
+								source : source
+							},
+							xAxis : {
+								type : 'category'
+							},
+							yAxis : {
+								gridIndex : 0
+							},
+							grid : {
+								top : '55%'
+							},
+							series : [ {
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							}, {
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							}, {
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							}, {
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							}, {
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							}, {
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							}, {
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							}, {
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							}, {
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							}, {
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							},{
+								type : 'line',
+								smooth : true,
+								seriesLayoutBy : 'row'
+							}, {
+								type : 'pie',
+								id : 'pie',
+								radius : '30%',
+								center : [ '50%', '25%' ],
+								label : {
+									formatter : '{b}: {@2012-01}({d}%)'
+								},
+								encode : {
+									itemName : 'area',
+									value : '2012-01',
+									tooltip : '2012-01'
+								}
+							} ]
+						};
+
+						myChart.on('updateAxisPointer', function(event) {
+							var xAxisInfo = event.axesInfo[0];
+							if (xAxisInfo) {
+								var dimension = xAxisInfo.value + 1;
+								myChart.setOption({
+									series : {
+										id : 'pie',
+										label : {
+											formatter : '{b}: {@[' + dimension
+													+ ']}({d}%) '
+										},
+										encode : {
+											value : dimension,
+											tooltip : dimension
+										}
+									}
+								});
+							}
+						});
+
+						myChart.setOption(option);
+
+					});
+					;
+					if (option && typeof option === "object") {
+						myChart.setOption(option, true);
+					}
+				}
+			});
+
+		}
+	</script>
+
+</body>
+</html>

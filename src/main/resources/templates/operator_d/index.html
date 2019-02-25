@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta  http-equiv="Content-Type" content="text/html;charset=UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <!-- 全局js -->
+    <script src="/js/jquery.min.js?v=2.1.4" type="text/javascript"></script>
+    <script src="/js/jquery-1.12.4.js"  type="text/javascript"></script>
+    <script src="/js/bootstrap.min.js?v=3.3.6" type="text/javascript"></script>
+    <script src="/js/jquery.dataTables.min.js"  type="text/javascript"></script>
+    <script src="/js/dataTables.bootstrap.min.js"  type="text/javascript"></script>
+    <script src="/js/plugins/layer/laydate/laydate.js" type="text/javascript"></script>
+    <script src="/js/jquery-editable-select.min.js" type="text/javascript"></script>
+ 	
+
+ 
+<title>厂家管理</title>
+<link href="/css/bootstrap.min.css?v=3.3.6" rel="stylesheet"/>
+<link href="/css/bootstrap-theme.min.css?v=3.3.7" rel="stylesheet"/>
+<link href="/css/jquery-editable-select.min.css?v=2.2.4" rel="stylesheet"/>
+<link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+<link href="/css/animate.css" rel="stylesheet">
+<link href="/css/style.css?v=4.1.0" rel="stylesheet">
+<link href="/css/supplier-min.css" rel="stylesheet">
+<style type="text/css">
+.bndanger{
+	height: 5%;
+	width: 10%;
+	font-size:20px;
+	color:white;
+	background-color: red;
+}
+.bnsuccess{
+	height: 5%;
+	width: 10%;
+	font-size:20px;
+	color:white;
+	background-color: green;
+}
+</style>
+</head>
+<body >
+
+<!-- 图片位置 -->
+<div >
+<img class="img-responsive img-thumbnail center-block" src="/img/diamond.png" width="100%"/>
+</div>
+<!-- 黑色框位置 -->
+<div class="row">
+	<div  class="col-md-4" style="background-color: black;text-align:center;height:40px;">
+		YOURDIAM珠宝
+	</div>
+	<div class="col-md-4" style="background-color: black;text-align:left;height:40px;">
+		 <font size="4" color="white">在线人数：<span id="count" class ="as"  ></span></font>	 	
+	</div>
+	<div class="col-md-2"  style="background-color: black;text-align:center;height:40px;">
+		 我的账号：厂家管理员	 	
+	</div>
+	<div class="col-md-2" style="background-color: black;text-align:center;height:40px;">
+		 <a href="/logout" >退出</a> 
+	</div>
+</div>
+<!-- 功能选择位置 -->
+<div style="height:26px;"></div>
+<div class="btn-toolbar">
+	<div class="btn-group btn-group-lg ">
+		<button type="button" id="btn_path" style="background-color: blue;" class="btn " >石头路径</button>
+		<button type="button" id="btn_manage" style="background-color: #34495E;" class="btn " >厂家订单管理</button>
+		<button type="button" id="btn_backStone" style="background-color: #34495E;" class="btn " >退石管理</button>
+		<button type="button" id="btn_history" style="background-color: #34495E;" class="btn " >退石记录</button>
+	</div>
+</div>
+
+<!-- 石头路径 -->
+<div id="path" style="border:1px solid #00BFFF;height:90px;">
+	<div style="height:10px;"></div>
+	<div class="row" style="margin-left:10px;margin-bottom: 20px;">
+		<div class="input-group col-lg-2 "  >
+			<span class="input-group-addon"   >查询属性</span>
+				<select id="queryTypeStonePath" class="form-control" >
+						<option value="stone_mainStoneNo">主石编</option>
+						<option value="stone_substoNo">副石编</option>						
+				</select>
+		</div>
+		<div id="div_mainNoPath" class="input-group col-lg-2" >
+			<input id="mainNoPath" class="form-control" name="stone_mainStoneNo" placeholder="请输入主石编">							
+		</div>	
+		<div id="div_subNoPath" class="input-group col-lg-2" style="display:none;">
+			<input id="substoNoPath" class="form-control" name="stone_substoNo" placeholder="请输入副石编">		
+		</div>	
+		<div class="input-group col-lg-2"> 
+			<button class="btn_search" id="ajaxSearchPath" onclick="ajaxSearchStonePath();" >查找</button>
+		</div>
+	</div>		
+	 <div class="row" id="pathShow" >
+        <div class="col-sm-12" id="cont">
+        
+            <div class="wrapper wrapper-content" >
+            
+                <div class="row animated fadeInRight" >
+               
+                    <div class="col-sm-12">
+                  
+                        <div class="ibox float-e-margins" id="cont">
+                    
+                            <div class="text-center float-e-margins p-md" >
+                            <h2 style="text-align: center;">石头路径</h2>
+                                
+                            </div>
+                            <div class="" id="ibox-content">
+
+                                <div id="vertical-timeline" class="vertical-container light-timeline">
+                                  <div class="vertical-timeline-block" id="path6">
+                                        <div class="vertical-timeline-icon blue-bg">
+                                            <i class="fa fa-file-text"></i>
+                                        </div>
+                                        <div class="vertical-timeline-content" >
+                                            <h2>退石</h2>
+                                            <p id="path6p">该石被总部退石</p>
+                                           
+                                            <span class="vertical-date" id="path6value"> <br></span> 
+                                        </div>
+                                    </div>
+  									<div class="vertical-timeline-block" id="path5">
+                                        <div class="vertical-timeline-icon blue-bg">
+                                            <i class="fa fa-file-text"></i>
+                                        </div>
+                                        <div class="vertical-timeline-content" >
+                                            <h2>退石</h2>
+                                            <p id="path5p">该石被从订单里退石</p>
+                                           
+                                            <span class="vertical-date" id="path5value"> <br></span> 
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="vertical-timeline-block" id="path4">
+                                        <div class="vertical-timeline-icon blue-bg">
+                                            <i class="fa fa-file-text"></i>
+                                        </div>
+
+                                        <div class="vertical-timeline-content" >
+                                            
+                                            <p id="path4p">加工厂加工完毕，成品返回</p>
+                                           
+                                            <span class="vertical-date" id="path4value"> <br></span> 
+                                        </div>
+                                    </div>
+
+                                    <div class="vertical-timeline-block" id="path3">
+                                        <div class="vertical-timeline-icon lazur-bg">
+                                            <i class="fa fa-coffee"></i>
+                                        </div>
+
+                                        <div class="vertical-timeline-content">
+                                            <h2>订单出库</h2>
+                                            <p id="path3p">订单从库存中发出，发给加工厂</p>
+                                           
+                                             <span class="vertical-date" id="path3value"> <br></span> 
+                                        </div>
+                                    </div>
+
+                                    <div class="vertical-timeline-block" id="path2">
+                                        <div class="vertical-timeline-icon yellow-bg">
+                                            <i class="fa fa-phone"></i>
+                                        </div>
+
+                                        <div class="vertical-timeline-content">
+                                            <h2>生成订单</h2>
+                                            <p id="path2p">被选中送给加工厂加工</p>
+                                            <span class="vertical-date" id="path2value"> <br></span> 
+                                        </div>
+                                    </div>
+									<div class="vertical-timeline-block" id="pathsub">
+                                        <div class="vertical-timeline-icon yellow-bg">
+                                            <i class="fa fa-phone"></i>
+                                        </div>
+
+                                        <div class="vertical-timeline-content">
+                                            <h2>订单走向</h2>
+                                            <p id="pathsubp3"></p>
+                                            <p id="pathsubp4"></p>
+                                            <p id="pathsubp5"></p>
+                                            <p id="pathsubp6"></p>
+                                            <p id="pathsubp7"></p>
+                                            <p id="pathsubp8"></p>
+                                            <p id="pathsubp9"></p>
+                                            <p id="pathsubp10"></p>
+                                            <p id="pathsubp11"></p>
+                                            <p id="pathsubp12"></p>
+                                            <p id="pathsubp13"></p>
+                                            <p id="pathsubp14"></p> 
+                                            <p id="pathsubp15"></p>
+                                               
+                                        </div>
+                                    </div>
+                                    <div class="vertical-timeline-block" id="path1">
+                                        <div class="vertical-timeline-icon lazur-bg">
+                                            <i class="fa fa-user-md"></i>
+                                        </div>
+
+                                        <div class="vertical-timeline-content">
+                                            <h2>入库</h2>
+                                            <p>石头入库</p>
+                                            <span class="vertical-date" id="path1value"> <br></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div> 
+</div>
+<!-- 厂家订单管理 -->
+<div id="manage" style="display:none;border:1px solid #00BFFF;height:90px;">
+	<div style="height:10px;"></div>
+	<div  id="ProcordShowList" style="border:1px solid;margin-top: 100px;">
+	<legend style="text-align: center;">数据显示列表</legend>
+	
+	<table id="exampletableshowList" class="table table-striped table-bordered" style="width:100%">
+	        <thead>
+	            <tr>	                         
+		            <th>序号</th>
+		            <th>批次</th>
+		            <th>订单号</th>
+		            <th>货款金额</th>
+		            <th>供应商</th>
+		            <th>订单日期</th> 
+		            <th>出货日期</th>
+		            <th>送货人</th>
+		            <th>经手人</th>
+		            <th>接货人</th>           
+		            <th>状态</th> 
+		             
+	            </tr>
+	        </thead>
+	         
+	        <tfoot>
+	             <tr>	                         
+		            <th>序号</th>
+		            <th>批次</th>
+		            <th>订单号</th>
+		            <th>货款金额</th>
+		            <th>供应商</th>
+		            <th>订单日期</th> 
+		            <th>出货日期</th>
+		            <th>送货人</th>
+		            <th>经手人</th>
+		            <th>接货人</th>            
+		            <th>状态</th> 
+		            
+	            </tr>
+	        </tfoot>
+	    </table>
+    </div>
+   
+</div>
+<!-- 退石管理 -->
+<div id="backStone" style="display:none;border:1px solid #00BFFF;height:100px;">
+	<form action="/d/findStoninprocByProcordNoOrStoneNo" method="post"  onsubmit="return checkPS();" target="tuishiframe">
+			<div class="input-group col-lg-2 "  >
+				<span class="input-group-addon"   >查询属性</span>
+					<select id="queryTypeBackPath" class="form-control" name="queryTypeBackPath" >
+							<option value="stoninproc_procordNo">单号</option>
+							<option value="stoninproc_stoneNo">石编</option>						
+					</select>
+			</div>
+			<div id="div_procordNoPath" class="input-group col-lg-2" >
+				<input class="form-control" id="stoninproc_procordNo_back" name="stoninproc_procordNo" placeholder="请输入订单号">							
+			</div>	
+			<div id="div_NoPath" class="input-group col-lg-2" style="display:none;">
+				<input  class="form-control" id="stoninproc_stoneNo_back"  name="stoninproc_stoneNo" placeholder="请输入石编">		
+			</div>	
+			
+		<div class="input-group col-lg-2"> 
+			<input type="submit" value="查找" class="btn_search" >			
+		</div>
+	</form>
+</div>
+<div id="tuishihtml" style="display: none;"><iframe name="tuishiframe" width="100%" height="500px"></iframe></div>
+<!-- 退石记录 -->
+<div id="history" style="display:none;border:1px solid #00BFFF;height:90px;">
+	<form action="/d/findBackStoneByProcordNo" method="post"  onsubmit="return checkBack();" target="historyframe">
+		<div class="input-group col-lg-2 "  >
+			<span class="input-group-addon"   >订单号</span>
+			<input type="text" class="form-control" onkeyup="this.value=this.value.replace(/\D/g,'')" placeholder="请输入订单号" name="back_procodeNo" id="back_procodeNo"/>
+		</div>
+		<div class="input-group col-lg-2"> 
+			<input type="submit" value="查找" class="btn_search" >			
+		</div>
+	</form>
+</div>
+<div id="historyhtml" style="display: none;"><iframe name="historyframe" width="100%" height="500px"></iframe></div>
+<div id="mydiv" class="white_content" >
+		<div style="text-align: right; cursor: default; height: 40px;">
+			<span style="font-size: 16px;" onclick="CloseDiv('mydiv')">关闭</span>
+		</div>
+		<div class="com1">订单详情</div>
+		<div>
+		<form action="/d/downloadProcordDetails" method="post" style="margin-left: 80%;">
+			<input type="hidden"   name="context" id="details"/>
+			<input type="submit" class = "btn_search" value="Excel下载">
+		</form>	
+		</div>
+		<table id="procordStoneDetails" class="table table-striped table-bordered table-hover" style="width:100%;">
+	        <thead>
+	            <tr>
+	                <th>订单号</th> 	                         
+		            <th>石编</th>
+		            <th>石重</th>
+		            <th>石数</th>
+		            <th>货款金额</th>
+		            <th>批次</th>
+		            <th>颜色</th>
+		            <th>净度</th>
+		            <th>备注</th>          
+		            <th>状态</th>     
+	            </tr>
+	        </thead> 
+	        <tfoot>
+	             <tr>	
+	                <th>订单号</th>                         
+		            <th>石编</th>
+		            <th>石重</th>
+		            <th>石数</th>
+		            <th>货款金额</th>
+		            <th>批次</th>
+		            <th>颜色</th>
+		            <th>净度</th>
+		            <th>备注</th>          
+		            <th>状态</th>      
+	            </tr>
+	        </tfoot>
+	    </table>
+		
+		<div>
+			<button class="btn_submit container" onclick="CloseDiv('mydiv')"
+				style="width: 100%;">退出</button>
+		</div>
+	</div>
+
+<script type="text/javascript" th:inline="javascript">
+//统计在线人数
+$.ajax({
+	 url:"/count",
+	 type:"post",
+	dateType:"json",
+	success:function(result) {
+		$("#count").text(result);
+	}
+});
+function findProcodeDetails(node) {
+	var procode_no = node.id;
+	$.ajax({
+		 url:"/d/findProcodeDetails",
+		 type:"post",
+		 data:{
+			 procode_no:procode_no,	
+		 },
+		dateType:"json",
+		success:function(result) {
+			var context="";
+			var mydiv = document.getElementById("mydiv");
+			mydiv.style.display="table";
+			var tt = $('#procordStoneDetails').DataTable();
+	 		 tt.clear();
+	 		 $("#procordStoneDetails tbody").empty();
+	 		 //tt.Rows.Clear();
+	 		//tt.fnClearTable(); //清空一下table
+	 		//tt.fnDestroy(); //还原初始化了的datatable
+			var stoninprocList =[];
+			stoninprocList = result;
+			//alert(stoninprocList.length);
+			
+			if(stoninprocList.length>0) {
+				for(var i=0;i<stoninprocList.length;i++) {	 			
+		 			var t = $('#procordStoneDetails').DataTable();
+		 			if(stoninprocList[i].stoninproc_stoneState==0) {
+		 				context  += stoninprocList[i].stoninproc_procordNo + "@" +
+					 				stoninprocList[i].stoninproc_stoneNo + "@" +
+					 				stoninprocList[i].stoninproc_stoneWeight + "@" +
+					 				stoninprocList[i].stoninproc_number + "@" +
+					 				stoninprocList[i].stoninproc_subpay + "@" +
+					 				stoninprocList[i].stoninproc_batch + "@" +
+					 				stoninprocList[i].stoninproc_stoneColor + "@" +
+					 				stoninprocList[i].stoninproc_stoneClarity + "@" +
+					 				stoninprocList[i].stoninproc_stoneContext + "@" +
+					 				"正在加工中" + "@";
+		 				t.row.add( [
+			 		    	stoninprocList[i].stoninproc_procordNo,
+			 		    	stoninprocList[i].stoninproc_stoneNo,
+			 		    	stoninprocList[i].stoninproc_stoneWeight,
+			 		    	stoninprocList[i].stoninproc_number,
+			 		    	stoninprocList[i].stoninproc_subpay,
+			 		    	stoninprocList[i].stoninproc_batch,
+			 		    	stoninprocList[i].stoninproc_stoneColor,
+			 		    	stoninprocList[i].stoninproc_stoneClarity,
+			 		    	stoninprocList[i].stoninproc_stoneContext,
+			 		    	"正在加工中",
+				 		 ] ).draw( );
+		 			}else if(stoninprocList[i].stoninproc_stoneState==1) {
+		 				context  += stoninprocList[i].stoninproc_procordNo + "@" +
+					 				stoninprocList[i].stoninproc_stoneNo + "@" +
+					 				stoninprocList[i].stoninproc_stoneWeight + "@" +
+					 				stoninprocList[i].stoninproc_number + "@" +
+					 				stoninprocList[i].stoninproc_subpay + "@" +
+					 				stoninprocList[i].stoninproc_batch + "@" +
+					 				stoninprocList[i].stoninproc_stoneColor + "@" +
+					 				stoninprocList[i].stoninproc_stoneClarity + "@" +
+					 				stoninprocList[i].stoninproc_stoneContext + "@" +
+					 				"加工完毕成品返回" + "@";
+		 				t.row.add( [
+			 		    	stoninprocList[i].stoninproc_procordNo,
+			 		    	stoninprocList[i].stoninproc_stoneNo,
+			 		    	stoninprocList[i].stoninproc_stoneWeight,
+			 		    	stoninprocList[i].stoninproc_number,
+			 		    	stoninprocList[i].stoninproc_subpay,
+			 		    	stoninprocList[i].stoninproc_batch,
+			 		    	stoninprocList[i].stoninproc_stoneColor,
+			 		    	stoninprocList[i].stoninproc_stoneClarity,
+			 		    	stoninprocList[i].stoninproc_stoneContext,
+			 		    	"加工完毕成品返回",
+				 		 ] ).draw( );
+		 			}else if(stoninprocList[i].stoninproc_stoneState==2) {
+		 				context  += stoninprocList[i].stoninproc_procordNo + "@" +
+					 				stoninprocList[i].stoninproc_stoneNo + "@" +
+					 				stoninprocList[i].stoninproc_stoneWeight + "@" +
+					 				stoninprocList[i].stoninproc_number + "@" +
+					 				stoninprocList[i].stoninproc_subpay + "@" +
+					 				stoninprocList[i].stoninproc_batch + "@" +
+					 				stoninprocList[i].stoninproc_stoneColor + "@" +
+					 				stoninprocList[i].stoninproc_stoneClarity + "@" +
+					 				stoninprocList[i].stoninproc_stoneContext + "@" +
+					 				"已被退石" + "@";
+		 				t.row.add( [
+			 		    	stoninprocList[i].stoninproc_procordNo,
+			 		    	stoninprocList[i].stoninproc_stoneNo,
+			 		    	stoninprocList[i].stoninproc_stoneWeight,
+			 		    	stoninprocList[i].stoninproc_number,
+			 		    	stoninprocList[i].stoninproc_subpay,
+			 		    	stoninprocList[i].stoninproc_batch,
+			 		    	stoninprocList[i].stoninproc_stoneColor,
+			 		    	stoninprocList[i].stoninproc_stoneClarity,
+			 		    	stoninprocList[i].stoninproc_stoneContext,
+			 		    	"已被退石",
+				 		 ] ).draw( );
+		 			}
+		 		    
+			    }
+		   }
+			document.getElementById("details").value=context;
+		}
+	});
+	
+}
+
+
+//检查订单号是否为空
+function check() {
+	var s = document.getElementById("stoninproc_procordNo").value;
+	if(s.length==0) {
+		alert("订单号不能为空");
+		return false;
+	}
+	$("#tuishihtml").show();
+}
+//检查订单号是否为空
+function checkBack() {
+	var s = document.getElementById("back_procodeNo").value;
+	if(s.length==0) {
+		alert("订单号不能为空");
+		return false;
+	}
+	$("#historyhtml").show();
+}
+//检查订单号或石编是否为空
+function checkPS() {
+	var type = document.getElementById("queryTypeBackPath").value;
+	if(type.indexOf("stoninproc_procordNo")!=-1) {
+		var procordNo = document.getElementById("stoninproc_procordNo_back").value;
+		if(procordNo.length==0) {
+			alert("请输入单号");
+			return false;
+		}
+	}
+	if(type.indexOf("stoninproc_stoneNo")!=-1) {
+		var stoneNo = document.getElementById("stoninproc_stoneNo_back").value;
+		if(stoneNo.length==0) {
+			alert("请输入石编");
+			return false;
+		}
+	}
+	$("#tuishihtml").show();
+}
+function CloseDiv(div){
+	var mydiv = document.getElementById("mydiv");
+		mydiv.style.display="none";
+}
+$("#btn_path").click(function(){
+	 $("#path").show();
+	 $("#manage").hide();
+	 $("#history").hide();
+	 $("#backStone").hide();
+	 $("#tuishihtml").hide();
+	 $("#historyhtml").hide();
+	 
+	 $("#btn_path").css("background","blue");
+	 $("#btn_path").css("color","white");
+	 $("#btn_manage").css("background","#34495E");
+	 $("#btn_backStone").css("background","#34495E");
+	 $("#btn_history").css("background","#34495E");
+});
+$("#btn_manage").click(function(){
+	 $("#path").hide();
+	 $("#manage").show();
+	 $("#backStone").hide();
+	 $("#history").hide();
+	 $("#ProcordShowList").show();
+	 $("#tuishihtml").hide();
+	 $("#historyhtml").hide();
+	 $("#btn_manage").css("background","blue");
+	 $("#btn_manage").css("color","white");
+	 $("#btn_path").css("background","#34495E");
+	 $("#btn_backStone").css("background","#34495E");
+	 $("#btn_history").css("background","#34495E");
+});
+$("#btn_backStone").click(function(){
+	 $("#path").hide();
+	 $("#manage").hide();
+	 $("#backStone").show();
+	 $("#history").hide();
+	 $("#ProcordShowList").hide();
+	 $("#tuishihtml").hide();
+	 $("#historyhtml").hide();
+	 
+	 $("#btn_backStone").css("background","blue");
+	 $("#btn_backStone").css("color","white");
+	 $("#btn_path").css("background","#34495E");
+	 $("#btn_manage").css("background","#34495E");
+	 $("#btn_history").css("background","#34495E");
+});
+$("#btn_history").click(function(){
+	 $("#path").hide();
+	 $("#manage").hide();
+	 $("#backStone").hide();
+	 $("#history").show();
+	 $("#ProcordShowList").hide();
+	 $("#tuishihtml").hide();
+	 $("#historyhtml").hide();
+	 $("#btn_history").css("background","blue");
+	 $("#btn_history").css("color","white");
+	 $("#btn_path").css("background","#34495E");
+	 $("#btn_manage").css("background","#34495E");
+	 $("#btn_backStone").css("background","#34495E");
+	 
+	 
+	 
+	 
+});
+
+$("#queryTypeStonePath").change(function(){ 
+	var id = $(this).val();
+     //alert(id);
+	if(id=="stone_mainStoneNo") {
+		$("#div_mainNoPath").show();
+		$("#div_subNoPath").hide();
+	}else if(id=="stone_substoNo") {
+		$("#div_mainNoPath").hide();
+		$("#div_subNoPath").show();
+
+	}
+});
+$("#queryTypeBackPath").change(function(){ 
+	var id = $(this).val();
+     //alert(id);
+     if(id=="stoninproc_procordNo") {
+		$("#div_procordNoPath").show();
+		$("#div_NoPath").hide();
+	}else if(id=="stoninproc_stoneNo") {
+		$("#div_procordNoPath").hide();
+		$("#div_NoPath").show();
+	
+
+	}
+});
+
+
+
+
+function ajaxSearchStonePath() {
+	var type = document.getElementById("queryTypeStonePath").value;
+	var mainNo = document.getElementById("mainNoPath").value;
+	var substoNo = document.getElementById("substoNoPath").value;
+	
+	if(type.indexOf("stone_mainStoneNo")!=-1) {
+		if(mainNo.length==0) {
+			alert("请输入主石编");
+			return false;
+		}
+	}
+	if(type.indexOf("stone_substoNo")!=-1) {
+		if(substoNo.length==0) {
+			alert("请输入副石编");
+			return false;
+		}
+	}
+	//alert(type+"||"+mainNo+"||"+substoNo+"||"+purchDateStart+"||"+purchDateEnd+"||"+supplierName);
+	
+	 $.ajax({
+		 url:"/path/find",
+		 type:"post",
+	 	data:{
+	 		type:type,
+	 		mainNo:mainNo,
+	 		substoNo:substoNo,
+	 	},
+	 	dateType:"json",
+	 	success:function(result) {
+	 		//alert(result);
+	 		//alert(result.length);
+	 		var len = result.length;
+	 		if(len==0) {
+	 			alert("没有此石头");
+		 	}else if(result[0].indexOf("main")!=-1){
+		 		if(len == 2) {
+		 			$("#path1").show();
+		 			$("#path1value").text(result[1]);
+		 			$("#path2").hide();
+		 			$("#path3").hide();
+		 			$("#path4").hide();
+		 			$("#path5").hide();
+		 			$("#path6").hide();
+		 			$("#pathsub").hide();
+		 			$("#pathShow").show();
+		 		}else if(len==5) {
+		 			$("#path1").show();
+		 			$("#path1value").text(result[1]);
+		 			$("#path2").show();
+		 			$("#path2p").text(result[2].split(",")[1]);
+		 			$("#path2value").text(result[2].split(",")[0]);
+		 			$("#path3").show();
+		 			$("#path3p").text(result[3].split(",")[1]);
+		 			$("#path3value").text(result[3].split(",")[0]);
+		 			$("#path4").show();
+		 			$("#path4p").text(result[4].split(",")[1]);
+		 			$("#path4value").text(result[4].split(",")[0]);
+		 			$("#path5").hide();
+		 			$("#path6").hide();
+		 			$("#pathsub").hide();
+		 			$("#pathShow").show();
+		 		}
+		 	}else if(result[0].indexOf("sub")!=-1){
+		 		if(len == 2) {
+		 			$("#path1").show();
+		 			$("#path1value").text(result[1]);
+		 			$("#path2").hide();
+		 			$("#path3").hide();
+		 			$("#path4").hide();
+		 			$("#path5").hide();
+		 			$("#path6").hide();
+		 			$("#pathShow").show();
+		 		}else if(len>=3) {
+		 			$("#path1").show();
+		 			$("#path1value").text(result[1]);
+		 			for(var i=3;i<=len;i++) {
+		 				$("#pathsubp"+i).text(result[i-1]);
+		 			}
+		 			$("#path2").hide();
+		 			$("#path3").hide();
+		 			$("#path4").hide();
+		 			$("#path5").hide();
+		 			$("#path6").hide();
+		 			$("#pathsub").show();
+		 			$("#pathShow").show();
+		 		}
+		 	}else if(result[0].indexOf("back")!=-1){
+			 		if(len==3) {
+			 			$("#path1").show();
+			 			$("#path1value").text(result[1]);
+			 			$("#path2").hide();
+			 			$("#path3").hide();
+			 			$("#path4").hide();
+			 			$("#path5").hide();
+			 			$("#path6").show();
+			 			$("#path6p").text(result[2].split(",")[1]);
+			 			$("#path6value").text(result[2].split(",")[0]);
+			 			$("#pathsub").hide();
+			 			$("#pathShow").show();
+			 		}else if(len==5) {
+			 			$("#path1").show();
+			 			$("#path1value").text(result[1]);
+			 			$("#path2").show();
+			 			$("#path2p").text(result[2].split(",")[1]);
+			 			$("#path2value").text(result[2].split(",")[0]);
+			 			$("#path3").show();
+			 			$("#path3p").text(result[3].split(",")[1]);
+			 			$("#path3value").text(result[3].split(",")[0]);
+			 			$("#path4").hide();
+			 			$("#path5").show();
+			 			$("#path6").hide();
+			 			$("#path5p").text(result[4].split(",")[1]);
+			 			$("#path5value").text(result[4].split(",")[0]);
+			 			$("#pathsub").hide();
+			 			$("#pathShow").show();
+			 		}
+			 	}	
+		 	}
+
+		 });
+		 return true;
+}
+Date.prototype.Format = function (fmt) { //author: meizz
+
+    var o = {
+        "M+": this.getMonth() + 1, //月份
+
+        "d+": this.getDate(), //日
+
+        "h+": this.getHours(), //小时
+
+        "m+": this.getMinutes(), //分
+
+        "s+": this.getSeconds(), //秒
+
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+
+        "S": this.getMilliseconds() //毫秒
+
+    };
+   if (/(y+)/.test(fmt)) {
+       fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+   }
+   for (var k in o) {
+       if (new RegExp("(" + k + ")").test(fmt)) {
+           fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+       }
+   }
+   return fmt;
+}
+function retrieveData(sSource, aoData, fnCallback ) {
+    $.ajax({
+        url : sSource,//这个就是请求地址对应sAjaxSource
+        data : {"aoData":JSON.stringify(aoData)},//这个是把datatable的一些基本数据传给后台,比如起始位置,每页显示的行数
+        type : 'post',
+        dataType : 'json',
+        async : false,
+        success : function(result) {
+            fnCallback(result);//把返回的数据传给这个方法就可以了,datatable会自动绑定数据的
+        },
+        error : function(msg) {
+            alert(msg);
+        }
+    });
+}
+
+$(document).ready(function() {
+	
+	  // $('#mainNoPath').editableSelect({ effects: 'slide' });//可输入的选择框
+	  // $('#substoNoPath').editableSelect({ effects: 'slide' });//可输入的选择框
+	   //$('#supplierName').editableSelect({ effects: 'slide' });//可输入的选择框
+	   
+	   
+	   $('#procordStoneDetails').DataTable({ 
+		   	 "paginationType" : "full_numbers", //详细分页组，可以支持直接跳转到某页  
+		     //当处理大数据时，延迟渲染数据，有效提高Datatables处理能力  
+		     "deferRender": true, 
+		     "bFilter" : false,// 搜索栏 
+		     "bLengthChange": false, //开关，是否显示每页大小的下拉框
+		     "bdestroy":true,//解决重新加载表格内容问题
+			"oLanguage": {  
+				"sLengthMenu": "每页显示 _MENU_ 条记录",  
+				"sZeroRecords": "抱歉， 没有找到",  
+				"sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",  
+				"sInfoEmpty": "没有数据",  
+				"sInfoFiltered": "(从 _MAX_ 条数据中检索)",  
+				"sSearch": "搜索",
+				"oPaginate": {  
+		    		"sFirst": "首页",  
+		    		"sPrevious": "前一页",  
+		    		"sNext": "后一页",  
+		    		"sLast": "尾页"  
+				},  
+				"sZeroRecords": "没有检索到数据",  
+				"sProcessing": "<img src='./loading.gif' />"  
+				}  
+				});
+    $('#exampletableshowList').DataTable({ 
+    	"bFilter" : false,// 搜索栏 
+        "bLengthChange": false, //开关，是否显示每页大小的下拉框
+	   	 "bProcessing": false, //打开数据加载时的等待效果  
+	   	 'bStateSave': true,//配置好这个,刷新页面会让页面停留在之前的页码
+	   	 "bServerSide": true,//这个用来指明是通过服务端来取数据
+	     "sAjaxSource": "/d/getProcordTableData",//这个是请求的地址，Rest API or JSP的action
+	   	 "fnServerData":retrieveData,// 获取数据的处理函数
+	   	 "oLanguage": {  
+	    		"sLengthMenu": "每页显示 _MENU_ 条记录",  
+	    		"sZeroRecords": "抱歉， 没有找到",  
+	    		"sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",  
+	    		"sInfoEmpty": "没有数据",  
+	    		"sInfoFiltered": "(从 _MAX_ 条数据中检索)",
+	    		"sProcessing" : "正在加载中...", 
+	    		"sSearch": "搜索",
+	    		"oPaginate": {  
+		    		"sFirst": "首页",  
+		    		"sPrevious": "前一页",  
+		    		"sNext": "后一页",  
+		    		"sLast": "尾页"  
+	    		},  
+	    		"sZeroRecords": "没有检索到数据",  
+	    		"sProcessing": "<img src='./loading.gif' />"  
+	    		},
+	
+	   	 "columns": [
+	   	      { "data": "procord_ID" },
+	   	      { "data": "procord_batch" },
+	   	   	  { "data": "procord_no",
+	   	    	render: function(data, type, row, meta) {
+                    
+                    return '<button id="'+data+'" onclick="findProcodeDetails(this)">'+data+'</button>';
+                }  
+	   	   	  },
+	   	      { "data": "procord_pay" },
+	   	      { "data": "procord_supplier" },
+	   	      { "data": "procord_date",
+	   	    	  render: function(data, type, row, meta) {
+	                     //先讲 时间格式化
+	                     return (new Date(data)).Format("yyyy-MM-dd"); //date的格式 Thu Apr 26 2016 00:00:00 GMT+0800
+	                 }  
+	   	      },
+	   	      { "data": "procord_delydate",
+	   	    	  render: function(data, type, row, meta) {
+	                     //先讲 时间格式化
+	                     return (new Date(data)).Format("yyyy-MM-dd"); //date的格式 Thu Apr 26 2016 00:00:00 GMT+0800
+	                 }  
+	   	      },
+	   	      { "data": "procord_delyman"},
+	   	      { "data": "procord_preparer" },
+	   	      { "data": "procord_porter" },
+	   	      { "data": "procord_status",
+	   	    	  "render":function(data,type,full,row)
+	   	            {    
+		   	    		  if(data == 0) {
+		   	            	 return '<span class="bndanger">订单没有完全返回</span>';
+		   	             }else {
+		   	            	return '<span class="bnsuccess">订单已经完全返回</span>';
+		   	             }	           
+	   	            } 
+	   	      },
+	   	      
+	   	      ],
+	   
+	   } );
+    $('#procordStoneState').DataTable({ 
+   	 "paginationType" : "full_numbers", //详细分页组，可以支持直接跳转到某页  
+     //当处理大数据时，延迟渲染数据，有效提高Datatables处理能力  
+     "deferRender": true, 
+     "bFilter" : false,// 搜索栏 
+     "bLengthChange": false, //开关，是否显示每页大小的下拉框
+	"oLanguage": {  
+		"sLengthMenu": "每页显示 _MENU_ 条记录",  
+		"sZeroRecords": "抱歉， 没有找到",  
+		"sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",  
+		"sInfoEmpty": "没有数据",  
+		"sInfoFiltered": "(从 _MAX_ 条数据中检索)",  
+		"sSearch": "搜索",
+		"oPaginate": {  
+    		"sFirst": "首页",  
+    		"sPrevious": "前一页",  
+    		"sNext": "后一页",  
+    		"sLast": "尾页"  
+		},  
+		"sZeroRecords": "没有检索到数据",  
+		"sProcessing": "<img src='./loading.gif' />"  
+		}  
+		});
+    
+ 
+} );
+
+
+
+
+</script>
+
+ 
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.ChannelDao">
+	<resultMap type="com.nenu.domain.Channel" id="ChannelMap">
+		<result column="channel_ID" property="channel_ID"/>
+		
+		<result column="channel_name" property="channel_name"/>
+		
+	</resultMap>
+	
+	<parameterMap type="com.nenu.domain.Channel" id="Channel"/>
+
+<select id="findChannelById"   resultMap="ChannelMap" parameterType="java.lang.Integer" >
+		select * from tb_channel where channel_ID=#{channel_ID} 
+	</select>
+	
+	<select id="findAllChannel"   resultMap="ChannelMap">
+		select * from tb_channel
+	</select>
+	<insert id="insertChannel" parameterMap="Channel" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_channel(channel_ID,channel_name)
+		values 
+		(#{channel_ID},#{channel_name})
+	</insert>
+	
+	<update id="updateChannel" parameterMap="Channel">
+		update
+		tb_channel
+		set
+		<if test="channel_name!=null">
+			channel_name = #{channel_name}
+		</if>		
+		where 
+		channel_ID=#{channel_ID}
+	</update>
+	
+	<delete id="deleteChannel" parameterType="java.lang.Integer">
+		delete from
+		tb_channel
+		where
+		channel_ID=#{channel_ID}
+	</delete>
+
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.StaffDao">
+	<resultMap type="com.nenu.domain.Staff" id="StaffMap">
+		<result column="staff_ID" property="staff_ID"/>
+		<result column="staff_name" property="staff_name" />
+	
+		
+	</resultMap>
+	
+	<parameterMap type="com.nenu.domain.Staff" id="Staff"/>
+	
+	<select id="findStaffById"   resultMap="StaffMap" parameterType="java.lang.Integer" >
+		select * from tb_staff where staff_ID=#{staff_ID} 
+	</select>
+	
+	<select id="findAllStaff"   resultMap="StaffMap">
+		select * from tb_staff
+	</select>
+	<insert id="insertStaff" parameterMap="Staff" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_staff(staff_ID,staff_name)
+		values 
+		(#{staff_ID},#{staff_name})
+	</insert>
+	
+	<update id="updateStaff" parameterMap="Staff">
+		update
+		tb_staff
+		set
+		<if test="staff_name!=null">
+			staff_name = #{staff_name}
+		</if>		
+		where 
+		staff_ID=#{staff_ID}
+	</update>
+	
+	<delete id="deleteStaff" parameterType="java.lang.Integer">
+		delete from
+		tb_staff
+		where
+		staff_ID=#{staff_ID}
+	</delete>
+	
+	
+</mapper>

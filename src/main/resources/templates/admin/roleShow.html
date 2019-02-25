@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+ <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+
+    <title> 权限管理</title>
+
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <!--[if lt IE 9]>
+    <meta http-equiv="refresh" content="0;ie.html" />
+    <![endif]-->
+
+   	<script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+   	<script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+   	<script type="text/javascript" th:src="@{/js/icheck.min.js}"></script>
+   	<script type="text/javascript" th:src="@{/js/popper.min.js}"></script>
+        
+	<link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+	<link th:href="@{/bootstrap/css/bootstrap-theme.min.css}" rel="stylesheet"/>
+	<link th:href="@{/css/default.css}" rel="stylesheet"/>
+	<link th:href="@{/css/custom.css}" rel="stylesheet"/>
+<style type="text/css">
+.col{
+border:1px solid #00BFFF;
+}
+.hid{
+display: none;
+}
+.btn_search{
+  display: inline-block;
+  padding: 9px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;   
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #3385FF;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 3px #999;
+
+}
+.btn_search:hover {background-color: #3366FF}
+
+.btn_search:active {
+  background-color: #3366FF;
+  box-shadow: 0 1px #666;
+  transform: translateY(4px);
+}
+</style>
+
+
+</head>
+<body>
+<div id="roleUserList" th:text="${roleList}" class="hid" ></div>
+<div id="roleList" th:text="${roleUserList}" class="hid" ></div>
+<div>
+<div  class="container" style="text-align: center;">
+			<h1>员工权限字段管理</h1>
+			<legend>      
+            </legend>
+	</div>
+	
+</div>
+
+<div class="row">
+  <div class="col" >
+    <div class=""  style="margin-left: 50px;">
+      
+      <div style="text-align: center;color: red;">
+      	<h4>成品入库字段</h4>
+      </div>
+      <div >
+      	<label class="checkbox-inline ">
+				<input type="checkbox" id="boxAll"  onclick="selAll(this);"> 全选/全不选
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="boxAll"  onclick="reAll();"> 反选
+			</label>
+			<legend>      
+            </legend>
+      </div>
+      	<form   method="post" class="form-horizontal">
+
+            <input type="hidden" id="selectedUserRole" name="user_role" th:value="${user_role}"/>
+	       
+	       
+			<label class="checkbox-inline ">
+				<input type="checkbox" id="finpord_procordNo" name="checkbox" value="finpord_procordNo"> 单号
+			</label>
+			
+			<label class="checkbox-inline ">
+				<input type="checkbox" id="finpord_barcode" name="checkbox" value="finpord_barcode"> 条码
+			</label>
+			<label class="checkbox-inline ">
+				<input type="checkbox" id="finpord_supplier" name="checkbox" value="finpord_supplier"> 供应商
+			</label>
+			<label class="checkbox-inline ">
+				<input type="checkbox" id="finpord_styno" name="checkbox" value="finpord_styno"> 款号
+			</label>
+			<label class="checkbox-inline ">
+				<input type="checkbox" id="finpord_quality" name="checkbox" value="finpord_quality"> 成色
+			</label>
+			<label class="checkbox-inline ">
+				<input type="checkbox" id="finpord_name" name="checkbox" value="finpord_name"> 名称
+			</label>
+			<label class="checkbox-inline ">
+				<input type="checkbox" id="finpord_ringsz" name="checkbox" value="finpord_ringsz"> 圈口
+			</label>
+			<label class="checkbox-inline ">
+				<input type="checkbox" id="finpord_multi" name="checkbox" value="finpord_multi"> 倍率
+			</label>
+			<label class="checkbox-inline ">
+				<input type="checkbox" id="finpord_tagedpr" name="checkbox" value="finpord_tagedpr"> 标价
+			</label>
+			<br>
+			<label class="checkbox-inline i-checks">
+				<input type="checkbox" id="finpord_goldwgt" name="checkbox" value="finpord_goldwgt"> 金重
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_merchwgt" name="checkbox"  value="finpord_merchwgt"> 货重
+			</label>
+			
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_counter" name="checkbox" value="finpord_counter"> 柜台
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_catagory" name="checkbox" value="finpord_catagory"> 品类
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_mainstono" name="checkbox" value="finpord_mainstono"> 主石编
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_mainstoname" name="checkbox" value="finpord_mainstoname"> 主石名
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_mainstowgt" name="checkbox" value="finpord_mainstowgt"> 主石
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_mainstoqty" name="checkbox" value="finpord_mainstoqty"> 主石数
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_mainstopr" name="checkbox" value="finpord_mainstopr"> 主石价
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_cert1" name="checkbox" value="finpord_cert1"> 证书号
+			</label>
+			<br>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_cert2" name="checkbox" value="finpord_cert2"> 证书2
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_gia1" name="checkbox" value="finpord_gia1"> GIA证书
+			</label>
+			
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_gia2" name="checkbox" value="finpord_gia2"> GIA证书2
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_series" name="checkbox" value="finpord_series"> 系列
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_cut1" name="checkbox" value="finpord_cut1"> 切工
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_symmetry1" name="checkbox" value="finpord_symmetry1"> 对称性
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_polish1" name="checkbox" value="finpord_polish1"> 抛光
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_fluorescence1" name="checkbox" value="finpord_fluorescence1"> 荧光
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_cut2" name="checkbox" value="finpord_cut2">切工2 
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_symmetry2" name="checkbox" value="finpord_symmetry2"> 对称性2
+			</label>
+			<br>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_polish2" name="checkbox" value="finpord_polish2"> 抛光2
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_fluorescence2" name="checkbox" value="finpord_fluorescence2"> 荧光2
+			</label>
+			
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_clarity1" name="checkbox" value="finpord_clarity1"> 级别
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_color1" name="checkbox" value="finpord_color1"> 颜色
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_clarity2" name="checkbox" value="finpord_clarity2"> 级别2
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_color2" name="checkbox" value="finpord_color2"> 颜色2
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_baslabcost" name="checkbox" value="finpord_baslabcost"> 基本工费
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_othrcost" name="checkbox" value="finpord_othrcost"> 其他费
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_salabcost" name="checkbox" value="finpord_salabcost"> 销售工费
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_goldpr" name="checkbox" value="finpord_goldpr"> 金价
+			</label>
+			<br>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_goldlos" name="checkbox" value="finpord_goldlos"> 损耗
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_cost" name="checkbox" value="finpord_cost"> 真实成本
+			</label>
+			
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_substo1no" name="checkbox" value="finpord_substo1no"> 副石编
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_substo1name" name="checkbox" value="finpord_substo1name"> 副石名
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_substo1wgt" name="checkbox" value="finpord_substo1wgt"> 副石
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_substo1qty" name="checkbox" value="finpord_substo1qty"> 副石数
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_substo1pr" name="checkbox" value="finpord_substo1pr"> 副石价
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_substo2no" name="checkbox" value="finpord_substo2no"> 副石2编
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_substo2name" name="checkbox" value="finpord_substo2name"> 副石2名
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_substo2wgt" name="checkbox" value="finpord_substo2wgt"> 副石2重
+			</label>
+			<br>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_substo2qty" name="checkbox" value="finpord_substo2qty"> 副石2数
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_substo2pr" name="checkbox" value="finpord_substo2pr"> 副石2价
+			</label>
+		
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_substo3no" name="checkbox" value="finpord_substo3no"> 副石3编
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_substo3name" name="checkbox" value="finpord_substo3name"> 副石3名
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_substo3wgt" name="checkbox" value="finpord_substo3wgt"> 副石3重
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_substo3qty" name="checkbox" value="finpord_substo3qty"> 副石3数
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_substo3pr" name="checkbox" value="finpord_substo3pr"> 副石3价
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_armsty" name="checkbox" value="finpord_armsty"> 戒臂样式
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_storname" name="checkbox" value="finpord_storname"> 库房
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_comments" name="checkbox" value="finpord_comments"> 备注
+			</label>
+			<br>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_entsdno" name="checkbox" value="finpord_entsdno"> 企业标准号
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_goldcolor" name="checkbox" value="finpord_goldcolor"> 金料颜色
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="finpord_mainstoshape" name="checkbox" value="finpord_mainstoshape"> 形状
+			</label>
+			
+			
+			<div style="height:40px;"></div>
+			<div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <input class="btn_search" type="button"  onclick="insertRoleSelect();" value="提交"/>&nbsp;&nbsp;
+                        <input class="btn_search" type="reset" value="重置"/>&nbsp;&nbsp;
+                        <input class="btn_search" type="button" value="返回" onclick="history.back()"/>
+                    </div>
+           </div>
+		</form>
+      </div>
+    </div>
+  </div>
+  
+
+
+<script type="text/javascript">
+
+
+function insertRoleSelect() {
+	 
+	var role =document.getElementById("selectedUserRole").value; 
+	var id="";
+	var chckBox = document.getElementsByName("checkbox");    //所有的选择框其那么都是checkBox  
+    var num = chckBox.length;  
+    var selected="";
+    for(var index =0 ; index<num ; index++){      
+    	if(chckBox[index].checked){
+    		selected += chckBox[index].value+",";
+    	}  
+    }  
+    
+	
+	alert("开始写入数据库");
+	
+	$.ajax({
+		 url:"/roleUser/insertRoleUser",
+		 type:"post",
+	 	data:{
+	 		role:role,
+	 		selected:selected,
+	 	},
+	 	dateType:"json",
+	 	success:function(result) {
+	 		//alert(result);
+	 		location.reload();
+	 	}	
+	 });
+	alert("分配完毕");
+}
+
+
+
+function selAll(obj){  
+    var chckBoxSign = document.getElementById("boxAll");       //ckb 全选/反选的选择框id  
+    var chckBox = document.getElementsByName("checkbox");    //所有的选择框其那么都是checkBox  
+    var num = chckBox.length;  
+    if(chckBoxSign.checked){  
+        for(var index =0 ; index<num ; index++){  
+            chckBox[index].checked = true;  
+            }  
+    }else{  
+        for(var index =0 ; index<num ; index++){  
+            chckBox[index].checked = false;  
+            }  
+        }  
+    }  
+function reAll(){  
+    var chckBoxSign = document.getElementById("reAll");  //boxAll 全选/反选的选择框id  
+    var chckBox = document.getElementsByName("checkbox");    //所有的选择框其那么都是checkBox  
+   // alert(typeof chckBoxSign);
+  //  alert(typeof chckBox);
+    var num = chckBox.length;   
+    for(var index =0 ; index<num ; index++){  
+        chckBox[index].checked = !chckBox[index].checked;  
+    }  
+}  
+
+
+$(document).ready(function() {
+	
+	 var list=[];
+	 list= document.getElementById("roleUserList").innerHTML ;
+	 var chckBox = document.getElementsByName("checkbox"); 
+	 var num = chckBox.length;  
+	 for(var index =0 ; index<num ; index++){  
+		 if(list.indexOf(chckBox[index].value)!=-1) {
+			 chckBox[index].checked =true;
+		 }    
+	 }
+});
+ 
+</script>
+
+</body>
+</html>

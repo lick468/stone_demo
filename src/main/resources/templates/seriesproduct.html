@@ -1,0 +1,490 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0" />
+<link rel="stylesheet" href="/css/styleAnalysis.css" media="screen" />
+<script src="/js/jquery-1.7.2.min.js"></script>
+<script src="/js/echarts.js"></script>
+<script type="text/javascript" src="/js/plugins/layer/laydate/laydate.js"></script>
+<link href="/css/bootstrap.min.css" rel="stylesheet" />
+<link href="/css/laydate.css" rel="stylesheet" />
+<link href="/css/bootstrap-theme.min.css" rel="stylesheet" />
+<link href="/css/jquery-editable-select.min.css" rel="stylesheet" />
+<link th:href="@{/css/loading.css}" rel="stylesheet"/>
+<title>系列商品分析</title>
+<style type="text/css">
+* {
+	margin: 0;
+	padding: 0;
+}
+
+.mian-div {
+	width: 100%;
+	margin: 0 auto;
+	height: 100%;
+}
+
+.top-div {
+	width: 100%;
+	margin: 0 auto;
+	height: 6%;
+}
+
+.left-div {
+	width: 20%;
+	height: 94%;
+	float: left;
+	text-align: center;
+}
+
+.left-div-inner {
+	width: 80%;
+	margin: 0 auto;
+}
+
+select {
+	display: block;
+	margin: 1rem auto;
+	width: 100%;
+	height: 2rem;
+	background-color: green;
+	color: white;
+	border-radius: 0.5rem;
+}
+
+.selector {
+	margin: 0 auto;
+	text-align: left;
+}
+
+.style-selector {
+	display: inline-block;
+	width: 100%;
+}
+
+.btn {
+	width: 60%;
+	margin: 1rem auto;
+	line-height: 2rem;
+	height: 3rem;
+	color: white;
+	border-radius: 0.5rem;
+}
+
+.blue {
+	background-color: rgb(36, 135, 207);
+}
+
+.red {
+	background-color: rgb(230, 80, 70);
+}
+
+.right-div {
+	width: 80%;
+	height: 94%;
+	float: right;
+}
+
+.right-inner {
+	height: 500px;
+}
+
+.right-inner-top {
+	height: 70%;
+}
+
+.right-inner-down {
+	height: 50%;
+}
+
+table {
+	border-collapse: collapse;
+	margin: 1rem auto;
+}
+
+.displayNone {
+	display: none;
+}
+
+html, body {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+</style>
+</head>
+
+<body>
+<!-- 遮罩层 开始-->
+ <div id="loading" style="display:none;">
+    <img src="/img/loading.gif" alt="正在加载中，请耐心等待" >
+    <span >正在加载中，请耐心等待</span>
+</div>
+<!-- 遮罩层结束 -->
+
+	<div id="listdate" th:text="${listdate}" class="displayNone"></div>
+	<div id="listnum" th:text="${listnum}" class="displayNone"></div>
+	<div class="mian-div">
+		<!-- header -->
+		<header>
+			<div class="row-3">
+
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="button-border"> <a class="button-red" href="/analysis/main">返回主菜单</a>
+				</span>
+
+				<div class="slogan-index">系列商品分析</div>
+
+			</div>
+		</header>
+		<!-- end header -->
+		<div class="left-div">
+			<div class="left-div-inner">
+				<div class="selector">
+					<div class="style-selector" >
+						<br>
+						<p>请选择起止时间：</p>
+						<input type="text" value="" placeholder="YYYY-MM-DD " class="form-control " id="starttime" onclick="laydate({istime: true, format: 'YYYY-MM-DD '})"  />
+						<br>
+						 <input type="text" value="" placeholder="YYYY-MM-DD " class="form-control " id="endtime" onclick="laydate({istime: true, format: 'YYYY-MM-DD '})" />
+					</div>
+				</div>
+				<br> 
+				<select id="listsupplier" class="form-control" onchange=" return supplierchange();" name="stone_supplierName" style="background-color: green; color: white;">
+					<option disabled="disabled" selected="selected" style='display: none;'>供应商</option>
+					<option th:each="n : ${listsupplier}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: white; text-align: left;"></option>
+				</select> 
+				<select id="listCounter" class="form-control" onchange=" return areachange();" name="stone_AreaName" style="background-color: green; color: black;">
+					<option disabled="disabled" selected="selected"  value="柜台">柜台</option>
+					<option value="所有">所有</option>
+					<option th:each="n : ${listCounter}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
+				</select>
+				<select id="listproduct" class="form-control" onchange=" return productchange();" name="stone_supplierName" style="background-color: green; color: white;">
+					<option disabled selected value="名称">名称</option>
+					<option th:each="n : ${listproduct}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: white; text-align: left;"></option>
+				</select> <br>
+				<div>
+					<input type="radio" name="selectTpye" value="数量" checked> 数量 <input type="radio" name="selectTpye" value="营业额"> 营业额
+				</div>
+				<br>
+				<div class="btn blue" onclick="return button_post();">提交</div>
+				<div class="btn red" onclick="rest();">重置</div>
+				<div class="btn red" onclick="btn_excel();">导出</div>
+			</div>
+		</div>
+		<div class="right-div">
+			<div class="right-inner">
+				<div class="right-inner-top">
+					<div id="container" style="height: 100%; width: 100%;">container</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="/js/jquery-1.12.4.js" type="text/javascript"></script>
+	<script src="/js/bootstrap.min.js" type="text/javascript"></script>
+	<script src="/js/jquery.min.js" type="text/javascript"></script>
+	<script src="/js/jquery-editable-select.min.js" type="text/javascript"></script>
+
+	<script type="text/javascript">
+		var dom = document.getElementById("container");
+		var myChart = echarts.init(dom);
+		var app = {};
+		option = null;
+		var xData;
+		var yData;
+		tt();
+		function tt() {
+			xData = document.getElementById("listdate").innerHTML;
+			xData = xData.substring(1, xData.length - 1).split(", ");
+			yData = document.getElementById("listnum").innerHTML;
+			yData = yData.substring(1, yData.length - 1).split(", ");
+		}
+
+		var dateList = xData.map(function(item) {
+			return item[0];
+		});
+		var valueList = yData.map(function(item) {
+			return item[1];
+		});
+
+		option = {
+
+			// Make gradient line here
+			visualMap : [ {
+				show : false,
+				type : 'continuous',
+				seriesIndex : 0,
+				min : 0,
+				max : 400
+			}, {
+				show : false,
+				type : 'continuous',
+				seriesIndex : 1,
+				dimension : 0,
+				min : 0,
+				max : dateList.length - 1
+			} ],
+
+			title : [ {
+				left : 'center',
+				text : '年走势图'
+			}, {
+				top : '55%',
+				left : 'center',
+				text : '月走势图'
+			} ],
+			tooltip : {
+				trigger : 'axis'
+			},
+			xAxis : [ {
+				data : xData
+			}, {
+				data : xData,
+				gridIndex : 1
+			} ],
+			yAxis : [ {
+				splitLine : {
+					show : false
+				}
+			}, {
+				splitLine : {
+					show : false
+				},
+				gridIndex : 1
+			} ],
+			grid : [ {
+				bottom : '60%'
+			}, {
+				top : '60%'
+			} ],
+			series : [ {
+				type : 'line',
+				showSymbol : false,
+				data : yData
+			}, {
+				type : 'line',
+				showSymbol : false,
+				data : yData,
+				xAxisIndex : 1,
+				yAxisIndex : 1
+			} ]
+		};
+
+		if (option && typeof option === "object") {
+			myChart.setOption(option, true);
+		}
+
+		function rest() {
+			location.reload();
+		}
+		function btn_excel() {
+			var supplier = document.getElementById("listsupplier").value;
+			var start = document.getElementById("starttime").value;
+			var end = document.getElementById("endtime").value;
+			$.ajax({
+				url : "/analysis/downloadExcelForProductNum",
+				type : "post",
+				data : {
+					supplier : supplier,
+					start : start,
+					end : end,
+				},
+				dateType : "json",
+				success : function(result) {
+					alert(result);
+				}
+			});
+		}
+		function button_post() {
+			//alert("asdasd");
+			var supplier = document.getElementById("listsupplier").value;
+			var product = document.getElementById("listproduct").value;
+
+			var start = document.getElementById("starttime").value;
+			var end = document.getElementById("endtime").value;
+			var selectType = $('input:radio:checked').val();
+			//alert(supplier);
+			if (start.length == 0) {
+				alert("请选择开始时间！");
+				return false;
+			} else if (end.length == 0) {
+				alert("请选择结束时间！");
+				return false;
+			}
+			$('#loading').show();
+			$.ajax({
+				url : "/analysis/supplierFind",
+				type : "post",
+				data : {
+					supplier : supplier,
+					product : product,
+					start : start,
+					end : end,
+					selectType : selectType,
+				},
+				dateType : "json",
+				success : function(result) {
+					$('#loading').hide();
+					var rs = result.split("@");
+					//图标数据
+					var xData = rs[1].substring(1, rs[1].length - 1)
+							.split(", ");
+					var yData = rs[0].substring(1, rs[0].length - 1)
+							.split(", ");
+					//表格数据
+					var s1 = rs[2].substring(1, rs[2].length - 1).split(", ");
+					var s2 = rs[3].substring(1, rs[3].length - 1).split(", ");
+					var s3 = rs[4].substring(1, rs[4].length - 1).split(", ");
+					var s4 = rs[5].substring(1, rs[5].length - 1).split(", ");
+
+					var dom = document.getElementById("container");
+					var myChart = echarts.init(dom);
+					var app = {};
+					option = null;
+
+					var dateList = xData.map(function(item) {
+						return item[0];
+					});
+					var valueList = yData.map(function(item) {
+						return item[1];
+					});
+
+					option = {
+						// Make gradient line here
+						visualMap : [ {
+							show : false,
+							type : 'continuous',
+							seriesIndex : 0,
+							min : 0,
+							max : 400
+						}, {
+							show : false,
+							type : 'continuous',
+							seriesIndex : 1,
+							dimension : 0,
+							min : 0,
+							max : dateList.length - 1
+						} ],
+
+						title : [ {
+							left : 'center',
+							text : '年走势图'
+						}, {
+							top : '55%',
+							left : 'center',
+							text : '月走势图'
+						} ],
+						tooltip : {
+							trigger : 'axis'
+						},
+						xAxis : [ {
+							data : xData
+						}, {
+							data : xData,
+							gridIndex : 1
+						} ],
+						yAxis : [ {
+							splitLine : {
+								show : false
+							}
+						}, {
+							splitLine : {
+								show : false
+							},
+							gridIndex : 1
+						} ],
+						grid : [ {
+							bottom : '60%'
+						}, {
+							top : '60%'
+						} ],
+						series : [ {
+							type : 'line',
+							showSymbol : false,
+							data : yData
+						}, {
+							type : 'line',
+							showSymbol : false,
+							data : yData,
+							xAxisIndex : 1,
+							yAxisIndex : 1
+						} ]
+					};
+
+					if (option && typeof option === "object") {
+						myChart.setOption(option, true);
+					}
+					//填充表格数据
+					$("#tableShow  tr:not(:first)").html("");
+					for (var i = 0; i < s1.length; i++) {
+						$("#tableShow").append(
+								"<tr><td>" + s2[i] + "</td><td>" + s3[i]
+										+ "</td><td>" + s4[i] + "</td><td>"
+										+ s1[i] + "</td></tr>");
+					}
+				}
+			});
+
+		}
+
+		function supplierchange() {
+			var supplier = document.getElementById("listsupplier").value;
+			var start = document.getElementById("starttime").value;
+			var end = document.getElementById("endtime").value;
+			if (start.length == 0) {
+				alert("请选择开始时间！");
+				return false;
+			} else if (end.length == 0) {
+				alert("请选择结束时间！");
+				return false;
+			}
+
+			$.ajax({
+				url : "/findProductBySupplier",
+				type : "post",
+				data : {
+					supplier : supplier,
+				},
+				dateType : "json",
+				success : function(result) {
+					//alert(result);
+					for (var i = 0; i < result.length; i++) {
+						$("#listproduct").append(
+								"<option value='"+ result[i] +"'>" + result[i]
+										+ "</option>");
+					}
+				}
+			});
+		}
+
+		function productchange() {
+			var supplier = document.getElementById("listsupplier").value;
+			var product = document.getElementById("listproduct").value;
+			var start = document.getElementById("starttime").value;
+			var end = document.getElementById("endtime").value;
+			if (supplier.indexOf("供应商") != -1) {
+				alert("请先选择供应商！");
+				return false;
+			}
+			if (start.length == 0) {
+				alert("请选择开始时间！");
+				return false;
+			} else if (end.length == 0) {
+				alert("请选择结束时间！");
+				return false;
+			}
+		}
+		function clickButton() {
+			console.log("clickButton");
+		}
+
+		function button_onclick() {
+			location.reload();//这里写你要执行的语句
+
+			//alert("这是调用函数");
+		}
+	</script>
+</body>
+</html>

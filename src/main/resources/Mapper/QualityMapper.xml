@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.QualityDao">
+	<resultMap type="com.nenu.domain.Quality" id="QualityMap">
+		<result column="quality_ID" property="quality_ID"/>
+		
+		<result column="quality_name" property="quality_name"/>
+		
+	</resultMap>
+	
+	<parameterMap type="com.nenu.domain.Quality" id="Quality"/>
+	
+		<select id="findQualityById"   resultMap="QualityMap" parameterType="java.lang.Integer" >
+		select * from tb_quality where quality_ID=#{quality_ID} 
+	</select>
+	
+	<select id="findAllQuality"   resultMap="QualityMap">
+		select * from tb_quality
+	</select>
+	<insert id="insertQuality" parameterMap="Quality" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_quality(quality_ID,quality_name)
+		values 
+		(#{quality_ID},#{quality_name})
+	</insert>
+	
+	<update id="updateQuality" parameterMap="Quality">
+		update
+		tb_quality
+		set
+		<if test="quality_name!=null">
+			quality_name = #{quality_name}
+		</if>		
+		where 
+		quality_ID=#{quality_ID}
+	</update>
+	
+	<delete id="deleteQuality" parameterType="java.lang.Integer">
+		delete from
+		tb_quality
+		where
+		quality_ID=#{quality_ID}
+	</delete>
+	
+
+</mapper>

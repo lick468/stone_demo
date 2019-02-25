@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.EmployeeRoleDao">
+	<!-- 结果映射 -->  
+	<resultMap id="EmployeeRoleMap" type="com.nenu.domain.EmployeeRole">
+	        <id property="id" column="id"/>
+	        <result property="emp_id" column="emp_id"/>
+	        <result property="emp_shownum" column="emp_shownum"/>
+	 </resultMap>
+	 
+	<parameterMap type="com.nenu.domain.EmployeeRole" id="EmployeeRole"></parameterMap>
+	
+	<select id="findEmployeeRoleByEmpID"   resultMap="EmployeeRoleMap" parameterType="java.lang.Integer" >
+		select * from employee_role where emp_id=#{emp_id} 
+	</select>
+	
+	
+	<insert id="insertEmployeeRole" parameterMap="EmployeeRole" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		employee_role(id,emp_id,emp_shownum)
+		values 
+		(#{id},#{emp_id},#{emp_shownum})
+	</insert>
+	
+
+	<delete id="deleteEmployeeRoleByEmpID" parameterType="java.lang.Integer">
+		delete from
+		employee_role
+		where
+		emp_id=#{emp_id}
+	</delete>
+
+</mapper>

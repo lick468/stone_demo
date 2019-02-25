@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.TBackStoneDao">
+	<resultMap type="com.nenu.domain.TBackStone" id="TBackStoneMap">
+		<result column="tback_ID" property="tback_ID"/>
+		<result column="tback_time" property="tback_time"/>
+		<result column="tback_content" property="tback_content"/>
+		<result column="tback_stoneNo" property="tback_stoneNo"/>
+	</resultMap>
+	
+	<parameterMap type="com.nenu.domain.TBackStone" id="TBackStone"/>
+	
+	<!-- 根据石编查询 -->
+	<select id="findTBackStoneByStoneNo"   resultMap="TBackStoneMap"  >
+		select * from tb_tbackStone 
+		where 
+		tback_stoneNo=#{tback_stoneNo} 
+		order by tback_time desc
+	</select>
+	<!-- 根据退石时间查询 -->
+	<select id="findTBackStoneByTime"   resultMap="TBackStoneMap"  parameterType="java.util.Map" >
+		select * from tb_tbackStone 
+		where 
+		<if test="start != null  " >
+		tback_time <![CDATA[ >= ]]>  #{start}
+		</if>
+		<if test="end != null  " >
+		 and tback_time <![CDATA[ <= ]]>  #{end}
+		</if> 
+	</select>
+	<!-- 查询所有退石记录 -->
+	<select id="findAllTBackStone"   resultMap="TBackStoneMap">
+		select * from tb_tbackStone order by tback_time desc
+	</select>
+	<!-- 插入一条退石记录 -->
+	<insert id="insertTBackStone" parameterMap="TBackStone" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_tbackStone(tback_ID,tback_time,tback_content,tback_stoneNo)
+		values 
+		(#{tback_ID},#{tback_time},#{tback_content},#{tback_stoneNo})
+	</insert>
+	
+
+</mapper>

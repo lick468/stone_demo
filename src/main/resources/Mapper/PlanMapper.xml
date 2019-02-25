@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.PlanDao">
+	<resultMap type="com.nenu.domain.Plan" id="PlanMap">
+		<result column="plan_ID" property="plan_ID"/>
+		
+		<result column="plan_start" property="plan_start"/>
+		<result column="plan_end" property="plan_end"/>
+		<result column="plan_room" property="plan_room"/>
+		<result column="plan_index" property="plan_index"/>
+		<result column="plan_num" property="plan_num"/>
+		<result column="plan_belong" property="plan_belong"/>
+		<result column="plan_diff" property="plan_diff"/>
+		
+	</resultMap>
+	
+	<parameterMap type="com.nenu.domain.Plan" id="Plan"/>
+
+   <select id="findPlanById"   resultMap="PlanMap" parameterType="java.lang.Integer" >
+		select * from tb_plan where plan_ID=#{plan_ID} 
+	</select>
+	
+	<select id="findAllPlan"   resultMap="PlanMap">
+		select * from tb_plan order by plan_ID
+	</select>
+	<select id="findPlanByParams"   resultMap="PlanMap" parameterType="java.util.Map">
+		select * from tb_plan 
+		where 
+		<if test="plan_start != null  " >
+		  plan_start = #{plan_start}
+		</if>
+		<if test="plan_end != null  " >
+		  and  plan_end = #{plan_end}
+		</if>
+		<if test="plan_room != null  " >
+		  and  plan_room = #{plan_room}
+		</if>
+		<if test="plan_belong != null  " >
+		  and  plan_belong = #{plan_belong}
+		</if>
+		<if test="plan_index != null  " >
+		  and  plan_index = #{plan_index}
+		</if>
+		<if test="plan_num != null  " >
+		  and  plan_num = #{plan_num}
+		</if>
+		
+	</select>
+	<!-- 查重 -->
+	<select id="findPlanByPlan"   resultMap="PlanMap" parameterMap="Plan">
+		select * from tb_plan 
+		where plan_start = #{plan_start} and plan_end = #{plan_end} and plan_room = #{plan_room} and  plan_belong = #{plan_belong} and plan_index = #{plan_index}  
+	</select>
+	
+	<!-- 单条插入 -->
+	<insert id="insertPlanByExcel" parameterMap="Plan" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_plan(plan_ID,plan_start,plan_end,plan_room,plan_belong,plan_num,plan_index)
+		values 
+		(#{plan_ID},#{plan_start},#{plan_end},#{plan_room},#{plan_belong},#{plan_num},#{plan_index})
+	</insert>
+	<!-- 批量插入 -->
+	<insert id="batchInsertPlan" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_plan(plan_ID,plan_start,plan_end,plan_room,plan_belong,plan_num,plan_index)
+		values 
+		<foreach collection="list" item="plan" separator=",">
+			(#{plan.plan_ID},#{plan.plan_start},#{plan.plan_end},#{plan.plan_room},#{plan.plan_belong},#{plan.plan_num},#{plan.plan_index})
+		</foreach>
+	</insert>
+	
+	<select id="findPlanByTableInfo" parameterType="java.util.Map" resultMap="PlanMap">
+		select * from tb_plan order by plan_ID DESC limit #{sEcho},#{len}
+	</select>
+	<!-- 单条删除 -->
+	<delete id="deleteOneData" parameterType="java.lang.Integer">
+		delete from
+		tb_plan
+		where
+		plan_ID=#{plan_ID}
+	</delete>
+	
+	<!-- 删除全部数据 -->
+	<update id="deleteAllData">
+		truncate table tb_plan
+	</update>
+
+</mapper>

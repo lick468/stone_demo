@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.ListPriceDao">
+	<resultMap type="com.nenu.domain.ListPrice" id="ListPriceMap">
+		<result column="listPrice_ID" property="listPrice_ID"/>
+		<result column="listPrice_start" property="listPrice_start"/>
+		<result column="listPrice_end" property="listPrice_end"/>
+		
+	</resultMap>
+	
+	<parameterMap type="com.nenu.domain.ListPrice" id="ListPrice"/>
+
+	<select id="findListPriceById"   resultMap="ListPriceMap" parameterType="java.lang.Integer" >
+		select * from tb_listPrice where listPrice_ID=#{listPrice_ID} 
+	</select>
+	
+	<select id="findAllListPrice"   resultMap="ListPriceMap">
+		select * from tb_listPrice order by  listPrice_ID
+	</select>
+	<insert id="insertListPrice" parameterMap="ListPrice" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_listPrice(listPrice_ID,listPrice_start,listPrice_end)
+		values 
+		(#{listPrice_ID},#{listPrice_start},#{listPrice_end})
+	</insert>
+	
+	<update id="updateListPrice" parameterMap="ListPrice">
+		update
+		tb_listPrice
+		set
+		<if test="listPrice_start!=null">
+			listPrice_start = #{listPrice_start}
+		</if>
+		<if test="listPrice_end!=null">
+			,listPrice_end = #{listPrice_end}
+		</if>		
+		where 
+		listPrice_ID=#{listPrice_ID}
+	</update>
+	
+	<delete id="deleteListPrice" parameterType="java.lang.Integer">
+		delete from
+		tb_listPrice
+		where
+		listPrice_ID=#{listPrice_ID}
+	</delete>
+
+</mapper>

@@ -1,0 +1,240 @@
+.input-group.col-lg-4{
+float:left;
+margin-left: 10px;
+margin-top:10px;
+display : none;
+}
+.input-group.col-lg-2{
+float:left;
+margin-left: 10px;
+margin-top:10px;
+}
+.input-group-addon {
+background-color: #4169E1;
+text-align: center;
+color:white;
+width:100px;
+}
+.white_content {
+	display: none;
+	position: absolute;
+	top: 10%;
+	width: 70%;
+	height: 100%;
+	border: 16px solid lightblue;
+	background-color: white;
+	z-index: 1002;
+	overflow: auto;
+}
+
+.com1 {
+	height: 60px;
+	border-radius: 20px 20px 0px 0px;
+	background-color: cornflowerblue;
+	text-align: center;
+	font-family: "ËÎÌו";
+	font-size: 40px;
+}
+.nnnnn{
+display: none;
+}
+
+
+.btn_procord{
+width: 300px;
+height: 100px;
+font-size: 50px;
+color: white;
+background-color: #700000;
+border-radius:15px;
+}
+
+.btn.container{
+width: 40%;
+}
+.space{
+height: 50px;
+}
+.col-md-2.column.input-group{
+float:left;
+margin-left: 10px;
+margin-top:10px;
+display: none;
+}
+.head {
+	background-color: #C0C0C0;
+	text-align: center;
+	height: 50px;
+	font-family: "ËÎÌו";
+	font-size: 40px;
+	font-style: oblique;
+}
+.input-group.col-lg-4.dd{
+float:left;
+margin-left: 10px;
+margin-top:10px;
+}
+.btn{
+color: white;
+}
+table tr:nth-child(2n+3){  
+    background-color:#E5E5E5;  
+}  
+table tr:nth-child(2n+2){  
+    background-color:#D0D0D0;  
+}
+.table {
+	border:1px solid pink;
+}
+table tr:hover{
+	background-color: grey;
+}
+td {
+text-align: center;
+}
+th {
+text-align: center;
+}
+
+.btn_edit{
+  display: inline-block;
+  padding: 9px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;   
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+
+}
+.btn_edit:hover {background-color: #3e8e41}
+
+.btn_edit:active {
+  background-color: #3e8e41;
+  box-shadow: 0 1px #666;
+  transform: translateY(4px);
+}
+.btn_search{
+  display: inline-block;
+  padding: 9px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;   
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #3385FF;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 3px #999;
+
+}
+.btn_search:hover {background-color: #3366FF}
+
+.btn_search:active {
+  background-color: #3366FF;
+  box-shadow: 0 1px #666;
+  transform: translateY(4px);
+}
+
+.btn_submit{
+  display: inline-block;
+  height:60px;
+  width:150px;
+  padding: 1px 2px;
+  font-size:24px;
+  cursor: pointer;
+  text-align: center;   
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #008287;
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0 1px #999;
+}
+.btn_delete{
+  display: inline-block;
+  padding: 9px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;   
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #FF0000;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 3px #999;
+
+}
+.btn_delete:hover {background-color: #B00000}
+
+.btn_delete:active {
+  background-color: #B00000;
+  box-shadow: 0 1px #666;
+  transform: translateY(4px);
+}
+.file-wrap {  
+    position: relative;  
+    width: 300px;  
+    height: 100px;  
+    border-radius: 15px;  
+    background-color: #700000;  
+    background-repeat: no-repeat;  
+    background-position: 0 0;  
+    background-attachment: scroll;  
+      
+    text-align: center;  
+    font-size: 50px;  
+    color: white;  
+    cursor: pointer;  
+    overflow: hidden;  
+    float: left;  
+    margin-right: 20px;  
+    z-index: 1;  
+}  
+  
+    .file-wrap input {  
+        position: absolute;  
+        width: 300px;  
+        height: 100px;  
+        font-size: 0;  
+        opacity: 0;  
+        -moz-opacity: 0;  
+        left: 0px;  
+        top: 0px;  
+        cursor: pointer;  
+        z-index: 2;  
+    }  
+.col-md-4{
+text-align: center;
+font-size: 26px;
+color: #7A998A;
+}
+.col-md-2{
+padding-top:5px;
+text-align: center;
+font-size: 20px;
+color: white;
+}
+.as{
+color: red;
+}
+.hide_column{
+   display: none;
+}
+.dangera{
+background-color : #FF0000;
+color: white;
+font-style: oblique;
+
+}
+.nodanger{
+background-color: green;
+color: white;
+}

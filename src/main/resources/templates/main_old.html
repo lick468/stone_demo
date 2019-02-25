@@ -1,0 +1,303 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>客户端</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width; initial-scale=1.0" />
+<link rel="stylesheet" href="/css/styleAnalysis.css" media="screen" />
+<script src="/js/jquery-1.7.2.min.js"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+.logout {
+margin-top:10px;
+margin-left: 1000px;
+font-size: 20px;
+text-align: center;
+color:blue;
+height: 40px;
+width:100px;
+}
+
+
+</style>
+</head>
+<body id="page1">
+<div id="roleList" th:text="${session.employeeRoleList}" style="display: none;"> </div>
+	<!-- header -->
+	<header>
+		<div class="row-3">
+			<div class="container_12">
+				<div class="grid_12">
+					<div class="logo fleft">
+						<div class="slogan">宇泰珠宝销售分析系统</div>
+						<div class="logout"><a href="/analysis/logout">退出</a></div>
+					</div>
+					
+						
+					
+				</div>
+			</div>
+		</div>
+	</header>
+	<!-- end header -->
+	<!-- content -->
+	<section id="content">
+		<div class="container_12">
+			<div class="wrapper">
+				<div class="grid_4" id="index1">
+					<a href="http://localhost:80/analysis/index">
+						<div class="box1">
+							<div class="imgs">
+								<img src="/images/icons/1page_sup.png" alt="" class="img-1" /> <img src="/images/icons/1page_sup-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>供应商分析</h3>
+							<p>分析单品的销售情况和销售走势</p>
+						</div>
+					</a>
+				</div>
+				<div class="grid_4" id="index2">
+					<a href="http://localhost:80/analysis/productnum">
+						<div class="box1">
+							<div class="imgs">
+								<img src="/images/icons/1page_sup.png" alt="" class="img-1" /> <img src="/images/icons/1page_sup-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>供应商品群分析</h3>
+							<p>供应商品群销售分析</p>
+						</div>
+					</a>
+				</div>
+				<div class="grid_4" id="index3">
+					<a href="http://localhost:80/analysis/index3">
+						<div class="box1">
+							<div class="imgs">
+								<img src="/images/icons/1page_sup.png" alt="" class="img-1" /> <img src="images/icons/1page_sup-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>销售排名分析</h3>
+							<p>供应商销售排名分析</p>
+						</div>
+					</a>
+				</div>
+				<div class="grid_4" id="index4">
+					<a href="http://localhost:80/analysis/seriesproduct">
+						<div class="box1">
+							<div class="imgs">
+								<img src="/images/icons/1page_img1.png" alt="" class="img-1" /> <img src="/images/icons/1page_img1-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>系列商品分析</h3>
+							<p>系列商品成长分析模型</p>
+						</div>
+					</a>
+				</div>
+				<div class="grid_4" id="index5">
+					<a href="http://localhost:80/analysis/index5">
+						<div class="box1">
+							<div class="imgs">
+								<img src="/images/icons/1page_img1.png" alt="" class="img-1" /> <img src="/images/icons/1page_img1-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>销售趋势分析</h3>
+							<p>分析各地区的销售增减趋势</p>
+						</div>
+					</a>
+				</div>
+				<div class="grid_4" id="index6">
+					<a href="http://localhost:80/analysis/s743">
+						<div class="box1">
+							<div class="imgs">
+								<img src="/images/icons/1page_img2.png" alt="" class="img-1" /> <img src="images/icons/1page_img2-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>销售结构分析</h3>
+							<p>同一柜台不同类别分析</p>
+						</div>
+					</a>
+				</div>
+				<div class="grid_4" id="index7">
+					<a href="http://localhost:80/analysis/s744">
+						<div class="box1">
+							<div class="imgs">
+								<img src="/images/icons/1page_img2.png" alt="" class="img-1" /> <img src="/images/icons/1page_img2-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>区域经营分析</h3>
+							<p>分析各地区综合销售情况</p>
+						</div>
+					</a>
+				</div>
+				<div class="grid_4" id="index8">
+					<a href="http://localhost:80/analysis/s75">
+						<div class="box1">
+							<div class="imgs">
+								<img src="/images/icons/1page_img2.png" alt="" class="img-1" /> <img src="/images/icons/1page_img2-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>管理分析</h3>
+							<p>商品系列的销售排名分析</p>
+						</div>
+					</a>
+				</div>
+				<div class="grid_4" id="index9">
+					<a href="http://localhost:80/analysis/s752">
+						<div class="box1">
+							<div class="imgs">
+								<img src="/images/icons/1page_img3.png" alt="" class="img-1" /> <img src="/images/icons/1page_img3-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>销量趋势分析</h3>
+							<p>分析对比某时间段与历史相同时期比较</p>
+						</div>
+					</a>
+				</div>
+				<div class="grid_4" id="index10">
+					<a href="http://localhost:80/analysis/index10">
+						<div class="box1">
+							<div class="imgs">
+								<img src="/images/icons/1page_img3.png" alt="" class="img-1" /> <img src="/images/icons/1page_img3-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>销售数据统计</h3>
+							<p>明确销售数量同类比较</p>
+						</div>
+					</a>
+				</div>
+				<div class="grid_4" id="index11">
+					<a href="http://localhost:80/analysis/index11">
+						<div class="box1">
+							<div class="imgs">
+								<img src="/images/icons/1page_img3.png" alt="" class="img-1" /> <img src="/images/icons/1page_img3-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>供应商销售排名</h3>
+							<p>销售前十的供应商排名分析</p>
+						</div>
+					</a>
+				</div>
+				<div class="grid_4" id="index12">
+					<a href="http://localhost:80/analysis/index10">
+						<div class="box1">
+							<div class="imgs">
+								<img src="/images/icons/1page_img3.png" alt="" class="img-1" /> <img src="/images/icons/1page_img3-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>销售数据统计</h3>
+							<p>明确销售数量同类比较</p>
+						</div>
+					</a>
+				</div>
+				<div class="grid_4" id="index13">
+					<a href="http://localhost:80/analysis/index811">
+						<div class="box1">
+							<div class="imgs">
+								<img src="/images/icons/1page_img3.png" alt="" class="img-1" /> <img src="/images/icons/1page_img3-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>周销售统计数据</h3>
+							<p>8.1.1</p>
+						</div>
+					</a>
+				</div>
+				<div class="grid_4" id="index14">
+					<a href="http://localhost:80/analysis/index812">
+						<div class="box1">
+							<div class="imgs">
+								<img src="/images/icons/1page_img3.png" alt="" class="img-1" /> <img src="/images/icons/1page_img3-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>月销售统计数据</h3>
+							<p>8.1.2</p>
+						</div>
+					</a>
+				</div>
+				<div class="grid_4" id="index15">
+					<a href="http://localhost:80/analysis/index813">
+						<div class="box1">
+							<div class="imgs">
+								<img src="/images/icons/1page_img3.png" alt="" class="img-1" /> <img src="/images/icons/1page_img3-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>季度销售统计数据</h3>
+							<p>8.1.3</p>
+						</div>
+					</a>
+				</div>
+				
+				<div class="grid_4" id="index16">
+					<a href="http://localhost:80/analysis/index814">
+						<div class="box1">
+							<div class="imgs">
+								<img src="/images/icons/1page_img3.png" alt="" class="img-1" /> <img src="/images/icons/1page_img3-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>年销售统计数据</h3>
+							<p>8.1.4</p>
+						</div>
+					</a>
+				</div>
+				<div class="grid_4" id="index17">
+					<a href="http://localhost:80/analysis/index821">
+						<div class="box1">
+							<div class="imgs">
+								<img src="/images/icons/1page_img3.png" alt="" class="img-1" /> <img src="/images/icons/1page_img3-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>月销售统计数据同比分析</h3>
+							<p>8.2.1</p>
+						</div>
+					</a>
+				</div>
+				<div class="grid_4" id="index18">
+					<a href="http://localhost:80/analysis/index822">
+						<div class="box1">
+							<div class="imgs">
+								<img src="/images/icons/1page_img3.png" alt="" class="img-1" /> <img src="/images/icons/1page_img3-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>年销售统计数据同比分析</h3>
+							<p>8.2.2</p>
+						</div>
+					</a>
+				</div>
+				<div class="grid_4" id="index19">
+					<a href="http://localhost:80/analysis/index831">
+						<div class="box1">
+							<div class="imgs">
+								<img src="/images/icons/1page_img3.png" alt="" class="img-1" /> <img src="/images/icons/1page_img3-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>月销售统计数据环比分析</h3>
+							<p>8.3.1</p>
+						</div>
+					</a>
+				</div>
+				<div class="grid_4" id="index20">
+					<a href="http://localhost:80/analysis/index832">
+						<div class="box1">
+							<div class="imgs">
+								<img src="/images/icons/1page_img3.png" alt="" class="img-1" /> <img src="/images/icons/1page_img3-hover.png" alt="" class="img-2" />
+							</div>
+							<h3>年销售统计数据环比分析</h3>
+							<p>8.3.2</p>
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="clear"></div>
+
+	</section>
+	<!-- end content -->
+	<!-- footer -->
+	<footer>
+		<div class="footer-2">
+			<div class="container_12">
+				<div class="wrapper">
+					<div class="grid_12">
+						<div class="policy">
+							&copy; Copyright &copy; 2000.YuTai Diamond Company name All rights reserved. 
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</footer>
+	<!-- end footer -->
+
+<!-- <script type="text/javascript"> -->
+<!-- // 	var list = ["index1","index2","index3","index4","index5","index6","index7","index8","index9","index10"]; -->
+<!-- // 	var roleList =  document.getElementById("roleList").innerHTML; -->
+<!-- // 	for(var i=0;i<list.length;i++) { -->
+<!-- // 		if(roleList.indexOf(list[i])!=-1) { -->
+<!-- // 			document.getElementById(list[i]).style.display="table"; -->
+<!-- // 		} -->
+		
+<!-- // 	} -->
+
+</script>
+</body>
+</html>

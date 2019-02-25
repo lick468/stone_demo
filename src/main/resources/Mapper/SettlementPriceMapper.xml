@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.SettlementPriceDao">
+	<resultMap type="com.nenu.domain.SettlementPrice" id="SettlementPriceMap">
+		<result column="settlementPrice_ID" property="settlementPrice_ID"/>
+		<result column="settlementPrice_start" property="settlementPrice_start"/>
+		<result column="settlementPrice_end" property="settlementPrice_end"/>
+		
+	</resultMap>
+	
+	<parameterMap type="com.nenu.domain.SettlementPrice" id="SettlementPrice"/>
+
+	<select id="findSettlementPriceById"   resultMap="SettlementPriceMap" parameterType="java.lang.Integer" >
+		select * from tb_settlementPrice where settlementPrice_ID=#{settlementPrice_ID} 
+	</select>
+	
+	<select id="findAllSettlementPrice"   resultMap="SettlementPriceMap">
+		select * from tb_settlementPrice order by  settlementPrice_ID
+	</select>
+	<insert id="insertSettlementPrice" parameterMap="SettlementPrice" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_settlementPrice(settlementPrice_ID,settlementPrice_start,settlementPrice_end)
+		values 
+		(#{settlementPrice_ID},#{settlementPrice_start},#{settlementPrice_end})
+	</insert>
+	
+	<update id="updateSettlementPrice" parameterMap="SettlementPrice">
+		update
+		tb_settlementPrice
+		set
+		<if test="settlementPrice_start!=null">
+			settlementPrice_start = #{settlementPrice_start}
+		</if>
+		<if test="settlementPrice_end!=null">
+			,settlementPrice_end = #{settlementPrice_end}
+		</if>		
+		where 
+		settlementPrice_ID=#{settlementPrice_ID}
+	</update>
+	
+	<delete id="deleteSettlementPrice" parameterType="java.lang.Integer">
+		delete from
+		tb_settlementPrice
+		where
+		settlementPrice_ID=#{settlementPrice_ID}
+	</delete>
+
+</mapper>

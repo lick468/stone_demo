@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>供应商单品分析模型</title>
+</head>
+<body>
+<div id="listname" th:text="${listname}">listname</div>
+<button value="danji" onclick="tt()">ffffffffffffffffffffffffffffffff</button>
+<div  class="container" style="text-align: center;">
+
+<h1>供应商单品分析模型</h1>
+</div>
+<div style="border:1px solid #00BFFF;height:400 px;padding: 10px 10px 10px;">
+<table id="example" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>source</th>
+                <th>room</th>
+                <th>district</th>
+                <th>orderNo</th>
+                <th>barcode</th>
+                <th>quality</th>
+                <th>centerstonename</th>
+                <th>name</th>
+                <th>settlementprice</th>
+                <th>goldweight</th>
+                <th>goodweight</th>
+                <th>centerstone</th>
+                <th>goldprice</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="stone : ${stoneList}">
+                        <td th:text="${stone.id}"></td>
+                        <td><a th:text="${stone.source}"></a></td>
+                        <td><a th:text="${stone.room}"></a></td>                 
+                        <td><a th:text="${stone.district}"></a></td>
+                        <td><a th:text="${stone.orderNo}"></a></td>  
+                        <td><a th:text="${stone.barcode}"></a></td>  
+                        <td><a th:text="${stone.quality}"></a></td>  
+                        <td><a th:text="${stone.centerstonename}"></a></td>  
+                        <td><a th:text="${stone.name}"></a></td>  
+                        <td><a th:text="${stone.settlementprice}"></a></td>  
+                        <td><a th:text="${stone.goldweight}"></a></td>  
+                        <td><a th:text="${stone.goodweight}"></a></td>  
+                        <td><a th:text="${stone.centerstone}"></a></td>  
+                        <td><a th:text="${stone.goldprice}"></a></td>  
+             </tr>
+        </tbody>
+        <tfoot>
+        </tfoot>
+    </table>
+</div>
+<script type="text/javascript">
+	var id;
+	function tt() {
+		id = document.getElementById("listname").innerHTML;
+		console.log(id);
+
+	}
+
+</script>
+</body>
+</html>

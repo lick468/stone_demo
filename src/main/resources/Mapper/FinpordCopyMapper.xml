@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.FinpordCopyDao">
+	<resultMap type="com.nenu.domain.FinpordCopy" id="BaseResultMapfinpordCopy">
+		<result column="finpord_ID" property="finpord_ID"/>
+		<result column="finpord_seqno" property="finpord_seqno" />
+		<result column="finpord_procordNo" property="finpord_procordNo"/>
+		<result column="finpord_barcode" property="finpord_barcode"/>
+		<result column="finpord_inboundate" property="finpord_inboundate" />
+		<result column="finpord_supplier" property="finpord_supplier"/>
+		<result column="finpord_styno" property="finpord_styno"/>
+		<result column="finpord_quality" property="finpord_quality" />
+		<result column="finpord_name" property="finpord_name"/>
+		<result column="finpord_ringsz" property="finpord_ringsz"/>
+		<result column="finpord_multi" property="finpord_multi" />
+		<result column="finpord_tagedpr" property="finpord_tagedpr"/>
+		
+		<result column="finpord_goldwgt" property="finpord_goldwgt"/>
+		<result column="finpord_merchwgt" property="finpord_merchwgt" />
+		<result column="finpord_counter" property="finpord_counter"/>
+		<result column="finpord_catagory" property="finpord_catagory"/>
+		<result column="finpord_goldcolor" property="finpord_goldcolor" />
+		<result column="finpord_baslabcost" property="finpord_baslabcost"/>
+		<result column="finpord_othrcost" property="finpord_othrcost"/>
+		<result column="finpord_salabcost" property="finpord_salabcost" />
+		<result column="finpord_goldpr" property="finpord_goldpr"/>
+		<result column="finpord_goldlos" property="finpord_goldlos"/>
+		<result column="finpord_cost" property="finpord_cost" />
+		<result column="finpord_armsty" property="finpord_armsty"/>
+		
+		<result column="finpord_storname" property="finpord_storname"/>
+		<result column="finpord_entsdno" property="finpord_entsdno" />
+		<result column="finpord_comments" property="finpord_comments"/>
+		<result column="finpord_mainstono" property="finpord_mainstono"/>
+		<result column="finpord_mainstoname" property="finpord_mainstoname" />
+		<result column="finpord_mainstowgt" property="finpord_mainstowgt"/>
+		<result column="finpord_mainstoqty" property="finpord_mainstoqty"/>
+		<result column="finpord_mainstopr" property="finpord_mainstopr" />
+		<result column="finpord_cert1" property="finpord_cert1"/>
+		<result column="finpord_cert2" property="finpord_cert2"/>
+		<result column="finpord_gia1" property="finpord_gia1" />
+		<result column="finpord_gia2" property="finpord_gia2"/>
+		
+		<result column="finpord_mainstoshape" property="finpord_mainstoshape"/>
+		<result column="finpord_series" property="finpord_series" />
+		<result column="finpord_cut1" property="finpord_cut1"/>
+		<result column="finpord_symmetry1" property="finpord_symmetry1"/>
+		<result column="finpord_polish1" property="finpord_polish1" />
+		<result column="finpord_fluorescence1" property="finpord_fluorescence1"/>
+		<result column="finpord_clarity1" property="finpord_clarity1"/>
+		<result column="finpord_color1" property="finpord_color1" />
+		<result column="finpord_cut2" property="finpord_cut2"/>
+		<result column="finpord_symmetry2" property="finpord_symmetry2"/>
+		<result column="finpord_polish2" property="finpord_polish2" />
+		<result column="finpord_fluorescence2" property="finpord_fluorescence2"/>
+		
+		<result column="finpord_clarity2" property="finpord_clarity2"/>
+		<result column="finpord_color2" property="finpord_color2" />
+		<result column="finpord_substo1no" property="finpord_substo1no"/>
+		<result column="finpord_substo1name" property="finpord_substo1name"/>
+		<result column="finpord_substo1wgt" property="finpord_substo1wgt" />
+		<result column="finpord_substo1qty" property="finpord_substo1qty"/>
+		<result column="finpord_substo1pr" property="finpord_substo1pr"/>
+		<result column="finpord_substo2no" property="finpord_substo2no" />
+		<result column="finpord_substo2name" property="finpord_substo2name"/>
+		<result column="finpord_substo2wgt" property="finpord_substo2wgt"/>
+		<result column="finpord_substo2qty" property="finpord_substo2qty" />
+		<result column="finpord_substo2pr" property="finpord_substo2pr"/>
+		
+		<result column="finpord_substo3no" property="finpord_substo3no"/>
+		<result column="finpord_substo3name" property="finpord_substo3name" />
+		<result column="finpord_substo3wgt" property="finpord_substo3wgt"/>
+		<result column="finpord_substo3qty" property="finpord_substo3qty"/>
+		<result column="finpord_substo3pr" property="finpord_substo3pr" />
+		<result column="finpord_reserved1" property="finpord_reserved1"/>
+		<result column="finpord_reserved2" property="finpord_reserved2"/>
+		
+	</resultMap>
+	
+	<parameterMap type="com.nenu.domain.FinpordCopy" id="FinpordCopy"/>
+	
+	<sql id="Base_Column_List_finpordCopy">
+		finpord_ID,finpord_seqno,finpord_procordNo,finpord_barcode,finpord_inboundate,finpord_supplier,finpord_styno,
+		finpord_quality,finpord_name,finpord_ringsz,finpord_multi,finpord_tagedpr,finpord_goldwgt,finpord_merchwgt,finpord_counter,
+		finpord_catagory,finpord_goldcolor,finpord_baslabcost,finpord_othrcost,finpord_salabcost,finpord_goldpr,finpord_goldlos,finpord_cost,
+		finpord_armsty,finpord_storname,finpord_entsdno,finpord_comments,finpord_mainstono,finpord_mainstoname,finpord_mainstowgt,finpord_mainstoqty,
+		finpord_mainstopr,finpord_cert1,finpord_cert2,finpord_gia1,finpord_gia2,finpord_mainstoshape,finpord_series,finpord_cut1,finpord_symmetry1,
+		finpord_polish1,finpord_fluorescence1,finpord_clarity1,finpord_color1,finpord_cut2,finpord_symmetry2,finpord_polish2,finpord_fluorescence2,
+		finpord_clarity2,finpord_color2,finpord_substo1no,finpord_substo1name,finpord_substo1wgt,finpord_substo1qty,finpord_substo1pr,finpord_substo2no,
+		finpord_substo2name,finpord_substo2wgt,finpord_substo2qty,finpord_substo2pr,finpord_substo3no,finpord_substo3name,finpord_substo3wgt,finpord_substo3qty,
+		finpord_substo3pr,finpord_reserved1,finpord_reserved2
+	</sql>
+
+	<select id="findAllFinpordCopy" resultMap="BaseResultMapfinpordCopy">
+		SELECT * from tb_finpord_copy ORDER BY finpord_seqno
+	</select>
+	<select id="findfinpordCopyByfinpordIDAJAX" resultMap="BaseResultMapfinpordCopy">
+		select 
+		<include refid="Base_Column_List_finpordCopy"/>
+		from tb_finpord_copy where finpord_ID=#{finpord_ID}
+	</select>
+	<select id="findLastFinpordCopy" resultMap="BaseResultMapfinpordCopy">
+		select 
+		<include refid="Base_Column_List_finpordCopy"/>
+		from tb_finpord_copy order by finpord_inboundate DESC LIMIT 1
+	</select>
+	<select id="findFinpordByMainNo" resultMap="BaseResultMapfinpordCopy">
+		select 
+		<include refid="Base_Column_List_finpordCopy"/>
+		from tb_finpord_copy
+		where finpord_mainstono=#{finpord_mainstono}
+	</select>
+	
+	<insert id="copyToFinpord" parameterMap="FinpordCopy"  >
+		insert into tb_finpord select * from tb_finpord_copy
+	</insert>
+	<!-- 单条插入 -->
+	<insert id="insertFinpordByExcel" parameterMap="FinpordCopy"  keyProperty="id">
+		insert into
+		tb_finpord_copy(
+		finpord_ID,finpord_seqno,finpord_procordNo,finpord_barcode,finpord_inboundate,finpord_supplier,finpord_styno,
+		finpord_quality,finpord_name,finpord_ringsz,finpord_multi,
+		finpord_tagedpr,finpord_goldwgt,finpord_merchwgt,finpord_counter,finpord_catagory,finpord_goldcolor,
+		finpord_baslabcost,finpord_othrcost,finpord_salabcost,finpord_goldpr,finpord_goldlos,
+		finpord_cost,finpord_armsty,finpord_storname,finpord_entsdno,finpord_comments,
+		finpord_mainstono,finpord_mainstoname,finpord_mainstowgt,finpord_mainstoqty,finpord_mainstopr,
+		finpord_cert1,finpord_cert2,finpord_gia1,finpord_gia2,finpord_mainstoshape,finpord_series,
+		finpord_cut1,finpord_symmetry1,finpord_polish1,finpord_fluorescence1,finpord_clarity1,finpord_color1,
+		finpord_cut2,finpord_symmetry2,finpord_polish2,finpord_fluorescence2,finpord_clarity2,finpord_color2,
+		finpord_substo1no,finpord_substo1name,finpord_substo1wgt,finpord_substo1qty,finpord_substo1pr,
+		finpord_substo2no,finpord_substo2name,finpord_substo2wgt,finpord_substo2qty,finpord_substo2pr,
+		finpord_substo3no,finpord_substo3name,finpord_substo3wgt,finpord_substo3qty,finpord_substo3pr,
+		finpord_reserved1,finpord_reserved2
+		)
+		values 
+		(#{finpord_ID},#{finpord_seqno},#{finpord_procordNo},#{finpord_barcode},#{finpord_inboundate},#{finpord_supplier},#{finpord_styno},
+		#{finpord_quality},#{finpord_name},#{finpord_ringsz},#{finpord_multi},
+		#{finpord_tagedpr},#{finpord_goldwgt},#{finpord_merchwgt},#{finpord_counter},#{finpord_catagory},#{finpord_goldcolor},
+		#{finpord_baslabcost},#{finpord_othrcost},#{finpord_salabcost},#{finpord_goldpr},#{finpord_goldlos},
+		#{finpord_cost},#{finpord_armsty},#{finpord_storname},#{finpord_entsdno},#{finpord_comments},
+		#{finpord_mainstono},#{finpord_mainstoname},#{finpord_mainstowgt},#{finpord_mainstoqty},#{finpord_mainstopr},
+		#{finpord_cert1},#{finpord_cert2},#{finpord_gia1},#{finpord_gia2},#{finpord_mainstoshape},#{finpord_series},
+		#{finpord_cut1},#{finpord_symmetry1},#{finpord_polish1},#{finpord_fluorescence1},#{finpord_clarity1},#{finpord_color1},
+		#{finpord_cut2},#{finpord_symmetry2},#{finpord_polish2},#{finpord_fluorescence2},#{finpord_clarity2},#{finpord_color2},
+		#{finpord_substo1no},#{finpord_substo1name},#{finpord_substo1wgt},#{finpord_substo1qty},#{finpord_substo1pr},
+		#{finpord_substo2no},#{finpord_substo2name},#{finpord_substo2wgt},#{finpord_substo2qty},#{finpord_substo2pr},
+		#{finpord_substo3no},#{finpord_substo3name},#{finpord_substo3wgt},#{finpord_substo3qty},#{finpord_substo3pr},
+		#{finpord_reserved1},#{finpord_reserved2}
+		)
+	</insert>
+	<!-- 批量插入 -->
+	<insert id="batchInsertFinpordCopy" parameterType="java.util.List"  keyProperty="id">
+		insert into
+		tb_finpord_copy(
+		finpord_ID,finpord_seqno,finpord_procordNo,finpord_barcode,finpord_inboundate,finpord_supplier,finpord_styno,
+		finpord_quality,finpord_name,finpord_ringsz,finpord_multi,
+		finpord_tagedpr,finpord_goldwgt,finpord_merchwgt,finpord_counter,finpord_catagory,finpord_goldcolor,
+		finpord_baslabcost,finpord_othrcost,finpord_salabcost,finpord_goldpr,finpord_goldlos,
+		finpord_cost,finpord_armsty,finpord_storname,finpord_entsdno,finpord_comments,
+		finpord_mainstono,finpord_mainstoname,finpord_mainstowgt,finpord_mainstoqty,finpord_mainstopr,
+		finpord_cert1,finpord_cert2,finpord_gia1,finpord_gia2,finpord_mainstoshape,finpord_series,
+		finpord_cut1,finpord_symmetry1,finpord_polish1,finpord_fluorescence1,finpord_clarity1,finpord_color1,
+		finpord_cut2,finpord_symmetry2,finpord_polish2,finpord_fluorescence2,finpord_clarity2,finpord_color2,
+		finpord_substo1no,finpord_substo1name,finpord_substo1wgt,finpord_substo1qty,finpord_substo1pr,
+		finpord_substo2no,finpord_substo2name,finpord_substo2wgt,finpord_substo2qty,finpord_substo2pr,
+		finpord_substo3no,finpord_substo3name,finpord_substo3wgt,finpord_substo3qty,finpord_substo3pr,
+		finpord_reserved1,finpord_reserved2
+		)
+		values 
+		<foreach collection="list" item="finpord" separator=",">
+			(#{finpord.finpord_ID},#{finpord.finpord_seqno},#{finpord.finpord_procordNo},#{finpord.finpord_barcode},
+			#{finpord.finpord_inboundate},#{finpord.finpord_supplier},#{finpord.finpord_styno},
+			#{finpord.finpord_quality},#{finpord.finpord_name},#{finpord.finpord_ringsz},#{finpord.finpord_multi},
+			#{finpord.finpord_tagedpr},#{finpord.finpord_goldwgt},#{finpord.finpord_merchwgt},#{finpord.finpord_counter},#{finpord.finpord_catagory},#{finpord.finpord_goldcolor},
+			#{finpord.finpord_baslabcost},#{finpord.finpord_othrcost},#{finpord.finpord_salabcost},#{finpord.finpord_goldpr},#{finpord.finpord_goldlos},
+			#{finpord.finpord_cost},#{finpord.finpord_armsty},#{finpord.finpord_storname},#{finpord.finpord_entsdno},#{finpord.finpord_comments},
+			#{finpord.finpord_mainstono},#{finpord.finpord_mainstoname},#{finpord.finpord_mainstowgt},#{finpord.finpord_mainstoqty},#{finpord.finpord_mainstopr},
+			#{finpord.finpord_cert1},#{finpord.finpord_cert2},#{finpord.finpord_gia1},#{finpord.finpord_gia2},#{finpord.finpord_mainstoshape},#{finpord.finpord_series},
+			#{finpord.finpord_cut1},#{finpord.finpord_symmetry1},#{finpord.finpord_polish1},#{finpord.finpord_fluorescence1},#{finpord.finpord_clarity1},#{finpord.finpord_color1},
+			#{finpord.finpord_cut2},#{finpord.finpord_symmetry2},#{finpord.finpord_polish2},#{finpord.finpord_fluorescence2},#{finpord.finpord_clarity2},#{finpord.finpord_color2},
+			#{finpord.finpord_substo1no},#{finpord.finpord_substo1name},#{finpord.finpord_substo1wgt},#{finpord.finpord_substo1qty},#{finpord.finpord_substo1pr},
+			#{finpord.finpord_substo2no},#{finpord.finpord_substo2name},#{finpord.finpord_substo2wgt},#{finpord.finpord_substo2qty},#{finpord.finpord_substo2pr},
+			#{finpord.finpord_substo3no},#{finpord.finpord_substo3name},#{finpord.finpord_substo3wgt},#{finpord.finpord_substo3qty},#{finpord.finpord_substo3pr},
+			#{finpord.finpord_reserved1},#{finpord.finpord_reserved2})
+		</foreach>
+	
+	</insert>
+	
+	
+	<update id="clearCopy" parameterMap="FinpordCopy" >
+		truncate table tb_finpord_copy
+	</update>
+	<update id="updateFinpordCopy" parameterMap="FinpordCopy" >
+		update
+		tb_finpord_copy
+		set
+		<if test="finpord_seqno!=null">
+			finpord_seqno = #{finpord_seqno},
+		</if>
+		<if test="finpord_procordNo!=null">
+			finpord_procordNo = #{finpord_procordNo},
+		</if>
+		<if test="finpord_barcode!=null">
+			finpord_barcode = #{finpord_barcode},
+		</if>
+		<if test="finpord_inboundate!=null">
+			finpord_inboundate = #{finpord_inboundate},
+		</if>
+		<if test="finpord_supplier!=null">
+			finpord_supplier = #{finpord_supplier},
+		</if>
+		<if test="finpord_styno!=null">
+			finpord_styno = #{finpord_styno},
+		</if>
+		<if test="finpord_quality!=null">
+			finpord_quality = #{finpord_quality},
+		</if>
+		<if test="finpord_name!=null">
+			finpord_name = #{finpord_name},
+		</if>
+		<if test="finpord_ringsz!=null">
+			finpord_ringsz = #{finpord_ringsz},
+		</if>
+		<if test="finpord_multi!=null">
+			finpord_multi = #{finpord_multi},
+		</if>
+		<if test="finpord_tagedpr!=null">
+			finpord_tagedpr = #{finpord_tagedpr},
+		</if>
+		<if test="finpord_goldwgt!=null">
+			finpord_goldwgt = #{finpord_goldwgt},
+		</if>
+		<if test="finpord_merchwgt!=null">
+			finpord_merchwgt = #{finpord_merchwgt},
+		</if>
+		<if test="finpord_counter!=null">
+			finpord_counter = #{finpord_counter},
+		</if>
+		<if test="finpord_catagory!=null">
+			finpord_catagory = #{finpord_catagory},
+		</if>
+		<if test="finpord_goldcolor!=null">
+			finpord_goldcolor = #{finpord_goldcolor},
+		</if>
+		<if test="finpord_baslabcost!=null">
+			finpord_baslabcost = #{finpord_baslabcost},
+		</if>
+		<if test="finpord_othrcost!=null">
+			finpord_othrcost = #{finpord_othrcost},
+		</if>
+		<if test="finpord_salabcost!=null">
+			finpord_salabcost = #{finpord_salabcost},
+		</if>
+		<if test="finpord_goldpr!=null">
+			finpord_goldpr = #{finpord_goldpr},
+		</if>
+		<if test="finpord_goldlos!=null">
+			finpord_goldlos = #{finpord_goldlos},
+		</if>
+		<if test="finpord_cost!=null">
+			finpord_cost = #{finpord_cost},
+		</if>
+		<if test="finpord_armsty!=null">
+			finpord_armsty = #{finpord_armsty},
+		</if>
+		<if test="finpord_storname!=null">
+			finpord_storname = #{finpord_storname},
+		</if>
+		<if test="finpord_entsdno!=null">
+			finpord_entsdno = #{finpord_entsdno},
+		</if>
+		<if test="finpord_comments!=null">
+			finpord_comments = #{finpord_comments},
+		</if>
+		<if test="finpord_mainstono!=null">
+			finpord_mainstono = #{finpord_mainstono},
+		</if>
+		<if test="finpord_mainstoname!=null">
+			finpord_mainstoname = #{finpord_mainstoname},
+		</if>
+		<if test="finpord_mainstowgt!=null">
+			finpord_mainstowgt = #{finpord_mainstowgt},
+		</if>
+		<if test="finpord_mainstoqty!=null">
+			finpord_mainstoqty = #{finpord_mainstoqty},
+		</if>
+		<if test="finpord_mainstopr!=null">
+			finpord_mainstopr = #{finpord_mainstopr},
+		</if>
+		<if test="finpord_cert1!=null">
+			finpord_cert1 = #{finpord_cert1},
+		</if>	
+		<if test="finpord_cert2!=null">
+			finpord_cert2 = #{finpord_cert2},
+		</if>	
+			<if test="finpord_gia1!=null">
+			finpord_gia1 = #{finpord_gia1},
+		</if>	
+			<if test="finpord_gia2!=null">
+			finpord_gia2 = #{finpord_gia2},
+		</if>	
+			<if test="finpord_mainstoshape!=null">
+			finpord_mainstoshape = #{finpord_mainstoshape},
+		</if>	
+			<if test="finpord_series!=null">
+			finpord_series = #{finpord_series},
+		</if>	
+			<if test="finpord_cut1!=null">
+			finpord_cut1 = #{finpord_cut1},
+		</if>	
+			<if test="finpord_symmetry1!=null">
+			finpord_symmetry1 = #{finpord_symmetry1},
+		</if>	
+			<if test="finpord_polish1!=null">
+			finpord_polish1 = #{finpord_polish1},
+		</if>	
+			<if test="finpord_fluorescence1!=null">
+			finpord_fluorescence1 = #{finpord_fluorescence1},
+		</if>	
+			<if test="finpord_clarity1!=null">
+			finpord_clarity1 = #{finpord_clarity1},
+		</if>	
+			<if test="finpord_color1!=null">
+			finpord_color1 = #{finpord_color1},
+		</if>	
+			<if test="finpord_cut2!=null">
+			finpord_cut2 = #{finpord_cut2},
+		</if>	
+			<if test="finpord_symmetry2!=null">
+			finpord_symmetry2 = #{finpord_symmetry2},
+		</if>	
+			<if test="finpord_polish2!=null">
+			finpord_polish2 = #{finpord_polish2},
+		</if>	
+			<if test="finpord_fluorescence2!=null">
+			finpord_fluorescence2 = #{finpord_fluorescence2},
+		</if>	
+			<if test="finpord_clarity2!=null">
+			finpord_clarity2 = #{finpord_clarity2},
+		</if>	
+			<if test="finpord_color2!=null">
+			finpord_color2 = #{finpord_color2},
+		</if>	
+			<if test="finpord_substo1no!=null">
+			finpord_substo1no = #{finpord_substo1no},
+		</if>
+		<if test="finpord_substo1name!=null">
+			finpord_substo1name = #{finpord_substo1name},
+		</if>
+		<if test="finpord_substo1wgt!=null">
+			finpord_substo1wgt = #{finpord_substo1wgt},
+		</if>
+		<if test="finpord_substo1qty!=null">
+			finpord_substo1qty = #{finpord_substo1qty},
+		</if>
+		<if test="finpord_substo1pr!=null">
+			finpord_substo1pr = #{finpord_substo1pr},
+		</if>
+		<if test="finpord_substo2no!=null">
+			finpord_substo2no = #{finpord_substo2no},
+		</if>
+		<if test="finpord_substo2name!=null">
+			finpord_substo2name = #{finpord_substo2name},
+		</if>
+		<if test="finpord_substo2wgt!=null">
+			finpord_substo2wgt = #{finpord_substo2wgt},
+		</if>
+		<if test="finpord_substo2qty!=null">
+			finpord_substo2qty = #{finpord_substo2qty},
+		</if>
+		<if test="finpord_substo2pr!=null">
+			finpord_substo2pr = #{finpord_substo2pr},
+		</if>
+		<if test="finpord_substo3no!=null">
+			finpord_substo3no = #{finpord_substo3no},
+		</if>
+		<if test="finpord_substo3name!=null">
+			finpord_substo3name = #{finpord_substo3name},
+		</if>
+		<if test="finpord_substo3wgt!=null">
+			finpord_substo3wgt = #{finpord_substo3wgt},
+		</if>
+		<if test="finpord_substo3qty!=null">
+			finpord_substo3qty = #{finpord_substo3qty},
+		</if>
+		<if test="finpord_substo3pr!=null">
+			finpord_substo3pr = #{finpord_substo3pr},
+		</if>
+		<if test="finpord_reserved1!=null">
+			finpord_reserved1 = #{finpord_reserved1}
+		</if>
+					
+	
+		
+		
+		where 
+		finpord_ID=#{finpord_ID}
+	</update>
+	<delete id="deleteFinpordCopy" parameterType="string">
+		delete from
+		tb_finpord_copy
+		where
+		finpord_ID=#{finpord_ID}
+	</delete>
+	
+	<!-- 删除全部数据 -->
+	<update id="deleteAllData">
+		truncate table tb_finpord_copy
+	</update>
+	
+	<select id="findFinpordCopyByTableInfo" parameterType="java.util.Map" resultMap="BaseResultMapfinpordCopy">
+		select * from tb_finpord_copy ORDER BY finpord_inboundate DESC,finpord_seqno DESC limit #{sEcho},#{len}
+	</select>
+	
+
+</mapper>

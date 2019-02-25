@@ -1,0 +1,429 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0" />
+<link rel="stylesheet" href="/css/styleAnalysis.css" media="screen" />
+<script src="/js/jquery-1.7.2.min.js"></script>
+<script src="/js/echarts.js"></script>
+<script type="text/javascript" src="/js/plugins/layer/laydate/laydate.js"></script>
+<link href="/css/bootstrap.min.css" rel="stylesheet" />
+<link href="/css/laydate.css" rel="stylesheet" />
+<link href="/css/bootstrap-theme.min.css" rel="stylesheet" />
+<link href="/css/jquery-editable-select.min.css" rel="stylesheet" />
+<link th:href="@{/css/loading.css}" rel="stylesheet"/>
+
+<title>系列商品分析</title>
+<style type="text/css">
+* {
+	margin: 0;
+	padding: 0;
+}
+
+.mian-div {
+	width: 100%;
+	margin: 0 auto;
+	height: 100%;
+}
+
+.top-div {
+	width: 100%;
+	margin: 0 auto;
+	height: 6%;
+}
+
+.left-div {
+	width: 20%;
+	height: 94%;
+	float: left;
+	text-align: center;
+}
+
+.left-div-inner {
+	width: 80%;
+	margin: 0 auto;
+}
+
+select {
+	display: block;
+	margin: 1rem auto;
+	width: 100%;
+	height: 2rem;
+	background-color: green;
+	color: white;
+	border-radius: 0.5rem;
+}
+
+.selector {
+	margin: 0 auto;
+	text-align: left;
+}
+
+.style-selector {
+	display: inline-block;
+	width: 100%;
+}
+
+.btn {
+	width: 60%;
+	margin: 1rem auto;
+	line-height: 2rem;
+	height: 3rem;
+	color: white;
+	border-radius: 0.5rem;
+}
+
+.blue {
+	background-color: rgb(36, 135, 207);
+}
+
+.red {
+	background-color: rgb(230, 80, 70);
+}
+
+.right-div {
+	width: 80%;
+	height: 94%;
+	float: right;
+}
+
+.right-inner {
+	height: 500px;
+}
+
+.right-inner-top {
+	height: 70%;
+}
+
+.right-inner-down {
+	height: 50%;
+}
+
+table {
+	border-collapse: collapse;
+	margin: 1rem auto;
+}
+
+.displayNone {
+	display: none;
+}
+</style>
+<meta charset="utf-8">
+</head>
+<body style="height: 100%; margin: 0">
+<header>
+		<div class="row-3">
+
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<span class="button-border">
+				<a class="button-red" href="/analysis/main">返回主菜单</a>
+			</span>
+
+			<div class="slogan-index">系列商品分析</div>
+
+		</div>
+	</header>
+	<div class="mian-div">
+		<div class="left-div">
+			<div class="left-div-inner">
+				<div class="selector">
+					<div class="style-selector" >
+						<br>
+						<p>请选择月份：</p>
+						<select id="selectMonth" class="form-control"   style="background-color: green; color: black;">
+						    <option  selected="selected" value="1">1月</option>
+						    <option  value="2">2月</option>
+						    <option  value="3">3月</option>
+						    <option  value="4">4月</option>
+						    <option  value="5">5月</option>
+						    <option  value="6">6月</option>
+						    <option  value="7">7月</option>
+						    <option  value="8">8月</option>
+						    <option  value="9">9月</option>
+						    <option  value="10">10月</option>
+						    <option  value="11">11月</option>
+						    <option  value="12">12月</option>
+						 </select>
+					</div>
+				</div>
+				
+				<select id="listsupplier" class="form-control"  name="stone_supplierName" style="background-color: green; color: black;">
+					<option disabled="disabled" selected="selected" value="供应商" >供应商</option>
+					<option value="所有">所有</option>
+					<option th:each="n : ${listsupplier}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
+				</select>
+				<select id="listCounter" class="form-control"  name="stone_AreaName" style="background-color: green; color: black;">
+					<option disabled="disabled" selected="selected"  value="柜台">柜台</option>
+					<option value="所有">所有</option>
+					<option th:each="n : ${listCounter}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
+				</select>
+				<select id="listproduct" class="form-control"   style="background-color: green; color: black;">
+					<option disabled selected value="名称">名称</option>
+					<option value="所有">所有</option>
+					<option th:each="n : ${listProduct}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
+				</select>
+				<br>
+				<div>
+					   <input type="radio" name="selectTpye" value="数量" checked>
+						数量
+						<input type="radio" value="标价" name="selectTpye">
+						标价
+						<input type="radio" value="结算价" name="selectTpye">
+						结算价
+						<input type="radio" value="金重" name="selectTpye">
+						金重
+						<input type="radio" value="主石" name="selectTpye">
+						主石
+				</div>
+				<br>
+				<div class="btn blue" onclick="return button_post();">提交</div>
+				<div class="btn red" onclick="rest();">重置</div>
+				<div >
+					<form action="/analysis/downloadGraphExcelFor7311" method="post" >
+						<input type="hidden"  value="" name="context" id="conGraph1"/>
+						<input type="submit" class = " btn red" value="导出年走势图表数据">
+					</form>
+				</div>
+				<div >
+					<form action="/analysis/downloadGraphExcelFor7312" method="post" >
+						<input type="hidden"  value="" name="context" id="conGraph2"/>
+						<input type="submit" class = " btn red" value="导出月走势图表数据">
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="right-div">
+			<div class="right-inner">
+				<div class="right-inner-top">
+					<div id="container" style="height: 700px; width: 100%;"></div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	
+	
+	
+	
+	<script type="text/javascript">
+	function rest() {
+		location.reload();
+	}
+	tt();
+	function tt() {
+		var dom = document.getElementById("container");
+		var myChart = echarts.init(dom);
+		var app = {};
+		option = null;
+
+		data = [ [ "2000-06-05", 116 ], [ "2000-06-06", 129 ],
+				[ "2000-06-07", 135 ], [ "2000-06-08", 86 ],
+				[ "2000-06-09", 73 ], [ "2000-06-10", 85 ],
+				[ "2000-06-11", 73 ], [ "2000-06-12", 68 ],
+				[ "2000-06-13", 92 ], [ "2000-06-14", 130 ],
+				[ "2000-06-15", 245 ], [ "2000-06-16", 139 ],
+				[ "2000-06-17", 115 ], [ "2000-06-18", 111 ],
+				[ "2000-06-19", 309 ], [ "2000-06-20", 206 ],
+				[ "2000-06-21", 137 ], [ "2000-06-22", 128 ],
+				[ "2000-06-23", 85 ], [ "2000-06-24", 94 ],
+				[ "2000-06-25", 71 ], [ "2000-06-26", 106 ],
+				[ "2000-06-27", 84 ], [ "2000-06-28", 93 ],
+				[ "2000-06-29", 85 ], [ "2000-06-30", 73 ],
+				[ "2000-07-01", 83 ], [ "2000-07-02", 125 ],
+				[ "2000-07-03", 107 ], [ "2000-07-04", 82 ],
+				[ "2000-07-05", 44 ], [ "2000-07-06", 72 ],
+				[ "2000-07-07", 106 ], [ "2000-07-08", 107 ],
+				[ "2000-07-09", 66 ], [ "2000-07-10", 91 ],
+				[ "2000-07-11", 92 ], [ "2000-07-12", 113 ],
+				[ "2000-07-13", 107 ], [ "2000-07-14", 131 ],
+				[ "2000-07-15", 111 ], [ "2000-07-16", 64 ],
+				[ "2000-07-17", 69 ], [ "2000-07-18", 88 ],
+				[ "2000-07-19", 77 ], [ "2000-07-20", 83 ],
+				[ "2000-07-21", 111 ], [ "2000-07-22", 57 ],
+				[ "2000-07-23", 55 ], [ "2000-07-24", 60 ] ];
+
+		var dateList = data.map(function(item) {
+			return item[0];
+		});
+		var valueList = data.map(function(item) {
+			return item[1];
+		});
+
+		option = {
+
+			// Make gradient line here
+			visualMap : [ {
+				show : false,
+				type : 'continuous',
+				seriesIndex : 0,
+				min : 0,
+				max : 400
+			}, {
+				show : false,
+				type : 'continuous',
+				seriesIndex : 1,
+				dimension : 0,
+				min : 0,
+				max : dateList.length - 1
+			} ],
+
+			title : [ {
+				left : 'center',
+				text : '年走势图',
+				subtext : '示例图,数据来自输入'
+			}, {
+				top : '55%',
+				left : 'center',
+				text : '月走势图',
+				subtext : '示例图,数据来自输入'
+			} ],
+			tooltip : {
+				trigger : 'axis'
+			},
+			xAxis : [ {
+				data : dateList
+			}, {
+				data : dateList,
+				gridIndex : 1
+			} ],
+			yAxis : [ {
+				splitLine : {
+					show : false
+				}
+			}, {
+				splitLine : {
+					show : false
+				},
+				gridIndex : 1
+			} ],
+			grid : [ {
+				bottom : '60%'
+			}, {
+				top : '60%'
+			} ],
+			series : [ {
+				type : 'line',
+				showSymbol : false,
+				data : valueList
+			}, {
+				type : 'line',
+				showSymbol : false,
+				data : valueList,
+				xAxisIndex : 1,
+				yAxisIndex : 1
+			} ]
+		};
+		;
+		if (option && typeof option === "object") {
+			myChart.setOption(option, true);
+		}
+	}
+	
+	function button_post() {
+		var supplier = document.getElementById("listsupplier").value;
+		var counter = document.getElementById("listCounter").value;
+		var product = document.getElementById("listproduct").value;
+		var selectMonth = document.getElementById("selectMonth").value;
+		var selectType = $('input:radio:checked').val();
+		
+		$.ajax({
+			url : "/analysis/supplierFind731",
+			type : "post",
+			data : {
+				supplier : supplier,
+				counter : counter,
+				product : product,
+				selectMonth : selectMonth,
+				selectType : selectType,
+			},
+			dateType : "json",
+			success : function(result) {
+				//alert(result);
+				var rs = result.split("@");
+				
+				var s1 = rs[0].substring(1, rs[0].length - 1).split(",");
+				var s2 = rs[1].substring(1, rs[1].length - 1).split(",");
+				var s3 = rs[2].substring(1, rs[2].length - 1).split(",");
+				var s4 = rs[3].substring(1, rs[3].length - 1).split(",");
+				//填充下载图表数据
+				var conGraph1 ="";
+				var conGraph2="";
+				for(var i=0;i<s1.length;i++) {
+					conGraph1 = conGraph1 +s2[i]+"&"+s1[i]+"&";
+				}
+				for(var i=0;i<s3.length;i++) {
+					conGraph2 = conGraph2 +s4[i]+"&"+s3[i]+"&";
+				}
+				document.getElementById("conGraph2").value=conGraph2;
+				document.getElementById("conGraph1").value=conGraph1;
+				var dom = document.getElementById("container");
+				var myChart = echarts.init(dom);
+				var app = {};
+				option = null;
+				option = {
+
+					    visualMap: [{
+					        show: false,
+					        type: 'continuous',
+					        seriesIndex: 0,
+					        min: 0,
+					        max: 12
+					    }, {
+					        show: false,
+					        type: 'continuous',
+					        seriesIndex: 1,
+					        dimension: 0,
+					        min: 0,
+					        max: 23
+					    }],
+
+
+					    title: [{
+					        left: 'center',
+					        text: '年走势图'
+					    }, {
+					        top: '55%',
+					        left: 'center',
+					        text: '月走势图'
+					    }],
+					    tooltip: {
+					        trigger: 'axis'
+					    },
+					    xAxis: [{
+					        data: s2
+					    }, {
+					        data:s4 ,
+					        gridIndex: 1
+					    }],
+					    yAxis: [{
+					        splitLine: {show: false}
+					    }, {
+					        splitLine: {show: false},
+					        gridIndex: 1
+					    }],
+					    grid: [{
+					        bottom: '60%'
+					    }, {
+					        top: '60%'
+					    }],
+					    series: [{
+					        type: 'line',
+					        showSymbol: false,
+					        data: s1
+					    }, {
+					        type: 'line',
+					        showSymbol: false,
+					        data: s3,
+					        xAxisIndex: 1,
+					        yAxisIndex: 1
+					    }]
+					};;
+					if (option && typeof option === "object") {
+					    myChart.setOption(option, true);
+					}
+			}
+		});
+
+	}
+	</script>
+</body>
+</html>

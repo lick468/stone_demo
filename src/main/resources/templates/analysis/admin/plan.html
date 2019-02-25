@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<!-- 全局js -->
+    <script src="/js/jquery.min.js?v=2.1.4" type="text/javascript"></script>
+    <script src="/js/jquery-1.12.4.js"  type="text/javascript"></script>
+    <script src="/js/bootstrap.min.js?v=3.3.6" type="text/javascript"></script>
+    <script src="/js/jquery.dataTables.min.js"  type="text/javascript"></script>
+      
+    <script src="/js/dataTables.bootstrap.min.js"  type="text/javascript"></script>
+    <script src="/js/plugins/layer/laydate/laydate.js" type="text/javascript"></script>
+     <script src="/js/movingwindow.js" type="text/javascript"></script>
+    <script src="/js/addtable.js" type="text/javascript"></script>
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>计划销售数据管理</title>
+<link th:href="@{/css/bootstrap.min.css?v=3.3.6}" rel="stylesheet"/>
+<link th:href="@{/css/bootstrap-theme.min.css?v=3.3.7}" rel="stylesheet"/>
+<link th:href="@{/css/loading.css}" rel="stylesheet"/>
+<style type="text/css">
+.file-wrap {  
+
+    position: relative;  
+    width: 300px;  
+    height: 200px;  
+    border-radius: 15px;  
+    background-color: #700000;  
+    background-repeat: no-repeat;  
+    background-position: 0 0;  
+    background-attachment: scroll; 
+    margin-left: 200px; 
+      
+    text-align: center;  
+    font-size: 60px;  
+    color: white;  
+    cursor: pointer;  
+    overflow: hidden;  
+    float: left;  
+    margin-right: 20px;  
+    z-index: 1;  
+}  
+  
+    .file-wrap input {  
+       text-align: center;
+        position: absolute;  
+        width: 300px;  
+        height: 200px;  
+        font-size: 0;  
+        opacity: 0;  
+        -moz-opacity: 0;  
+        left: 0px;  
+        top: 0px;  
+        cursor: pointer;  
+        z-index: 2; 
+         
+    } 
+    .space{
+    	height:100px;
+    }
+    .head {
+	background-color: #C0C0C0;
+	text-align: center;
+	height: 70px;
+	font-family: "宋体";
+	font-size: 50px;
+	font-style: oblique;
+}
+
+</style>
+</head>
+<body>
+<div class="head">导入计划销售excel文件</div>
+<div class="space"> </div>
+<form  method="post" id="uploadForm" enctype="multipart/form-data">
+<div class="file-wrap" > 		
+	<input type="file" class="btn_procord" id="fileName" name="file" accept=".xls" >  
+	Excel
+	<br>导入	
+</div>
+
+<button type="button" id="upload" class="file-wrap" onclick="return checkFile();">上传文件</button>
+</form>
+ <!-- 遮罩层 开始-->
+ <div id="loading" style="display:none;">
+    <img src="/img/loading.gif" alt="正在加载中，请耐心等待" >
+    <span >正在加载中，请耐心等待</span>
+</div>
+<!-- 遮罩层结束 -->
+ 
+<script type="text/javascript" th:inline="javascript">
+ function checkFile(){
+	
+	var f =  document.getElementById("fileName").files;
+	if(f.length==0) {
+		alert("请选择文件！" );
+		return false;
+	}
+	var size = f[0].size/1024;//文件大小   单位'kb'
+	var fileName = f[0].name;//文件名称
+	var index = fileName.lastIndexOf(".");
+	var suffix =fileName.substring(index+1);//文件后缀名
+	//alert(fileName +"==="+size+"==="+suffix);
+	
+	if(suffix.indexOf("xls")==-1) {
+		alert("文件类型不对，请重新选择！");
+		return false;
+	}else if(size <=0){
+		alert("文件大小为空，请选择其它的文件 ！");
+		return false;
+	}else {
+		$('#loading').show();
+		 var formData = new FormData($('#uploadForm')[0]);
+         $.ajax({
+             type: 'post',
+             url: "/analysis/admin/planexceltosql",
+             data: formData,
+             cache: false,
+             processData: false,
+             contentType: false,
+             success:function(result) {
+            	 $('#loading').hide();
+                alert(result);
+                 window.location.href="/analysis/admin/planhtml"; 
+             }
+         });
+		return true;
+	}
+
+ }
+ 
+ 
+ </script>
+</body>
+</html>

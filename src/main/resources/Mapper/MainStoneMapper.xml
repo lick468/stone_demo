@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.MainStoneDao">
+	<resultMap type="com.nenu.domain.MainStone" id="MainStoneMap">
+		<result column="mainStone_ID" property="mainStone_ID"/>
+		<result column="mainStone_start" property="mainStone_start"/>
+		<result column="mainStone_end" property="mainStone_end"/>
+		
+	</resultMap>
+	
+	<parameterMap type="com.nenu.domain.MainStone" id="MainStone"/>
+
+	<select id="findMainStoneById"   resultMap="MainStoneMap" parameterType="java.lang.Integer" >
+		select * from tb_mainStone where mainStone_ID=#{mainStone_ID} 
+	</select>
+	
+	<select id="findAllMainStone"   resultMap="MainStoneMap">
+		select * from tb_mainStone order by  mainStone_ID
+	</select>
+	<insert id="insertMainStone" parameterMap="MainStone" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_mainStone(mainStone_ID,mainStone_start,mainStone_end)
+		values 
+		(#{mainStone_ID},#{mainStone_start},#{mainStone_end})
+	</insert>
+	
+	<update id="updateMainStone" parameterMap="MainStone">
+		update
+		tb_mainStone
+		set
+		<if test="mainStone_start!=null">
+			mainStone_start = #{mainStone_start}
+		</if>
+		<if test="mainStone_end!=null">
+			,mainStone_end = #{mainStone_end}
+		</if>		
+		where 
+		mainStone_ID=#{mainStone_ID}
+	</update>
+	
+	<delete id="deleteMainStone" parameterType="java.lang.Integer">
+		delete from
+		tb_mainStone
+		where
+		mainStone_ID=#{mainStone_ID}
+	</delete>
+
+</mapper>

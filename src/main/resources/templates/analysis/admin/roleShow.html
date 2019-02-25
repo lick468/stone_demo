@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+ <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+
+    <title> 权限管理</title>
+
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <!--[if lt IE 9]>
+    <meta http-equiv="refresh" content="0;ie.html" />
+    <![endif]-->
+
+   <script src="/admin/js/jquery.min.js"></script>
+    <script src="/admin/js/bootstrap.min.js"></script>
+        
+	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+	<link th:href="@{/css/bootstrap-theme.min.css}" rel="stylesheet"/>
+	<link th:href="@{/css/default.css}" rel="stylesheet"/>
+	<link th:href="@{/css/custom.css}" rel="stylesheet"/>
+	<link th:href="@{/css/stone-min.css}" rel="stylesheet"/>
+<style type="text/css">
+.col{
+border:1px solid #00BFFF;
+}
+.hid{
+display: none;
+}
+.btn_search{
+  display: inline-block;
+  padding: 9px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;   
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #3385FF;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 3px #999;
+
+}
+.btn_search:hover {background-color: #3366FF}
+
+.btn_search:active {
+  background-color: #3366FF;
+  box-shadow: 0 1px #666;
+  transform: translateY(4px);
+}
+</style>
+
+
+</head>
+<body>
+<div id="roleUserList" th:text="${roleList}" class="hid"></div>
+
+<div>
+<div  class="container" style="text-align: center;">
+			<h1>人员权限管理</h1>
+			<legend>      
+            </legend>
+	</div>
+	
+</div>
+
+<div class="row">
+  <div class="col" >
+    <div class=""  style="margin-left: 50px;">
+      
+      <div style="text-align: center;color: red;">
+      	<h4>可选择的查看内容</h4>
+      </div>
+      
+      	<form   method="post" class="form-horizontal">
+
+            <input type="hidden" id="selectedEmployeeRole"  th:value="${id}"/>
+	       <table id="example" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+       		<tr>
+                <th><label class="checkbox-inline ">
+				<input type="checkbox" id="boxAll"  onclick="selAll(this);"> 全选/全不选
+			</label>
+			<label class="checkbox-inline">
+				<input type="checkbox" id="boxAll"  onclick="reAll();"> 反选
+			</label></th>
+                <th>可操作内容</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr >
+                <td ><input type="checkbox" id="index1" name="checkbox" value="index1"></td>
+                <td >供应商分析模型</td>                 
+             </tr>
+             <tr >
+                <td ><input type="checkbox" id="index2" name="checkbox" value="index2"></td>
+                <td >销售排名分析模型</td>                    
+             </tr>
+             <tr >
+                <td ><input type="checkbox" id="index3" name="checkbox" value="index3"></td>
+                <td >系列商品分析模型</td>                   
+             </tr>
+             <tr >
+                <td ><input type="checkbox" id="index4" name="checkbox" value="index4"></td>
+                <td >管理分析模型</td>                                
+             </tr>
+             <tr >
+                <td ><input type="checkbox" id="index5" name="checkbox" value="index5"></td>
+                <td >销售分析模型</td>
+             </tr>
+             <tr >
+                <td ><input type="checkbox" id="index6" name="checkbox" value="index6"></td>
+                <td >分类销售数据汇总</td>             
+             </tr>
+             <tr >
+                <td ><input type="checkbox" id="index7" name="checkbox" value="index7"></td>
+                <td >销售汇总数据分析</td>           
+             </tr>
+
+        </tbody>
+      
+    </table>
+	       
+	
+			
+			
+			
+			<div style="height:40px;"></div>
+			<div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <input class="btn_search" type="button"  onclick="insertRoleSelect();" value="提交"/>&nbsp;&nbsp;
+                        <input class="btn_search" type="reset" value="重置"/>&nbsp;&nbsp;
+                        <input class="btn_search" type="button" value="返回" onclick="history.back()"/>
+                    </div>
+           </div>
+		</form>
+      </div>
+    </div>
+  </div>
+  
+
+
+<script type="text/javascript">
+
+
+function insertRoleSelect() {
+	 
+	var role =document.getElementById("selectedEmployeeRole").value; 
+	var id="";
+	var chckBox = document.getElementsByName("checkbox");    //所有的选择框其那么都是checkBox  
+    var num = chckBox.length;  
+    var selected="";
+    for(var index =0 ; index<num ; index++){      
+    	if(chckBox[index].checked){
+    		selected += chckBox[index].value+",";
+    	}  
+    }  
+    
+	
+	alert("开始写入数据库");
+	//alert(role+"\n"+selected);
+	
+	$.ajax({
+		 url:"/analysis/admin/insertEmployeeRole",
+		 type:"post",
+		 	data:{
+		 		role:role,
+		 		selected:selected,
+		 	},
+		 	dateType:"json",
+		 	success:function(result) {
+		 		//alert(result);
+		 		location.reload();
+		 	}	
+		 });
+	alert("分配完毕");
+}
+
+
+
+function selAll(obj){  
+    var chckBoxSign = document.getElementById("boxAll");       //ckb 全选/反选的选择框id  
+    var chckBox = document.getElementsByName("checkbox");    //所有的选择框其那么都是checkBox  
+    var num = chckBox.length;  
+    if(chckBoxSign.checked){  
+        for(var index =0 ; index<num ; index++){  
+            chckBox[index].checked = true;  
+            }  
+    }else{  
+        for(var index =0 ; index<num ; index++){  
+            chckBox[index].checked = false;  
+            }  
+        }  
+    }  
+function reAll(){  
+    var chckBoxSign = document.getElementById("reAll");  //boxAll 全选/反选的选择框id  
+    var chckBox = document.getElementsByName("checkbox");    //所有的选择框其那么都是checkBox  
+   // alert(typeof chckBoxSign);
+  //  alert(typeof chckBox);
+    var num = chckBox.length;   
+    for(var index =0 ; index<num ; index++){  
+        chckBox[index].checked = !chckBox[index].checked;  
+    }  
+}  
+
+
+$(document).ready(function() {
+	
+	 var list=[];
+	 list= document.getElementById("roleUserList").innerHTML ;
+	 var chckBox = document.getElementsByName("checkbox"); 
+	 var num = chckBox.length;  
+	 for(var index =0 ; index<num ; index++){  
+		 if(list.indexOf(chckBox[index].value)!=-1) {
+			 chckBox[index].checked =true;
+		 }    
+	 }
+});
+ 
+</script>
+
+</body>
+</html>

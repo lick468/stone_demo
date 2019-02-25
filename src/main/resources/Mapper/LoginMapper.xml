@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.LoginDao">
+	<!-- 结果映射 -->  
+	<resultMap id="userMap" type="com.nenu.domain.User">
+	        <id property="user_ID" column="user_ID"/>
+	        <result property="user_name" column="user_name"/>
+	        <result property="user_password" column="user_password"/>
+	        <result property="user_role" column="user_role"/>
+	        
+	
+	 </resultMap>
+	<parameterMap type="com.nenu.domain.User" id="User"></parameterMap>
+	
+	
+	
+	<select id="findUserByUser"   resultMap="userMap">
+		select * from tb_user where user_name=#{user_name} and user_role=#{user_role}
+	</select>
+	<select id="findUserByUserName"   resultMap="userMap">
+		select * from tb_user where user_name=#{user_name} 
+	</select>
+	<select id="findUserByUserID"   resultMap="userMap" parameterType="int" >
+		select * from tb_user where user_ID=#{user_ID} 
+	</select>
+	
+	<select id="findRoleList"   resultMap="userMap">
+		select * from tb_user 
+	</select>
+	<insert id="createUser" parameterMap="User" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_user(user_ID,user_name,user_password,user_role)
+		values 
+		(#{user_ID},#{user_name},#{user_password},#{user_role})
+	</insert>
+	
+	<update id="updateUser" parameterMap="User">
+		update
+		tb_user
+		set
+		<if test="user_name!=null">
+			user_name = #{user_name},
+		</if>
+		<if test="user_role!=null">
+			user_role = #{user_role},
+		</if>
+		<if test="user_password!=null">
+			user_password=#{user_password}
+		</if>
+		where 
+		user_ID=#{user_ID}
+	</update>
+	
+
+
+</mapper>

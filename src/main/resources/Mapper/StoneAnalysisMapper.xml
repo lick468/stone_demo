@@ -1,0 +1,1131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nenu.dao.StoneAnalysisDao">
+	<!-- 结果映射 -->
+	<resultMap id="userAnalysisMap" type="com.nenu.domain.StoneAnalysis">
+		<id property="id" column="id" />
+		<id property="sid" column="sid" />
+		<result property="source" column="source" />
+		<result property="room" column="room" />
+		<result property="date" column="date" />
+		<result property="product" column="product" />
+		<result property="bouns" column="bouns" />
+		<result property="cut" column="cut" />
+		<result property="cardNo" column="cardNo" />
+		<result property="time" column="time" />
+		<result property="cost" column="cost" />
+		<result property="circle" column="circle" />
+		<result property="supplier" column="supplier" />
+		<result property="series" column="series" />
+		<result property="style" column="style" />
+		<result property="remark" column="remark" />
+		<result property="area" column="area" />
+		<result property="orderNo" column="orderNo" />
+		<result property="barcode" column="barcode" />
+		<result property="quality" column="quality" />
+		<result property="centerstonename" column="centerstonename" />
+		<result property="settlementprice" column="settlementprice" />
+		<result property="goldweight" column="goldweight" />
+		<result property="centerstone" column="centerstone" />
+		<result property="goldprice" column="goldprice" />
+		<result property="listprice" column="listprice" />
+		<result property="discount" column="discount" />
+		<result property="wage" column="wage" />
+		<result property="counter" column="counter" />
+		<result property="exchangegoldweight" column="exchangegoldweight" />
+		<result property="deprecitiongoldweight" column="deprecitiongoldweight" />
+		<result property="exchangemoney" column="exchangemoney" />
+		<result property="sort" column="sort" />
+		<result property="centerstoneNo" column="centerstoneNo" />
+		<result property="count" column="count" />
+		<result property="sidestoneNo" column="sidestoneNo" />
+		<result property="sidestoneweight" column="sidestoneweight" />
+		<result property="salesman" column="salesman" />
+		<result property="color" column="color" />
+		<result property="level" column="level" />
+		<result property="priceNo" column="priceNo" />
+		<result property="areacount" column="areacount" />
+		<result property="roomcount" column="roomcount" />
+		<result property="countercount" column="countercount" />
+		<result property="areamoney" column="areamoney" />
+		<result property="roommoney" column="roommoney" />
+		<result property="countermoney" column="countermoney" />
+		<result property="settlementpriceSum" column="settlementpriceSum" />
+		<result property="numberSum" column="numberSum" />
+		<result property="listpriceSum" column="listpriceSum" />
+		<result property="goldweightSum" column="goldweightSum" />
+		<result property="centerstoneSum" column="centerstoneSum" />
+		<result property="productmoney" column="productmoney" />
+		<result property="productsum" column="productsum" />
+		<result property="sEcho" column="sEcho" />
+		<result property="len" column="len" />
+		<!-- <result property="settlementpriceSum2" column="settlementpriceSum2" /> -->
+		<!-- <result property="numberSum2" column="numberSum2" /> -->
+		<!-- <result property="settlementpriceSum3" column="settlementpriceSum3" /> -->
+		<!-- <result property="numberSum3" column="numberSum3" /> -->
+	</resultMap>
+	<!-- 单条插入 -->
+	<insert id="insertStone" parameterType="StoneAnalysis" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		stone(id, sid,source, room, bouns, cut, cardNo, time, cost, circle,
+		supplier, series, style, remark, area, orderNo, barcode,
+		quality, centerstonename, product, settlementprice, goldweight, goodweight,
+		centerstone, goldprice, listprice, discount, wage, counter, exchangegoldweight,
+		deprecitiongoldweight, exchangemoney, sort, centerstoneNo, count, date, sidestoneNo,
+		sidestoneweight, certificateNo, salesman, color, level, priceNo)
+		values
+		(#{id},#{sid},#{source},#{room},#{bouns},#{cut},#{cardNo},
+		#{time},#{cost},#{circle},#{supplier},#{series},#{style},
+		#{remark},#{area},#{orderNo},#{barcode},#{quality},#{centerstonename},
+		#{product},#{settlementprice},#{goldweight},#{goodweight},#{centerstone},
+		#{goldprice},#{listprice},#{discount},#{wage},#{counter},#{exchangegoldweight},
+		#{deprecitiongoldweight},#{exchangemoney},#{sort},#{centerstoneNo},#{count},#{date},
+		#{sidestoneNo},#{sidestoneweight},#{certificateNo},#{salesman},#{color},#{level},
+		#{priceNo})
+	</insert>
+	<!-- 批量插入 -->
+	<insert id="batchInsertStone" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		stone(id, sid,source, room, bouns, cut, cardNo, time, cost, circle,
+		supplier, series, style, remark, area, orderNo, barcode,
+		quality, centerstonename, product, settlementprice, goldweight, goodweight,
+		centerstone, goldprice, listprice, discount, wage, counter, exchangegoldweight,
+		deprecitiongoldweight, exchangemoney, sort, centerstoneNo, count, date, sidestoneNo,
+		sidestoneweight, certificateNo, salesman, color, level, priceNo)
+		values
+		<foreach collection="list" item="stone" separator=",">
+		(#{stone.id},#{stone.sid},#{stone.source},#{stone.room},#{stone.bouns},#{stone.cut},#{stone.cardNo},
+		#{stone.time},#{stone.cost},#{stone.circle},#{stone.supplier},#{stone.series},#{stone.style},
+		#{stone.remark},#{stone.area},#{stone.orderNo},#{stone.barcode},#{stone.quality},#{stone.centerstonename},
+		#{stone.product},#{stone.settlementprice},#{stone.goldweight},#{stone.goodweight},#{stone.centerstone},
+		#{stone.goldprice},#{stone.listprice},#{stone.discount},#{stone.wage},#{stone.counter},#{stone.exchangegoldweight},
+		#{stone.deprecitiongoldweight},#{stone.exchangemoney},#{stone.sort},#{stone.centerstoneNo},#{stone.count},#{stone.date},
+		#{stone.sidestoneNo},#{stone.sidestoneweight},#{stone.certificateNo},#{stone.salesman},#{stone.color},#{stone.level},
+		#{stone.priceNo})
+		</foreach>
+		
+	</insert>
+	
+	<select id="findAllStone" parameterType="String" resultMap="userAnalysisMap">
+		select * from stone 
+	</select>
+	<select id="findStoneByTableInfo" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select * from stone limit #{sEcho},#{len}
+	</select>
+	<select id="findProductOfIndex814" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select product,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		 where product!='' 
+		 and date <![CDATA[ >= ]]>#{start}
+		 and date <![CDATA[ <= ]]>#{end}
+		 <if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		 GROUP BY product,date ORDER BY  numberSum desc 
+	</select>
+	<select id="findProductOfIndex813" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select product,date,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		 where product!='' 
+		 and date <![CDATA[ >= ]]>#{start}
+		 and date <![CDATA[ <= ]]>#{end}
+		 <if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		 GROUP BY product ORDER BY numberSum desc 
+	</select>
+	<select id="findProductOfIndex812" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select product,date,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		 where product!='' 
+		 and date <![CDATA[ >= ]]>#{start}
+		 and date <![CDATA[ <= ]]>#{end}
+		 <if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		 GROUP BY product,date ORDER BY numberSum desc 
+	</select>
+	<select id="findProductOfIndex811" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select product,date,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		where product!='' 
+		 and date <![CDATA[ >= ]]>#{start}
+		 and date <![CDATA[ <= ]]>#{end}
+		 <if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		 GROUP BY product,date ORDER BY date 
+	</select>
+	
+	<select id="findDateForIndex8888" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select area,room,counter,product,settlementprice,listprice,goldweight,centerstone,date from stone
+		where product!='' 
+		 and date <![CDATA[ >= ]]>#{start}
+		 and date <![CDATA[ <= ]]>#{end}
+		<if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+	</select>
+	<select id="findCompareDateAreaOfIndex822" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select area,room,counter,product,date,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		where area!='' 
+		 and date <![CDATA[ >= ]]>#{start}
+		 and date <![CDATA[ <= ]]>#{end}
+		 <if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		 GROUP BY area ORDER BY numberSum desc
+	</select>
+	<select id="findCompareDateProductOfIndex822" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select area,room,counter,product,date,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		 where product!='' 
+		 and date <![CDATA[ >= ]]>#{start}
+		 and date <![CDATA[ <= ]]>#{end}
+		 <if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		 GROUP BY product ORDER BY numberSum desc
+	</select>
+	<select id="findCompareDateCounterOfIndex822" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select area,room,counter,product,date,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		 where counter!='' 
+		 and date <![CDATA[ >= ]]>#{start}
+		 and date <![CDATA[ <= ]]>#{end}
+		 <if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		 GROUP BY counter ORDER BY numberSum desc
+	</select>
+	<select id="findCompareDateRoomOfIndex822" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select area,room,counter,product,date,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		 where room!='' 
+		 and date <![CDATA[ >= ]]>#{start}
+		 and date <![CDATA[ <= ]]>#{end}
+		 <if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		 GROUP BY room ORDER BY numberSum desc
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<select id="findSupplierForIndex11" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select supplier,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum 
+		from stone
+		 where supplier!='' 
+		 and date <![CDATA[ >= ]]>#{start}
+		 and date <![CDATA[ <= ]]>#{end}
+		 <if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		 GROUP BY supplier ORDER BY  numberSum desc 
+	</select>
+	<select id="findOneSupplierForIndex11" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select supplier,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum  
+		from stone
+		 where supplier = #{supplier}
+		 and date <![CDATA[ >= ]]>#{start}
+		 and date <![CDATA[ <= ]]>#{end}
+		 <if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		 GROUP BY supplier 
+	</select>
+	
+	<select id="findStoneByCounterAndTimeOfIndex9" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select counter,date,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		 where 
+		 date <![CDATA[ >= ]]>#{start}
+		 and date <![CDATA[ <= ]]>#{end}
+		 <if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		 
+		 GROUP BY counter,date  ORDER BY date 
+	</select>
+	<select id="findStoneByProductAndTimeOfIndex9" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select counter,date,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum  
+		from stone
+		 where 
+		 date <![CDATA[ >= ]]>#{start}
+		 and date <![CDATA[ <= ]]>#{end}
+		 <if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		 GROUP BY product,date  ORDER BY date 
+	</select>
+	<select id="findAreaFor742" parameterType="String" resultMap="userAnalysisMap">
+		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum  
+		from stone
+		where
+		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		GROUP BY area ORDER BY numberSum DESC 
+	</select>
+	<select id="findRoomFor742" parameterType="String" resultMap="userAnalysisMap">
+		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum  
+		from stone
+		where
+		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		GROUP BY room ORDER BY numberSum DESC 
+	</select>
+	<select id="findCounterFor742" parameterType="String" resultMap="userAnalysisMap">
+		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum  
+		from stone
+		where
+		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		GROUP BY counter ORDER BY numberSum DESC 
+	</select>
+	<select id="findCompareDataSetByParams" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select area,room,counter,product,settlementprice,date from stone
+		where
+		area = #{area}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		<if test="start!=null">
+			and date <![CDATA[ >= ]]>
+			#{start}
+		</if>
+		<if test="end!=null">
+			and date <![CDATA[ <= ]]>
+			#{end}
+		</if>
+	</select>
+	<select id="findTwoYearsDataSetForCompare" resultMap="userAnalysisMap">
+		select area,date,COUNT(date) as numberSum, SUM(settlementprice) AS settlementpriceSum
+		from stone
+		where
+		area = #{area}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		GROUP BY area,date ORDER BY date
+	</select>
+
+
+	<select id="findStoneByAreaAndTimeForNumberSumDemo" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select area,date,COUNT(date) as numberSum from stone
+		where
+		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		GROUP BY area,date ORDER BY date
+	</select>
+	<select id="findStoneByAreaAndTimeForNumberSum" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select area,date,COUNT(date) as numberSum from stone
+		where
+		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		GROUP BY area,date ORDER BY date
+	</select>
+	<select id="findStoneByAreaAndTimeForSettlementpriceSum" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select area,date,SUM(settlementprice) AS settlementpriceSum from stone
+		where
+		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		GROUP BY area,date ORDER BY date
+	</select>
+
+	<select id="findExchangeByParams" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select * from stone
+		where
+		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		<if test="supplier!=null">
+			and supplier = #{supplier}
+		</if>
+		
+
+	</select>
+
+	<select id="findExchangeByParamsFor725" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		where
+		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		<if test="supplier!=null">
+			and supplier = #{supplier}
+		</if>
+		GROUP BY product,source
+	</select>
+	
+
+	<!-- //index  711   712 -->
+	<select id="findStoneBySupplier" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select * from stone
+		where
+		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		<if test="supplier!=null">
+			and supplier = #{supplier}
+		</if>
+		<if test="quality!=null">
+			and quality = #{quality}
+		</if>
+	</select>
+	<!-- //index  711 -->
+	<select id="findStoneBySupplierFor711" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		where
+		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		<if test="supplier!=null">
+			and supplier = #{supplier}
+		</if>
+		GROUP BY date ORDER BY date
+	</select>
+
+
+
+
+
+
+
+
+
+	<select id="findProductBySupplierAndCounter" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select * from stone
+		where
+		supplier = #{supplier} and counter = #{counter}
+
+	</select>
+
+	<select id="findStoneBySupplierAndProductForNumberSum" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select *,COUNT(*) AS numberSum
+		from stone
+		where
+		supplier=#{supplier} and product=#{product}
+		<if test="start!=null">
+			and date <![CDATA[ >= ]]>
+			#{start}
+		</if>
+		<if test="end!=null">
+			and date <![CDATA[ <= ]]>
+			#{end}
+		</if>
+		GROUP BY date ORDER BY date
+	</select>
+	<select id="findStoneBySupplierAndProductForSettlementpriceSum" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select *,SUM(settlementprice) AS settlementpriceSum
+		from stone
+		where
+		supplier=#{supplier} and product=#{product}
+		<if test="start!=null">
+			and date <![CDATA[ >= ]]>
+			#{start}
+		</if>
+		<if test="end!=null">
+			and date <![CDATA[ <= ]]>
+			#{end}
+		</if>
+		GROUP BY date ORDER BY date
+	</select>
+
+	<select id="findStoneBySupplierAndProduct" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select * from stone
+		where
+		supplier=#{supplier}
+		and product=#{product}
+		<if test="start!=null">
+			and date <![CDATA[ >= ]]>
+			#{start}
+		</if>
+		<if test="end!=null">
+			and date <![CDATA[ <= ]]>
+			#{end}
+		</if>
+	</select>
+
+
+	<select id="findStoneByProduct" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select * from stone
+		where
+		product=#{productName}
+		<if test="start!=null">
+			and date <![CDATA[ >= ]]>
+			#{start}
+		</if>
+		<if test="end!=null">
+			and date <![CDATA[ <= ]]>
+			#{end}
+		</if>
+
+	</select>
+	<select id="findStoneCountNumber" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select supplier,date,COUNT(*) AS countSum
+		from stone
+		where
+		supplier=#{supplier}
+		<if test="start!=null">
+			and date <![CDATA[ >= ]]>
+			#{start}
+		</if>
+		<if test="end!=null">
+			and date <![CDATA[ <= ]]>
+			#{end}
+		</if>
+		GROUP BY date ORDER BY date
+	</select>
+
+	<select id="findStoneSellNumber" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select supplier,date,SUM(settlementprice) AS settlementpriceSum
+		from stone
+		where
+		supplier=#{supplier}
+		<if test="start!=null">
+			and date <![CDATA[ >= ]]>
+			#{start}
+		</if>
+		<if test="end!=null">
+			and date <![CDATA[ <= ]]>
+			#{end}
+		</if>
+		GROUP BY date ORDER BY date
+	</select>
+
+	<!-- //productnum  712-->
+
+	<select id="findStoneBySupplierForProductSum" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		where
+		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="quality!=null">
+			and quality = #{quality}
+		</if>
+		<if test="supplier!=null">
+			and supplier = #{supplier}
+		</if>
+		GROUP BY product
+	</select>
+
+	
+
+	<!-- //s743 -->
+	<select id="findStoneByCounter" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select * from stone
+		where source = "销售" 
+		<if test="start!=null">
+			and date <![CDATA[ >= ]]>
+			#{start}
+		</if>
+		<if test="end!=null">
+			and date <![CDATA[ <= ]]>
+			#{end}
+		</if>
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+	</select>
+	<select id="findStoneByCounterFor743" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		where source = "销售" 
+		and date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		GROUP BY product
+	</select>
+	
+
+	<!-- //s744 -->
+	<select id="findStoneByArea" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select * from stone
+		where source = "销售" 
+		and date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		<if test="quality!=null">
+			and quality = #{quality}
+		</if>
+	</select>
+	<select id="findStoneFor744" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		where source = "销售" 
+		and date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		<if test="quality!=null">
+			and quality = #{quality}
+		</if>
+		GROUP BY product
+	</select>
+	
+	
+
+
+	<!-- 地区75 -->
+	<select id="findAreaAccountByProductAndTime" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		SELECT *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum 
+		FROM stone
+		where source = "销售" 
+		<if test="start!=null">
+			and date <![CDATA[ >= ]]>#{start}
+		</if>
+		<if test="end!=null">
+			and date <![CDATA[ <= ]]>#{end}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		GROUP BY area ORDER BY COUNT(*)
+	</select>
+	<!-- 门店75 -->
+	<select id="findRoomAccountByProductAndTime" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		SELECT *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum 
+		FROM stone
+		where source = "销售"
+		<if test="start!=null">
+			and date <![CDATA[ >= ]]>#{start}
+		</if>
+		<if test="end!=null">
+			and date <![CDATA[ <= ]]>#{end}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		GROUP BY room ORDER BY COUNT(*)
+	</select>
+	<!-- 柜台75 -->
+	<select id="findCounterAccountByProductAndTime" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		SELECT *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum 
+		FROM stone
+		where source = "销售"
+		<if test="start!=null">
+			and date <![CDATA[ >= ]]>#{start}
+		</if>
+		<if test="end!=null">
+			and date <![CDATA[ <= ]]>#{end}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		GROUP BY counter ORDER BY COUNT(*)
+	</select>
+
+	
+
+
+
+	<select id="findStoneByAll" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select * from stone
+		where source = "销售"
+		<if test="start!=null">
+			and date <![CDATA[ >= ]]>
+			#{start}
+		</if>
+		<if test="end!=null">
+			and date <![CDATA[ <= ]]>
+			#{end}
+		</if>
+	</select>
+ <select id="findProductByTime" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum 
+		from stone
+		where source = "销售"
+		<if test="start!=null">
+			and date <![CDATA[ >= ]]>
+			#{start}
+		</if>
+		<if test="end!=null">
+			and date <![CDATA[ <= ]]>
+			#{end}
+		</if>
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="quality!=null">
+			and quality = #{quality}
+		</if>
+		GROUP BY product 
+	</select>
+	
+	<!-- 删除一条数据 -->
+	<delete id="deleteOneData" parameterType="java.lang.Integer">
+		delete from
+		stone
+		where
+		id=#{id}
+	</delete>
+	<!-- 删除全部数据 -->
+	<update id="deleteAllData">
+		truncate table stone
+	</update>
+	<!-- source -->
+	<select id="findStoneForSource" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		where
+		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		<if test="source!=null">
+			and source = #{source}
+		</if>
+		<if test="supplier!=null">
+			and supplier = #{supplier}
+		</if>
+		<if test="quality!=null">
+			and quality = #{quality}
+		</if>
+		GROUP BY source 
+	</select>
+	
+	
+	
+	<!-- source -->
+	<select id="findStoneBySource" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select * from stone
+		where  
+		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		<if test="source!=null">
+			and source = #{source}
+		</if>
+		<if test="supplier!=null">
+			and supplier = #{supplier}
+		</if>
+		<if test="quality!=null">
+			and quality = #{quality}
+		</if>
+	</select>
+	<!-- index722   index723 -->
+	<select id="findStoneFor722And723" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select * from stone
+		where  
+		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		<if test="priceNo!=null">
+			and priceNo = #{priceNo}
+		</if>
+		<if test="style!=null">
+			and style = #{style}
+		</if>
+		<if test="supplier!=null">
+			and supplier = #{supplier}
+		</if>
+	</select>
+	<!-- index723 -->
+	<select id="findStoneFor723" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		where 
+ 		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		<if test="style!=null">
+			and style = #{style}
+		</if>
+		<if test="supplier!=null">
+			and supplier = #{supplier}
+		</if>
+		GROUP BY style
+	</select>
+	<!-- index722 -->
+	<select id="findStoneFor722" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		where 
+ 		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		<if test="priceNo!=null">
+			and priceNo = #{priceNo}
+		</if>
+		<if test="supplier!=null">
+			and supplier = #{supplier}
+		</if>
+		GROUP BY priceNo
+	</select>
+	<!-- index724  主石区间 -->
+	<select id="findStoneForIndex724MainStone" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		where 
+ 		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		<if test="supplier!=null">
+			and supplier = #{supplier}
+		</if>
+		GROUP BY centerstone
+	</select>
+	<!-- index724  标价区间 -->
+	<select id="findStoneForIndex724ListPrice" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		where 
+ 		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		<if test="supplier!=null">
+			and supplier = #{supplier}
+		</if>
+		GROUP BY listprice
+	</select>
+	<!-- index724  结算价区间 -->
+	<select id="findStoneForIndex724SettlePrice" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		where 
+ 		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		<if test="supplier!=null">
+			and supplier = #{supplier}
+		</if>
+		GROUP BY settlementprice
+	</select>
+	<!-- index726 圈口 -->
+	<select id="findStoneFor726" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select * from stone
+		where  
+		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		<if test="circle!=null">
+			and circle = #{circle}
+		</if>
+		<if test="supplier!=null">
+			and supplier = #{supplier}
+		</if>
+	</select>
+	<!-- index726  圈口 -->
+	<select id="findStoneForIndex726" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		where 
+ 		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		<if test="supplier!=null">
+			and supplier = #{supplier}
+		</if>
+		<if test="circle!=null">
+			and circle = #{circle}
+		</if>
+		GROUP BY circle order by circle
+	</select>
+	<!-- index741 计划 -->
+	<select id="findStoneForIndex741" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		where 
+ 		date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		GROUP BY  counter
+	</select>
+</mapper>

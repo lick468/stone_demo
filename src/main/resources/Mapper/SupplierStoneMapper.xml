@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.SupplierStoneDao">
+	<resultMap type="com.nenu.domain.SupplierStone" id="SupplierStoneMap">
+		<result column="id" property="id"/>
+		<result column="supplier_name" property="supplier_name"/>
+		<result column="supplier_purchdate" property="supplier_purchdate"/>
+		<result column="supplier_procorNo" property="supplier_procorNo"/>
+		<result column="supplier_mainStoneNo" property="supplier_mainStoneNo"/>
+		<result column="supplier_mainNumber" property="supplier_mainNumber"/>
+		<result column="supplier_mainWeight" property="supplier_mainWeight"/>
+		<result column="supplier_subStoneNo" property="supplier_subStoneNo"/>
+		<result column="supplier_subWeight" property="supplier_subWeight"/>		
+		<result column="supplier_subNumber" property="supplier_subNumber"/>
+		<result column="supplier_delyman" property="supplier_delyman"/>
+		<result column="supplier_preparer" property="supplier_preparer"/>
+		<result column="supplier_porter" property="supplier_porter"/>
+		
+		
+	</resultMap>
+	
+	<parameterMap type="com.nenu.domain.SupplierStone" id="SupplierStone"/>
+
+
+	<select id="findAllSupplierStone"   resultMap="SupplierStoneMap">
+		select * from tb_supplierStone 
+	</select>
+	<select id="getSupplierStoneByID"   resultMap="SupplierStoneMap" parameterType="int">
+		select * from tb_supplierStone where id=#{id}
+	</select>
+	<select id="findSupplierStoneByTableInfo" parameterType="java.util.Map" resultMap="SupplierStoneMap">
+		select * from tb_supplierStone limit #{sEcho},#{len}
+	</select>
+	<select id="findAllSupplierStoneWithSupplierName"   resultMap="SupplierStoneMap" parameterType="string">
+		select * from tb_supplierStone where supplier_name = #{supplier_name}
+	</select>
+	<select id="findSupplierStoneByTableInfoWithSupplierName" parameterType="java.util.Map" resultMap="SupplierStoneMap">
+		select * from tb_supplierStone where supplier_name = #{supplier_name} limit #{sEcho},#{len}
+	</select>
+	
+	<select id="findSupplierStoneCountWithSupplierName"   resultMap="SupplierStoneMap" parameterType="string">
+		SELECT supplier_name,COUNT(supplier_mainStoneNo) as mainNumber,SUM(supplier_mainWeight) as mainWeight,
+		COUNT(supplier_subStoneNo) as subNumber,SUM(supplier_subWeight) as subWeight  
+		from tb_supplierstone GROUP BY supplier_name 
+	</select>
+	
+	<insert id="insertSupplierStone" parameterMap="SupplierStone" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_supplierStone(supplier_name,supplier_purchdate,supplier_procorNo,supplier_mainStoneNo,
+		supplier_mainNumber,supplier_mainWeight,supplier_subStoneNo,supplier_subWeight,
+		supplier_subNumber,supplier_delyman,supplier_preparer,supplier_porter)
+		values 
+		(#{supplier_name},#{supplier_purchdate},#{supplier_procorNo},#{supplier_mainStoneNo},
+		#{supplier_mainNumber},#{supplier_mainWeight},#{supplier_subStoneNo},#{supplier_subWeight},
+		#{supplier_subNumber},#{supplier_delyman},#{supplier_preparer},#{supplier_porter})
+	</insert>
+	
+	<delete id="deleteSupplierStoneBySubNo" parameterType="long">
+		delete from
+		tb_supplierStone
+		where
+		supplier_subStoneNo=#{supplier_subStoneNo}
+	</delete>
+	<delete id="deleteSupplierStoneByMainNo" parameterType="string">
+		delete from
+		tb_supplierStone
+		where
+		supplier_mainStoneNo=#{supplier_mainStoneNo}
+	</delete>
+
+</mapper>

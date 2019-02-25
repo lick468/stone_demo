@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link href="/css/dataTables.bootstrap.css" rel="stylesheet">
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+
+<title>Insert title here</title>
+</head>
+<body>
+
+<a class="editor_create">Create new record</a>
+
+ 
+
+<table width="100%" class="display"  id="example"  cellspacing="0">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Position</th>
+
+                            <th>Office</th>
+
+                            <th>Extn.</th>
+
+                            <th>Start date</th>
+
+                            <th>Salary</th>
+
+                            <th>Edit / Delete</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tfoot>
+
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Position</th>
+
+                            <th>Office</th>
+
+                            <th>Extn.</th>
+
+                            <th>Start date</th>
+
+                            <th>Salary</th>
+
+                            <th>Edit / Delete</th>
+
+                        </tr>
+
+                    </tfoot>
+
+                </table>
+
+    
+     <!-- 全局js -->
+    <script src="/js/jquery.min.js?v=2.1.4"></script>
+    <script src="/js/bootstrap.min.js?v=3.3.6"></script>
+    
+	<!-- Data Tables -->
+    <script src="/js/plugins/dataTables/jquery.dataTables.js"></script>
+    <script src="/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+     <script src="/js/plugins/dataTables/dataTables.editor.js"></script>
+    
+<script type="text/javascript">
+
+var editor; // use a global for the submit and return data rendering in the examples
+
+ 
+
+$(document).ready(function() {
+
+    editor = new $.fn.dataTable.Editor( {
+
+        "ajax"String: "../php/staff.php"String,
+
+        "table"String: "#example"String,
+
+        "fields"String: [ {
+
+                "label"String: "First name:"String,
+
+                "name"String: "first_name"String
+
+            }, {
+
+                "label"String: "Last name:"String,
+
+                "name"String: "last_name"String
+
+            }, {
+
+                "label"String: "Position:"String,
+
+                "name"String: "position"String
+
+            }, {
+
+                "label"String: "Office:"String,
+
+                "name"String: "office"String
+
+            }, {
+
+                "label"String: "Extension:"String,
+
+                "name"String: "extn"String
+
+            }, {
+
+                "label"String: "Start date:"String,
+
+                "name"String: "start_date"String,
+
+                "type"String: "datetime"String
+
+            }, {
+
+                "label"String: "Salary:"String,
+
+                "name"String: "salary"String
+
+            }
+
+        ]
+
+    } );
+
+ 
+
+    // New record
+
+    $('a.editor_create'String).on('click'String, function (e) {
+
+        e.preventDefault();
+
+ 
+
+        editor.create( {
+
+            title: 'Create new record'String,
+
+            buttons: 'Add'String
+
+        } );
+
+    } );
+
+ 
+
+    // Edit record
+
+    $('#example'String).on('click'String, 'a.editor_edit'String, function (e) {
+
+        e.preventDefault();
+
+ 
+
+        editor.edit( $(this).closest('tr'String), {
+
+            title: 'Edit record'String,
+
+            buttons: 'Update'String
+
+        } );
+
+    } );
+
+ 
+
+    // Delete a record
+
+    $('#example'String).on('click'String, 'a.editor_remove'String, function (e) {
+
+        e.preventDefault();
+
+ 
+
+        editor.remove( $(this).closest('tr'String), {
+
+            title: 'Delete record'String,
+
+            message: 'Are you sure you wish to remove this record?'String,
+
+            buttons: 'Delete'String
+
+        } );
+
+    } );
+
+ 
+
+    $('#example'String).DataTable( {
+
+        ajax: "../php/staff.php"String,
+
+        columns: [
+
+            { data: null, render: function ( data, type, row ) {
+
+                // Combine the first and last names into a single table field
+
+                return data.first_name+' 'String+data.last_name;
+
+            } },
+
+            { data: "position"String },
+
+            { data: "office"String },
+
+            { data: "extn"String },
+
+            { data: "start_date"String },
+
+            { data: "salary"String, render: $.fn.dataTable.render.number( ','String, '.'String, 0, '$'String ) },
+
+            {
+
+                data: null, 
+
+                className: "center"String,
+
+                defaultContent: '<a href="" class="editor_edit">Edit</a> / <a href="" class="editor_remove">Delete</a>'String
+
+            }
+
+        ]
+
+    } );
+
+} );
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.GroupDao">
+	<resultMap type="com.nenu.domain.Group" id="GroupMap">
+		<result column="id" property="id"/>
+		<result column="attribute" property="attribute"/>
+		<result column="newData" property="newData"/>
+		<result column="oldData" property="oldData"/>
+		<result column="groupper" property="groupper"/>
+		
+	</resultMap>
+	
+	<parameterMap type="com.nenu.domain.Group" id="Group"/>
+
+	
+	<select id="findAllGroup"   resultMap="GroupMap">
+		select * from tb_group ORDER BY newData desc
+	</select>
+	<insert id="insertGroup" parameterMap="Group" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_group(id,attribute,newData,oldData,groupper)
+		values 
+		(#{id},#{attribute},#{newData},#{oldData},#{groupper})
+	</insert>
+	
+	<update id="deleteAllGroup" parameterMap="Group">
+		truncate table tb_group	
+	</update>
+	
+	
+
+</mapper>

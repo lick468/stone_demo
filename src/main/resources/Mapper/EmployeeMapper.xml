@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.EmployeeDao">
+	<!-- 结果映射 -->  
+	<resultMap id="EmployeeMap" type="com.nenu.domain.Employee">
+	        <id property="id" column="id"/>
+	        <result property="emp_name" column="emp_name"/>
+	        <result property="emp_password" column="emp_password"/>
+	 </resultMap>
+	 
+	<parameterMap type="com.nenu.domain.Employee" id="Employee"></parameterMap>
+	
+	<select id="findEmployeeByID"   resultMap="EmployeeMap" parameterType="java.lang.Integer" >
+		select * from employee where id=#{id} 
+	</select>
+	<select id="findEmployeeByName"   resultMap="EmployeeMap" parameterType="string" >
+		select * from employee where emp_name=#{emp_name} 
+	</select>
+	
+	<select id="findAllEmployee"   resultMap="EmployeeMap">
+		select * from employee
+	</select>
+	<insert id="createEmployee" parameterMap="Employee" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		employee(id,emp_name,emp_password)
+		values 
+		(#{id},#{emp_name},#{emp_password})
+	</insert>
+	
+	<update id="updateEmployee" parameterMap="Employee">
+		update
+		employee
+		set
+		emp_name = #{emp_name} ,emp_password = #{emp_password}		
+		where 
+		id=#{id}
+	</update>
+	
+	<delete id="deleteEmployee" parameterType="java.lang.Integer">
+		delete from
+		employee
+		where
+		id=#{id}
+	</delete>
+
+</mapper>

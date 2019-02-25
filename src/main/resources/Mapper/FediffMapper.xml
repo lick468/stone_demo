@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.FediffDao">
+	<resultMap type="com.nenu.domain.Fediff" id="BaseResultMapfediff">
+		<result column="fediff_ID" property="fediff_ID"/>
+		<result column="fediff_stoneNo" property="fediff_stoneNo" />
+		<result column="fediff_procordNo" property="fediff_procordNo"/>
+		<result column="fediff_weightDiff" property="fediff_weightDiff"/>
+		<result column="fediff_time" property="fediff_time"/>
+		<result column="fediff_batch" property="fediff_batch"/>
+		
+	</resultMap>
+	
+	<parameterMap type="com.nenu.domain.Fediff" id="Fediff"/>
+	
+	<sql id="Base_Column_List_fediff">
+		fediff_ID,fediff_stoneNo,fediff_procordNo,fediff_weightDiff,fediff_time,fediff_batch
+	</sql>
+
+	<select id="findAllFediff" resultMap="BaseResultMapfediff">
+		select 
+		<include refid="Base_Column_List_fediff"/>
+		from tb_fediff
+	</select>
+	
+	<insert id="insertFediff" parameterMap="Fediff" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_fediff(fediff_ID,fediff_stoneNo,fediff_procordNo,fediff_weightDiff,fediff_time,fediff_batch)
+		values 
+		(#{fediff_ID},#{fediff_stoneNo},#{fediff_procordNo},#{fediff_weightDiff},#{fediff_time},#{fediff_batch})
+	</insert>
+	
+	<select id="findFediffByTwoParam" resultMap="BaseResultMapfediff">
+		select 
+		<include refid="Base_Column_List_fediff"/>
+		from tb_fediff
+		where 
+		fediff_procordNo=#{fediff_procordNo} and fediff_stoneNo=#{fediff_stoneNo}
+	</select>
+	<select id="findFediffByTime" resultMap="BaseResultMapfediff">
+		select 
+		<include refid="Base_Column_List_fediff"/>
+		from tb_fediff
+		where 
+		fediff_time=#{fediff_time} 
+	</select>
+	<select id="findFediffByTableInfo" parameterType="java.util.Map" resultMap="BaseResultMapfediff">
+		select * from tb_fediff  ORDER BY fediff_ID DESC limit #{sEcho},#{len}
+	</select>
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.CounterDao">
+	<resultMap type="com.nenu.domain.Counter" id="CounterMap">
+		<result column="counter_ID" property="counter_ID"/>
+		
+		<result column="counter_name" property="counter_name"/>
+		
+	</resultMap>
+	
+	<parameterMap type="com.nenu.domain.Counter" id="Counter"/>
+
+	<select id="findCounterById"   resultMap="CounterMap" parameterType="java.lang.Integer" >
+		select * from tb_counter where counter_ID=#{counter_ID} 
+	</select>
+	
+	<select id="findAllCounter"   resultMap="CounterMap">
+		select * from tb_counter
+	</select>
+	<insert id="insertCounter" parameterMap="Counter" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_counter(counter_ID,counter_name)
+		values 
+		(#{counter_ID},#{counter_name})
+	</insert>
+	
+	<update id="updateCounter" parameterMap="Counter">
+		update
+		tb_counter
+		set
+		<if test="counter_name!=null">
+			counter_name = #{counter_name}
+		</if>		
+		where 
+		counter_ID=#{counter_ID}
+	</update>
+	
+	<delete id="deleteCounter" parameterType="java.lang.Integer">
+		delete from
+		tb_counter
+		where
+		counter_ID=#{counter_ID}
+	</delete>
+
+</mapper>

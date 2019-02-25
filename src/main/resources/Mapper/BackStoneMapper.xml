@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.BackStoneDao">
+	<resultMap type="com.nenu.domain.BackStone" id="BackStoneMap">
+		<result column="back_ID" property="back_ID"/>
+		<result column="back_time" property="back_time"/>
+		<result column="back_procodeNo" property="back_procodeNo"/>
+		<result column="back_content" property="back_content"/>
+		<result column="back_process" property="back_process"/>
+		<result column="back_stoneNo" property="back_stoneNo"/>
+	</resultMap>
+	
+	<parameterMap type="com.nenu.domain.BackStone" id="BackStone"/>
+	<!-- 根据订单号查询 -->
+	<select id="findBackStoneByProcodeNo"   resultMap="BackStoneMap"  >
+		select * from tb_backStone 
+		where 
+		back_procodeNo=#{back_procodeNo} 
+		order by back_time desc
+	</select>
+	<!-- 根据石编查询 -->
+	<select id="findBackStoneByStoneNo"   resultMap="BackStoneMap"  >
+		select * from tb_backStone 
+		where 
+		back_stoneNo=#{back_stoneNo} 
+		order by back_time desc
+	</select>
+	<!-- 查询所有退石记录 -->
+	<select id="findAllBackStone"   resultMap="BackStoneMap">
+		select * from tb_backStone order by back_time desc
+	</select>
+	<!-- 插入一条退石记录 -->
+	<insert id="insertBackStone" parameterMap="BackStone" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_backStone(back_ID,back_time,back_procodeNo,back_content,back_process,back_stoneNo)
+		values 
+		(#{back_ID},#{back_time},#{back_procodeNo},#{back_content},#{back_process},#{back_stoneNo})
+	</insert>
+	
+
+</mapper>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.BelongAndCounterDao">
+	<resultMap type="com.nenu.domain.BelongAndCounter" id="BelongAndCounterMap">
+		<result column="bc_ID" property="bc_ID"/>
+		<result column="bc_belong_name" property="bc_belong_name"/>
+		<result column="bc_counter_name" property="bc_counter_name"/>
+		
+		
+		
+	</resultMap>
+	
+	<parameterMap type="com.nenu.domain.BelongAndCounter" id="BelongAndCounter"/>
+
+	<select id="findBelongAndCounterById"   resultMap="BelongAndCounterMap" parameterType="java.lang.Integer" >
+		select * from tb_belongAndCounter where bc_ID=#{bc_ID} 
+	</select>
+	
+	<select id="findAllBelongAndCounter"   resultMap="BelongAndCounterMap">
+		select * from tb_belongAndCounter
+		
+	</select>
+	<select id="findAllBelongAndCounterByBelong"   resultMap="BelongAndCounterMap" parameterType="String">
+		select * from tb_belongAndCounter
+		where bc_belong_name =#{bc_belong_name}
+	</select>
+	<select id="findAllBelongAndCounterByCounter"   resultMap="BelongAndCounterMap" parameterType="String">
+		select * from tb_belongAndCounter
+		where bc_counter_name =#{bc_counter_name}
+	</select>
+	<select id="findAllBelongAndCounterByBelongAndCounter"   resultMap="BelongAndCounterMap" parameterMap="BelongAndCounter">
+		select * from tb_belongAndCounter
+		where bc_counter_name =#{bc_counter_name} and bc_belong_name =#{bc_belong_name}
+	</select>
+	<insert id="insertBelongAndCounter" parameterMap="BelongAndCounter" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_belongAndCounter(bc_ID,bc_belong_name,bc_counter_name)
+		values 
+		(#{bc_ID},#{bc_belong_name},#{bc_counter_name})
+	</insert>
+	
+	<update id="updateBelongAndCounter" parameterMap="BelongAndCounter">
+		update
+		tb_belongAndCounter
+		set
+		<if test="bc_belong_name!=null">
+			bc_belong_name = #{bc_belong_name}
+		</if>
+		<if test="bc_counter_name!=null">
+		   and	bc_counter_name = #{bc_counter_name}
+		</if>		
+		where 
+		bc_ID=#{bc_ID}
+	</update>
+	
+	<delete id="deleteBelongAndCounterByBelongAndCounter" parameterMap="BelongAndCounter">
+		delete from
+		tb_belongAndCounter
+		where
+		bc_belong_name=#{bc_belong_name} and bc_counter_name = #{bc_counter_name}
+	</delete>
+	<delete id="deleteBelongAndCounterByBelong" parameterMap="BelongAndCounter">
+		delete from
+		tb_belongAndCounter
+		where
+		bc_belong_name=#{bc_belong_name}
+	</delete>
+
+</mapper>

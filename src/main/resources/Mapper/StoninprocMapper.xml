@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.StoninprocDao">
+	<resultMap type="com.nenu.domain.Stoninproc" id="BaseResultMapstoninproc">
+		<result column="stoninproc_ID" property="stoninproc_ID"/>
+		<result column="stoninproc_seqno" property="stoninproc_seqno" />
+		<result column="stoninproc_stoneNo" property="stoninproc_stoneNo"/>
+		<result column="stoninproc_procordNo" property="stoninproc_procordNo" />
+		<result column="stoninproc_number" property="stoninproc_number"/>
+		<result column="stoninproc_subpay" property="stoninproc_subpay"/>
+		<result column="stoninproc_stoneWeight" property="stoninproc_stoneWeight"/>
+		<result column="stoninproc_stoneColor" property="stoninproc_stoneColor"/>
+		<result column="stoninproc_stoneClarity" property="stoninproc_stoneClarity"/>
+		<result column="stoninproc_stoneShape" property="stoninproc_stoneShape"/>
+		<result column="stoninproc_stoneState" property="stoninproc_stoneState"/>
+		<result column="stoninproc_stoneContext" property="stoninproc_stoneContext"/>
+		<result column="stoninproc_supplier" property="stoninproc_supplier"/>
+		<result column="stoninproc_batch" property="stoninproc_batch"/>
+		
+	</resultMap>
+	
+	<parameterMap type="com.nenu.domain.Stoninproc" id="Stoninproc"/>
+	
+	<sql id="Base_Column_List_stoninproc">
+		stoninproc_ID,stoninproc_seqno,stoninproc_stoneNo,stoninproc_procordNo,stoninproc_number,stoninproc_subpay,stoninproc_stoneWeight,
+		stoninproc_stoneColor,stoninproc_stoneClarity,stoninproc_stoneShape,stoninproc_stoneState,stoninproc_stoneContext,stoninproc_supplier,stoninproc_batch
+	</sql>
+
+	<select id="findAllStoninproc" resultMap="BaseResultMapstoninproc">
+		select 
+		<include refid="Base_Column_List_stoninproc"/>
+		from tb_stoninproc
+	</select>
+	<select id="findAllStoninprocWithStateEqualZero" resultMap="BaseResultMapstoninproc">
+		select 
+		<include refid="Base_Column_List_stoninproc"/>
+		from tb_stoninproc where stoninproc_stoneState = 0
+	</select>
+	<select id="findAllStoninprocWithStateEQualZero" resultMap="BaseResultMapstoninproc">
+		select 
+		<include refid="Base_Column_List_stoninproc"/>
+		from tb_stoninproc where stoninproc_stoneState = 0
+	</select>
+	<select id="findLastStoninproc" resultMap="BaseResultMapstoninproc">
+		select 
+		<include refid="Base_Column_List_stoninproc"/>
+		from tb_stoninproc order by stoninproc_procordNo desc LIMIT 1
+	</select>
+	<insert id="insertStoninproc" parameterMap="Stoninproc"  keyProperty="id">
+		insert into
+		tb_stoninproc(stoninproc_ID,stoninproc_seqno,stoninproc_stoneNo,stoninproc_procordNo,stoninproc_number,stoninproc_subpay,stoninproc_stoneWeight,
+		stoninproc_stoneColor,stoninproc_stoneClarity,stoninproc_stoneShape,stoninproc_stoneState,stoninproc_stoneContext,stoninproc_supplier,stoninproc_batch)
+		values 
+		(#{stoninproc_ID},#{stoninproc_seqno},#{stoninproc_stoneNo},#{stoninproc_procordNo},#{stoninproc_number},#{stoninproc_subpay},
+		#{stoninproc_stoneWeight},#{stoninproc_stoneColor},#{stoninproc_stoneClarity},#{stoninproc_stoneShape},#{stoninproc_stoneState},#{stoninproc_stoneContext},#{stoninproc_supplier},#{stoninproc_batch})
+	</insert>
+	<select id="findStoninprocByStoneNo" resultMap="BaseResultMapstoninproc">
+		SELECT p.procord_date as orderDate,
+		p.procord_delydate as chukuDate,
+		stoninproc_procordNo,stoninproc_batch
+		from tb_stoninproc s 
+		LEFT JOIN tb_procord p 
+		on p.procord_no=s.stoninproc_procordNo 
+		where 
+		s.stoninproc_stoneNo=#{stoninproc_stoneNo}
+	</select>
+	<select id="findStoninprocBySubStoneNo" resultMap="BaseResultMapstoninproc">
+		select 
+		*
+		from tb_stoninproc
+		where stoninproc_stoneNo=#{stoninproc_stoneNo}
+	</select>
+	<select id="findAllStoninprocByProcordNo" resultMap="BaseResultMapstoninproc">
+		select 
+		<include refid="Base_Column_List_stoninproc"/>
+		from tb_stoninproc
+		where stoninproc_procordNo=#{stoninproc_procordNo}
+	</select>
+	<select id="findStoneNumberFromStoninproc" resultMap="BaseResultMapstoninproc" parameterType="java.util.Map">
+		select 
+		<include refid="Base_Column_List_stoninproc"/>
+		from tb_stoninproc
+		where 
+		stoninproc_procordNo=#{procordNo} and stoninproc_stoneNo=#{stoneNo}
+	</select>
+	<delete id="deleteStoneFromProcord" parameterType="java.util.Map">
+	delete from tb_stoninproc
+	where 
+	stoninproc_procordNo=#{procordNo} and stoninproc_stoneNo=#{stoneNo}
+	</delete>
+	<!-- 更改石头状态 -->
+	<update id="updateStoninprocState" parameterMap="Stoninproc" >
+		update
+		tb_stoninproc
+		set
+		stoninproc_stoneState = #{stoninproc_stoneState}
+		where 
+		stoninproc_procordNo=#{stoninproc_procordNo} and stoninproc_stoneNo=#{stoninproc_stoneNo}
+	</update>
+
+</mapper>

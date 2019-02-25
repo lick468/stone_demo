@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.ProcordDao">
+	<resultMap type="com.nenu.domain.Procord" id="BaseResultMapprocord">
+		<result column="procord_ID" property="procord_ID"/>
+		<result column="procord_no" property="procord_no" />
+		<result column="procord_status" property="procord_status"/>
+		<result column="procord_supplier" property="procord_supplier"/>
+		<result column="procord_batch" property="procord_batch" />
+		<result column="procord_date" property="procord_date"/>
+		<result column="procord_delydate" property="procord_delydate"/>
+		<result column="procord_goodscount" property="procord_goodscount" />
+		<result column="procord_pay" property="procord_pay"/>
+		<result column="procord_delyman" property="procord_delyman"/>
+		<result column="procord_preparer" property="procord_preparer" />
+		<result column="procord_porter" property="procord_porter"/>
+		<result column="procord_backcount" property="procord_backcount"/>
+		<result column="procord_weight" property="procord_weight"/>
+		
+	</resultMap>
+	
+	<parameterMap type="com.nenu.domain.Procord" id="Procord"/>
+	
+	<sql id="Base_Column_List_procord">
+		procord_ID,procord_no,procord_status,procord_supplier,procord_batch,procord_date,procord_delydate,
+		procord_goodscount,procord_pay,procord_delyman,procord_preparer,procord_porter,procord_backcount,procord_weight
+	</sql>
+
+	<select id="findAllProcord" resultMap="BaseResultMapprocord">
+		select 
+		<include refid="Base_Column_List_procord"/>
+		from tb_procord ORDER BY procord_supplier
+	</select>
+	<select id="findProcordByProcordNo" resultMap="BaseResultMapprocord">
+		select 
+		<include refid="Base_Column_List_procord"/>
+		from tb_procord
+		where procord_no=#{procord_no}
+	</select>
+	<select id="findProcordBySupplier" resultMap="BaseResultMapprocord">
+		select 
+		<include refid="Base_Column_List_procord"/>
+		from tb_procord
+		where procord_supplier=#{procord_supplier}
+	</select>
+	<insert id="insertProcord" parameterMap="Procord" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_procord(procord_ID,procord_no,procord_status,procord_supplier,procord_batch,procord_date,
+		procord_delydate,procord_goodscount,procord_pay,procord_delyman,procord_preparer,procord_porter,procord_backcount,procord_weight)
+		values 
+		(#{procord_ID},#{procord_no},#{procord_status},#{procord_supplier},#{procord_batch},
+		#{procord_date},#{procord_delydate},#{procord_goodscount},#{procord_pay},#{procord_delyman},
+		#{procord_preparer},#{procord_porter},#{procord_backcount},#{procord_weight})
+	</insert>
+	<update id="updateProcord" parameterMap="Procord" >
+		update
+		tb_procord
+		set
+		<if test="procord_supplier!=null">
+			procord_supplier = #{procord_supplier},
+		</if>
+		<if test="procord_batch!=null">
+			procord_batch = #{procord_batch},
+		</if>
+		<if test="procord_date!=null">
+			procord_date = #{procord_date},
+		</if>
+		<if test="procord_delydate!=null">
+			procord_delydate = #{procord_delydate},
+		</if>
+		<if test="procord_delyman!=null ">
+			procord_delyman = #{procord_delyman},
+		</if>
+		<if test="procord_preparer!=null">
+			procord_preparer = #{procord_preparer},
+		</if>
+		<if test="procord_porter!=null">
+			procord_porter = #{procord_porter},
+		</if>
+		<if test="procord_backcount!=null">
+			procord_backcount = #{procord_backcount}
+		</if>
+		<if test="procord_weight!=null">
+			procord_weight = #{procord_weight}
+		</if>		
+		where 
+		procord_no=#{procord_no}
+	</update>
+	<update id="updateProcordAccounts" parameterMap="Procord" >
+		update
+		tb_procord
+		set
+		
+		<if test="procord_goodscount!=null">
+			procord_goodscount = #{procord_goodscount},
+		</if>
+		<if test="procord_status!=null">
+			procord_status = #{procord_status}
+		</if>
+		where 
+		procord_no=#{procord_no}
+	</update>
+	<update id="updateProcordPay" parameterMap="Procord" >
+		update
+		tb_procord
+		set
+		<if test="procord_pay!=null">
+			procord_pay = #{procord_pay},
+		</if>
+		<if test="procord_weight!=null">
+			procord_weight = #{procord_weight}
+		</if>	
+		where 
+		procord_no=#{procord_no}
+	</update>
+   <update id="updateProcordState" parameterMap="Procord" >
+		update
+		tb_procord
+		set
+		<if test="procord_status!=null">
+			procord_status = #{procord_status},
+		</if>
+		<if test="procord_backcount!=null">
+			procord_backcount = #{procord_backcount}
+		</if>
+		where 
+		procord_no=#{procord_no}
+	</update>
+	<select id="findProcordByTableInfo" parameterType="java.util.Map" resultMap="BaseResultMapprocord">
+		select * from tb_procord ORDER BY procord_ID DESC limit #{sEcho},#{len}
+	</select>
+
+</mapper>
