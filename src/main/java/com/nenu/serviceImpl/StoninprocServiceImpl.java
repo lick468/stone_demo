@@ -99,27 +99,32 @@ public class StoninprocServiceImpl implements StoninprocService {
 		String titleName = "订单详情表统计表";
 		String fileName = "订单详情表表单";
 		String[] glist = context.split("@");
-		int columnNumber = 10;
-		int[] columnWidth = { 15, 15,15,15, 15,15 ,15, 15,15 ,15 };
-		String[][] dataList = new String[glist.length/10][10];
+		int columnNumber = 11;
+		int[] columnWidth = { 15,15, 15,15,15, 15,15 ,15, 15,15 ,15 };
+		String[][] dataList = new String[glist.length/11][11];
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		for (int i = 0; i < glist.length; i++) {
-			if(i%10==9) {
-				int j = (i+1)/9-1;
-				dataList[j][0] =glist[i-9] ;
-				dataList[j][1] =glist[i-8] ;
-				dataList[j][2] =glist[i-7] ;
-				dataList[j][3] =glist[i-6] ;
-				dataList[j][4] =glist[i-5] ;
-				dataList[j][5] =glist[i-4] ;
-				dataList[j][6] =glist[i-3] ;
-				dataList[j][7] =glist[i-2] ;
-				dataList[j][8] =glist[i-1] ;
-				dataList[j][9] =glist[i-0] ;
+			if(i%11==10) {
+				int j = (i+1)/11-1;
+				dataList[j][0] =glist[i-10] ;
+				if(glist[i-9].length() == 1) {
+                    dataList[j][1] ="";
+                }else {
+                    dataList[j][1] =glist[i-9] ;
+                }
+				dataList[j][2] =glist[i-8] ;
+				dataList[j][3] =glist[i-7] ;
+				dataList[j][4] =glist[i-6] ;
+				dataList[j][5] =glist[i-5] ;
+				dataList[j][6] =glist[i-4] ;
+				dataList[j][7] =glist[i-3] ;
+				dataList[j][8] =glist[i-2] ;
+				dataList[j][9] =glist[i-1] ;
+				dataList[j][10] =glist[i-0] ;
 			}					
 		}
 		String path = "D:\\analysisFile";
-		String[] columnName = {"订单", "石编","石重", "石数","货款金额", "批次","颜色", "净度","备注","状态"};
+		String[] columnName = {"订单","成品单号", "石编","石重", "石数","货款金额", "批次","颜色", "净度","备注","状态"};
 		try {
 			new ExcelUtils().ExportNoResponse(sheetName, titleName, fileName, columnNumber, columnWidth, columnName, dataList, path,response);
 			return 1;

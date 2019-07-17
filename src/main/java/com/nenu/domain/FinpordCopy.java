@@ -65,18 +65,18 @@ public class FinpordCopy implements Serializable {
 
 	private String finpord_clarity2;//级别2
 	private String finpord_color2;//颜色2
-	private long finpord_substo1no;//副石编
+	private String finpord_substo1no;//副石编
 	private String finpord_substo1name;//副石名
 	private double finpord_substo1wgt;//副石
 	private int    finpord_substo1qty;//副石数
 	private double finpord_substo1pr;//副石价
-	private long finpord_substo2no;//副石2编
+	private String finpord_substo2no;//副石2编
 	private String finpord_substo2name;//副石2名
 	private double finpord_substo2wgt;//副石2重
 	private int    finpord_substo2qty;//副石2数
 	private double finpord_substo2pr;//副石2价
 
-	private long finpord_substo3no;//副石3编
+	private String finpord_substo3no;//副石3编
 	private String finpord_substo3name;//副石3名
 	private double finpord_substo3wgt;//副石3重
 	private int    finpord_substo3qty;//副石3数
@@ -121,7 +121,7 @@ public class FinpordCopy implements Serializable {
 	public FinpordCopy( String finpord_ID,int finpord_seqno, long finpord_procordNo, String finpord_barcode, Date finpord_inboundate, String finpord_supplier, String finpord_styno, String finpord_quality, String finpord_name, int finpord_ringsz, float finpord_multi, double finpord_tagedpr, double finpord_goldwgt, double finpord_merchwgt, String finpord_counter, String finpord_catagory,
 			String finpord_goldcolor, double finpord_baslabcost, double finpord_othrcost, double finpord_salabcost,double finpord_goldpr, double finpord_goldlos, double finpord_cost, String finpord_armsty, String finpord_storname, String finpord_entsdno, String finpord_comments, String finpord_mainstono, String finpord_mainstoname, double finpord_mainstowgt, int finpord_mainstoqty, 
 			double finpord_mainstopr, String finpord_cert1, String finpord_cert2, String finpord_gia1, String finpord_gia2, String finpord_mainstoshape, String finpord_series, String finpord_cut1, String finpord_symmetry1, String finpord_polish1, String finpord_fluorescence1, String finpord_clarity1, String finpord_color1, String finpord_cut2, String finpord_symmetry2, String finpord_polish2,
-			String finpord_fluorescence2, String finpord_clarity2, String finpord_color2, long finpord_substo1no, String finpord_substo1name, double finpord_substo1wgt, int finpord_substo1qty, double finpord_substo1pr, long finpord_substo2no, String finpord_substo2name, double finpord_substo2wgt, int finpord_substo2qty, double finpord_substo2pr,long finpord_substo3no, String finpord_substo3name,
+			String finpord_fluorescence2, String finpord_clarity2, String finpord_color2, String finpord_substo1no, String finpord_substo1name, double finpord_substo1wgt, int finpord_substo1qty, double finpord_substo1pr, String finpord_substo2no, String finpord_substo2name, double finpord_substo2wgt, int finpord_substo2qty, double finpord_substo2pr,String finpord_substo3no, String finpord_substo3name,
 			double finpord_substo3wgt, int finpord_substo3qty, double finpord_substo3pr,int finpord_reserved1,String finpord_reserved2) {
 		this.finpord_ID = finpord_ID;
 
@@ -357,22 +357,22 @@ public class FinpordCopy implements Serializable {
 	public void setFinpord_mainstono(String finpord_mainstono) {
 		this.finpord_mainstono = finpord_mainstono;
 	}
-	public long getFinpord_substo1no() {
+	public String getFinpord_substo1no() {
 		return finpord_substo1no;
 	}
-	public void setFinpord_substo1no(long finpord_substo1no) {
+	public void setFinpord_substo1no(String finpord_substo1no) {
 		this.finpord_substo1no = finpord_substo1no;
 	}
-	public long getFinpord_substo2no() {
+	public String getFinpord_substo2no() {
 		return finpord_substo2no;
 	}
-	public void setFinpord_substo2no(long finpord_substo2no) {
+	public void setFinpord_substo2no(String finpord_substo2no) {
 		this.finpord_substo2no = finpord_substo2no;
 	}
-	public long getFinpord_substo3no() {
+	public String getFinpord_substo3no() {
 		return finpord_substo3no;
 	}
-	public void setFinpord_substo3no(long finpord_substo3no) {
+	public void setFinpord_substo3no(String finpord_substo3no) {
 		this.finpord_substo3no = finpord_substo3no;
 	}
 	public int getFinpord_reserved1() {

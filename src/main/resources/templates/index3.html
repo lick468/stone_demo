@@ -10,9 +10,8 @@
 <link href="/css/laydate.css" rel="stylesheet" />
 <link href="/css/bootstrap-theme.min.css" rel="stylesheet" />
 <link href="/css/jquery-editable-select.min.css" rel="stylesheet" />
-<link th:href="@{/css/loading.css}" rel="stylesheet"/>
-<link href="/css/bootstrap-theme.min.css" rel="stylesheet" />
-<link th:href="@{/css/loading.css}" rel="stylesheet"/>
+<link href="/css/loading.css" rel="stylesheet"/>
+
 
 <title>兑换排名分析</title>
 <style type="text/css">
@@ -218,6 +217,7 @@ th,td{
 								<th>柜台</th>
 								<th>名称</th>
 								<th>来源</th>
+								<th>兑换金重</th>
 								<th>结算价</th>
 								<th>标价</th>
 								<th>金重</th>
@@ -367,6 +367,7 @@ th,td{
 					var s7 = rs[10].substring(1, rs[10].length - 1).split(", ");
 					var s8 = rs[11].substring(1, rs[11].length - 1).split(", ");
 					var s9 = rs[12].substring(1, rs[12].length - 1).split(", ");
+                    var s10 = rs[13].substring(1, rs[13].length - 1).split(", ");
 					
 					var dom = document.getElementById("container");
 					var myChart = echarts.init(dom);
@@ -421,7 +422,8 @@ th,td{
 						$("#tableShow").append(
 								"<tr><td>" + s1[i] + "</td><td>" + s2[i]
 										+ "</td><td>" + s3[i] 
-										+ "</td><td>" + s4[i] 
+										+ "</td><td>" + s4[i]
+                                        + "</td><td>" + s10[i]
 										+ "</td><td>" + s5[i]
 										+ "</td><td>" + s7[i]
 										+ "</td><td>" + s8[i]

@@ -10,7 +10,7 @@
 <link href="/css/laydate.css" rel="stylesheet" />
 <link href="/css/bootstrap-theme.min.css" rel="stylesheet" />
 <link href="/css/jquery-editable-select.min.css" rel="stylesheet" />
-<link th:href="@{/css/loading.css}" rel="stylesheet"/>
+<link href="/css/loading.css" rel="stylesheet"/>
 
 <title>供应商销售模型</title>
 <style type="text/css">
@@ -188,16 +188,16 @@ text-align: center;
 			<div class="btn blue" onclick="return button_post();">提交</div>
 			<div class="btn red" onclick="rest();">重置</div>
 			<div >
-					<form action="/analysis/downloadExcelFor711" method="post" onsubmit="return checkForm();">
-						<input type="hidden"  value="" name="context" id="context"/>
-						<input type="submit" class = " btn red" value="导出表格数据">
-					</form>
+				<form action="/analysis/downloadExcelFor711" method="post" onsubmit="return checkForm();">
+					<input type="hidden"  value="" name="context" id="context"/>
+					<input type="submit" class = " btn red" value="导出表格数据">
+				</form>
 			</div>
 			<div >
-					<form action="/analysis/downloadGraphExcelFor711" method="post" onsubmit="return checkForm1();">
-						<input type="hidden"  value="" name="context" id="conGraph"/>
-						<input type="submit" class = " btn red" value="导出图表数据">
-					</form>
+				<form action="/analysis/downloadGraphExcelFor711" method="post" onsubmit="return checkForm1();">
+					<input type="hidden"  value="" name="context" id="conGraph"/>
+					<input type="submit" class = " btn red" value="导出图表数据">
+				</form>
 			</div>
 		</div>
 	</div>
@@ -296,6 +296,12 @@ text-align: center;
 			var app = {};
 			option = null;
 			option = {
+                tooltip : {
+                    trigger : 'axis',
+                    axisPointer : { // 坐标轴指示器，坐标轴触发有效
+                        type : 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+                    }
+                },
 				xAxis : {
 					type : 'category',
 					data : [ '200801', '200802', '200803', '200804', '200805',
@@ -311,6 +317,7 @@ text-align: center;
 					type : 'value'
 				},
 				series : [ {
+                    name : '直接访问',
 					data : [ 420, 932, 901, 934, 1290, 1330, 1320 ],
 					type : 'line',
 					smooth : true
@@ -422,6 +429,12 @@ text-align: center;
 					var app = {};
 					option = null;
 					option = {
+                        tooltip : {
+                            trigger : 'axis',
+                            axisPointer : { // 坐标轴指示器，坐标轴触发有效
+                                type : 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+                            }
+                        },
 						xAxis : {
 							type : 'category',
 							data : xData,
@@ -436,6 +449,7 @@ text-align: center;
 							type : 'value'
 						},
 						series : [ {
+                            name : '直接访问',
 							data : yData,
 							type : 'line',
 							smooth : true

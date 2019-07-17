@@ -57,7 +57,7 @@ public class PathController {
 	 */
 	@ApiOperation(value="路径查询",notes="路径查询")
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@RequestMapping(value="find",method=RequestMethod.POST)
+	@RequestMapping(value="/find",method=RequestMethod.POST)
 	@ResponseBody
 	public List find(HttpServletRequest requset) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -128,7 +128,7 @@ public class PathController {
 			}else {
 				List<TBackStone> tblist = tbackStoneService.findTBackStoneByStoneNo(subNo);
 				
-				List<Stone> list1 = stoneService.findStoneBySubNo(Long.parseLong(subNo));
+				List<Stone> list1 = stoneService.findStoneBySubNo(subNo);
 				if(list1.size()>0)  {
 					result.add("sub");//添加副石标记
 					result.add(sdf.format(list1.get(0).getStone_purchdate()));
@@ -139,7 +139,7 @@ public class PathController {
 				}else {
 					List<BackStone> bkList = backStoneService.findBackStoneByStoneNo(subNo);
 					if(bkList.size()>0) {//副石有退石情况
-						List<Stone> list = stoneService.findStoneBySubNo(Long.parseLong(subNo));
+						List<Stone> list = stoneService.findStoneBySubNo(subNo);
 						if(list.size()>0)  {
 							for (int i = 0; i < bkList.size(); i++) {
 								Procord procord = procordService.findProcordByProcordNo( bkList.get(i).getBack_procodeNo());
@@ -151,7 +151,7 @@ public class PathController {
 							}
 						}
 					}else {//副石没有退石情况
-						List<Stone> list = stoneService.findStoneBySubNo(Long.parseLong(subNo));
+						List<Stone> list = stoneService.findStoneBySubNo(subNo);
 						if(list.size()>0)  {						
 						List<Finpord> fList = finpordService.findAllFinpord();
 							if(fList.size()>0) {

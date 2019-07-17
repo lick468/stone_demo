@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -40,7 +41,7 @@ public class LoginController {
 	 * @return String created by lick on 2018年5月12日
 	 */
 	@ApiOperation(value="跳转登陆页面",notes="显示登陆页面")
-	@RequestMapping(value = "login", method = RequestMethod.GET)
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String login() {
 		return "login";
 	}
@@ -54,7 +55,7 @@ public class LoginController {
 	 * @return String created by lick on 2018年5月12日
 	 */
 	@ApiOperation(value="登陆",notes="根据权限跳转不同的页面")
-	@RequestMapping(value = "doLogin", method = RequestMethod.POST)
+	@RequestMapping(value = "/doLogin", method = RequestMethod.POST)
 	public String doLogi(User ur, ModelMap map, HttpServletRequest requset, RedirectAttributes model) {
 		System.out.println(ur.getUser_name() + "---------------" + ur.getUser_role());
 		User user = loginService.findUserByUser(ur);
@@ -112,7 +113,7 @@ public class LoginController {
 	 * @return String created by lick on 2018年5月12日
 	 */
 	@ApiOperation(value="登出",notes="退出登录")
-	@RequestMapping(value = "/logout")
+	@GetMapping(value = "/logout")
 	public String logout(HttpSession session) {
 		String user_name = (String) session.getAttribute("user_name");
 		User ur =loginService.findUserByUserName(user_name);

@@ -3,6 +3,7 @@ package com.nenu.controller;
 import org.springframework.boot.web.servlet.error.ErrorController;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.swagger.annotations.Api;
@@ -19,7 +20,7 @@ public class ErrorRController implements ErrorController {
 		return ERROR_PATH;
 	}
 	@ApiOperation(value="跳转到404页面",notes="跳转到404页面")
-	@RequestMapping(value=ERROR_PATH)  
+	@GetMapping(value=ERROR_PATH)
     public String handleError(){  
         return "4040";  
     }  

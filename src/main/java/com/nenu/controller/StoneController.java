@@ -35,7 +35,7 @@ public class StoneController {
 
 	}
 	
-	@RequestMapping(value = "insertStone", method = RequestMethod.POST)
+	@RequestMapping(value = "/insertStone", method = RequestMethod.POST)
 	public String insertStone(Stone stone,BindingResult bin,HttpServletRequest request, ModelMap map) {
 		String dd = request.getParameter("stone_purchdate") ;
 		System.out.println(dd+"====================");
@@ -44,7 +44,7 @@ public class StoneController {
 		return "operator_b/new";
 	}
 
-	@RequestMapping(value = "sel")
+	@RequestMapping(value = "/sel")
 	public String stoneList() {
 
 		return "index";

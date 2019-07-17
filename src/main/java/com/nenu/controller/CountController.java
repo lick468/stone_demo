@@ -27,13 +27,7 @@ public class CountController {
 	@RequestMapping(value="/count",method = RequestMethod.POST)
 	@ResponseBody
 	public int count(HttpServletRequest request) {
-		HttpSession session = request.getSession(); 
-		//System.out.println("role0======"+session.getAttribute("role0"));
-		//System.out.println("role1======"+session.getAttribute("role1"));
-		//System.out.println("role2======"+session.getAttribute("role2"));
-		//System.out.println("role3======"+session.getAttribute("role3"));
-		//System.out.println("role4======"+session.getAttribute("role4"));
-		//System.out.println("role5======"+session.getAttribute("role5"));
+		HttpSession session = request.getSession();
 		
 		int res=0;
 		if(session.getAttribute("role0")!=null) {

@@ -5,6 +5,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,18 +29,18 @@ public class QualityController {
 	@Autowired
 	private QualityService qualityService;
 	@ApiOperation(value="跳转到admin/qualityList页面",notes="跳转到admin/qualityList页面")
-	@RequestMapping(value = "findAllQuality")
+	@GetMapping(value = "/findAllQuality")
 	public String findAll(ModelMap map, HttpSession session) {
 		map.addAttribute("qualityList", qualityService.findAllQuality());
 		return "admin/qualityList";
 	}
 	@ApiOperation(value="跳转到添加页面",notes="跳转到添加页面")
-	@RequestMapping(value = "showQualityCreateForm")
+	@GetMapping(value = "/showQualityCreateForm")
 	public String showCtrateForm() {
 		return "admin/qualityCreateForm";
 	}
 	@ApiOperation(value="添加一条成色记录",notes="添加一条成色记录")
-	@RequestMapping(value = "createQuality", method = RequestMethod.POST)
+	@RequestMapping(value = "/createQuality", method = RequestMethod.POST)
 	public String createQuality(Quality quality, ModelMap map) {
 		int i = qualityService.insertQuality(quality);
 		if (i == 1)

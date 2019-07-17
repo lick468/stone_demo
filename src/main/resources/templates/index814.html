@@ -1,7 +1,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width; initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="stylesheet" href="/css/styleAnalysis.css" media="screen" />
 <script src="/js/jquery-1.7.2.min.js"></script>
 <script src="/js/echarts.js"></script>
@@ -394,10 +394,12 @@ text-align: center;
 								json = json + xData[i] + ":" + yData[i];
 							}
 						}
+
 						json = json + "}";
-	
-						var data = eval('(' + json + ')');
-	
+                        console.log(json)
+                        var data = (new Function("","return "+json))();
+						//var data = eval('(' + json + ')');
+                        console.log(data)
 						var dom = document.getElementById("container");
 						var myChart = echarts.init(dom);
 						var app = {};

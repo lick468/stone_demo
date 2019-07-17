@@ -55,7 +55,7 @@
 		#{supplier_subNumber},#{supplier_delyman},#{supplier_preparer},#{supplier_porter})
 	</insert>
 	
-	<delete id="deleteSupplierStoneBySubNo" parameterType="long">
+	<delete id="deleteSupplierStoneBySubNo" parameterType="String">
 		delete from
 		tb_supplierStone
 		where

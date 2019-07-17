@@ -355,18 +355,18 @@ public class FinpordServiceImpl implements FinpordService {
 
 			 String finpord_clarity2=null;//净度2
 			 String finpord_color2=null;//颜色2
-			 long finpord_substo1no=0;//副石1编号
+			 String finpord_substo1no=null;//副石1编号
 			 String finpord_substo1name=null;//副石1名称
 			 double finpord_substo1wgt=0;//副石1重量
 			 int finpord_substo1qty=0;//副石1数量
 			 double finpord_substo1pr=0;//副石1价格
-			 long finpord_substo2no=0;//副石2编号
+			 String finpord_substo2no=null;//副石2编号
 			 String finpord_substo2name=null;//副石2名称
 			 double finpord_substo2wgt=0;//副石2重量
 			 int finpord_substo2qty=0;//副石2数量
 			 double finpord_substo2pr=0;//副石2价格
 
-			 long finpord_substo3no=0;//副石3编号
+			 String finpord_substo3no=null;//副石3编号
 			 String finpord_substo3name=null;//副石3名称
 			 double finpord_substo3wgt=0;//副石3重量
 			 int    finpord_substo3qty=0;//副石3数量
@@ -646,7 +646,7 @@ public class FinpordServiceImpl implements FinpordService {
 					 }
 			    }else if("finpord_substo1no".equals(map.get(i))) {
 					 if(row.getCell(i)!=null) {
-						 finpord_substo1no =(long)row.getCell(i).getNumericCellValue();// 副石1编号
+						 finpord_substo1no =row.getCell(i).getStringCellValue();// 副石1编号
 						 
 						List<Stone> listStone =  stoneDao.findStoneBySubNo(finpord_substo1no);
 						if(listStone.size() > 0) {
@@ -657,7 +657,7 @@ public class FinpordServiceImpl implements FinpordService {
 					 }
 			    }else if("finpord_substo2no".equals(map.get(i))) {
 					 if(row.getCell(i)!=null) {
-						 finpord_substo2no =(long)row.getCell(i).getNumericCellValue();// 副石2编号
+						 finpord_substo2no =row.getCell(i).getStringCellValue();// 副石2编号
 						 List<Stone> listStone =  stoneDao.findStoneBySubNo(finpord_substo1no);
 						 if(listStone.size() > 0) {
 							finpord_substo1pr = listStone.get(0).getStone_substoPrperct();// 副石2价格
@@ -667,7 +667,7 @@ public class FinpordServiceImpl implements FinpordService {
 					 }
 			    }else if("finpord_substo3no".equals(map.get(i))) {
 					 if(row.getCell(i)!=null) {
-						 finpord_substo3no =(long)row.getCell(i).getNumericCellValue();// 副石3编号
+						 finpord_substo3no =row.getCell(i).getStringCellValue();// 副石3编号
 						 List<Stone> listStone =  stoneDao.findStoneBySubNo(finpord_substo1no);
 						 if(listStone.size() > 0) {
 							finpord_substo1pr = listStone.get(0).getStone_substoPrperct();// 副石3价格
@@ -990,13 +990,13 @@ public class FinpordServiceImpl implements FinpordService {
 					dataList[i][j]=Double.toString(s.getFinpord_cost());
 					name[j]="成本";
 				}else if("finpord_substo1no".equals(map.get(j))) {
-					dataList[i][j]=Long.toString(s.getFinpord_substo1no());
+					dataList[i][j]=s.getFinpord_substo1no();
 					name[j]="副石编";
 				}else if("finpord_substo2no".equals(map.get(j))) {
-					dataList[i][j]=Long.toString(s.getFinpord_substo2no());
+					dataList[i][j]=s.getFinpord_substo2no();
 					name[j]="副石1编";
 				}else if("finpord_substo3no".equals(map.get(j))) {
-					dataList[i][j]=Long.toString(s.getFinpord_substo3no());
+					dataList[i][j]=s.getFinpord_substo3no();
 					name[j]="副石2编";
 				}else if("finpord_substo1name".equals(map.get(j))) {
 					dataList[i][j]=s.getFinpord_substo1name();

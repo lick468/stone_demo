@@ -13,8 +13,8 @@
      <script src="/js/movingwindow.js" type="text/javascript"></script>
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>成品管理</title>
-<link th:href="@{/css/bootstrap.min.css?v=3.3.6}" rel="stylesheet"/>
-<link th:href="@{/css/bootstrap-theme.min.css?v=3.3.7}" rel="stylesheet"/>
+<link href="/css/bootstrap.min.css?v=3.3.6" rel="stylesheet"/>
+<link href="/css/bootstrap-theme.min.css?v=3.3.7" rel="stylesheet"/>
 <link href="/css/jquery-editable-select.min.css?v=2.2.4" rel="stylesheet"/>
 <link href="/css/finpord-min.css" rel="stylesheet" />
 <style type="text/css">
@@ -672,6 +672,7 @@
 	            <th>序号</th>
 	            <th>时间</th>
 	            <th>订单号</th>
+				<th>成品单号</th>
 	            <th>批次</th>
 	            <th>石编</th>
 	            <th>操作</th>
@@ -685,7 +686,8 @@
 	            <th>序号</th>
 	            <th>时间</th>
 	            <th>订单号</th>
-	             <th>批次</th>
+				<th>成品单号</th>
+				<th>批次</th>
 	            <th>石编</th>
 	             <th>操作</th>
 	            <th>入料差</th> 
@@ -705,7 +707,8 @@
 		            <th>序号</th>
 		            <th>时间</th>
 		            <th>订单号</th>
-		             <th>批次</th>
+					<th>成品单号</th>
+					<th>批次</th>
 		            <th>石编</th>
 		            <th>操作</th>
 		            <th>入料差</th> 
@@ -719,7 +722,8 @@
 		            <th>序号</th>
 		            <th>时间</th>
 		            <th>订单号</th>
-		             <th>批次</th>
+					<th>成品单号</th>
+					<th>批次</th>
 		            <th>石编</th>
 		            <th>操作</th>
 		            <th>入料差</th> 
@@ -1804,7 +1808,7 @@ function ajaxSearchForFediff(){
 function findFediffDetails(node) {
 	var tr1 = node.parentNode.parentNode;  
 	var pno = tr1.cells[2].innerText;
-	var sno = tr1.cells[4].innerText;
+	var sno = tr1.cells[5].innerText;
 	//alert(pno+"|||"+sno);
 	 $.ajax({
 		 url:"/c/findFediffDetails",
@@ -1903,7 +1907,7 @@ function findFediffByTime() {
 	 		    		"sLast": "尾页"  
 	 	    		},  
 	 	    		"sZeroRecords": "没有检索到数据",  
-	 	    		"sProcessing": "<img src='./loading.gif' />"  
+	 	    		"sProcessing": "<img src='img/loading.gif' />"
 	 	    		}  
 	 	    		});
 	 		tt.clear();
@@ -1915,6 +1919,7 @@ function findFediffByTime() {
 		 		    	  list[i].fediff_ID,
 		 		    	  format(now),
 		 		    	  list[i].fediff_procordNo,
+                          list[i].finpord_procordNo,
 		 		    	  list[i].fediff_batch,
 		 		    	  list[i].fediff_stoneNo,
 		 		    	  "<button class='btn_edit' value="+list[i].fediff_ID +" onclick='findFediffDetails(this);'>查看详情</button>",
@@ -1925,6 +1930,7 @@ function findFediffByTime() {
 		 		    	  list[i].fediff_ID,
 		 		    	  format(now),
 		 		    	  list[i].fediff_procordNo,
+                          list[i].finpord_procordNo,
 		 		    	  list[i].fediff_batch,
 		 		    	  list[i].fediff_stoneNo,
 		 		    	  "<button class='btn_edit' value="+list[i].fediff_ID +" onclick='findFediffDetails(this);'>查看详情</button>",
@@ -2099,7 +2105,7 @@ $(document).ready(function() {
  		    		"sLast": "尾页"  
  	    		},  
  	    		"sZeroRecords": "没有检索到数据",  
- 	    		"sProcessing": "<img src='./loading.gif' />"  
+ 	    		"sProcessing": "<img src='img/loading.gif' />"
  	    		},
  	
  	   	 "columns": [
@@ -2119,6 +2125,15 @@ $(document).ready(function() {
                     }
                 }  
  	   	      },
+             { "data": "finpord_procordNo",
+                 render: function(data, type, row, meta) {
+                     if(data > 0) {
+                         return data;
+                     }else {
+                         return "";
+                     }
+                 }
+             },
  	   	      { "data": "fediff_batch"},
  	   	      { "data": "fediff_stoneNo" },
  	   	      { "data": "fediff_ID",
@@ -2163,7 +2178,7 @@ $(document).ready(function() {
 	    		"sLast": "尾页"  
     		},  
     		"sZeroRecords": "没有检索到数据",  
-    		"sProcessing": "<img src='./loading.gif' />"  
+    		"sProcessing": "<img src='img/loading.gif' />"
     		}  
     		} );
 	 $('#listAllFinpordCopy').DataTable({ 
@@ -2189,7 +2204,7 @@ $(document).ready(function() {
  		    		"sLast": "尾页"  
  	    		},  
  	    		"sZeroRecords": "没有检索到数据",  
- 	    		"sProcessing": "<img src='./loading.gif' />"  
+ 	    		"sProcessing": "<img src='img/loading.gif' />"
  	    		},
  	
  	   	 "columns": [
@@ -2313,7 +2328,7 @@ $(document).ready(function() {
 		    		"sLast": "尾页"  
 	    		},  
 	    		"sZeroRecords": "没有检索到数据",  
-	    		"sProcessing": "<img src='./loading.gif' />"  
+	    		"sProcessing": "<img src='img/loading.gif' />"
 	    		}  
 	    		} );
 	 $('#listAllFinpord').DataTable({ 
@@ -2339,7 +2354,7 @@ $(document).ready(function() {
  		    		"sLast": "尾页"  
  	    		},  
  	    		"sZeroRecords": "没有检索到数据",  
- 	    		"sProcessing": "<img src='./loading.gif' />"  
+ 	    		"sProcessing": "<img src='img/loading.gif' />"
  	    		},
  	
  	   	 "columns": [
@@ -2393,7 +2408,7 @@ $(document).ready(function() {
  		    		"sLast": "尾页"  
  	    		},  
  	    		"sZeroRecords": "没有检索到数据",  
- 	    		"sProcessing": "<img src='./loading.gif' />"  
+ 	    		"sProcessing": "<img src='img/loading.gif' />"
  	    		},
  	
  	   	 "columns": [
@@ -2533,7 +2548,7 @@ $(document).ready(function() {
 	    		"sLast": "尾页"  
     		},  
     		"sZeroRecords": "没有检索到数据",  
-    		"sProcessing": "<img src='./loading.gif' />"  
+    		"sProcessing": "<img src='img/loading.gif' />"
     		}  
     		} );
 	 $('#profitsShowList').DataTable({ 
@@ -2557,7 +2572,7 @@ $(document).ready(function() {
 	    		"sLast": "尾页"  
     		},  
     		"sZeroRecords": "没有检索到数据",  
-    		"sProcessing": "<img src='./loading.gif' />"  
+    		"sProcessing": "<img src='img/loading.gif' />"
     		}  
     		} );
 	 
@@ -2927,9 +2942,8 @@ function insertfinport() {
 		 		document.getElementById("efffinpord_clarity2").value = result.finpord_clarity2;
 		 		document.getElementById("efffinpord_color2").value = result.finpord_color2;
 		 		
-		 		if(result.finpord_substo1no > 0) {
-		 			document.getElementById("efffinpord_substo1no").value = result.finpord_substo1no;
-		 		}
+
+                document.getElementById("efffinpord_substo1no").value = result.finpord_substo1no;
 		 		document.getElementById("efffinpord_substo1name").value = result.finpord_substo1name;
 		 		if(result.finpord_substo1wgt > 0) {
 		 			document.getElementById("efffinpord_substo1wgt").value = result.finpord_substo1wgt;
@@ -2941,9 +2955,8 @@ function insertfinport() {
 		 			document.getElementById("efffinpord_substo1pr").value = result.finpord_substo1pr;
 		 		}
 		 		
-		 		if(result.finpord_substo2no > 0) {
-		 			document.getElementById("efffinpord_substo2no").value = result.finpord_substo2no;
-		 		}
+
+                document.getElementById("efffinpord_substo2no").value = result.finpord_substo2no;
 		 		document.getElementById("efffinpord_substo2name").value = result.finpord_substo2name;
 		 		if(result.finpord_substo2wgt > 0) {
 		 			document.getElementById("efffinpord_substo2wgt").value = result.finpord_substo2wgt;
@@ -2954,10 +2967,8 @@ function insertfinport() {
 		 		if(result.finpord_substo2pr > 0) {
 		 			document.getElementById("efffinpord_substo2pr").value = result.finpord_substo2pr;
 		 		}
-		 		if(result.finpord_substo3no > 0) {
-		 			document.getElementById("efffinpord_substo3no").value = result.finpord_substo3no;
-		 		}
-		 		
+
+                document.getElementById("efffinpord_substo3no").value = result.finpord_substo3no;
 		 		document.getElementById("efffinpord_substo3name").value = result.finpord_substo3name;
 		 		if(result.finpord_substo3wgt > 0) {
 		 			document.getElementById("efffinpord_substo3wgt").value = result.finpord_substo3wgt;
@@ -3147,9 +3158,8 @@ function insertfinport() {
 		 		document.getElementById("efffinpord_clarity2").value = result.finpord_clarity2;
 		 		document.getElementById("efffinpord_color2").value = result.finpord_color2;
 		 		
-		 		if(result.finpord_substo1no > 0) {
-		 			document.getElementById("efffinpord_substo1no").value = result.finpord_substo1no;
-		 		}
+
+                document.getElementById("efffinpord_substo1no").value = result.finpord_substo1no;
 		 		document.getElementById("efffinpord_substo1name").value = result.finpord_substo1name;
 		 		if(result.finpord_substo1wgt > 0) {
 		 			document.getElementById("efffinpord_substo1wgt").value = result.finpord_substo1wgt;
@@ -3160,10 +3170,8 @@ function insertfinport() {
 		 		if(result.finpord_substo1pr > 0) {
 		 			document.getElementById("efffinpord_substo1pr").value = result.finpord_substo1pr;
 		 		}
-		 		
-		 		if(result.finpord_substo2no > 0) {
-		 			document.getElementById("efffinpord_substo2no").value = result.finpord_substo2no;
-		 		}
+
+                document.getElementById("efffinpord_substo2no").value = result.finpord_substo2no;
 		 		document.getElementById("efffinpord_substo2name").value = result.finpord_substo2name;
 		 		if(result.finpord_substo2wgt > 0) {
 		 			document.getElementById("efffinpord_substo2wgt").value = result.finpord_substo2wgt;
@@ -3174,10 +3182,8 @@ function insertfinport() {
 		 		if(result.finpord_substo2pr > 0) {
 		 			document.getElementById("efffinpord_substo2pr").value = result.finpord_substo2pr;
 		 		}
-		 		if(result.finpord_substo3no > 0) {
-		 			document.getElementById("efffinpord_substo3no").value = result.finpord_substo3no;
-		 		}
-		 		
+
+                document.getElementById("efffinpord_substo3no").value = result.finpord_substo3no;
 		 		document.getElementById("efffinpord_substo3name").value = result.finpord_substo3name;
 		 		if(result.finpord_substo3wgt > 0) {
 		 			document.getElementById("efffinpord_substo3wgt").value = result.finpord_substo3wgt;
@@ -3373,9 +3379,8 @@ function insertfinport() {
 		 		document.getElementById("fffinpord_clarity2").value = result.finpord_clarity2;
 		 		document.getElementById("fffinpord_color2").value = result.finpord_color2;
 		 		
-		 		if(result.finpord_substo1no > 0) {
-		 			document.getElementById("fffinpord_substo1no").value = result.finpord_substo1no;
-		 		}
+
+                document.getElementById("fffinpord_substo1no").value = result.finpord_substo1no;
 		 		document.getElementById("fffinpord_substo1name").value = result.finpord_substo1name;
 		 		if(result.finpord_substo1wgt > 0) {
 		 			document.getElementById("fffinpord_substo1wgt").value = result.finpord_substo1wgt;
@@ -3386,10 +3391,8 @@ function insertfinport() {
 		 		if(result.finpord_substo1pr > 0) {
 		 			document.getElementById("fffinpord_substo1pr").value = result.finpord_substo1pr;
 		 		}
-		 		
-		 		if(result.finpord_substo2no > 0) {
-		 			document.getElementById("fffinpord_substo2no").value = result.finpord_substo2no;
-		 		}
+
+                document.getElementById("fffinpord_substo2no").value = result.finpord_substo2no;
 		 		document.getElementById("fffinpord_substo2name").value = result.finpord_substo2name;
 		 		if(result.finpord_substo2wgt > 0) {
 		 			document.getElementById("fffinpord_substo2wgt").value = result.finpord_substo2wgt;
@@ -3400,10 +3403,8 @@ function insertfinport() {
 		 		if(result.finpord_substo2pr > 0) {
 		 			document.getElementById("fffinpord_substo2pr").value = result.finpord_substo2pr;
 		 		}
-		 		if(result.finpord_substo3no > 0) {
-		 			document.getElementById("fffinpord_substo3no").value = result.finpord_substo3no;
-		 		}
-		 		
+
+                document.getElementById("fffinpord_substo3no").value = result.finpord_substo3no;
 		 		document.getElementById("fffinpord_substo3name").value = result.finpord_substo3name;
 		 		if(result.finpord_substo3wgt > 0) {
 		 			document.getElementById("fffinpord_substo3wgt").value = result.finpord_substo3wgt;
@@ -3598,9 +3599,8 @@ function insertfinport() {
 		 		document.getElementById("efinpord_clarity2").value = result.finpord_clarity2;
 		 		document.getElementById("efinpord_color2").value = result.finpord_color2;
 		 		
-		 		if(result.finpord_substo31no > 0) {
-		 			document.getElementById("efinpord_substo1no").value = result.finpord_substo1no;
-		 		}
+
+                document.getElementById("efinpord_substo1no").value = result.finpord_substo1no;
 		 		document.getElementById("efinpord_substo1name").value = result.finpord_substo1name;
 		 		if(result.finpord_substo1wgt > 0) {
 		 			document.getElementById("efinpord_substo1wgt").value = result.finpord_substo1wgt;
@@ -3612,9 +3612,8 @@ function insertfinport() {
 		 			document.getElementById("efinpord_substo1pr").value = result.finpord_substo1pr;
 		 		}
 		 		
-		 		if(result.finpord_substo2no > 0) {
-		 			document.getElementById("efinpord_substo2no").value = result.finpord_substo2no;
-		 		}
+
+                document.getElementById("efinpord_substo2no").value = result.finpord_substo2no;
 		 		document.getElementById("efinpord_substo2name").value = result.finpord_substo2name;
 		 		if(result.finpord_substo2wgt > 0) {
 		 			document.getElementById("efinpord_substo2wgt").value = result.finpord_substo2wgt;
@@ -3625,10 +3624,8 @@ function insertfinport() {
 		 		if(result.finpord_substo2pr > 0) {
 		 			document.getElementById("efinpord_substo2pr").value = result.finpord_substo2pr;
 		 		}
-		 		if(result.finpord_substo3no > 0) {
-		 			document.getElementById("efinpord_substo3no").value = result.finpord_substo3no;
-		 		}
-		 		
+
+                document.getElementById("efinpord_substo3no").value = result.finpord_substo3no;
 		 		document.getElementById("efinpord_substo3name").value = result.finpord_substo3name;
 		 		if(result.finpord_substo3wgt > 0) {
 		 			document.getElementById("efinpord_substo3wgt").value = result.finpord_substo3wgt;

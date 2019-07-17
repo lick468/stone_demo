@@ -5,6 +5,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,7 +38,7 @@ public class SupplierController {
 	 * created  at 2018年6月4日
 	 */
 	@ApiOperation(value="跳转主页",notes="跳转主页")
-	@RequestMapping(value = "findAllSupplier")
+	@GetMapping(value = "/findAllSupplier")
 	public String findAll(ModelMap map, HttpSession session) {
 		map.addAttribute("supplierList", supplierService.findAllSupplier());
 		return "admin/supplierList";
@@ -50,7 +51,7 @@ public class SupplierController {
 	 * created  at 2018年6月4日
 	 */
 	@ApiOperation(value="跳转添加页面",notes="显示添加供应商页面")
-	@RequestMapping(value = "showSupplierCreateForm")
+	@GetMapping(value = "/showSupplierCreateForm")
 	public String showCtrateForm() {
 		return "admin/supplierCreateForm";
 	}
@@ -64,7 +65,7 @@ public class SupplierController {
 	 * created  at 2018年6月4日
 	 */
 	@ApiOperation(value="添加供应商",notes="添加供应商")
-	@RequestMapping(value = "createSupplier", method = RequestMethod.POST)
+	@RequestMapping(value = "/createSupplier", method = RequestMethod.POST)
 	public String createSupplier(Supplier supplier, ModelMap map) {
 		int i = supplierService.insertSupplier(supplier);
 		if (i == 1)

@@ -11,7 +11,7 @@
 <link href="/css/bootstrap-theme.min.css" rel="stylesheet" />
 <link href="/css/jquery-editable-select.min.css" rel="stylesheet" />
 <link th:href="@{/css/loading.css}" rel="stylesheet"/>
-<title>镶嵌方式销售排名分析模型</title>
+<title>系列销售排名分析模型</title>
 <style type="text/css">
 * {
 	margin: 0;
@@ -128,7 +128,7 @@ th, td {
 			<a class="button-red" href="/analysis/main">返回主菜单</a>
 		</span>
 
-		<div class="slogan-index">镶嵌方式销售排名分析</div>
+		<div class="slogan-index">系列销售排名分析</div>
 
 	</div>
 </header>
@@ -151,16 +151,16 @@ th, td {
 					<div class="style-selector">
 						<br>
 						<p>请选择起止时间：</p>
-						<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control layer-date" id="starttime"  style="background-color: green; color: black;" />
+						<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control" id="starttime"  style="background-color: green; color: black;" />
 						<br>
-						<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control layer-date" id="endtime"  style="background-color: green; color: black;" />
+						<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control" id="endtime"  style="background-color: green; color: black;" />
 					</div>
 				</div>
 				<br>
-				<select id="listStyle" class="form-control" onchange=" return areachange();" name="stone_AreaName" style="background-color: green; color: black;">
-					<option disabled="disabled" selected="selected"  value="镶嵌">镶嵌方式</option>
+				<select id="listSeries" class="form-control" onchange=" return areachange();" name="stone_AreaName" style="background-color: green; color: black;">
+					<option disabled="disabled" selected="selected"  value="系列">系列</option>
 					<option value="所有">所有</option>
-					<option th:each="n : ${listStyle}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
+					<option th:each="n : ${listSeries}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
 				</select>
 				<select id="listArea" class="form-control" onchange=" return areachange();" name="stone_AreaName" style="background-color: green; color: black;">
 					<option disabled="disabled" selected="selected"  value="地区">地区</option>
@@ -181,6 +181,11 @@ th, td {
 					<option disabled="disabled" selected="selected"  value="供应商">供应商</option>
 					<option value="所有">所有</option>
 					<option th:each="n : ${listSupplier}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
+				</select>
+				<select id="listProduct" class="form-control" onchange=" return supplierchange();" name="stone_supplierName" style="background-color: green; color: black;">
+					<option disabled selected value="名称">名称</option>
+					<option value="所有">所有</option>
+					<option th:each="n : ${listProduct}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
 				</select>
 				<br>
 				<div>
@@ -227,7 +232,7 @@ th, td {
 								<th>门店</th>
 								<th>柜台</th>
 								<th>名称</th>
-								<th>镶嵌方式</th>
+								<th>系列</th>
 								<th>标价</th>
 								<th>结算价</th>
 								<th>金重</th>
@@ -309,10 +314,11 @@ th, td {
 		
 		function button_post() {
 			var area = document.getElementById("listArea").value;
+            var product = document.getElementById("listProduct").value;
 			var supplier = document.getElementById("listSupplier").value;
 			var room = document.getElementById("listRoom").value;
 			var counter = document.getElementById("listCounter").value;
-			var style = document.getElementById("listStyle").value;
+			var series = document.getElementById("listSeries").value;
 			var start = document.getElementById("starttime").value;
 			var end = document.getElementById("endtime").value;
 			var selectType = $('input:radio:checked').val();
@@ -330,8 +336,9 @@ th, td {
 				type : "post",
 				data : {
 					area : area,
+                    product : product,
 					supplier : supplier,
-					style : style,
+                    series : series,
 					room : room,
 					counter : counter,
 					start : start,
@@ -343,7 +350,7 @@ th, td {
 					//alert(result);
 					 $('#loading').hide();
 					var rs = result.split("@");
-					document.getElementById("context").value=area+"&"+room+"&"+counter+"&"+supplier+"&"+style+"&"+start+"&"+end;
+					document.getElementById("context").value=area+"&"+room+"&"+counter+"&"+supplier+"&"+series+"&"+start+"&"+end+"&"+product;
 					//图标数据
 					var xData = rs[1].substring(1, rs[1].length - 1)
 							.split(", ");
@@ -409,7 +416,7 @@ th, td {
 					var s5 = rs[6].substring(1, rs[6].length - 1).split(", ");//地区
 					var s6 = rs[7].substring(1, rs[7].length - 1).split(", ");//门店
 					var s7 = rs[8].substring(1, rs[8].length - 1).split(", ");//柜台
-					var s8 = rs[9].substring(1, rs[9].length - 1).split(", ");//成色
+					var s8 = rs[9].substring(1, rs[9].length - 1).split(", ");//系列
 					var s9 = rs[10].substring(1, rs[10].length - 1).split(", ");//标价
 					var s10 = rs[11].substring(1, rs[11].length - 1).split(", ");//主石
 					var s11 = rs[12].substring(1, rs[12].length - 1).split(", ");//金重

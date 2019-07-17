@@ -6,15 +6,14 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.nenu.dao.BelongAndCounterDao;
 
 import com.nenu.domain.BelongAndCounter;
 import com.nenu.service.BelongAndCounterService;
-@Service
 
+@Service
 public class BelongAndCounterServiceImpl implements BelongAndCounterService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BelongAndCounterServiceImpl.class);
 	@Autowired

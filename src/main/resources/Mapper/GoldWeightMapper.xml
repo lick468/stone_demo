@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace ="com.nenu.dao.GoldWeightDao">
+	<resultMap type="com.nenu.domain.GoldWeight" id="GoldWeightMap">
+		<result column="goldWeight_ID" property="goldWeight_ID"/>
+		<result column="goldWeight_start" property="goldWeight_start"/>
+		<result column="goldWeight_end" property="goldWeight_end"/>
+		
+	</resultMap>
+	
+	<parameterMap type="com.nenu.domain.GoldWeight" id="GoldWeight"/>
+
+	<select id="findGoldWeightById"   resultMap="GoldWeightMap" parameterType="java.lang.Integer" >
+		select * from tb_goldWeight where goldWeight_ID=#{goldWeight_ID}
+	</select>
+	
+	<select id="findAllGoldWeight"   resultMap="GoldWeightMap">
+		select * from tb_goldWeight order by  goldWeight_ID
+	</select>
+	<insert id="insertGoldWeight" parameterMap="GoldWeight" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		tb_goldWeight(goldWeight_ID,goldWeight_start,goldWeight_end)
+		values 
+		(#{goldWeight_ID},#{goldWeight_start},#{goldWeight_end})
+	</insert>
+	
+	<update id="updateGoldWeight" parameterMap="GoldWeight">
+		update
+		tb_goldWeight
+		set
+		<if test="goldWeight_start!=null">
+			goldWeight_start = #{goldWeight_start}
+		</if>
+		<if test="goldWeight_end!=null">
+			,goldWeight_end = #{goldWeight_end}
+		</if>		
+		where
+		goldWeight_ID=#{goldWeight_ID}
+	</update>
+	
+	<delete id="deleteGoldWeight" parameterType="java.lang.Integer">
+		delete from
+		tb_goldWeight
+		where
+		goldWeight_ID=#{goldWeight_ID}
+	</delete>
+
+</mapper>

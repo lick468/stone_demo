@@ -43,11 +43,11 @@ public interface StoneService {
 
 	List<Stone> findStoneByMainNo(String stone_mainNo);
 
-	List<Stone> findStoneBySubNo(long stone_substoNo);
+	List<Stone> findStoneBySubNo(String stone_substoNo);
 	
 	List<Stone> findStoneByMainNoForManage(String stone_mainNo);//根据主石编获取石头信息(石库管理)
 
-	List<Stone> findStoneBySubNoForManage(long stone_substoNo);//根据副石编获取石头信息(石库管理)
+	List<Stone> findStoneBySubNoForManage(String stone_substoNo);//根据副石编获取石头信息(石库管理)
 
 	List<Stone> findStoneBySupplierName(String stone_supplierName);
 	

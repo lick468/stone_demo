@@ -3,9 +3,10 @@ package com.nenu.service;
 import java.util.List;
 import java.util.Map;
 
+import com.nenu.domain.Finpord;
 import com.nenu.domain.Procord;
 
-
+import javax.servlet.http.HttpServletResponse;
 
 
 public interface ProcordService {
@@ -18,4 +19,5 @@ public interface ProcordService {
 	int updateProcordState(Procord procord );
 	int updateProcordPay(Procord procord);
 	List<Procord> findProcordByTableInfo(Map<String, Object> params);
+	int downloadExcel(List<Procord> list, HttpServletResponse response);
 }

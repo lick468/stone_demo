@@ -13,8 +13,8 @@
      <script src="/js/movingwindow.js" type="text/javascript"></script>
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>石头管理</title>
-<link th:href="@{/css/bootstrap.min.css?v=3.3.6}" rel="stylesheet"/>
-<link th:href="@{/css/bootstrap-theme.min.css?v=3.3.7}" rel="stylesheet"/>
+<link href="/css/bootstrap.min.css?v=3.3.6" rel="stylesheet"/>
+<link href="/css/bootstrap-theme.min.css?v=3.3.7" rel="stylesheet"/>
 <link href="/css/jquery-editable-select.min.css?v=2.2.4" rel="stylesheet"/>
 
 
@@ -182,7 +182,6 @@ table tr:nth-child(2n+2){
   border: none;
   border-radius: 15px;
   box-shadow: 0 3px #999;
-
 }
 .btn_search:hover {background-color: #3366FF}
 
@@ -206,7 +205,6 @@ table tr:nth-child(2n+2){
   border: none;
   border-radius: 15px;
   box-shadow: 0 3px #999;
-
 }
 
 .btn_submit{
@@ -224,6 +222,20 @@ table tr:nth-child(2n+2){
   border: none;
   border-radius: 4px;
   box-shadow: 0 1px #999;
+}
+.btn_download{
+    display: inline-block;
+    height:30px;
+    width:150px;
+    font-size:24px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    background-color:#3385FF;
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0 1px #999;
 }
 
 .btn_back{
@@ -512,7 +524,7 @@ text-align: center;
 				</select>
 			</div>
 			<div class="input-group col-lg-2">
-				<button class="btn_search" id="ajaxSearch"
+				<button class="btn_search" id="ajaxSearch1"
 					onclick="ajaxSearchStone();">查找</button>
 			</div>
 			<div id="secondSearch" style="display: none;" class="input-group col-lg-2">
@@ -1253,7 +1265,8 @@ text-align: center;
 		style="width: 100%;  display: none;">
 		<div style="height: 10px;"></div>
 		<div id="ProcordShowList" style="padding: 10px 10px 10px;">
-			<div class="head">加工订单表</div>
+			<div class="head">加工订单表<small>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="btn_download" href="/b/downloadProcord">Excel下载</a> </small>
+			</div>
 			<br>
 			<table id="exampleorderout"
 				class="table table-striped table-bordered table-hover " style="width: 100%;">
@@ -1410,7 +1423,7 @@ text-align: center;
 		<div id="tbackStoneShowList" style="border: 0px solid; margin-top: 10px;">
 			<div class="head">数据显示列表</div>
 			<div class="space"></div>
-			<table id="tbackStoneshowList"
+			<table id="tbackStoneshowListShow"
 				class="table table-striped table-bordered" style="width: 100%;">
 				<thead>
 					<tr>
@@ -2272,13 +2285,13 @@ function tbackStoneSearch() {
 			var tbackStoneList =[];
 	 		tbackStoneList = result;
 	 		document.getElementById("flag_back").value="search";
-			var tt = $('#tbackStoneshowList').DataTable();
+			var tt = $('#tbackStoneshowListShow').DataTable();
 	 		 tt.clear();
-	 		$("#tbackStoneshowList tbody").empty();
+	 		$("#tbackStoneshowListShow tbody").empty();
 			if(tbackStoneList.length>0) {
 				for(var i=0;i<tbackStoneList.length;i++) {
 		 			var now   = new Date(tbackStoneList[i].tback_time);
-		 			var t = $('#tbackStoneshowList').DataTable();
+		 			var t = $('#tbackStoneshowListShow').DataTable();
 		 		    t.row.add( [
 		 		    	tbackStoneList[i].tback_ID,
 		 		    	format(now),
@@ -3723,15 +3736,7 @@ function initTable() {
                   }
               }    
 	      },
-	      { "data": "supplier_subStoneNo",
-	    	  render: function(data, type, row, meta) {
-                  if(data > 0) {
-                	  return data;
-                  }else {
-                	  return "";
-                  }
-              }   
-	      },
+	      { "data": "supplier_subStoneNo"},
 	      { "data": "supplier_subNumber",
 	    	  render: function(data, type, row, meta) {
                   if(data > 0) {
@@ -3929,7 +3934,7 @@ $(document).ready(function() {
 		    		"sLast": "尾页"  
 	    		},  
 	    		"sZeroRecords": "没有检索到数据",  
-	    		"sProcessing": "<img src='./loading.gif' />"  
+	    		"sProcessing": "<img src='img/loading.gif' />"
 	    		},
 	
 	   	 "columns": [
@@ -3961,15 +3966,7 @@ $(document).ready(function() {
 	                     }
 	                 }    
 	   	      },
-	   	      { "data": "stone_substoNo",
-	   	    	  render: function(data, type, row, meta) {
-	                     if(data > 0) {
-	                   	  return data;
-	                     }else {
-	                   	  return "";
-	                     }
-	                 }    
-	   	      },
+	   	      { "data": "stone_substoNo"},
 	   	      { "data": "stone_substoName" },
 	   	      { "data": "stone_substoWgt",
 	   	    	  render: function(data, type, row, meta) {
@@ -4002,7 +3999,7 @@ $(document).ready(function() {
 	   	      ],
 	   
 	   } );
-    $('#tbackStoneshowList').DataTable({ 
+    $('#tbackStoneshowListShow').DataTable({
    	 "paginationType" : "full_numbers", //详细分页组，可以支持直接跳转到某页  
         //当处理大数据时，延迟渲染数据，有效提高Datatables处理能力  
         "deferRender": true, 
@@ -4023,7 +4020,7 @@ $(document).ready(function() {
 	    		"sLast": "尾页"  
    		},  
    		"sZeroRecords": "没有检索到数据",  
-   		"sProcessing": "<img src='./loading.gif' />"  
+   		"sProcessing": "<img src='img/loading.gif' />"
    		}  
    		} );
     $('#listAllStoneCopy').DataTable({ 
@@ -4049,7 +4046,7 @@ $(document).ready(function() {
 		    		"sLast": "尾页"  
 	    		},  
 	    		"sZeroRecords": "没有检索到数据",  
-	    		"sProcessing": "<img src='./loading.gif' />"  
+	    		"sProcessing": "<img src='img/loading.gif' />"
 	    		},
 	
 	   	 "columns": [
@@ -4073,15 +4070,7 @@ $(document).ready(function() {
 	                 }   
 	   	      },
 	   	      
-	   	      { "data": "stone_substoNo",
-	   	    	  render: function(data, type, row, meta) {
-	                     if(data > 0) {
-	                   	  return data;
-	                     }else {
-	                   	  return "";
-	                     }
-	                 }    
-	   	      },
+	   	      { "data": "stone_substoNo"},
 	   	      { "data": "stone_substoName" },
 	   	      { "data": "stone_substoWgt",
 	   	    	  render: function(data, type, row, meta) {
@@ -4130,7 +4119,7 @@ $(document).ready(function() {
  	    		"sLast": "尾页"  
      		},  
      		"sZeroRecords": "没有检索到数据",  
-     		"sProcessing": "<img src='./loading.gif' />"  
+     		"sProcessing": "<img src='img/loading.gif' />"
      		},
 
     	 "columns": [
@@ -4162,15 +4151,7 @@ $(document).ready(function() {
                       }
                   }    
     	      },
-    	      { "data": "stone_substoNo",
-    	    	  render: function(data, type, row, meta) {
-                      if(data > 0) {
-                    	  return data;
-                      }else {
-                    	  return "";
-                      }
-                  }    
-    	      },
+    	      { "data": "stone_substoNo"},
     	      { "data": "stone_substoName" },
     	      { "data": "stone_substoWgt",
     	    	  render: function(data, type, row, meta) {
@@ -4228,7 +4209,7 @@ $(document).ready(function() {
 		    		"sLast": "尾页"  
 	    		},  
 	    		"sZeroRecords": "没有检索到数据",  
-	    		"sProcessing": "<img src='./loading.gif' />"  
+	    		"sProcessing": "<img src='img/loading.gif' />"
 	    		},
 	
 	   	 "columns": [
@@ -4257,15 +4238,7 @@ $(document).ready(function() {
 	                     }
 	                 }    
 	   	      },
-	   	      { "data": "stone_substoNo",
-	   	    	  render: function(data, type, row, meta) {
-	                     if(data > 0) {
-	                   	  return data;
-	                     }else {
-	                   	  return "";
-	                     }
-	                 }    
-	   	      },
+	   	      { "data": "stone_substoNo"},
 	   	      { "data": "stone_substoWgt",
 	   	    	  render: function(data, type, row, meta) {
 	                     if(data > 0) {
@@ -4314,7 +4287,7 @@ $(document).ready(function() {
        		"sLast": "尾页"  
    		},  
    		"sZeroRecords": "没有检索到数据",  
-   		"sProcessing": "<img src='./loading.gif' />"  
+   		"sProcessing": "<img src='img/loading.gif' />"
    		}  
    	} );
 } );  

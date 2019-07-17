@@ -109,13 +109,13 @@
 		where stone_mainNumber <![CDATA[ > ]]> 0  and stone_reserved1=0 and stone_mainStoneNo=#{stone_mainStoneNo}
 	</select>
 	<!-- 石库管理查询  副石-->
-	<select id="findStoneBySubNoForManage" resultMap="BaseResultMapStone" parameterType="long">
+	<select id="findStoneBySubNoForManage" resultMap="BaseResultMapStone" parameterType="String">
 		select 
 		<include refid="Base_Column_List_Stone"/>
 		from tb_stone
 		where stone_substoNumber <![CDATA[ > ]]>  0 and stone_reserved1=0 and  stone_substoNo=#{stone_substoNo}
 	</select>
-	<select id="findStoneBySubNo" resultMap="BaseResultMapStone" parameterType="long">
+	<select id="findStoneBySubNo" resultMap="BaseResultMapStone" parameterType="String">
 		select 
 		<include refid="Base_Column_List_Stone"/>
 		from tb_stone
@@ -195,7 +195,7 @@
 		where 
 		stone_mainStoneNo=#{stone_mainStoneNo}
 	</update>
-	<update id="updateSubStoneNumber" parameterMap="Stone" parameterType="long">
+	<update id="updateSubStoneNumber" parameterMap="Stone" parameterType="String">
 		update
 		tb_stone
 		set

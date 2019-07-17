@@ -126,7 +126,7 @@ public class StoneServiceImpl implements StoneService {
 					if(stoneListNo.get(i).getStone_mainStoneNo().length()>0) {
 						listNo.add(stoneListNo.get(i).getStone_mainStoneNo());
 					}
-					if(stoneListNo.get(i).getStone_substoNo()>0) {
+					if(stoneListNo.get(i).getStone_substoNo().length()>0) {
 						listNo.add(stoneListNo.get(i).getStone_substoNo());
 					}		
 				}
@@ -135,7 +135,7 @@ public class StoneServiceImpl implements StoneService {
 					if(stoneCopyListNo.get(i).getStone_mainStoneNo().length()>0) {
 						listNo.add(stoneCopyListNo.get(i).getStone_mainStoneNo());
 					}
-					if(stoneCopyListNo.get(i).getStone_substoNo() > 0) {
+					if(stoneCopyListNo.get(i).getStone_substoNo().length() > 0) {
 						listNo.add(stoneCopyListNo.get(i).getStone_substoNo());
 					}
 				}
@@ -280,7 +280,7 @@ public class StoneServiceImpl implements StoneService {
 					double stone_mainWeight=0;
 					double stone_mainPrperct=0;
 					double stone_mainPramt=0;
-					long stone_substoNo = 0;
+					String stone_substoNo = "";
 					String stone_substoName = "";
 					double stone_substoWgt=0;
 					int stone_substoNumber=0;
@@ -320,15 +320,16 @@ public class StoneServiceImpl implements StoneService {
 							}
 							
 						} else if("stone_loosdofty".equals(map.get(i))) {
-							int cell = row.getCell(i).getCellType(); // Cell类型 0 表示数字 1表示字符串
-							if (cell == 1) {
-								 stone_loosdofty = row.getCell(i).getStringCellValue();// 裸石厂	
-							} else if (cell == 0) {
-								int temp;
-								temp = (int) row.getCell(i).getNumericCellValue();// 裸石厂
-								stone_loosdofty = String.valueOf(temp);
+							if(row.getCell(i)!=null) {
+								int cell = row.getCell(i).getCellType(); // Cell类型 0 表示数字 1表示字符串
+								if (cell == 1) {
+									stone_loosdofty = row.getCell(i).getStringCellValue();// 裸石厂
+								} else if (cell == 0) {
+									int temp;
+									temp = (int) row.getCell(i).getNumericCellValue();// 裸石厂
+									stone_loosdofty = String.valueOf(temp);
+								}
 							}
-					
 						} else if("stone_mainName".equals(map.get(i))) {
 							if(row.getCell(i)!=null) {
 								stone_mainName = row.getCell(i).getStringCellValue();// 主石名
@@ -361,7 +362,14 @@ public class StoneServiceImpl implements StoneService {
 							}
 						} else if("stone_substoNo".equals(map.get(i))) {
 							if(row.getCell(i)!=null) {
-								stone_substoNo = (long)row.getCell(i).getNumericCellValue();// 副石编
+                                int cell = row.getCell(i).getCellType(); // Cell类型 0 表示数字 1表示字符串
+                                if (cell == 1) {
+                                    stone_substoNo = row.getCell(i).getStringCellValue();// 副石编
+                                } else if (cell == 0) {
+                                    int temp;
+                                    temp = (int) row.getCell(i).getNumericCellValue();// 副石编
+                                    stone_substoNo = String.valueOf(temp);
+                                }
 							}
 						} else if("stone_substoName".equals(map.get(i))) {
 							if(row.getCell(i)!=null) {
@@ -371,14 +379,10 @@ public class StoneServiceImpl implements StoneService {
 							if(row.getCell(i)!=null) {
 								stone_substoWgt = row.getCell(i).getNumericCellValue();// 副石
 							}
-							
-							
 						} else if("stone_substoNumber".equals(map.get(i))) {
 							if(row.getCell(i)!=null) {
 								stone_substoNumber = (int) row.getCell(i).getNumericCellValue();// 副石数
 							}
-							
-							
 						} else if("stone_substoPrperct".equals(map.get(i))) {
 							if(row.getCell(i)!=null) {
 								stone_substoPrperct = row.getCell(i).getNumericCellValue();// 副石价
@@ -389,8 +393,6 @@ public class StoneServiceImpl implements StoneService {
 							if(row.getCell(i)!=null) {
 								stone_substoPramt = row.getCell(i).getNumericCellValue();// 副石额
 							}
-							
-							
 						} else if("stone_shape".equals(map.get(i))) {
 							if(row.getCell(i)!=null) {
 								stone_shape = row.getCell(i).getStringCellValue();// 形状	
@@ -513,17 +515,17 @@ public class StoneServiceImpl implements StoneService {
 					
 					
 					//说明此excel表中有与数据库里相同的石编
-					if ((listNo.contains(stone_substoNo) && (stone_substoNo>0) ) || (listNo.contains(stone_mainStoneNo)&& (!stone_mainStoneNo.isEmpty()) )) {
+					if ((listNo.contains(stone_substoNo) && (!stone_substoNo.isEmpty()) ) || (listNo.contains(stone_mainStoneNo)&& (!stone_mainStoneNo.isEmpty()) )) {
 						System.out.println("数据库里已有这条数据"+"main:"+stone_mainStoneNo +"-->"+stone_substoNo);
 					} else {
 						//说明此excel表中有重复石编
-						if( (listThisNo.contains(stone_mainStoneNo) && !stone_mainStoneNo.isEmpty()) || (listThisNo.contains(String.valueOf(stone_substoNo)) && stone_substoNo>0 )) {
+						if( (listThisNo.contains(stone_mainStoneNo) && !stone_mainStoneNo.isEmpty()) || (listThisNo.contains(String.valueOf(stone_substoNo)) && !stone_substoNo.isEmpty() )) {
 							System.out.println("Excel表里已有这条数据"+"main:"+stone_mainStoneNo +"-->"+stone_substoNo);
 						}else {
 							if(!stone_mainStoneNo.isEmpty()) {
 								listThisNo.add(stone_mainStoneNo);
 							}
-							if(stone_substoNo>0 ) {
+							if(!stone_substoNo.isEmpty() ) {
 								listThisNo.add(String.valueOf(stone_substoNo));
 							}
 			
@@ -585,7 +587,7 @@ public class StoneServiceImpl implements StoneService {
 	}
 
 	@Override
-	public List<Stone> findStoneBySubNo(long stone_substoNo) {
+	public List<Stone> findStoneBySubNo(String stone_substoNo) {
 		LOGGER.info("通过（stone_substoNo）查询一个石头信息:>>" + stone_substoNo);
 		return stoneDao.findStoneBySubNo(stone_substoNo);
 	}
@@ -652,7 +654,7 @@ public class StoneServiceImpl implements StoneService {
 				dataList[i][9] = null;
 				dataList[i][26] = null;
 				dataList[i][27] = null;
-				dataList[i][10] = String.valueOf(s.getStone_substoNo());
+				dataList[i][10] = s.getStone_substoNo();
 				dataList[i][11] = s.getStone_substoName();
 				dataList[i][12] = Double.toString(s.getStone_substoWgt());
 				dataList[i][13] = Integer.toString(s.getStone_substoNumber());
@@ -829,7 +831,7 @@ public class StoneServiceImpl implements StoneService {
 				dataList[i][4] =list.get(i).getSupplier_mainStoneNo();
 				dataList[i][5] =String.valueOf(list.get(i).getSupplier_mainNumber()>0?list.get(i).getSupplier_mainNumber():0);
 				dataList[i][6] =String.valueOf(list.get(i).getSupplier_mainWeight()>0?list.get(i).getSupplier_mainWeight():0);
-				dataList[i][7] =String.valueOf(list.get(i).getSupplier_subStoneNo()>0?list.get(i).getSupplier_subStoneNo():0);
+				dataList[i][7] =String.valueOf(list.get(i).getSupplier_subStoneNo());
 				dataList[i][8] =String.valueOf(list.get(i).getSupplier_subNumber()>0?list.get(i).getSupplier_subNumber():0);
 				dataList[i][9] =String.valueOf(list.get(i).getSupplier_subWeight()>0?list.get(i).getSupplier_subWeight():0);
 				dataList[i][10] =list.get(i).getSupplier_delyman();
@@ -927,7 +929,7 @@ public class StoneServiceImpl implements StoneService {
 	}
 
 	@Override
-	public List<Stone> findStoneBySubNoForManage(long stone_substoNo) {
+	public List<Stone> findStoneBySubNoForManage(String stone_substoNo) {
 		// TODO Auto-generated method stub
 		return stoneDao.findStoneBySubNoForManage(stone_substoNo);
 	}

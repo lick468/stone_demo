@@ -151,9 +151,9 @@ th, td {
 					<div class="style-selector">
 						<br>
 						<p>请选择起止时间：</p>
-						<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control layer-date" id="starttime"  style="background-color: green; color: black;" />
+						<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control" id="starttime"  style="background-color: green; color: black;" />
 						<br>
-						<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control layer-date" id="endtime"  style="background-color: green; color: black;" />
+						<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control" id="endtime"  style="background-color: green; color: black;" />
 					</div>
 				</div>
 				<br>
@@ -181,6 +181,11 @@ th, td {
 					<option disabled="disabled" selected="selected"  value="供应商">供应商</option>
 					<option value="所有">所有</option>
 					<option th:each="n : ${listSupplier}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
+				</select>
+				<select id="listProduct" class="form-control" onchange=" return supplierchange();" name="stone_supplierName" style="background-color: green; color: black;">
+					<option disabled selected value="名称">名称</option>
+					<option value="所有">所有</option>
+					<option th:each="n : ${listProduct}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
 				</select>
 				<br>
 				<div>
@@ -309,6 +314,7 @@ th, td {
 		
 		function button_post() {
 			var area = document.getElementById("listArea").value;
+            var product = document.getElementById("listProduct").value;
 			var supplier = document.getElementById("listSupplier").value;
 			var room = document.getElementById("listRoom").value;
 			var counter = document.getElementById("listCounter").value;
@@ -330,6 +336,7 @@ th, td {
 				type : "post",
 				data : {
 					area : area,
+                    product : product,
 					supplier : supplier,
 					priceNo : priceNo,
 					room : room,
@@ -343,7 +350,7 @@ th, td {
 					//alert(result);
 					 $('#loading').hide();
 					var rs = result.split("@");
-					document.getElementById("context").value=area+"&"+room+"&"+counter+"&"+supplier+"&"+priceNo+"&"+start+"&"+end;
+					document.getElementById("context").value=area+"&"+room+"&"+counter+"&"+supplier+"&"+priceNo+"&"+start+"&"+end+"&"+product;
 					//图标数据
 					var xData = rs[1].substring(1, rs[1].length - 1)
 							.split(", ");

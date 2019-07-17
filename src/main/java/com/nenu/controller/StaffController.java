@@ -5,6 +5,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,13 +24,13 @@ public class StaffController {
 	@Autowired
 	private StaffService staffService;
 	@ApiOperation(value="跳转到admin/staffList页面",notes="跳转到admin/staffList页面")
-	@RequestMapping(value = "findAllStaff")
+	@GetMapping(value = "/findAllStaff")
 	public String findAll(ModelMap map, HttpSession session) {
 		map.addAttribute("staffList", staffService.findAllStaff());
 		return "admin/staffList";
 	}
 	@ApiOperation(value="跳转到添加页面",notes="跳转到添加页面")
-	@RequestMapping(value = "showStaffCreateForm")
+	@GetMapping(value = "/showStaffCreateForm")
 	public String showCtrateForm() {
 		return "admin/staffCreateForm";
 	}

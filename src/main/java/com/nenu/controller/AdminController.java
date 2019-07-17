@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,12 +34,12 @@ public class AdminController {
 	@Autowired
 	private RoleUserOfInService roleUserOfInService;
 	@ApiOperation(value="跳转到admin/index页面",notes="跳转到主页")
-	@RequestMapping(value = "/index")
+	@GetMapping(value = "/index")
 	public String index() {
 		return "admin/index";
 	}
 	@ApiOperation(value="跳转到admin/roleUserList页面",notes="跳转到主页")
-	@RequestMapping(value = "/roleUserList")
+	@GetMapping(value = "/roleUserList")
 	public String roleUserList(ModelMap map) {
 		map.addAttribute("roleUserList", loginService.findRoleList());
 		return "admin/roleUserList";
@@ -57,7 +58,7 @@ public class AdminController {
 		return "admin/roleShow";
 	}
 	@ApiOperation(value="跳转到admin/userCreateForm页面",notes="跳转到主页")
-	@RequestMapping(value = "/createForm")
+	@GetMapping(value = "/createForm")
 	public String createForm() {
 		return "admin/userCreateForm";
 	}

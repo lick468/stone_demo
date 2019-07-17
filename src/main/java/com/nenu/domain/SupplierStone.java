@@ -21,7 +21,7 @@ public class SupplierStone implements Serializable {
 	private int supplier_mainNumber;//主石数
 	private double supplier_mainWeight;//主石
 
-	private long supplier_subStoneNo;//副石编
+	private String supplier_subStoneNo;//副石编
 	private double supplier_subWeight;//副石
 	private int supplier_subNumber;//副石数
 	
@@ -79,10 +79,10 @@ public class SupplierStone implements Serializable {
 	public void setSupplier_mainWeight(double supplier_mainWeight) {
 		this.supplier_mainWeight = supplier_mainWeight;
 	}
-	public long getSupplier_subStoneNo() {
+	public String getSupplier_subStoneNo() {
 		return supplier_subStoneNo;
 	}
-	public void setSupplier_subStoneNo(long supplier_subStoneNo) {
+	public void setSupplier_subStoneNo(String supplier_subStoneNo) {
 		this.supplier_subStoneNo = supplier_subStoneNo;
 	}
 	public double getSupplier_subWeight() {

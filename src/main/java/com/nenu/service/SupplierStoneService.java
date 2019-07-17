@@ -17,6 +17,6 @@ public interface SupplierStoneService {
 	void insertSupplierStone(SupplierStone supplierStone);
 	
 	void deleteSupplierStoneByMainNo(String mainNo);
-	void deleteSupplierStoneBySubNo(long subNo);
+	void deleteSupplierStoneBySubNo(String subNo);
 
 }

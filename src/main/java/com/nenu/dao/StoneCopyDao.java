@@ -34,7 +34,7 @@ public interface StoneCopyDao {
 
 	List<StoneCopy> findStoneByMainNo(String stone_mainNo);//根据主石编获取石头信息
 
-	List<StoneCopy> findStoneBySubNo(long stone_substoNo);//根据副石编获取石头信息
+	List<StoneCopy> findStoneBySubNo(String stone_substoNo);//根据副石编获取石头信息
 
 	List<StoneCopy> findStoneBySupplierName(String stone_supplierName);//根据供应商获取石头信息
 

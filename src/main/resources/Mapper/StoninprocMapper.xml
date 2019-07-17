@@ -16,6 +16,8 @@
 		<result column="stoninproc_stoneContext" property="stoninproc_stoneContext"/>
 		<result column="stoninproc_supplier" property="stoninproc_supplier"/>
 		<result column="stoninproc_batch" property="stoninproc_batch"/>
+		<result column="finpord_procordNo" property="finpord_procordNo"/>
+
 		
 	</resultMap>
 	
@@ -23,7 +25,7 @@
 	
 	<sql id="Base_Column_List_stoninproc">
 		stoninproc_ID,stoninproc_seqno,stoninproc_stoneNo,stoninproc_procordNo,stoninproc_number,stoninproc_subpay,stoninproc_stoneWeight,
-		stoninproc_stoneColor,stoninproc_stoneClarity,stoninproc_stoneShape,stoninproc_stoneState,stoninproc_stoneContext,stoninproc_supplier,stoninproc_batch
+		stoninproc_stoneColor,stoninproc_stoneClarity,stoninproc_stoneShape,stoninproc_stoneState,stoninproc_stoneContext,stoninproc_supplier,stoninproc_batch,finpord_procordNo
 	</sql>
 
 	<select id="findAllStoninproc" resultMap="BaseResultMapstoninproc">
@@ -88,12 +90,12 @@
 	where 
 	stoninproc_procordNo=#{procordNo} and stoninproc_stoneNo=#{stoneNo}
 	</delete>
-	<!-- 更改石头状态 -->
+	<!-- 更改石头状态和成品入库的单号 -->
 	<update id="updateStoninprocState" parameterMap="Stoninproc" >
 		update
 		tb_stoninproc
 		set
-		stoninproc_stoneState = #{stoninproc_stoneState}
+		stoninproc_stoneState = #{stoninproc_stoneState},finpord_procordNo = #{finpord_procordNo}
 		where 
 		stoninproc_procordNo=#{stoninproc_procordNo} and stoninproc_stoneNo=#{stoninproc_stoneNo}
 	</update>

@@ -3,14 +3,12 @@
 <mapper namespace ="com.nenu.dao.ChannelDao">
 	<resultMap type="com.nenu.domain.Channel" id="ChannelMap">
 		<result column="channel_ID" property="channel_ID"/>
-		
 		<result column="channel_name" property="channel_name"/>
-		
 	</resultMap>
 	
 	<parameterMap type="com.nenu.domain.Channel" id="Channel"/>
 
-<select id="findChannelById"   resultMap="ChannelMap" parameterType="java.lang.Integer" >
+	<select id="findChannelById"   resultMap="ChannelMap" parameterType="java.lang.Integer" >
 		select * from tb_channel where channel_ID=#{channel_ID} 
 	</select>
 	

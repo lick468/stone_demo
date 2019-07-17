@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 
+import com.nenu.domain.*;
+import com.nenu.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -24,31 +26,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.nenu.domain.Belong;
-import com.nenu.domain.BelongAndCounter;
-import com.nenu.domain.Counter;
-import com.nenu.domain.DatatablesViewPage;
-import com.nenu.domain.Employee;
-import com.nenu.domain.EmployeeRole;
-import com.nenu.domain.ListPrice;
-import com.nenu.domain.MainStone;
-import com.nenu.domain.Plan;
-import com.nenu.domain.SettlementPrice;
-import com.nenu.domain.StoneAnalysis;
-import com.nenu.service.BelongAndCounterService;
-import com.nenu.service.BelongService;
-import com.nenu.service.CounterService;
-import com.nenu.service.EmployeeRoleService;
-import com.nenu.service.EmployeeService;
-import com.nenu.service.ListPriceService;
-import com.nenu.service.MainStoneService;
-import com.nenu.service.PlanService;
-import com.nenu.service.SettlementPriceService;
-import com.nenu.service.StoneAnalysisService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import net.minidev.json.JSONArray;
+
 
 
 /**
@@ -81,6 +61,9 @@ public class AdminAnalysisController {
 	private CounterService counterService;
 	@Autowired
 	private PlanService planService;
+
+	@Autowired
+	private GoldWeightService goldWeightService;
 	/**
 	 * 跳转到主页面
 	 *
@@ -212,7 +195,6 @@ public class AdminAnalysisController {
 	 * 删除员工完毕跳转到员工列表显示页面
 	 *
 	 * com.nenu.controller
-	 * @param employee
 	 * @return String
 	 * created  at 2018年6月29日
 	 */
@@ -271,7 +253,7 @@ public class AdminAnalysisController {
 	 * created  at 2018年6月29日
 	 */
 	@ApiOperation(value="跳转到修改页面",notes="跳转到修改页面")
-	@RequestMapping(value="insertEmployeeRole",method=RequestMethod.POST)
+	@RequestMapping(value="/insertEmployeeRole",method=RequestMethod.POST)
 	public String insertEmployeeRole(HttpServletRequest request) {
 		String role = request.getParameter("role");
 		int emp_id = Integer.parseInt(role);
@@ -301,7 +283,7 @@ public class AdminAnalysisController {
 	 * created by lick on 2018年7月2日 下午11:12:50
 	 */
 	@ApiOperation(value="跳转到修改页面",notes="跳转到修改页面")
-	@RequestMapping(value = "exceltosql", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequestMapping(value = "/exceltosql", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public String excel2sql(@RequestParam(value = "file") MultipartFile file, ModelMap map, HttpSession session,
 			HttpServletRequest request, RedirectAttributes model) {
@@ -344,7 +326,7 @@ public class AdminAnalysisController {
 	 * created  at 2018年9月12日
 	 */
 	@ApiOperation(value="跳转到修改页面",notes="跳转到修改页面")
-	@RequestMapping(value = "deleteOneData", method = RequestMethod.POST)
+	@RequestMapping(value = "/deleteOneData", method = RequestMethod.POST)
 	@ResponseBody
 	public String deleteOneData(HttpServletRequest request) {
 		int id = Integer.parseInt(request.getParameter("id"));
@@ -407,7 +389,6 @@ public class AdminAnalysisController {
 	//mainStone
 	/**
 	 * 跳转到主石主页面
-	 * @param id
 	 * @param map
 	 * @return
 	 */
@@ -421,8 +402,6 @@ public class AdminAnalysisController {
 	
 	/**
 	 * 跳转到添加页面
-	 * @param id
-	 * @param map
 	 * @return
 	 */
 	@ApiOperation(value="跳转到添加页面",notes="跳转到添加页面")
@@ -447,8 +426,6 @@ public class AdminAnalysisController {
 	
 	/**
 	 * 修改一条主石记录
-	 * @param id
-	 * @param map
 	 * @return
 	 */
 	@ApiOperation(value="修改一条主石记录",notes="修改一条主石记录")
@@ -460,8 +437,6 @@ public class AdminAnalysisController {
 	
 	/**
 	 * 添加一条主石记录
-	 * @param id
-	 * @param map
 	 * @return
 	 */
 	@ApiOperation(value="添加一条主石记录",notes="添加一条主石记录")
@@ -487,7 +462,6 @@ public class AdminAnalysisController {
 	//listprice
 	/**
 	 * 跳转到标价主页面
-	 * @param id
 	 * @param map
 	 * @return
 	 */
@@ -500,8 +474,6 @@ public class AdminAnalysisController {
 	}
 	/**
 	 * 跳转到添加页面
-	 * @param id
-	 * @param map
 	 * @return
 	 */
 	@ApiOperation(value="跳转到添加页面",notes="跳转到添加页面")
@@ -524,8 +496,6 @@ public class AdminAnalysisController {
 	}
 	/**
 	 * 修改一条标价记录
-	 * @param id
-	 * @param map
 	 * @return
 	 */
 	@ApiOperation(value="修改一条标价记录",notes="修改一条标价记录")
@@ -536,8 +506,6 @@ public class AdminAnalysisController {
 	}
 	/**
 	 * 添加一条标价记录
-	 * @param id
-	 * @param map
 	 * @return
 	 */
 	@ApiOperation(value="添加一条标价记录",notes="添加一条标价记录")
@@ -558,6 +526,76 @@ public class AdminAnalysisController {
 		listPriceService.deleteListPrice(id);
 		return "redirect:/analysis/admin/listPriceList";
 	}
+
+	//goldWeight
+	/**
+	 * 跳转到金重主页面
+	 * @param map
+	 * @return
+	 */
+	@ApiOperation(value="跳转到金重主页面",notes="跳转到金重主页面")
+	@RequestMapping(value="/goldWeightList")
+	public String goldWeightList(ModelMap map) {
+		List<GoldWeight> allGoldWeight = goldWeightService.findAllGoldWeight();
+		map.addAttribute("goldWeightList", allGoldWeight);
+		return "analysis/admin/goldWeightList";
+	}
+	/**
+	 * 跳转到添加页面
+	 * @return
+	 */
+	@ApiOperation(value="跳转到添加页面",notes="跳转到添加页面")
+	@RequestMapping(value="/showGoldWeightCreateForm")
+	public String showGoldWeightCreateForm() {
+		return "analysis/admin/goldWeightCreateForm";
+	}
+	/**
+	 * 跳转到修改页面
+	 * @param id
+	 * @param map
+	 * @return
+	 */
+	@ApiOperation(value="跳转到修改页面",notes="跳转到修改页面")
+	@RequestMapping(value="/showGoldWeightUpdateForm/{id}")
+	public String showGoldWeightUpdateForm(@PathVariable("id") int id,ModelMap map) {
+        GoldWeight emp = goldWeightService.findGoldWeightById(id);
+		map.addAttribute("goldWeight", emp);
+		return "analysis/admin/goldWeightUpdateForm";
+	}
+	/**
+	 * 修改一条金重记录
+	 * @return
+	 */
+	@ApiOperation(value="修改一条金重记录",notes="修改一条金重记录")
+	@RequestMapping(value="/updateGoldWeight")
+	public String updateGoldWeight(GoldWeight goldWeight) {
+	    goldWeightService.updateGoldWeight(goldWeight);
+		return "redirect:/analysis/admin/goldWeightList";
+	}
+	/**
+	 * 添加一条金重记录
+	 * @return
+	 */
+	@ApiOperation(value="添加一条金重记录",notes="添加一条金重记录")
+	@RequestMapping(value="/createGoldWeight")
+	public String createGoldWeight(GoldWeight goldWeight) {
+	    goldWeightService.insertGoldWeight(goldWeight);
+		return "redirect:/analysis/admin/goldWeightList";
+	}
+	/**
+	 * 删除一条金重记录
+	 * @param id
+	 * @return
+	 */
+	@ApiOperation(value="删除一条金重记录",notes="删除一条金重记录")
+	@RequestMapping(value="/deleteGoldWeight/{id}")
+	public String deleteGoldWeight(@PathVariable("id") int id) {
+	    goldWeightService.deleteGoldWeight(id);
+		return "redirect:/analysis/admin/goldWeightList";
+	}
+
+
+
 	//settlementPrice
 	/**
 	 * 跳转到结算价主页
@@ -796,7 +834,7 @@ public class AdminAnalysisController {
 	 * @return
 	 */
 	@ApiOperation(value="导入计划任务excel",notes="导入计划任务excel")
-	@RequestMapping(value = "planexceltosql", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequestMapping(value = "/planexceltosql", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public String planexceltosql(@RequestParam(value = "file") MultipartFile file, ModelMap map, HttpSession session,
 			HttpServletRequest request, RedirectAttributes model) {
@@ -820,7 +858,7 @@ public class AdminAnalysisController {
 	 * @return
 	 */
 	@ApiOperation(value="删除一条计划任务",notes="删除一条计划任务")
-	@RequestMapping(value = "deleteOnePlanData", method = RequestMethod.POST)
+	@RequestMapping(value = "/deleteOnePlanData", method = RequestMethod.POST)
 	@ResponseBody
 	public String deleteOnePlanData(HttpServletRequest request) {
 		int id = Integer.parseInt(request.getParameter("id"));

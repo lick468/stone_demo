@@ -709,9 +709,9 @@ public class StoneAnalysisServiceImpl implements StoneAnalysisService {
 		String sheetName = "兑换销售数据表单";
 		String titleName = "兑换销售数据统计表";
 		String fileName = "兑换销售数据统计表单";
-		int columnNumber = 9;
-		int[] columnWidth = { 15, 15, 15, 15, 15, 15,15,15,15 };
-		String[][] dataList = new String[list.size()][9];
+		int columnNumber = 10;
+		int[] columnWidth = { 15, 15, 15, 15, 15, 15,15,15,15,15 };
+		String[][] dataList = new String[list.size()][10];
 		// System.out.println("datalist========================"+dataList.length);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		for (int i = 0; i < dataList.length; i++) {
@@ -721,15 +721,16 @@ public class StoneAnalysisServiceImpl implements StoneAnalysisService {
 			dataList[i][1] = s.getCounter();
 			dataList[i][2] = s.getProduct();
 			dataList[i][3] = s.getSource();
-			dataList[i][4] = String.valueOf(s.getSettlementprice());
-			dataList[i][5] = String.valueOf(s.getListprice());
-			dataList[i][6] = String.valueOf(s.getGoldweight());
-			dataList[i][7] = String.valueOf(s.getCenterstone());
-			dataList[i][8] = sdf.format(s.getDate());
+			dataList[i][4] = String.valueOf(s.getExchangegoldweight());
+			dataList[i][5] = String.valueOf(s.getSettlementprice());
+			dataList[i][6] = String.valueOf(s.getListprice());
+			dataList[i][7] = String.valueOf(s.getGoldweight());
+			dataList[i][8] = String.valueOf(s.getCenterstone());
+			dataList[i][9] = sdf.format(s.getDate());
 		}
 		String path = "D:\\analysisFile";
 
-		String[] columnName = { "供应商", "柜台", "名称", "来源", "结算价", "标价", "金重", "主石", "日期" };
+		String[] columnName = { "供应商", "柜台", "名称", "来源", "兑换金重","结算价", "标价", "金重", "主石", "日期" };
 
 		try {
 			new ExcelUtils().ExportNoResponse(sheetName, titleName, fileName, columnNumber, columnWidth, columnName, dataList, path,response);
@@ -1415,6 +1416,11 @@ public class StoneAnalysisServiceImpl implements StoneAnalysisService {
 	public List<StoneAnalysis> findStoneForIndex724SettlePrice(Map<String, Object> params) {
 		// TODO Auto-generated method stub
 		return stoneDao.findStoneForIndex724SettlePrice(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findStoneForIndex724GoldWeight(Map<String, Object> params) {
+		return stoneDao.findStoneForIndex724GoldWeight(params);
 	}
 
 	@Override
@@ -2283,6 +2289,4 @@ public class StoneAnalysisServiceImpl implements StoneAnalysisService {
 		return 0;
 	}
 
-	
-	
 }

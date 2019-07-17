@@ -35,12 +35,18 @@ public class Stoninproc implements Serializable {
 	private int subNumber;//供应商副石总数
 	private double mainWeight;//供应商主石总重
 	private double subWeight;//供应商副石总重
-	
-	
-	
-	
-	
-	
+
+	private long finpord_procordNo; // 成品返回时单号
+
+
+	public long getFinpord_procordNo() {
+		return finpord_procordNo;
+	}
+
+	public void setFinpord_procordNo(long finpord_procordNo) {
+		this.finpord_procordNo = finpord_procordNo;
+	}
+
 	public String getStoninproc_supplier() {
 		return stoninproc_supplier;
 	}

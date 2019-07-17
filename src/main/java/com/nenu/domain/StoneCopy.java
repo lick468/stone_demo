@@ -22,7 +22,7 @@ public class StoneCopy implements Serializable {
 	private double stone_mainPrperct;//
 	private double stone_mainPramt;//
 
-	private long stone_substoNo;//
+	private String stone_substoNo;//
 	private String stone_substoName;//
 	private double stone_substoWgt;//
 	private int stone_substoNumber;
@@ -57,7 +57,7 @@ public class StoneCopy implements Serializable {
 	public StoneCopy(String stone_ID, Date stone_purchdate, int stone_seqno, String stone_loosdofty,
 			String stone_mainName, String stone_mainStoneNo, String stone_spec,
 			int stone_mainNumber, double stone_mainWeight, double stone_mainPrperct, double stone_mainPramt,
-			long stone_substoNo, String stone_substoName, double stone_substoWgt, int stone_substoNumber,
+			String stone_substoNo, String stone_substoName, double stone_substoWgt, int stone_substoNumber,
 			double stone_substoPrperct, double stone_substoPramt, String stone_shape, String stone_color,
 			String stone_clarity, String stone_color2, String stone_clarity2, String stone_cut,
 			String stone_fluorescence, String stone_symmetry, String stone_polish, double stone_diameter,
@@ -390,11 +390,11 @@ public class StoneCopy implements Serializable {
 		this.stone_mainStoneNo = stone_mainStoneNo;
 	}
 
-	public long getStone_substoNo() {
+	public String getStone_substoNo() {
 		return stone_substoNo;
 	}
 
-	public void setStone_substoNo(long stone_substoNo) {
+	public void setStone_substoNo(String stone_substoNo) {
 		this.stone_substoNo = stone_substoNo;
 	}
 	

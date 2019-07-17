@@ -87,7 +87,7 @@
 		from tb_stone_copy
 		where stone_mainStoneNo=#{stone_mainStoneNo}
 	</select>
-	<select id="findStoneBySubNo" resultMap="BaseResultMapStoneCopy" parameterType="long">
+	<select id="findStoneBySubNo" resultMap="BaseResultMapStoneCopy" parameterType="String">
 		select 
 		<include refid="Base_Column_List_StoneCopy"/>
 		from tb_stone_copy
@@ -180,7 +180,7 @@
 		where 
 		stone_mainStoneNo=#{stone_mainStoneNo}
 	</update>
-	<update id="updateSubStoneNumber" parameterMap="StoneCopy" parameterType="long">
+	<update id="updateSubStoneNumber" parameterMap="StoneCopy" parameterType="String">
 		update
 		tb_stone_copy
 		set

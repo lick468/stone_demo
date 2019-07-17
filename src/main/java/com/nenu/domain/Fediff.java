@@ -19,7 +19,18 @@ public class Fediff implements Serializable {
 	private String fediff_batch;//批次
 	private long fediff_procordNo;//订单号
 	private double fediff_weightDiff;//入料差
-	
+	private long finpord_procordNo; // 成品返回时单号
+
+
+	public long getFinpord_procordNo() {
+		return finpord_procordNo;
+	}
+
+	public void setFinpord_procordNo(long finpord_procordNo) {
+		this.finpord_procordNo = finpord_procordNo;
+	}
+
+
 	private Date fediff_time;//时间
 	
 	public Date getFediff_time() {

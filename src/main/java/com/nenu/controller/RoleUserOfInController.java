@@ -43,7 +43,7 @@ public class RoleUserOfInController {
 		String list = request.getParameter("selected");
 		String[] sel = list.split(",");
 		int roleUser = Integer.parseInt(role);
-		System.out.println(list+"llllllllllllllllllllll");
+		//System.out.println(list+"llllllllllllllllllllll");
 		roleUserOfInService.deleteRoleUserOfIn(roleUser);
 		
 		for(int i=0;i<sel.length;i++) {

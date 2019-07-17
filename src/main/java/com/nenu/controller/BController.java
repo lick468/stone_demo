@@ -129,7 +129,7 @@ public class BController {
 				mainNumber++;
 				mainWeight+=allStoneList.get(i).getStone_mainWeight();
 			}
-			if (allStoneList.get(i).getStone_substoNo()!=0) {//副石
+			if (allStoneList.get(i).getStone_substoNo().length()>1) {//副石
 				subList.add(allStoneList.get(i).getStone_substoNo());
 				subNumber+=allStoneList.get(i).getStone_substoNumber();
 				subWeight+=allStoneList.get(i).getStone_substoWgt();
@@ -147,7 +147,7 @@ public class BController {
 				mainNumberCopy++;
 				mainWeightCopy+=allStoneCopyList.get(i).getStone_mainWeight();
 			}
-			if (allStoneCopyList.get(i).getStone_substoNo()!=0) {//副石
+			if (allStoneCopyList.get(i).getStone_substoNo().length()>1) {//副石
 				subNumberCopy+=allStoneCopyList.get(i).getStone_substoNumber();
 				subWeightCopy+=allStoneCopyList.get(i).getStone_substoWgt();
 			}
@@ -205,7 +205,7 @@ public class BController {
 		return "operator_b/index";
 	}
 	@ApiOperation(value="临时表拷贝到石头表",notes="临时表拷贝到石头表")
-	@RequestMapping(value = "copyToStone", method = RequestMethod.POST)
+	@RequestMapping(value = "/copyToStone", method = RequestMethod.POST)
 	@ResponseBody
 	public int copyToStone(HttpServletRequest request) {
 		int finish=stoneService.copyToStone();
@@ -230,7 +230,7 @@ public class BController {
 	 * created  at 2018年6月4日
 	 */
 	@ApiOperation(value="获取excel文件里的数据导入数据库中",notes="获取excel文件里的数据导入数据库中")
-	@RequestMapping(value = "exceltosql", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequestMapping(value = "/exceltosql", method = { RequestMethod.POST, RequestMethod.GET })
 	public String excel2sql(@RequestParam(value = "StoneFile") MultipartFile file, ModelMap map, HttpSession session,
 			HttpServletRequest request, RedirectAttributes model) {
 		String stone_channelNo = request.getParameter("stone_channelNo");
@@ -264,7 +264,7 @@ public class BController {
 	 * created  at 2018年6月4日
 	 */
 	@ApiOperation(value="生成excel文件",notes="生成excel文件")
-	@RequestMapping(value = "downloadExcel", method = RequestMethod.POST)
+	@RequestMapping(value = "/downloadExcel", method = RequestMethod.POST)
 	@ResponseBody
 	public String downloadExcel(HttpServletRequest request,HttpSession session,HttpServletResponse response) throws ParseException {
 		List<Stone> list = new ArrayList<Stone>();
@@ -288,13 +288,12 @@ public class BController {
 	/**
 	 * 下载所有石头库存
 	 * @param request
-	 * @param session
 	 * @param response
 	 * @return
 	 * @throws ParseException
 	 */
 	@ApiOperation(value="生成excel文件",notes="生成excel文件")
-	@RequestMapping(value = "downloadAllStoneExcel", method = RequestMethod.POST)
+	@RequestMapping(value = "/downloadAllStoneExcel", method = RequestMethod.POST)
 	@ResponseBody
 	public String downloadAllStoneExcel(HttpServletRequest request,HttpServletResponse response) throws ParseException {
 		List<Stone> list = stoneService.findAllStone();
@@ -302,8 +301,24 @@ public class BController {
 		String result1="";
 		return result1;
 	}
+	/**
+	 * 下载所有石头库存
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws ParseException
+	 */
 	@ApiOperation(value="生成excel文件",notes="生成excel文件")
-	@RequestMapping(value = "downloadExcelSupplier", method = RequestMethod.POST)
+	@RequestMapping(value = "/downloadProcord", method = RequestMethod.GET)
+	@ResponseBody
+	public String downloadProcord(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+        List<Procord> list = procordService.findAllProcord();
+        procordService.downloadExcel(list,response);
+		String result1="";
+		return result1;
+	}
+	@ApiOperation(value="生成excel文件",notes="生成excel文件")
+	@RequestMapping(value = "/downloadExcelSupplier", method = RequestMethod.POST)
 	@ResponseBody
 	public String downloadExcelSupplier(HttpSession session,HttpServletResponse response) throws ParseException {
 		List<SupplierStone> supplierStoneList = (List<SupplierStone>) session.getAttribute("supplierStoneList");
@@ -324,7 +339,7 @@ public class BController {
 	 * created  at 2018年12月19日
 	 */
 	@ApiOperation(value="供应商库存汇总下载",notes="供应商库存汇总下载")
-	@RequestMapping(value = "downloadExcelAllSupplier", method = RequestMethod.POST)
+	@RequestMapping(value = "/downloadExcelAllSupplier", method = RequestMethod.POST)
 	@ResponseBody
 	public String downloadExcelAllSupplier(HttpServletRequest request,HttpSession session,HttpServletResponse response) throws ParseException {
 		List listSupplier = new ArrayList<>();
@@ -388,7 +403,7 @@ public class BController {
 	 * @throws ParseException 
 	 */
 	@ApiOperation(value="ajax传值 动态查找（主石编，副石编，采购日期，裸石厂）",notes="ajax传值 动态查找（主石编，副石编，采购日期，裸石厂）")
-	@RequestMapping(value = "test", method = RequestMethod.POST)
+	@RequestMapping(value = "/test", method = RequestMethod.POST)
 	@ResponseBody
 	public List<Stone> test(HttpServletRequest request, ModelMap map,HttpSession session) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -404,9 +419,7 @@ public class BController {
 		}else if (queryType.equals("stone_substoNo")) {
 			if( request.getParameter("substoNo")!=null) {//副石编查找
 				String substoNo = request.getParameter("substoNo");
-				long sub_stone = 0;
-				sub_stone = Long.parseLong(substoNo);
-				list = stoneService.findStoneBySubNoForManage(sub_stone);
+				list = stoneService.findStoneBySubNoForManage(substoNo);
 			}
 		}else if (queryType.equals("stone_loosdofty")) {
 			if( request.getParameter("loosdofty")!=null) {//按裸石厂查找
@@ -447,7 +460,7 @@ public class BController {
 	 * created  at 2018年6月8日
 	 */
 	@ApiOperation(value="ajax传值 动态查找（二次检索）",notes="ajax传值 动态查找（二次检索）")
-	@RequestMapping(value = "second", method = RequestMethod.POST)
+	@RequestMapping(value = "/second", method = RequestMethod.POST)
 	@ResponseBody
 	public List<Stone> testsecond(HttpServletRequest request, ModelMap map,HttpSession session) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -464,9 +477,7 @@ public class BController {
 		}else if (queryType.equals("stone_substoNo")) {
 			if( request.getParameter("substoNo")!=null) {//副石编查找
 				String substoNo = request.getParameter("substoNo");
-				long sub_stone = 0;
-				sub_stone = Long.parseLong(substoNo);
-				list = stoneService.findStoneBySubNoForManage(sub_stone);
+				list = stoneService.findStoneBySubNoForManage(substoNo);
 			}
 		}else if (queryType.equals("stone_loosdofty")) {
 			if( request.getParameter("loosdofty")!=null) {//按裸石厂查找
@@ -533,7 +544,7 @@ public class BController {
 	 * @return
 	 */
 	@ApiOperation(value="石库管理石编查找",notes="石库管理石编查找")
-	@RequestMapping(value = "manageStoneNoSearch", method = RequestMethod.POST)
+	@RequestMapping(value = "/manageStoneNoSearch", method = RequestMethod.POST)
 	@ResponseBody
 	public List<Stone> manageStoneNoSearch(HttpServletRequest request, ModelMap map)  {	
 		List<Stone> list = new ArrayList<Stone>();
@@ -541,9 +552,7 @@ public class BController {
 		if(sno.matches(".*[a-zA-Z].*")) {//按主石编查找
 			list = stoneService.findStoneByMainNoForManage(sno);
 		}else {//副石编查找
-			long sub_stone = 0;
-			sub_stone = Long.parseLong(sno);
-			list = stoneService.findStoneBySubNoForManage(sub_stone);
+			list = stoneService.findStoneBySubNoForManage(sno);
 		}
 		return list;
 	}
@@ -573,7 +582,7 @@ public class BController {
 		s.setStone_purchdate(sdf.parse(t));
 		stoneService.insertStone(s);
 		
-		System.out.println(s.getStone_purchdate() + "---" + s.getStone_loosdofty());
+		//System.out.println(s.getStone_purchdate() + "---" + s.getStone_loosdofty());
 
 		return "redirect:/b/index";
 	}
@@ -600,7 +609,7 @@ public class BController {
 		return "main";
 	}
 	@ApiOperation(value="查找一条临时表石头记录",notes="查找一条临时表石头记录")
-	@RequestMapping(value = "findStoneCopyByStoneIDAJAX", method = RequestMethod.POST)
+	@RequestMapping(value = "/findStoneCopyByStoneIDAJAX", method = RequestMethod.POST)
 	@ResponseBody
 	public StoneCopy findStoneCopyByStoneIDAJAX(HttpServletRequest request) {
 		String stone_ID = request.getParameter("sid");
@@ -735,7 +744,7 @@ public class BController {
 				supplierStone.setSupplier_procorNo(stoninproc_procordNo);
 				
 				if(!rr[i-3].matches(".*[a-zA-Z].*")) {//不包含字母 的是 副石编
-					List<Stone> list = stoneService.findStoneBySubNo(Long.parseLong(rr[i-3]));//根据副石编获取副石信息
+					List<Stone> list = stoneService.findStoneBySubNo(rr[i-3]);//根据副石编获取副石信息
 					if(!list.isEmpty()) {
 						total_weight += list.get(0).getStone_substoWgt();
 						stoninpro.setStoninproc_stoneClarity( list.get(0).getStone_clarity());
@@ -768,7 +777,7 @@ public class BController {
 					int before = list.get(0).getStone_substoNumber();//获取副石数量
 					int after = before-number;//获得选石之后的副石数量
 					System.out.println("number="+number+",after="+after);
-					stone.setStone_substoNo(Long.parseLong(rr[i-3]));
+					stone.setStone_substoNo(rr[i-3]);
 					stone.setStone_substoNumber(after);
 					
 					stoneService.updateSubStoneNumber(stone);//更新副石数量
@@ -849,29 +858,33 @@ public class BController {
 	 * created  at 2018年6月4日
 	 */
 	@ApiOperation(value="ajax根据stone_ID获取一条石头信息并返回",notes="ajax根据stone_ID获取一条石头信息并返回")
-	@RequestMapping(value = "findStoneByStoneIDAJAX", method = RequestMethod.POST)
+	@RequestMapping(value = "/findStoneByStoneIDAJAX", method = RequestMethod.POST)
 	@ResponseBody
 	public Stone findStoneByStoneIDAJAX(HttpServletRequest request) {
 		String stone_ID = request.getParameter("sid");
 		Stone stone = new Stone();
-		SupplierStone supplierStone = supplierStoneService.getSupplierStoneByID(Integer.parseInt(stone_ID));
-		if(supplierStone!=null) {
-			String mainNo = supplierStone.getSupplier_mainStoneNo();
-			if(!mainNo.isEmpty()) {
-				List<Stone> sList =  stoneService.findStoneByMainNo(mainNo);
-				if(!sList.isEmpty()) {
-					stone = sList.get(0);
-				}
-			}
-			long subNo = supplierStone.getSupplier_subStoneNo();
-			if(subNo > 0 ) {
-				List<Stone> sList = stoneService.findStoneBySubNo(subNo);
-				if(!sList.isEmpty()) {
-					stone = sList.get(0);
-				}
-			}	
-		}
-		
+		if(stone_ID.length()<10) {
+            SupplierStone supplierStone = supplierStoneService.getSupplierStoneByID(Integer.parseInt(stone_ID));
+            if(supplierStone!=null) {
+                String mainNo = supplierStone.getSupplier_mainStoneNo();
+                if(!mainNo.isEmpty()) {
+                    List<Stone> sList =  stoneService.findStoneByMainNo(mainNo);
+                    if(!sList.isEmpty()) {
+                        stone = sList.get(0);
+                    }
+                }
+                String subNo = supplierStone.getSupplier_subStoneNo();
+                if(subNo.length()>1) {
+                    List<Stone> sList = stoneService.findStoneBySubNo(subNo);
+                    if(!sList.isEmpty()) {
+                        stone = sList.get(0);
+                    }
+                }
+            }
+        }else {
+            stone = stoneService.findStoneByStoneIDAJAX(stone_ID);
+        }
+
 
 		return stone;
 	}
@@ -884,7 +897,7 @@ public class BController {
 	 * created  at 2018年6月4日
 	 */
 	@ApiOperation(value="ajax根据procord_no获取一条订单信息并返回",notes="ajax根据procord_no获取一条订单信息并返回")
-	@RequestMapping(value = "editProcord", method = RequestMethod.POST)
+	@RequestMapping(value = "/editProcord", method = RequestMethod.POST)
 	@ResponseBody
 	public Procord editProcord(HttpServletRequest request) {
 		String procord_no = request.getParameter("procord_no");
@@ -934,7 +947,7 @@ public class BController {
 	 * created  at 2018年11月9日
 	 */
 	@ApiOperation(value="总部退石",notes="总部退石")
-	@RequestMapping(value = "deleteStoneByStoneIDAJAX", method = RequestMethod.POST)
+	@RequestMapping(value = "/deleteStoneByStoneIDAJAX", method = RequestMethod.POST)
 	public String deleteStoneByStoneIDAJAX(HttpServletRequest request,RedirectAttributes redirectAttributes) {
 		String sid = request.getParameter("delete_ID");
 		System.out.println(sid);
@@ -945,7 +958,7 @@ public class BController {
 		stoneService.deleteStoneByStoneIDAJAX(s);
 		Stone ss = new Stone();
 		ss =stoneService.findStoneByStoneID(sid); 
-		if(ss.getStone_substoNo()>0) {//副石
+		if(ss.getStone_substoNo().length()>1) {//副石
 			TBackStone tb = new TBackStone();
 			tb.setTback_time(new Date());
 			tb.setTback_stoneNo(String.valueOf(ss.getStone_substoNo()));
@@ -969,7 +982,7 @@ public class BController {
 	 * @throws ParseException
 	 */
 	@ApiOperation(value="总部退石查询",notes="总部退石查询")
-	@RequestMapping(value = "tbackStoneSearch", method = RequestMethod.POST)
+	@RequestMapping(value = "/tbackStoneSearch", method = RequestMethod.POST)
 	@ResponseBody
 	public List<TBackStone> tbackStoneSearch(HttpServletRequest request,HttpSession session) throws ParseException {
 		String type =request.getParameter("type");
@@ -990,7 +1003,7 @@ public class BController {
 		return tbList;
 	}
 	@ApiOperation(value="生成excel文件",notes="生成excel文件")
-	@RequestMapping(value = "downloadBackExcel", method = RequestMethod.POST)
+	@RequestMapping(value = "/downloadBackExcel", method = RequestMethod.POST)
 	@ResponseBody
 	public String downloadBackExcel(HttpServletRequest request,HttpSession session,HttpServletResponse response) throws ParseException {
 		List<TBackStone> list = new ArrayList<TBackStone>();
@@ -1012,7 +1025,7 @@ public class BController {
 	 * created  at 2018年10月21日
 	 */
 	@ApiOperation(value="选石  一键选石",notes="选石  一键选石")
-	@RequestMapping(value = "xuanshiForAll", method = RequestMethod.POST)
+	@RequestMapping(value = "/xuanshiForAll", method = RequestMethod.POST)
 	@ResponseBody
 	public List<Stone> xuanshiForAll(HttpServletRequest request) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -1031,7 +1044,7 @@ public class BController {
 			if(stone_no.matches(".*[a-zA-Z].*")) {//主石
 				slist = stoneService.findStoneByMainNoForManage(stone_no);
 			}else {
-				slist = stoneService.findStoneBySubNoForManage(Long.parseLong(stone_no));
+				slist = stoneService.findStoneBySubNoForManage(stone_no);
 			}
 		}
 		return slist;
@@ -1045,7 +1058,7 @@ public class BController {
 	 * created  at 2018年10月21日
 	 */
 	@ApiOperation(value="选石    追个添加",notes="选石    追个添加")
-	@RequestMapping(value = "xuanshiForOne", method = RequestMethod.POST)
+	@RequestMapping(value = "/xuanshiForOne", method = RequestMethod.POST)
 	@ResponseBody
 	public List<Stone> xuanshiForOne(HttpServletRequest request) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -1069,7 +1082,7 @@ public class BController {
 	 * created  at 2018年10月21日
 	 */
 	@ApiOperation(value="根据采购日期查找显示",notes="根据采购日期查找显示")
-	@RequestMapping(value = "xuanshiForShow", method = RequestMethod.POST)
+	@RequestMapping(value = "/xuanshiForShow", method = RequestMethod.POST)
 	@ResponseBody
 	public List<Stone> xuanshiForShow(HttpServletRequest request) {
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -1088,7 +1101,7 @@ public class BController {
 	 * created  at 2018年12月21日
 	 */
 	@ApiOperation(value="根据石编选石",notes="根据石编选石")
-	@RequestMapping(value = "xuanshiForShowForNo", method = RequestMethod.POST)
+	@RequestMapping(value = "/xuanshiForShowForNo", method = RequestMethod.POST)
 	@ResponseBody
 	public List<Stone> xuanshiForShowForNo(HttpServletRequest request) {
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -1097,7 +1110,7 @@ public class BController {
 		if(stone_no.matches(".*[a-zA-Z].*")) {//主石
 			slist = stoneService.findStoneByMainNoForManage(stone_no);
 		}else {
-			slist = stoneService.findStoneBySubNoForManage(Long.parseLong(stone_no));
+			slist = stoneService.findStoneBySubNoForManage(stone_no);
 		}
 		return slist;
 	}

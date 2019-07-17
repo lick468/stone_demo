@@ -78,7 +78,7 @@
 			procord_porter = #{procord_porter},
 		</if>
 		<if test="procord_backcount!=null">
-			procord_backcount = #{procord_backcount}
+			procord_backcount = #{procord_backcount},
 		</if>
 		<if test="procord_weight!=null">
 			procord_weight = #{procord_weight}

@@ -35,7 +35,7 @@ public class SupplierStoneServiceImpl implements SupplierStoneService {
 	}
 
 	@Override
-	public void deleteSupplierStoneBySubNo(long subNo) {
+	public void deleteSupplierStoneBySubNo(String subNo) {
 		// TODO Auto-generated method stub
 		supplierStoneDao.deleteSupplierStoneBySubNo(subNo);
 		

@@ -66,22 +66,23 @@ public class FediffServiceImpl implements FediffService {
 		String sheetName = "入料差表单";
 		String titleName = "入料差数据统计表";
 		String fileName = "入料差统计表单";
-		int columnNumber = 4;
-		int[] columnWidth = { 10, 10, 10, 10};
+		int columnNumber = 5;
+		int[] columnWidth = { 20, 20, 20, 20,20};
 
 		
-		String[][] dataList = new String[list.size()][4];
+		String[][] dataList = new String[list.size()][5];
 
 		for (int i = 0; i < dataList.length; i++) {
 			Fediff f = (Fediff) list.get(i);
 			dataList[i][0] = String.valueOf(f.getFediff_ID());
 			dataList[i][1] = String.valueOf(f.getFediff_procordNo());
-			dataList[i][2] =f.getFediff_stoneNo();
-			dataList[i][3] = String.valueOf(f.getFediff_weightDiff());
+			dataList[i][2] = String.valueOf(f.getFinpord_procordNo());
+			dataList[i][3] =f.getFediff_stoneNo();
+			dataList[i][4] = String.valueOf(f.getFediff_weightDiff());
 
 		}
 		String path="D:\\FediffFile";
-		String[] columnName = {"序号", "订单号", "石编", "入料差"};
+		String[] columnName = {"序号", "订单号","成品单号", "石编", "入料差"};
 
 		try {
 			new ExcelUtils().ExportNoResponse(sheetName, titleName, fileName, columnNumber, columnWidth,

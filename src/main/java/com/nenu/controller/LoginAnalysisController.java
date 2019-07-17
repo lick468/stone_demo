@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -33,13 +34,13 @@ public class LoginAnalysisController {
 	@Autowired
 	private EmployeeRoleService employeeRoleService;
 	@ApiOperation(value="跳转到analysis/login页面",notes="跳转到analysis/login页面")
-	@RequestMapping(value = "login")
+	@GetMapping(value = "/login")
 	public String login() {
 		return "analysis/login";
 	}
 	
 	@ApiOperation(value="登陆",notes="登陆")
-	@RequestMapping(value = "doLogin", method = RequestMethod.POST)
+	@RequestMapping(value = "/doLogin", method = RequestMethod.POST)
 	public String doLogi(Employee emp, ModelMap map, HttpServletRequest requset, RedirectAttributes model) {
 		System.out.println(emp.getEmp_name() + "---------------" + emp.getEmp_password());
 		Employee employee = employeeService.findEmployeeByName(emp.getEmp_name());
@@ -73,7 +74,7 @@ public class LoginAnalysisController {
 	 * @return String created by lick on 2018年5月12日
 	 */
 	@ApiOperation(value="退出登录",notes="退出登录")
-	@RequestMapping(value = "/logout")
+	@GetMapping(value = "/logout")
 	public String logout(HttpSession session) {
 		
 		return "redirect:/analysis/login";

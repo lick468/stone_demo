@@ -116,7 +116,7 @@
 		select product,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		 where product!='' 
+		 where product!='' and source in ('销售' , '退回')
 		 and date <![CDATA[ >= ]]>#{start}
 		 and date <![CDATA[ <= ]]>#{end}
 		 <if test="area!=null">
@@ -137,7 +137,7 @@
 		select product,date,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		 where product!='' 
+		 where product!='' and source in ('销售' , '退回')
 		 and date <![CDATA[ >= ]]>#{start}
 		 and date <![CDATA[ <= ]]>#{end}
 		 <if test="area!=null">
@@ -158,7 +158,7 @@
 		select product,date,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		 where product!='' 
+		 where product!='' and source in ('销售' , '退回')
 		 and date <![CDATA[ >= ]]>#{start}
 		 and date <![CDATA[ <= ]]>#{end}
 		 <if test="area!=null">
@@ -179,7 +179,7 @@
 		select product,date,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		where product!='' 
+		where product!='' and source in ('销售' , '退回')
 		 and date <![CDATA[ >= ]]>#{start}
 		 and date <![CDATA[ <= ]]>#{end}
 		 <if test="area!=null">
@@ -199,7 +199,7 @@
 	
 	<select id="findDateForIndex8888" parameterType="java.util.Map" resultMap="userAnalysisMap">
 		select area,room,counter,product,settlementprice,listprice,goldweight,centerstone,date from stone
-		where product!='' 
+		where product!='' and source in ('销售' , '退回')
 		 and date <![CDATA[ >= ]]>#{start}
 		 and date <![CDATA[ <= ]]>#{end}
 		<if test="area!=null">
@@ -219,7 +219,7 @@
 		select area,room,counter,product,date,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		where area!='' 
+		where area!='' and source in ('销售' , '退回')
 		 and date <![CDATA[ >= ]]>#{start}
 		 and date <![CDATA[ <= ]]>#{end}
 		 <if test="area!=null">
@@ -240,7 +240,7 @@
 		select area,room,counter,product,date,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		 where product!='' 
+		 where product!='' and source in ('销售' , '退回')
 		 and date <![CDATA[ >= ]]>#{start}
 		 and date <![CDATA[ <= ]]>#{end}
 		 <if test="area!=null">
@@ -261,7 +261,7 @@
 		select area,room,counter,product,date,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		 where counter!='' 
+		 where counter!='' and source in ('销售' , '退回')
 		 and date <![CDATA[ >= ]]>#{start}
 		 and date <![CDATA[ <= ]]>#{end}
 		 <if test="area!=null">
@@ -282,7 +282,7 @@
 		select area,room,counter,product,date,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		 where room!='' 
+		 where room!='' and source in ('销售' , '退回')
 		 and date <![CDATA[ >= ]]>#{start}
 		 and date <![CDATA[ <= ]]>#{end}
 		 <if test="area!=null">
@@ -300,30 +300,11 @@
 		 GROUP BY room ORDER BY numberSum desc
 	</select>
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	<select id="findSupplierForIndex11" parameterType="java.util.Map" resultMap="userAnalysisMap">
 		select supplier,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum 
 		from stone
-		 where supplier!='' 
+		 where supplier!='' and source in ('销售' , '退回')
 		 and date <![CDATA[ >= ]]>#{start}
 		 and date <![CDATA[ <= ]]>#{end}
 		 <if test="counter!=null">
@@ -335,7 +316,7 @@
 		select supplier,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum  
 		from stone
-		 where supplier = #{supplier}
+		 where supplier = #{supplier} and source in ('销售' , '退回')
 		 and date <![CDATA[ >= ]]>#{start}
 		 and date <![CDATA[ <= ]]>#{end}
 		 <if test="counter!=null">
@@ -348,8 +329,8 @@
 		select counter,date,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		 where 
-		 date <![CDATA[ >= ]]>#{start}
+		 where  source in ('销售' , '退回')
+		 and date <![CDATA[ >= ]]>#{start}
 		 and date <![CDATA[ <= ]]>#{end}
 		 <if test="counter!=null">
 			and counter = #{counter}
@@ -364,8 +345,8 @@
 		select counter,date,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum  
 		from stone
-		 where 
-		 date <![CDATA[ >= ]]>#{start}
+		 where  source in ('销售' , '退回')
+		 and date <![CDATA[ >= ]]>#{start}
 		 and date <![CDATA[ <= ]]>#{end}
 		 <if test="counter!=null">
 			and counter = #{counter}
@@ -379,8 +360,8 @@
 		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum  
 		from stone
-		where
-		date <![CDATA[ >= ]]>#{start}
+		where  source in ('销售' , '退回')
+		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		GROUP BY area ORDER BY numberSum DESC 
 	</select>
@@ -388,8 +369,8 @@
 		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum  
 		from stone
-		where
-		date <![CDATA[ >= ]]>#{start}
+		where  source in ('销售' , '退回')
+		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		GROUP BY room ORDER BY numberSum DESC 
 	</select>
@@ -397,15 +378,15 @@
 		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum  
 		from stone
-		where
-		date <![CDATA[ >= ]]>#{start}
+		where  source in ('销售' , '退回')
+		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		GROUP BY counter ORDER BY numberSum DESC 
 	</select>
 	<select id="findCompareDataSetByParams" parameterType="java.util.Map" resultMap="userAnalysisMap">
 		select area,room,counter,product,settlementprice,date from stone
 		where
-		area = #{area}
+		area = #{area} and source in ('销售' , '退回')
 		<if test="counter!=null">
 			and counter = #{counter}
 		</if>
@@ -425,7 +406,7 @@
 		select area,date,COUNT(date) as numberSum, SUM(settlementprice) AS settlementpriceSum
 		from stone
 		where
-		area = #{area}
+		area = #{area} and source in ('销售' , '退回')
 		<if test="counter!=null">
 			and counter = #{counter}
 		</if>
@@ -438,30 +419,30 @@
 
 	<select id="findStoneByAreaAndTimeForNumberSumDemo" parameterType="java.util.Map" resultMap="userAnalysisMap">
 		select area,date,COUNT(date) as numberSum from stone
-		where
-		date <![CDATA[ >= ]]>#{start}
+		where  source in ('销售' , '退回')
+		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		GROUP BY area,date ORDER BY date
 	</select>
 	<select id="findStoneByAreaAndTimeForNumberSum" parameterType="java.util.Map" resultMap="userAnalysisMap">
 		select area,date,COUNT(date) as numberSum from stone
-		where
-		date <![CDATA[ >= ]]>#{start}
+		where  source in ('销售' , '退回')
+		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		GROUP BY area,date ORDER BY date
 	</select>
 	<select id="findStoneByAreaAndTimeForSettlementpriceSum" parameterType="java.util.Map" resultMap="userAnalysisMap">
 		select area,date,SUM(settlementprice) AS settlementpriceSum from stone
-		where
-		date <![CDATA[ >= ]]>#{start}
+		where  source in ('销售' , '退回')
+		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		GROUP BY area,date ORDER BY date
 	</select>
 
 	<select id="findExchangeByParams" parameterType="java.util.Map" resultMap="userAnalysisMap">
 		select * from stone
-		where
-		date <![CDATA[ >= ]]>#{start}
+		where  (source = '销售' and exchangegoldweight = 0 ) or (source = '兑换' and exchangegoldweight > 0 )
+		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		<if test="counter!=null">
 			and counter = #{counter}
@@ -480,8 +461,8 @@
 		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		where
-		date <![CDATA[ >= ]]>#{start}
+		where  (source = '销售' and exchangegoldweight = 0 ) or (source = '兑换' and exchangegoldweight > 0 )
+		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		<if test="counter!=null">
 			and counter = #{counter}
@@ -499,8 +480,8 @@
 	<!-- //index  711   712 -->
 	<select id="findStoneBySupplier" parameterType="java.util.Map" resultMap="userAnalysisMap">
 		select * from stone
-		where
-		date <![CDATA[ >= ]]>#{start}
+		where  source in ('销售' , '退回')
+		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		<if test="counter!=null">
 			and counter = #{counter}
@@ -520,8 +501,8 @@
 		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		where
-		date <![CDATA[ >= ]]>#{start}
+		where  source in ('销售' , '退回')
+		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		<if test="counter!=null">
 			and counter = #{counter}
@@ -536,17 +517,10 @@
 	</select>
 
 
-
-
-
-
-
-
-
 	<select id="findProductBySupplierAndCounter" parameterType="java.util.Map" resultMap="userAnalysisMap">
 		select * from stone
 		where
-		supplier = #{supplier} and counter = #{counter}
+		supplier = #{supplier} and counter = #{counter} and source in ('销售' , '退回')
 
 	</select>
 
@@ -554,7 +528,7 @@
 		select *,COUNT(*) AS numberSum
 		from stone
 		where
-		supplier=#{supplier} and product=#{product}
+		supplier=#{supplier} and product=#{product} and source in ('销售' , '退回')
 		<if test="start!=null">
 			and date <![CDATA[ >= ]]>
 			#{start}
@@ -569,7 +543,7 @@
 		select *,SUM(settlementprice) AS settlementpriceSum
 		from stone
 		where
-		supplier=#{supplier} and product=#{product}
+		supplier=#{supplier} and product=#{product} and source in ('销售' , '退回')
 		<if test="start!=null">
 			and date <![CDATA[ >= ]]>
 			#{start}
@@ -585,7 +559,7 @@
 		select * from stone
 		where
 		supplier=#{supplier}
-		and product=#{product}
+		and product=#{product} and source in ('销售' , '退回')
 		<if test="start!=null">
 			and date <![CDATA[ >= ]]>
 			#{start}
@@ -600,7 +574,7 @@
 	<select id="findStoneByProduct" parameterType="java.util.Map" resultMap="userAnalysisMap">
 		select * from stone
 		where
-		product=#{productName}
+		product=#{productName} and source in ('销售' , '退回')
 		<if test="start!=null">
 			and date <![CDATA[ >= ]]>
 			#{start}
@@ -615,7 +589,7 @@
 		select supplier,date,COUNT(*) AS countSum
 		from stone
 		where
-		supplier=#{supplier}
+		supplier=#{supplier} and source in ('销售' , '退回')
 		<if test="start!=null">
 			and date <![CDATA[ >= ]]>
 			#{start}
@@ -631,7 +605,7 @@
 		select supplier,date,SUM(settlementprice) AS settlementpriceSum
 		from stone
 		where
-		supplier=#{supplier}
+		supplier=#{supplier} and source in ('销售' , '退回')
 		<if test="start!=null">
 			and date <![CDATA[ >= ]]>
 			#{start}
@@ -649,8 +623,8 @@
 		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		where
-		date <![CDATA[ >= ]]>#{start}
+		where  source in ('销售' , '退回')
+		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		<if test="counter!=null">
 			and counter = #{counter}
@@ -669,7 +643,7 @@
 	<!-- //s743 -->
 	<select id="findStoneByCounter" parameterType="java.util.Map" resultMap="userAnalysisMap">
 		select * from stone
-		where source = "销售" 
+		where  source in ('销售' , '退回')
 		<if test="start!=null">
 			and date <![CDATA[ >= ]]>
 			#{start}
@@ -686,7 +660,7 @@
 		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		where source = "销售" 
+		where  source in ('销售' , '退回')
 		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		<if test="counter!=null">
@@ -699,7 +673,7 @@
 	<!-- //s744 -->
 	<select id="findStoneByArea" parameterType="java.util.Map" resultMap="userAnalysisMap">
 		select * from stone
-		where source = "销售" 
+		where  source in ('销售' , '退回')
 		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		<if test="counter!=null">
@@ -719,7 +693,7 @@
 		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		where source = "销售" 
+		where  source in ('销售' , '退回')
 		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		<if test="counter!=null">
@@ -745,7 +719,7 @@
 		SELECT *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum 
 		FROM stone
-		where source = "销售" 
+		where  source in ('销售' , '退回')
 		<if test="start!=null">
 			and date <![CDATA[ >= ]]>#{start}
 		</if>
@@ -771,7 +745,7 @@
 		SELECT *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum 
 		FROM stone
-		where source = "销售"
+		where  source in ('销售' , '退回')
 		<if test="start!=null">
 			and date <![CDATA[ >= ]]>#{start}
 		</if>
@@ -797,7 +771,7 @@
 		SELECT *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum 
 		FROM stone
-		where source = "销售"
+		where  source in ('销售' , '退回')
 		<if test="start!=null">
 			and date <![CDATA[ >= ]]>#{start}
 		</if>
@@ -825,7 +799,7 @@
 
 	<select id="findStoneByAll" parameterType="java.util.Map" resultMap="userAnalysisMap">
 		select * from stone
-		where source = "销售"
+		where source in ('销售' , '退回')
 		<if test="start!=null">
 			and date <![CDATA[ >= ]]>
 			#{start}
@@ -839,7 +813,7 @@
 		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum 
 		from stone
-		where source = "销售"
+		where source in ('销售' , '退回')
 		<if test="start!=null">
 			and date <![CDATA[ >= ]]>
 			#{start}
@@ -873,8 +847,8 @@
 		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		where
-		date <![CDATA[ >= ]]>#{start}
+		where source in ('销售' , '退回')
+		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		<if test="counter!=null">
 			and counter = #{counter}
@@ -902,7 +876,7 @@
 	<!-- source -->
 	<select id="findStoneBySource" parameterType="java.util.Map" resultMap="userAnalysisMap">
 		select * from stone
-		where  
+		where
 		date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		<if test="counter!=null">
@@ -917,6 +891,9 @@
 		<if test="source!=null">
 			and source = #{source}
 		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
 		<if test="supplier!=null">
 			and supplier = #{supplier}
 		</if>
@@ -927,8 +904,8 @@
 	<!-- index722   index723 -->
 	<select id="findStoneFor722And723" parameterType="java.util.Map" resultMap="userAnalysisMap">
 		select * from stone
-		where  
-		date <![CDATA[ >= ]]>#{start}
+		where  source in ('销售' , '退回')
+		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		<if test="counter!=null">
 			and counter = #{counter}
@@ -942,8 +919,11 @@
 		<if test="priceNo!=null">
 			and priceNo = #{priceNo}
 		</if>
-		<if test="style!=null">
-			and style = #{style}
+		<if test="series!=null">
+			and series = #{series}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
 		</if>
 		<if test="supplier!=null">
 			and supplier = #{supplier}
@@ -954,8 +934,8 @@
 		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		where 
- 		date <![CDATA[ >= ]]>#{start}
+		where source in ('销售' , '退回')
+ 		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		<if test="counter!=null">
 			and counter = #{counter}
@@ -966,21 +946,24 @@
 		<if test="room!=null">
 			and room = #{room}
 		</if>
-		<if test="style!=null">
-			and style = #{style}
+		<if test="series!=null">
+			and series = #{series}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
 		</if>
 		<if test="supplier!=null">
 			and supplier = #{supplier}
 		</if>
-		GROUP BY style
+		GROUP BY series
 	</select>
 	<!-- index722 -->
 	<select id="findStoneFor722" parameterType="java.util.Map" resultMap="userAnalysisMap">
 		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		where 
- 		date <![CDATA[ >= ]]>#{start}
+		where source in ('销售' , '退回')
+ 		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		<if test="counter!=null">
 			and counter = #{counter}
@@ -990,6 +973,9 @@
 		</if>
 		<if test="room!=null">
 			and room = #{room}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
 		</if>
 		<if test="priceNo!=null">
 			and priceNo = #{priceNo}
@@ -1004,14 +990,17 @@
 		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		where 
- 		date <![CDATA[ >= ]]>#{start}
+		where source in ('销售' , '退回')
+ 		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		<if test="counter!=null">
 			and counter = #{counter}
 		</if>
 		<if test="area!=null">
 			and area = #{area}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
 		</if>
 		<if test="room!=null">
 			and room = #{room}
@@ -1026,14 +1015,17 @@
 		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		where 
- 		date <![CDATA[ >= ]]>#{start}
+		where source in ('销售' , '退回')
+ 		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		<if test="counter!=null">
 			and counter = #{counter}
 		</if>
 		<if test="area!=null">
 			and area = #{area}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
 		</if>
 		<if test="room!=null">
 			and room = #{room}
@@ -1048,14 +1040,17 @@
 		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		where 
- 		date <![CDATA[ >= ]]>#{start}
+		where source in ('销售' , '退回')
+		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		<if test="counter!=null">
 			and counter = #{counter}
 		</if>
 		<if test="area!=null">
 			and area = #{area}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
 		</if>
 		<if test="room!=null">
 			and room = #{room}
@@ -1065,11 +1060,36 @@
 		</if>
 		GROUP BY settlementprice
 	</select>
+	<!-- index724  金重区间 -->
+	<select id="findStoneForIndex724GoldWeight" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
+		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
+		from stone
+		where source in ('销售' , '退回')
+		and date <![CDATA[ >= ]]>#{start}
+		and date <![CDATA[ <= ]]>#{end}
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="area!=null">
+			and area = #{area}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		<if test="supplier!=null">
+			and supplier = #{supplier}
+		</if>
+		GROUP BY goldweight
+	</select>
 	<!-- index726 圈口 -->
 	<select id="findStoneFor726" parameterType="java.util.Map" resultMap="userAnalysisMap">
 		select * from stone
-		where  
-		date <![CDATA[ >= ]]>#{start}
+		where  source in ('销售' , '退回')
+		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		<if test="counter!=null">
 			and counter = #{counter}
@@ -1079,6 +1099,9 @@
 		</if>
 		<if test="room!=null">
 			and room = #{room}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
 		</if>
 		<if test="circle!=null">
 			and circle = #{circle}
@@ -1092,8 +1115,8 @@
 		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		where 
- 		date <![CDATA[ >= ]]>#{start}
+		where source in ('销售' , '退回')
+ 		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		<if test="counter!=null">
 			and counter = #{counter}
@@ -1103,6 +1126,9 @@
 		</if>
 		<if test="room!=null">
 			and room = #{room}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
 		</if>
 		<if test="supplier!=null">
 			and supplier = #{supplier}
@@ -1117,8 +1143,8 @@
 		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		where 
- 		date <![CDATA[ >= ]]>#{start}
+		where source in ('销售' , '退回')
+ 		and date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		<if test="counter!=null">
 			and counter = #{counter}

@@ -13,34 +13,21 @@ import java.util.Calendar;
 import java.text.Collator;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.nenu.domain.*;
+import com.nenu.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.nenu.domain.Belong;
-import com.nenu.domain.BelongAndCounter;
-import com.nenu.domain.Group;
-import com.nenu.domain.ListPrice;
-import com.nenu.domain.MainStone;
-import com.nenu.domain.Plan;
-import com.nenu.domain.SettlementPrice;
-import com.nenu.domain.StoneAnalysis;
-import com.nenu.service.BelongAndCounterService;
-import com.nenu.service.BelongService;
-import com.nenu.service.GroupService;
-import com.nenu.service.ListPriceService;
-import com.nenu.service.MainStoneService;
-import com.nenu.service.PlanService;
-import com.nenu.service.SettlementPriceService;
-import com.nenu.service.StoneAnalysisService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -61,6 +48,9 @@ public class StoneAnalysisController {
 	private GroupService groupService;
 	@Autowired
 	private MainStoneService mainStoneService;
+
+	@Autowired
+    private GoldWeightService goldWeightService;
 	
 	@Autowired
 	private ListPriceService listPriceService;
@@ -83,7 +73,7 @@ public class StoneAnalysisController {
 	 *             String created on 2018年7月1日 下午7:03:29
 	 */
 	@ApiOperation(value="跳转index页面",notes="显示index页面")
-	@RequestMapping(value = "index")
+	@GetMapping(value = "index")
 	public String index(ModelMap map, HttpSession session) throws ParseException {
 		List<StoneAnalysis> list = stoneService.findAllStone();
 		List listSupplier = new ArrayList<>();
@@ -309,7 +299,7 @@ public class StoneAnalysisController {
 	 *             String created on 2018年7月1日 下午7:26:57
 	 */
 	@ApiOperation(value="跳转到productnum页面",notes="跳转到productnum页面")
-	@RequestMapping(value = "productnum")
+	@GetMapping(value = "productnum")
 	public String productnum(ModelMap map, HttpSession session) throws ParseException {
 
 		map.addAttribute("stoneList", stoneService.findAllStone());
@@ -529,7 +519,7 @@ public class StoneAnalysisController {
 	 */
 	@ApiOperation(value="跳转到index3页面",notes="兑换销售排名分析页面")
 	@SuppressWarnings("rawtypes")
-	@RequestMapping(value = "index3")
+	@GetMapping(value = "index3")
 	public String index3(ModelMap map) {
 		List<StoneAnalysis> list = stoneService.findAllStone();
 		List listSupplier = new ArrayList<>();
@@ -741,12 +731,6 @@ public class StoneAnalysisController {
 		listXHave.add(haveSum);
 		listXNotHave.add(notHaveSum);
 
-		//System.out.println(listY_t);
-		//System.out.println(listXHave_t);
-		//System.out.println(listXNotHave_t);
-		//System.out.println(listY);
-		//System.out.println(listXHave);
-		//System.out.println(listXNotHave);
 		// 表格数据
 		List listSupplier = new ArrayList<>();
 		List listCounter = new ArrayList<>();
@@ -756,6 +740,7 @@ public class StoneAnalysisController {
 		List listListprice = new ArrayList<>();
 		List listGoldweight = new ArrayList<>();
 		List listCenterstone = new ArrayList<>();
+		List listExchangegoldweight = new ArrayList<>();
 		List listDate = new ArrayList<>();
 		if (listAll != null) {
 			for (int i = 0; i < listAll.size(); i++) {
@@ -767,13 +752,14 @@ public class StoneAnalysisController {
 				listListprice.add(listAll.get(i).getListprice());
 				listGoldweight.add(listAll.get(i).getGoldweight());
 				listCenterstone.add(listAll.get(i).getCenterstone());
+                listExchangegoldweight.add(listAll.get(i).getExchangegoldweight());
 				listDate.add(sdf.format(listAll.get(i).getDate()));
 			}
 		}
 
 		result = "" + listY + "@" + listXHave + "@" + listXNotHave + "@" + listSupplier + "@" + listCounter + "@" + listProduct + "@" 
 		+ listSource + "@" + listSettlementprice + "@" + listDate + "@" + listAll.size()
-		+"@"+listListprice+"@"+listGoldweight+"@"+listCenterstone;
+		+"@"+listListprice+"@"+listGoldweight+"@"+listCenterstone+"@"+listExchangegoldweight;
 
 		return result;
 	}
@@ -835,7 +821,7 @@ public class StoneAnalysisController {
 	 *             String created on 2018年7月1日 下午7:41:02
 	 */
 	@ApiOperation(value="跳转到7.3.1页面  ",notes="系列商品走势页面  ")
-	@RequestMapping(value = "seriesproduct")
+	@GetMapping(value = "seriesproduct")
 	public String seriesproduct(ModelMap map, HttpSession session) throws ParseException {
 		List<StoneAnalysis> list = stoneService.findAllStone();
 		List listSupplier = new ArrayList<>();
@@ -901,6 +887,7 @@ public class StoneAnalysisController {
 		String product = request.getParameter("product");
 		String counter = request.getParameter("counter");
 		String selectType = request.getParameter("selectType");
+        String selectYear = request.getParameter("selectYear");
 		System.out.println("名称=============" + product);
 		System.out.println("供应商=============" + supplier);
 		System.out.println("类别=============" + selectType);
@@ -920,8 +907,8 @@ public class StoneAnalysisController {
 			params.put("counter", counter);
 		}
 		Date d = new Date();
-		String start = sdf.format(d).substring(0, 4) + "-01-01";
-		String end = sdf.format(d).substring(0, 4) + "-12-31";
+		String start =selectYear + "-01-01";
+		String end = selectYear + "-12-31";
 		System.out.println("st===" + start + ",ed======" + end);
 		params.put("start", start);
 		params.put("end", end);
@@ -1013,8 +1000,8 @@ public class StoneAnalysisController {
 		List listDate = new ArrayList<>();// 月走势日期
 		List listMonthNum = new ArrayList<>();// 月走势数量
 		int year = Integer.parseInt(sdf.format(d).substring(0, 4));
-		String strat_day = sdf.format(d).substring(0, 4) + "-"+selectMonth+"-01";
-		String strat_end = sdf.format(d).substring(0, 4);
+		String strat_day = selectYear + "-"+selectMonth+"-01";
+		String strat_end = selectYear;
 		if ((year % 4 == 0) && (year % 100 != 0) || (year % 400 == 0)) {// 闰年
 			if (selectMonth.equals("2")) {
 				strat_end += "-02-29";
@@ -1135,10 +1122,6 @@ public class StoneAnalysisController {
 		}
 
 		result = "" + listNum + "@" + listMonth + "@" + listMonthNum + "@" + listDate;
-		//System.out.println(listNum);
-		//System.out.println(listMonth);
-		//System.out.println(listMonthNum);
-		//System.out.println(listDate);
 		return result;
 	}
 
@@ -1152,7 +1135,7 @@ public class StoneAnalysisController {
 	 *             String created on 2018年6月27日
 	 */
 	@ApiOperation(value="跳转到index5页面 ",notes="分析销售增减趋势页面  ")
-	@RequestMapping(value = "index5")
+	@GetMapping(value = "index5")
 	public String index5(ModelMap map, HttpSession session) throws ParseException {
 		List<StoneAnalysis> list = stoneService.findAllStone();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -1586,7 +1569,7 @@ public class StoneAnalysisController {
 	 *             String created on 2018年7月1日 下午7:55:11
 	 */
 	@ApiOperation(value="跳转到s743页面",notes=" 销售结构分析")
-	@RequestMapping(value = "s743")
+	@GetMapping(value = "s743")
 	public String s743(ModelMap map, HttpSession session) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		map.addAttribute("stoneList", stoneService.findAllStone());
@@ -1746,7 +1729,7 @@ public class StoneAnalysisController {
 	 *             String created on 2018年7月1日 下午8:35:49
 	 */
 	@ApiOperation(value="跳转到s744页面，区域经营分析",notes="区域经营分析")
-	@RequestMapping(value = "s744")
+	@GetMapping(value = "s744")
 	public String s744(ModelMap map, HttpSession session) throws ParseException {
 		List<StoneAnalysis> list = stoneService.findAllStone();
 		List listArea = new ArrayList<>();
@@ -1989,7 +1972,7 @@ public class StoneAnalysisController {
 	 * @return String created by lick on 2018年7月1日
 	 */
 	@ApiOperation(value="跳转到index10页面,销售数据统计")
-	@RequestMapping(value = "index10")
+	@GetMapping(value = "index10")
 	public String index10(ModelMap map) {
 		List<StoneAnalysis> list = stoneService.findAllStone();
 		List listArea = new ArrayList<>();
@@ -2434,7 +2417,7 @@ public class StoneAnalysisController {
 	 * @throws ParseException
 	 */
 	@ApiOperation(value="productsum页面,供应商品群分析")
-	@RequestMapping(value = "productsum")
+	@GetMapping(value = "productsum")
 	public String productsum(ModelMap map, HttpSession session) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		map.addAttribute("stoneList", stoneService.findAllStone());
@@ -2448,7 +2431,6 @@ public class StoneAnalysisController {
 			if (index0 == -1) {
 				listSupplier.add(supplier);
 			}
-
 		}
 		map.addAttribute("listsupplier", listSupplier);
 
@@ -2477,7 +2459,7 @@ public class StoneAnalysisController {
 	 * @throws ParseException
 	 */
 	@ApiOperation(value="index9页面,销售结构分析")
-	@RequestMapping(value = "s752")
+	@GetMapping(value = "s752")
 	public String s752(ModelMap map, HttpSession session) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		map.addAttribute("stoneList", stoneService.findAllStone());
@@ -2517,8 +2499,6 @@ public class StoneAnalysisController {
 	}
 	/**
 	 * index9页面 销售结构分析 查询
-	 * @param map
-	 * @param session
 	 * @return
 	 * @throws ParseException
 	 */
@@ -2751,7 +2731,7 @@ public class StoneAnalysisController {
 	 *             String created on 2018年7月2日 上午9:42:32
 	 */
 	@ApiOperation(value="跳转到s75页面,管理分析")
-	@RequestMapping(value = "s75")
+	@GetMapping(value = "s75")
 	public String s75(ModelMap map, HttpSession session) throws ParseException {
 		map.addAttribute("stoneList", stoneService.findAllStone());
 		List<StoneAnalysis> list = stoneService.findAllStone();
@@ -3016,7 +2996,7 @@ public class StoneAnalysisController {
 	 * @return String created by lick on 2018年7月1日
 	 */
 	@ApiOperation(value="跳转到index11页面,供应商销售排名分析")
-	@RequestMapping(value = "index11")
+	@GetMapping(value = "index11")
 	public String index11(ModelMap map) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		
@@ -3064,6 +3044,7 @@ public class StoneAnalysisController {
 		
 		List<StoneAnalysis> listAll = stoneService.findAllStone();
 		List listCounter = new ArrayList<>();
+        List listProduct = new ArrayList<>();
 		if (listAll != null) {
 			for (int i = 0; i < listAll.size(); i++) {
 				if (listAll.get(i).getCounter() != null) {
@@ -3071,6 +3052,11 @@ public class StoneAnalysisController {
 						listCounter.add(listAll.get(i).getCounter());
 					}
 				}
+                if (listAll.get(i).getProduct() != null) {
+                    if (!listProduct.contains(listAll.get(i).getProduct()) && listAll.get(i).getProduct().length() > 0) {
+                        listProduct.add(listAll.get(i).getProduct());
+                    }
+                }
 			}
 		}
 		Collections.sort(listCounter, new Comparator<String>() {            
@@ -3080,7 +3066,15 @@ public class StoneAnalysisController {
 				return com.compare(o1, o2);            
 			}        
 		});
-		map.addAttribute("listCounter", listCounter);
+        Collections.sort(listProduct, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);
+                return com.compare(o1, o2);
+            }
+        });
+		map.addAttribute("listProduct", listProduct);
+        map.addAttribute("listCounter", listCounter);
 		map.addAttribute("listSupplier", listSupplier);
 		map.addAttribute("listThisYear", listThisYear);
 		map.addAttribute("listLastYear", listLastYear);
@@ -3091,8 +3085,6 @@ public class StoneAnalysisController {
 	 * index11页面 
 	 * 根据销量或营业额获取供应商
 	 *
-	 * com.nenu.controller
-	 * @param map
 	 * @return String
 	 * created  at 2018年7月3日
 	 */
@@ -3197,7 +3189,7 @@ public class StoneAnalysisController {
 	 * created  on 2018年7月3日 下午10:10:33
 	 */
 	@ApiOperation(value="跳转到index811页面,周销售数据统计")
-	@RequestMapping(value="index811")
+	@GetMapping(value="index811")
 	public String index811(ModelMap map) {
 		List<StoneAnalysis> list = stoneService.findAllStone();
 		List listArea = new ArrayList<>();
@@ -3270,7 +3262,7 @@ public class StoneAnalysisController {
 	 * created  on 2018年7月3日 下午10:10:33
 	 */
 	@ApiOperation(value="跳转到index812页面,月销售数据统计")
-	@RequestMapping(value="index812")
+	@GetMapping(value="index812")
 	public String index812(ModelMap map) {
 		List<StoneAnalysis> list = stoneService.findAllStone();
 		List listArea = new ArrayList<>();
@@ -3343,7 +3335,7 @@ public class StoneAnalysisController {
 	 * created  on 2018年7月3日 下午10:10:33
 	 */
 	@ApiOperation(value="跳转到index813页面,季度销售数据统计")
-	@RequestMapping(value="index813")
+	@GetMapping(value="index813")
 	public String index813(ModelMap map) {
 		List<StoneAnalysis> list = stoneService.findAllStone();
 		List listArea = new ArrayList<>();
@@ -3416,7 +3408,7 @@ public class StoneAnalysisController {
 	 * created  on 2018年7月3日 下午10:10:33
 	 */
 	@ApiOperation(value="跳转到index814页面,年销售数据统计")
-	@RequestMapping(value="index814")
+	@GetMapping(value="index814")
 	public String index814(ModelMap map ) {
 		List<StoneAnalysis> list = stoneService.findAllStone();
 		List listArea = new ArrayList<>();
@@ -3545,7 +3537,14 @@ public class StoneAnalysisController {
 		if(list.size()>0) {
 			for (int i = 0; i < list.size(); i++) {
 				if (!listX.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
-					listX.add(list.get(i).getProduct());
+                    String regex="^[0-9].*$";
+                    Pattern p = Pattern.compile(regex);
+                    //数字开头 加个下划线
+                    if(p.matcher(list.get(i).getProduct()).matches()) {
+                        listX.add("_"+list.get(i).getProduct());
+                    }else {
+                        listX.add(list.get(i).getProduct());
+                    }
 				}
 			}
 		}
@@ -3561,7 +3560,7 @@ public class StoneAnalysisController {
 				if(selectType.contains("销量")) {
 					int num = 0;
 					for (int j = 0; j < listX.size(); j++) {
-						if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+						if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 							num = listY.get(j).hashCode() + list.get(i).getNumberSum();
 							listY.set(j, num);
 						}
@@ -3570,7 +3569,7 @@ public class StoneAnalysisController {
 				if(selectType.contains("结算价")) {
 					int num = 0;
 					for (int j = 0; j < listX.size(); j++) {
-						if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                        if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 							num = listY.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 							listY.set(j, num);
 						}
@@ -3579,7 +3578,7 @@ public class StoneAnalysisController {
 				if(selectType.contains("标价")) {
 					float num = 0;
 					for (int j = 0; j < listX.size(); j++) {
-						if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                        if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 							num = Float.parseFloat(listY.get(j).toString()) + list.get(i).getListpriceSum();
 							listY.set(j, num);
 						}
@@ -3588,7 +3587,7 @@ public class StoneAnalysisController {
 				if(selectType.contains("金重")) {
 					float num = 0;
 					for (int j = 0; j < listX.size(); j++) {
-						if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                        if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 							num = Float.parseFloat(listY.get(j).toString()) + list.get(i).getGoldweightSum();
 							listY.set(j, num);
 						}
@@ -3597,7 +3596,7 @@ public class StoneAnalysisController {
 				if(selectType.contains("主石")) {
 					float num = 0;
 					for (int j = 0; j < listX.size(); j++) {
-						if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                        if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 							num = Float.parseFloat(listY.get(j).toString()) + list.get(i).getCenterstoneSum();
 							listY.set(j, num);
 						}
@@ -3605,9 +3604,7 @@ public class StoneAnalysisController {
 				}
 			}
 		}
-		
-		
-		
+
 		List listArea = new ArrayList<>();
 		List listRoom = new ArrayList<>();
 		List listCounter = new ArrayList<>();
@@ -3712,7 +3709,14 @@ public class StoneAnalysisController {
 			if(list.size()>0) {
 				for (int i = 0; i < list.size(); i++) {
 					if (!listX.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
-						listX.add(list.get(i).getProduct());
+                        String regex="^[0-9].*$";
+                        Pattern p = Pattern.compile(regex);
+                        //数字开头 加个下划线
+                        if(p.matcher(list.get(i).getProduct()).matches()) {
+                            listX.add("_"+list.get(i).getProduct());
+                        }else {
+                            listX.add(list.get(i).getProduct());
+                        }
 					}
 				}
 			}
@@ -3742,7 +3746,7 @@ public class StoneAnalysisController {
 					if (m == 1) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY1.get(j).hashCode() + list.get(i).getNumberSum();
 								listY1.set(j, num);
 							}
@@ -3751,7 +3755,7 @@ public class StoneAnalysisController {
 					if (m == 2) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY2.get(j).hashCode() + list.get(i).getNumberSum();
 								listY2.set(j, num);
 							}
@@ -3760,7 +3764,7 @@ public class StoneAnalysisController {
 					if (m == 3) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY3.get(j).hashCode() + list.get(i).getNumberSum();
 								listY3.set(j, num);
 							}
@@ -3769,7 +3773,7 @@ public class StoneAnalysisController {
 					if (m == 4) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY4.get(j).hashCode() + list.get(i).getNumberSum();
 								listY4.set(j, num);
 							}
@@ -3778,7 +3782,7 @@ public class StoneAnalysisController {
 					if (m == 5) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY5.get(j).hashCode() + list.get(i).getNumberSum();
 								listY5.set(j, num);
 							}
@@ -3787,7 +3791,7 @@ public class StoneAnalysisController {
 					if (m == 6) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY6.get(j).hashCode() + list.get(i).getNumberSum();
 								listY6.set(j, num);
 							}
@@ -3796,7 +3800,7 @@ public class StoneAnalysisController {
 					if (m == 7) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY7.get(j).hashCode() + list.get(i).getNumberSum();
 								listY7.set(j, num);
 							}
@@ -3805,7 +3809,7 @@ public class StoneAnalysisController {
 					if (m == 8) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY8.get(j).hashCode() + list.get(i).getNumberSum();
 								listY8.set(j, num);
 							}
@@ -3814,7 +3818,7 @@ public class StoneAnalysisController {
 					if (m == 9) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY9.get(j).hashCode() + list.get(i).getNumberSum();
 								listY9.set(j, num);
 							}
@@ -3823,7 +3827,7 @@ public class StoneAnalysisController {
 					if (m == 10) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY10.get(j).hashCode() + list.get(i).getNumberSum();
 								listY10.set(j, num);
 							}
@@ -3832,7 +3836,7 @@ public class StoneAnalysisController {
 					if (m == 11) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY11.get(j).hashCode() + list.get(i).getNumberSum();
 								listY11.set(j, num);
 							}
@@ -3841,7 +3845,7 @@ public class StoneAnalysisController {
 					if (m == 12) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY12.get(j).hashCode() + list.get(i).getNumberSum();
 								listY12.set(j, num);
 							}
@@ -3859,7 +3863,7 @@ public class StoneAnalysisController {
 					if (m == 1) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY1.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 								listY1.set(j, num);
 							}
@@ -3868,7 +3872,7 @@ public class StoneAnalysisController {
 					if (m == 2) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY2.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 								listY2.set(j, num);
 							}
@@ -3877,7 +3881,7 @@ public class StoneAnalysisController {
 					if (m == 3) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY3.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 								listY3.set(j, num);
 							}
@@ -3886,7 +3890,7 @@ public class StoneAnalysisController {
 					if (m == 4) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY4.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 								listY4.set(j, num);
 							}
@@ -3895,7 +3899,7 @@ public class StoneAnalysisController {
 					if (m == 5) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY5.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 								listY5.set(j, num);
 							}
@@ -3904,7 +3908,7 @@ public class StoneAnalysisController {
 					if (m == 6) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY6.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 								listY6.set(j, num);
 							}
@@ -3913,7 +3917,7 @@ public class StoneAnalysisController {
 					if (m == 7) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY7.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 								listY7.set(j, num);
 							}
@@ -3922,7 +3926,7 @@ public class StoneAnalysisController {
 					if (m == 8) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY8.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 								listY8.set(j, num);
 							}
@@ -3931,7 +3935,7 @@ public class StoneAnalysisController {
 					if (m == 9) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY9.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 								listY9.set(j, num);
 							}
@@ -3940,7 +3944,7 @@ public class StoneAnalysisController {
 					if (m == 10) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY10.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 								listY10.set(j, num);
 							}
@@ -3949,7 +3953,7 @@ public class StoneAnalysisController {
 					if (m == 11) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY11.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 								listY11.set(j, num);
 							}
@@ -3958,7 +3962,7 @@ public class StoneAnalysisController {
 					if (m == 12) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY12.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 								listY12.set(j, num);
 							}
@@ -3974,7 +3978,7 @@ public class StoneAnalysisController {
 					if (m == 1) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY1.get(j).toString()) + list.get(i).getListpriceSum();
 								listY1.set(j, num);
 							}
@@ -3983,7 +3987,7 @@ public class StoneAnalysisController {
 					if (m == 2) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY2.get(j).toString()) + list.get(i).getListpriceSum();
 								listY2.set(j, num);
 							}
@@ -3992,7 +3996,7 @@ public class StoneAnalysisController {
 					if (m == 3) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY3.get(j).toString()) + list.get(i).getListpriceSum();
 								listY3.set(j, num);
 							}
@@ -4001,7 +4005,7 @@ public class StoneAnalysisController {
 					if (m == 4) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY4.get(j).toString()) + list.get(i).getListpriceSum();
 								listY4.set(j, num);
 							}
@@ -4010,7 +4014,7 @@ public class StoneAnalysisController {
 					if (m == 5) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY5.get(j).toString()) + list.get(i).getListpriceSum();
 								listY5.set(j, num);
 							}
@@ -4019,7 +4023,7 @@ public class StoneAnalysisController {
 					if (m == 6) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY6.get(j).toString()) + list.get(i).getListpriceSum();
 								listY6.set(j, num);
 							}
@@ -4028,7 +4032,7 @@ public class StoneAnalysisController {
 					if (m == 7) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY7.get(j).toString()) + list.get(i).getListpriceSum();
 								listY7.set(j, num);
 							}
@@ -4037,7 +4041,7 @@ public class StoneAnalysisController {
 					if (m == 8) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY8.get(j).toString()) + list.get(i).getListpriceSum();
 								listY8.set(j, num);
 							}
@@ -4046,7 +4050,7 @@ public class StoneAnalysisController {
 					if (m == 9) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY9.get(j).toString()) + list.get(i).getListpriceSum();
 								listY9.set(j, num);
 							}
@@ -4055,7 +4059,7 @@ public class StoneAnalysisController {
 					if (m == 10) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY10.get(j).toString()) + list.get(i).getListpriceSum();
 								listY10.set(j, num);
 							}
@@ -4064,7 +4068,7 @@ public class StoneAnalysisController {
 					if (m == 11) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY11.get(j).toString()) + list.get(i).getListpriceSum();
 								listY11.set(j, num);
 							}
@@ -4073,7 +4077,7 @@ public class StoneAnalysisController {
 					if (m == 12) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY12.get(j).toString()) + list.get(i).getListpriceSum();
 								listY12.set(j, num);
 							}
@@ -4089,7 +4093,7 @@ public class StoneAnalysisController {
 					if (m == 1) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY1.get(j).toString()) + list.get(i).getGoldweightSum();
 								listY1.set(j, num);
 							}
@@ -4098,7 +4102,7 @@ public class StoneAnalysisController {
 					if (m == 2) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY2.get(j).toString()) + list.get(i).getGoldweightSum();
 								listY2.set(j, num);
 							}
@@ -4107,7 +4111,7 @@ public class StoneAnalysisController {
 					if (m == 3) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY3.get(j).toString()) + list.get(i).getGoldweightSum();
 								listY3.set(j, num);
 							}
@@ -4116,7 +4120,7 @@ public class StoneAnalysisController {
 					if (m == 4) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY4.get(j).toString()) + list.get(i).getGoldweightSum();
 								listY4.set(j, num);
 							}
@@ -4125,7 +4129,7 @@ public class StoneAnalysisController {
 					if (m == 5) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY5.get(j).toString()) + list.get(i).getGoldweightSum();
 								listY5.set(j, num);
 							}
@@ -4134,7 +4138,7 @@ public class StoneAnalysisController {
 					if (m == 6) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY6.get(j).toString()) + list.get(i).getGoldweightSum();
 								listY6.set(j, num);
 							}
@@ -4143,7 +4147,7 @@ public class StoneAnalysisController {
 					if (m == 7) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY7.get(j).toString()) + list.get(i).getGoldweightSum();
 								listY7.set(j, num);
 							}
@@ -4152,7 +4156,7 @@ public class StoneAnalysisController {
 					if (m == 8) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY8.get(j).toString()) + list.get(i).getGoldweightSum();
 								listY8.set(j, num);
 							}
@@ -4161,7 +4165,7 @@ public class StoneAnalysisController {
 					if (m == 9) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY9.get(j).toString()) + list.get(i).getGoldweightSum();
 								listY9.set(j, num);
 							}
@@ -4170,7 +4174,7 @@ public class StoneAnalysisController {
 					if (m == 10) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY10.get(j).toString()) + list.get(i).getGoldweightSum();
 								listY10.set(j, num);
 							}
@@ -4179,7 +4183,7 @@ public class StoneAnalysisController {
 					if (m == 11) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY11.get(j).toString()) + list.get(i).getGoldweightSum();
 								listY11.set(j, num);
 							}
@@ -4188,7 +4192,7 @@ public class StoneAnalysisController {
 					if (m == 12) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY12.get(j).toString()) + list.get(i).getGoldweightSum();
 								listY12.set(j, num);
 							}
@@ -4204,7 +4208,7 @@ public class StoneAnalysisController {
 					if (m == 1) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY1.get(j).toString()) + list.get(i).getCenterstoneSum();
 								listY1.set(j, num);
 							}
@@ -4213,7 +4217,7 @@ public class StoneAnalysisController {
 					if (m == 2) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY2.get(j).toString()) + list.get(i).getCenterstoneSum();
 								listY2.set(j, num);
 							}
@@ -4222,7 +4226,7 @@ public class StoneAnalysisController {
 					if (m == 3) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY3.get(j).toString()) + list.get(i).getCenterstoneSum();
 								listY3.set(j, num);
 							}
@@ -4231,7 +4235,7 @@ public class StoneAnalysisController {
 					if (m == 4) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY4.get(j).toString()) + list.get(i).getCenterstoneSum();
 								listY4.set(j, num);
 							}
@@ -4240,7 +4244,7 @@ public class StoneAnalysisController {
 					if (m == 5) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY5.get(j).toString()) + list.get(i).getCenterstoneSum();
 								listY5.set(j, num);
 							}
@@ -4249,7 +4253,7 @@ public class StoneAnalysisController {
 					if (m == 6) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY6.get(j).toString()) + list.get(i).getCenterstoneSum();
 								listY6.set(j, num);
 							}
@@ -4258,7 +4262,7 @@ public class StoneAnalysisController {
 					if (m == 7) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY7.get(j).toString()) + list.get(i).getCenterstoneSum();
 								listY7.set(j, num);
 							}
@@ -4267,7 +4271,7 @@ public class StoneAnalysisController {
 					if (m == 8) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY8.get(j).toString()) + list.get(i).getCenterstoneSum();
 								listY8.set(j, num);
 							}
@@ -4276,7 +4280,7 @@ public class StoneAnalysisController {
 					if (m == 9) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY9.get(j).toString()) + list.get(i).getCenterstoneSum();
 								listY9.set(j, num);
 							}
@@ -4285,7 +4289,7 @@ public class StoneAnalysisController {
 					if (m == 10) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY10.get(j).toString()) + list.get(i).getCenterstoneSum();
 								listY10.set(j, num);
 							}
@@ -4294,7 +4298,7 @@ public class StoneAnalysisController {
 					if (m == 11) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY11.get(j).toString()) + list.get(i).getCenterstoneSum();
 								listY11.set(j, num);
 							}
@@ -4303,7 +4307,7 @@ public class StoneAnalysisController {
 					if (m == 12) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY12.get(j).toString()) + list.get(i).getCenterstoneSum();
 								listY12.set(j, num);
 							}
@@ -4412,7 +4416,14 @@ public class StoneAnalysisController {
 		if(list.size()>0) {
 			for (int i = 0; i < list.size(); i++) {
 				if (!listX.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
-					listX.add(list.get(i).getProduct());
+                    String regex="^[0-9].*$";
+                    Pattern p = Pattern.compile(regex);
+                    //数字开头 加个下划线
+                    if(p.matcher(list.get(i).getProduct()).matches()) {
+                        listX.add("_"+list.get(i).getProduct());
+                    }else {
+                        listX.add(list.get(i).getProduct());
+                    }
 				}
 			}
 		}
@@ -4433,7 +4444,7 @@ public class StoneAnalysisController {
 					if (m >= 1 && m <= 3) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY1.get(j).hashCode() + list.get(i).getNumberSum();
 								listY1.set(j, num);
 							}
@@ -4442,7 +4453,7 @@ public class StoneAnalysisController {
 					if (m >= 4 && m <= 6) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY2.get(j).hashCode() + list.get(i).getNumberSum();
 								listY2.set(j, num);
 							}
@@ -4451,7 +4462,7 @@ public class StoneAnalysisController {
 					if (m >= 7 && m <= 9) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY3.get(j).hashCode() + list.get(i).getNumberSum();
 								listY3.set(j, num);
 							}
@@ -4460,7 +4471,7 @@ public class StoneAnalysisController {
 					if (m >= 10 && m <= 12) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY4.get(j).hashCode() + list.get(i).getNumberSum();
 								listY4.set(j, num);
 							}
@@ -4478,7 +4489,7 @@ public class StoneAnalysisController {
 					if (m >= 1 && m <= 3) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY1.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 								listY1.set(j, num);
 							}
@@ -4487,7 +4498,7 @@ public class StoneAnalysisController {
 					if (m >= 4 && m <= 6) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY2.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 								listY2.set(j, num);
 							}
@@ -4496,7 +4507,7 @@ public class StoneAnalysisController {
 					if (m >= 7 && m <= 9) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY3.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 								listY3.set(j, num);
 							}
@@ -4505,7 +4516,7 @@ public class StoneAnalysisController {
 					if (m >= 10 && m <= 12) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY4.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 								listY4.set(j, num);
 							}
@@ -4523,7 +4534,7 @@ public class StoneAnalysisController {
 					if (m >= 1 && m <= 3) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY1.get(j).toString()) + list.get(i).getListpriceSum();
 								listY1.set(j, num);
 							}
@@ -4533,7 +4544,7 @@ public class StoneAnalysisController {
 					if (m >= 4 && m <= 6) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY2.get(j).toString()) + list.get(i).getListpriceSum();
 								listY2.set(j, num);
 							}
@@ -4542,7 +4553,7 @@ public class StoneAnalysisController {
 					if (m >= 7 && m <= 9) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY3.get(j).toString()) + list.get(i).getListpriceSum();
 								listY3.set(j, num);
 							}
@@ -4551,7 +4562,7 @@ public class StoneAnalysisController {
 					if (m >= 10 && m <= 12) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY4.get(j).toString()) + list.get(i).getListpriceSum();
 								listY4.set(j, num);
 							}
@@ -4569,7 +4580,7 @@ public class StoneAnalysisController {
 					if (m >= 1 && m <= 3) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY1.get(j).toString()) + list.get(i).getGoldweightSum();
 								listY1.set(j, num);
 							}
@@ -4579,7 +4590,7 @@ public class StoneAnalysisController {
 					if (m >= 4 && m <= 6) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY2.get(j).toString()) + list.get(i).getGoldweightSum();
 								listY2.set(j, num);
 							}
@@ -4588,7 +4599,7 @@ public class StoneAnalysisController {
 					if (m >= 7 && m <= 9) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY3.get(j).toString()) + list.get(i).getGoldweightSum();
 								listY3.set(j, num);
 							}
@@ -4597,7 +4608,7 @@ public class StoneAnalysisController {
 					if (m >= 10 && m <= 12) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY4.get(j).toString()) + list.get(i).getGoldweightSum();
 								listY4.set(j, num);
 							}
@@ -4615,7 +4626,7 @@ public class StoneAnalysisController {
 					if (m >= 1 && m <= 3) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY1.get(j).toString()) + list.get(i).getCenterstoneSum();
 								listY1.set(j, num);
 							}
@@ -4625,7 +4636,7 @@ public class StoneAnalysisController {
 					if (m >= 4 && m <= 6) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY2.get(j).toString()) + list.get(i).getCenterstoneSum();
 								listY2.set(j, num);
 							}
@@ -4634,7 +4645,7 @@ public class StoneAnalysisController {
 					if (m >= 7 && m <= 9) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY3.get(j).toString()) + list.get(i).getCenterstoneSum();
 								listY3.set(j, num);
 							}
@@ -4643,7 +4654,7 @@ public class StoneAnalysisController {
 					if (m >= 10 && m <= 12) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY4.get(j).toString()) + list.get(i).getCenterstoneSum();
 								listY4.set(j, num);
 							}
@@ -4786,7 +4797,14 @@ public class StoneAnalysisController {
 			if(list.size()>0) {
 				for (int i = 0; i < list.size(); i++) {
 					if (!listX.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
-						listX.add(list.get(i).getProduct());
+                        String regex="^[0-9].*$";
+                        Pattern p = Pattern.compile(regex);
+                        //数字开头 加个下划线
+                        if(p.matcher(list.get(i).getProduct()).matches()) {
+                            listX.add("_"+list.get(i).getProduct());
+                        }else {
+                            listX.add(list.get(i).getProduct());
+                        }
 					}
 				}
 			}
@@ -4820,7 +4838,7 @@ public class StoneAnalysisController {
 					if(thisday>=1 && thisday <listMonday.get(0).hashCode()) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY1.get(j).hashCode() + list.get(i).getNumberSum();
 								listY1.set(j, num);
 							}
@@ -4829,7 +4847,7 @@ public class StoneAnalysisController {
 					if(thisday>=listMonday.get(0).hashCode() && thisday <listMonday.get(1).hashCode()) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY2.get(j).hashCode() + list.get(i).getNumberSum();
 								listY2.set(j, num);
 							}
@@ -4838,7 +4856,7 @@ public class StoneAnalysisController {
 					if(thisday>=listMonday.get(1).hashCode() && thisday <listMonday.get(2).hashCode()) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY3.get(j).hashCode() + list.get(i).getNumberSum();
 								listY3.set(j, num);
 							}
@@ -4847,7 +4865,7 @@ public class StoneAnalysisController {
 					if(thisday>=listMonday.get(2).hashCode() && thisday <listMonday.get(3).hashCode()) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY4.get(j).hashCode() + list.get(i).getNumberSum();
 								listY4.set(j, num);
 							}
@@ -4857,7 +4875,7 @@ public class StoneAnalysisController {
 						if(thisday>=listMonday.get(3).hashCode() && thisday <listMonday.get(4).hashCode()) {
 							int num = 0;
 							for (int j = 0; j < listX.size(); j++) {
-								if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                                if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 									num = listY5.get(j).hashCode() + list.get(i).getNumberSum();
 									listY5.set(j, num);
 								}
@@ -4867,7 +4885,7 @@ public class StoneAnalysisController {
 							if(thisday>=listMonday.get(4).hashCode() && thisday <listMonday.get(5).hashCode()) {
 								int num = 0;
 								for (int j = 0; j < listX.size(); j++) {
-									if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                                    if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 										num = listY6.get(j).hashCode() + list.get(i).getNumberSum();
 										listY6.set(j, num);
 									}
@@ -4887,7 +4905,7 @@ public class StoneAnalysisController {
 					if(thisday>=1 && thisday <listMonday.get(0).hashCode()) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY1.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 								listY1.set(j, num);
 							}
@@ -4896,7 +4914,7 @@ public class StoneAnalysisController {
 					if(thisday>=listMonday.get(0).hashCode() && thisday <listMonday.get(1).hashCode()) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY2.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 								listY2.set(j, num);
 							}
@@ -4905,7 +4923,7 @@ public class StoneAnalysisController {
 					if(thisday>=listMonday.get(1).hashCode() && thisday <listMonday.get(2).hashCode()) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY3.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 								listY3.set(j, num);
 							}
@@ -4914,7 +4932,7 @@ public class StoneAnalysisController {
 					if(thisday>=listMonday.get(2).hashCode() && thisday <listMonday.get(3).hashCode()) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = listY4.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 								listY4.set(j, num);
 							}
@@ -4924,7 +4942,7 @@ public class StoneAnalysisController {
 						if(thisday>=listMonday.get(3).hashCode() && thisday <listMonday.get(4).hashCode()) {
 							int num = 0;
 							for (int j = 0; j < listX.size(); j++) {
-								if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                                if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 									num = listY5.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 									listY5.set(j, num);
 								}
@@ -4934,7 +4952,7 @@ public class StoneAnalysisController {
 							if(thisday>=listMonday.get(4).hashCode() && thisday <listMonday.get(5).hashCode()) {
 								int num = 0;
 								for (int j = 0; j < listX.size(); j++) {
-									if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                                    if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 										num = listY6.get(j).hashCode() + list.get(i).getSettlementpriceSum();
 										listY6.set(j, num);
 									}
@@ -4952,7 +4970,7 @@ public class StoneAnalysisController {
 					if(thisday>=1 && thisday <listMonday.get(0).hashCode()) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY1.get(j).toString()) + list.get(i).getListpriceSum();
 								listY1.set(j, num);
 							}
@@ -4962,7 +4980,7 @@ public class StoneAnalysisController {
 					if(thisday>=listMonday.get(0).hashCode() && thisday <listMonday.get(1).hashCode()) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY2.get(j).toString()) + list.get(i).getListpriceSum();
 								listY2.set(j, num);
 							}
@@ -4971,7 +4989,7 @@ public class StoneAnalysisController {
 					if(thisday>=listMonday.get(1).hashCode() && thisday <listMonday.get(2).hashCode()) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY3.get(j).toString()) + list.get(i).getListpriceSum();
 								listY3.set(j, num);
 							}
@@ -4980,7 +4998,7 @@ public class StoneAnalysisController {
 					if(thisday>=listMonday.get(2).hashCode() && thisday <listMonday.get(3).hashCode()) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY4.get(j).toString()) + list.get(i).getListpriceSum();
 								listY1.set(4, num);
 							}
@@ -4991,7 +5009,7 @@ public class StoneAnalysisController {
 						if(thisday>=listMonday.get(3).hashCode() && thisday <listMonday.get(4).hashCode()) {
 							float num = 0;
 							for (int j = 0; j < listX.size(); j++) {
-								if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                                if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 									num = Float.parseFloat(listY5.get(j).toString()) + list.get(i).getListpriceSum();
 									listY5.set(j, num);
 								}
@@ -5001,7 +5019,7 @@ public class StoneAnalysisController {
 							if(thisday>=listMonday.get(4).hashCode() && thisday <listMonday.get(5).hashCode()) {
 								float num = 0;
 								for (int j = 0; j < listX.size(); j++) {
-									if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                                    if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 										num = Float.parseFloat(listY6.get(j).toString()) + list.get(i).getListpriceSum();
 										listY6.set(j, num);
 									}
@@ -5019,7 +5037,7 @@ public class StoneAnalysisController {
 					if(thisday>=1 && thisday <listMonday.get(0).hashCode()) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY1.get(j).toString()) + list.get(i).getGoldweightSum();
 								listY1.set(j, num);
 							}
@@ -5028,7 +5046,7 @@ public class StoneAnalysisController {
 					if(thisday>=listMonday.get(0).hashCode() && thisday <listMonday.get(1).hashCode()) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY2.get(j).toString()) + list.get(i).getGoldweightSum();
 								listY2.set(j, num);
 							}
@@ -5037,7 +5055,7 @@ public class StoneAnalysisController {
 					if(thisday>=listMonday.get(1).hashCode() && thisday <listMonday.get(2).hashCode()) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY3.get(j).toString()) + list.get(i).getGoldweightSum();
 								listY3.set(j, num);
 							}
@@ -5046,7 +5064,7 @@ public class StoneAnalysisController {
 					if(thisday>=listMonday.get(2).hashCode() && thisday <listMonday.get(3).hashCode()) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY4.get(j).toString()) + list.get(i).getGoldweightSum();
 								listY4.set(j, num);
 							}
@@ -5057,7 +5075,7 @@ public class StoneAnalysisController {
 						if(thisday>=listMonday.get(3).hashCode() && thisday <listMonday.get(4).hashCode()) {
 							float num = 0;
 							for (int j = 0; j < listX.size(); j++) {
-								if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                                if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 									num = Float.parseFloat(listY5.get(j).toString()) + list.get(i).getGoldweightSum();
 									listY5.set(j, num);
 								}
@@ -5067,7 +5085,7 @@ public class StoneAnalysisController {
 							if(thisday>=listMonday.get(4).hashCode() && thisday <listMonday.get(5).hashCode()) {
 								float num = 0;
 								for (int j = 0; j < listX.size(); j++) {
-									if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                                    if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 										num = Float.parseFloat(listY6.get(j).toString()) + list.get(i).getGoldweightSum();
 										listY6.set(j, num);
 									}
@@ -5085,7 +5103,7 @@ public class StoneAnalysisController {
 					if(thisday>=1 && thisday <listMonday.get(0).hashCode()) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY1.get(j).toString()) + list.get(i).getCenterstoneSum();
 								listY1.set(j, num);
 							}
@@ -5094,7 +5112,7 @@ public class StoneAnalysisController {
 					if(thisday>=listMonday.get(0).hashCode() && thisday <listMonday.get(1).hashCode()) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY2.get(j).toString()) + list.get(i).getCenterstoneSum();
 								listY2.set(j, num);
 							}
@@ -5103,7 +5121,7 @@ public class StoneAnalysisController {
 					if(thisday>=listMonday.get(1).hashCode() && thisday <listMonday.get(2).hashCode()) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY3.get(j).toString()) + list.get(i).getCenterstoneSum();
 								listY3.set(j, num);
 							}
@@ -5112,7 +5130,7 @@ public class StoneAnalysisController {
 					if(thisday>=listMonday.get(2).hashCode() && thisday <listMonday.get(3).hashCode()) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-							if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 								num = Float.parseFloat(listY4.get(j).toString()) + list.get(i).getCenterstoneSum();
 								listY4.set(j, num);
 							}
@@ -5122,7 +5140,7 @@ public class StoneAnalysisController {
 						if(thisday>=listMonday.get(3).hashCode() && thisday <listMonday.get(4).hashCode()) {
 							float num = 0;
 							for (int j = 0; j < listX.size(); j++) {
-								if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                                if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 									num = Float.parseFloat(listY5.get(j).toString()) + list.get(i).getCenterstoneSum();
 									listY5.set(j, num);
 								}
@@ -5132,7 +5150,7 @@ public class StoneAnalysisController {
 							if(thisday>=listMonday.get(4).hashCode() && thisday <listMonday.get(5).hashCode()) {
 								float num = 0;
 								for (int j = 0; j < listX.size(); j++) {
-									if(list.get(i).getProduct().contains(listX.get(j).toString())) {
+                                    if(listX.get(j).toString().contains(list.get(i).getProduct())) {
 										num = Float.parseFloat(listY6.get(j).toString()) + list.get(i).getCenterstoneSum();
 										listY6.set(j, num);
 									}
@@ -5426,7 +5444,7 @@ public class StoneAnalysisController {
 	 * created  at 2018年7月4日
 	 */
 	@ApiOperation(value="跳转到index822页面,年销售数据同比分析")
-	@RequestMapping(value="index822")
+	@GetMapping(value="index822")
 	public String index822() {
 		return "index822";
 	}
@@ -5438,7 +5456,7 @@ public class StoneAnalysisController {
 	 * created  at 2018年7月4日
 	 */
 	@ApiOperation(value="跳转到index832页面,年销售数据环比分析")
-	@RequestMapping(value="index832")
+	@GetMapping(value="index832")
 	public String index832() {
 		return "index832";
 	}
@@ -5450,7 +5468,7 @@ public class StoneAnalysisController {
 	 * created  at 2018年7月4日
 	 */
 	@ApiOperation(value="跳转到index821页面,月销售数据同比分析")
-	@RequestMapping(value="index821")
+	@GetMapping(value="index821")
 	public String index821() {
 		return "index821";
 	}
@@ -5462,7 +5480,7 @@ public class StoneAnalysisController {
 	 * created  at 2018年7月4日
 	 */
 	@ApiOperation(value="跳转到index831页面,月销售数据环比分析")
-	@RequestMapping(value="index831")
+	@GetMapping(value="index831")
 	public String index831() {
 		return "index831";
 	}
@@ -6852,7 +6870,7 @@ public class StoneAnalysisController {
 	 *             String created on 2018年7月1日 下午7:55:11
 	 */
 	@ApiOperation(value="跳转到index7页面,系列商品贡献度分析模型")
-	@RequestMapping(value = "index7")
+	@GetMapping(value = "index7")
 	public String index7(ModelMap map, HttpSession session) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		map.addAttribute("stoneList", stoneService.findAllStone());
@@ -6961,7 +6979,7 @@ public class StoneAnalysisController {
 	 *             String created on 2018年7月4日 上午8:29:25
 	 */
 	@ApiOperation(value="跳转到sellsort页面,管理分析模型")
-	@RequestMapping(value = "sellsort")
+	@GetMapping(value = "sellsort")
 	public String sellsort(ModelMap map, HttpSession session) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		map.addAttribute("stoneList", stoneService.findAllStone());
@@ -6996,7 +7014,7 @@ public class StoneAnalysisController {
 	 *             String created on 2018年7月4日 上午8:29:25
 	 */
 	@ApiOperation(value="跳转到plan页面,销售计划分析模型")
-	@RequestMapping(value = "plan")
+	@GetMapping(value = "plan")
 	public String plan(ModelMap map, HttpSession session) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		map.addAttribute("stoneList", stoneService.findAllStone());
@@ -7071,7 +7089,7 @@ public class StoneAnalysisController {
 	 * created  at 2018年10月19日
 	 */
 	@ApiOperation(value="跳转到source页面,来源分析模型")
-	@RequestMapping(value = "source")
+	@GetMapping(value = "source")
 	public String source(ModelMap map, HttpSession session) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		List<StoneAnalysis> list = stoneService.findAllStone();
@@ -7374,7 +7392,7 @@ public class StoneAnalysisController {
 	 * created  at 2018年10月20日
 	 */
 	@ApiOperation(value="跳转到index724页面,主石区间销售分析 ")
-	@RequestMapping(value = "index724")
+	@GetMapping(value = "index724")
 	public String index724(ModelMap map, HttpSession session) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		List<StoneAnalysis> list = stoneService.findAllStone();
@@ -7383,12 +7401,18 @@ public class StoneAnalysisController {
 		List listSource = new ArrayList<>();
 		List listArea = new ArrayList<>();
 		List listSupplier = new ArrayList<>();
+        List listProduct = new ArrayList<>();
 		for (int i = 0; i < list.size(); i++) {
 			if(list.get(i).getRoom()!=null) {
 				if(!listRoom.contains(list.get(i).getRoom()) && list.get(i).getRoom().length()>0) {
 					listRoom.add(list.get(i).getRoom());
 				}
 			}
+            if (list.get(i).getProduct() != null) {
+                if (!listProduct.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
+                    listProduct.add(list.get(i).getProduct());
+                }
+            }
 			if(list.get(i).getCounter()!=null) {
 				if(!listCounter.contains(list.get(i).getCounter()) && list.get(i).getCounter().length()>0) {
 					listCounter.add(list.get(i).getCounter());
@@ -7416,6 +7440,14 @@ public class StoneAnalysisController {
 				return com.compare(o1, o2);            
 			}        
 		});
+        Collections.sort(listProduct, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);
+                return com.compare(o1, o2);
+            }
+        });
+
 		Collections.sort(listRoom, new Comparator<String>() {            
 			@Override            
 			public int compare(String o1, String o2) {                
@@ -7450,6 +7482,8 @@ public class StoneAnalysisController {
 		map.addAttribute("listRoom", listRoom);
 		map.addAttribute("listSupplier", listSupplier);
 		map.addAttribute("listCounter", listCounter);
+        map.addAttribute("listProduct", listProduct);
+
 		
 		return "index724";
 	}
@@ -7472,7 +7506,7 @@ public class StoneAnalysisController {
 		String supplier = request.getParameter("supplier");
 		String source = request.getParameter("source");
 		String room = request.getParameter("room");
-		String quality = request.getParameter("quality");
+		String product = request.getParameter("product");
 		String counter = request.getParameter("counter");
 		
 		String selectType = request.getParameter("selectType");
@@ -7485,6 +7519,12 @@ public class StoneAnalysisController {
 			System.out.println("有地区");
 			params.put("area", areaName);
 		}
+        if(product.contains("所有") || product.contains("名称")) {
+        }else {
+            System.out.println("有名称");
+            params.put("product", product);
+        }
+
 		if(room.contains("所有") || room.contains("门店")) {
 		}else {
 			System.out.println("有门店");
@@ -7518,6 +7558,10 @@ public class StoneAnalysisController {
 		
 		List<SettlementPrice> SettlementPricelist = new ArrayList<SettlementPrice>(); // 结算价区间
 		SettlementPricelist = settlementPriceService.findAllSettlementPrice();
+
+		List<GoldWeight> goldWeightList = new ArrayList<>();//金重区间
+		goldWeightList = goldWeightService.findAllGoldWeight();
+
 		if(source.contains("主石区间") ) {
 			if(mainStonelist.size()>0) {
 				for (int i = 0; i < mainStonelist.size(); i++) {
@@ -7605,7 +7649,36 @@ public class StoneAnalysisController {
 					}	
 				}
 			}
-		}
+        }else if(source.contains("金重区间")) {
+            if(goldWeightList.size()>0) {
+                for (int i = 0; i < goldWeightList.size(); i++) {
+                    listX.add(""+goldWeightList.get(i).getGoldWeight_start()+"-"+goldWeightList.get(i).getGoldWeight_end());
+                    listY.add("0");
+                }
+            }
+            list = stoneService.findStoneForIndex724GoldWeight(params);
+            if(list.size()>0) {
+                for (int j = 0; j < list.size(); j++) {
+                    if(goldWeightList.size()>0) {
+                        for (int i = 0; i < goldWeightList.size(); i++) {
+                            if(list.get(j).getGoldweight()>=goldWeightList.get(i).getGoldWeight_start() && list.get(j).getGoldweight()<=goldWeightList.get(i).getGoldWeight_end()) {
+                                if(selectType.contains("数量")) {
+                                    listY.set(i, list.get(j).getNumberSum()+Integer.parseInt(listY.get(i).toString()));
+                                }else if(selectType.contains("结算价")) {
+                                    listY.set(i,list.get(j).getSettlementpriceSum()+Double.parseDouble( listY.get(i).toString()));
+                                }else if(selectType.contains("标价")) {
+                                    listY.set(i,list.get(j).getListpriceSum()+Double.parseDouble((String) listY.get(i).toString()));
+                                }else if(selectType.contains("金重")) {
+                                    listY.set(i,list.get(j).getGoldweightSum()+Double.parseDouble((String) listY.get(i).toString()));
+                                }else if(selectType.contains("主石")) {
+                                    listY.set(i,list.get(j).getCenterstoneSum()+Double.parseDouble((String) listY.get(i).toString()));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 		
 		
 		
@@ -7628,7 +7701,7 @@ public class StoneAnalysisController {
 				for (int j = 0; j < listTemp.size(); j++) {
 					if(listPricelist.size()>0) {	
 						for (int i = 0; i < listPricelist.size(); i++) {		
-							if(listTemp.get(j).getCenterstone()>=listPricelist.get(i).getListPrice_start() && listTemp.get(j).getCenterstone()<=listPricelist.get(i).getListPrice_end()) {
+							if(listTemp.get(j).getListprice()>=listPricelist.get(i).getListPrice_start() && listTemp.get(j).getListprice()<=listPricelist.get(i).getListPrice_end()) {
 								listAll.add(listTemp.get(j));
 							}
 						}
@@ -7639,13 +7712,24 @@ public class StoneAnalysisController {
 				for (int j = 0; j < listTemp.size(); j++) {
 					if(SettlementPricelist.size()>0) {	
 						for (int i = 0; i < SettlementPricelist.size(); i++) {		
-							if(listTemp.get(j).getCenterstone()>=SettlementPricelist.get(i).getSettlementPrice_start() && listTemp.get(j).getCenterstone()<=SettlementPricelist.get(i).getSettlementPrice_end()) {
+							if(listTemp.get(j).getSettlementprice()>=SettlementPricelist.get(i).getSettlementPrice_start() && listTemp.get(j).getSettlementprice()<=SettlementPricelist.get(i).getSettlementPrice_end()) {
 								listAll.add(listTemp.get(j));
 							}
 						}
 					}
 				}
 			}
+            if(source.contains("金重区间")) {
+                for (int j = 0; j < listTemp.size(); j++) {
+                    if(goldWeightList.size()>0) {
+                        for (int i = 0; i < goldWeightList.size(); i++) {
+                            if(listTemp.get(j).getGoldweight()>=goldWeightList.get(i).getGoldWeight_start() && listTemp.get(j).getGoldweight()<=goldWeightList.get(i).getGoldWeight_end()) {
+                                listAll.add(listTemp.get(j));
+                            }
+                        }
+                    }
+                }
+            }
 		}
 		
 		
@@ -7697,7 +7781,7 @@ public class StoneAnalysisController {
 	 */
 	
 	@ApiOperation(value="跳转到index722页面,款式销售排名分析")
-	@RequestMapping(value = "index722")
+	@GetMapping(value = "index722")
 	public String index722(ModelMap map, HttpSession session) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		List<StoneAnalysis> list = stoneService.findAllStone();
@@ -7706,6 +7790,7 @@ public class StoneAnalysisController {
 		List listPriceNo = new ArrayList<>();
 		List listArea = new ArrayList<>();
 		List listSupplier = new ArrayList<>();
+		List listProduct = new ArrayList();
 		for (int i = 0; i < list.size(); i++) {
 			if(list.get(i).getRoom()!=null) {
 				if(!listRoom.contains(list.get(i).getRoom()) && list.get(i).getRoom().length()>0) {
@@ -7731,6 +7816,11 @@ public class StoneAnalysisController {
 					listSupplier.add(list.get(i).getSupplier());
 				}
 			}
+            if (list.get(i).getProduct() != null) {
+                if (!listProduct.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
+                    listProduct.add(list.get(i).getProduct());
+                }
+            }
 		}
 		Collections.sort(listCounter, new Comparator<String>() {            
 			@Override            
@@ -7760,7 +7850,14 @@ public class StoneAnalysisController {
 				return com.compare(o1, o2);            
 			}        
 		});
-		Collections.sort(listArea, new Comparator<String>() {            
+        Collections.sort(listProduct, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);
+                return com.compare(o1, o2);
+            }
+        });
+		Collections.sort(listArea, new Comparator<String>() {
 			@Override            
 			public int compare(String o1, String o2) {                
 				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
@@ -7773,6 +7870,8 @@ public class StoneAnalysisController {
 		map.addAttribute("listRoom", listRoom);
 		map.addAttribute("listSupplier", listSupplier);
 		map.addAttribute("listCounter", listCounter);
+        map.addAttribute("listProduct", listProduct);
+
 		
 		return "index722";
 	}
@@ -7785,16 +7884,17 @@ public class StoneAnalysisController {
 	 * @throws ParseException String
 	 * created by lick on 2018年10月20日 下午10:36:47
 	 */
-	@ApiOperation(value="跳转到index723页面,镶嵌方式销售排名分析")
-	@RequestMapping(value = "index723")
+	@ApiOperation(value="跳转到index723页面,系列销售排名分析")
+	@GetMapping(value = "index723")
 	public String index723(ModelMap map, HttpSession session) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		List<StoneAnalysis> list = stoneService.findAllStone();
 		List listRoom = new ArrayList<>();
 		List listCounter = new ArrayList<>();
-		List listStyle = new ArrayList<>();
+		List listSeries = new ArrayList<>();
 		List listArea = new ArrayList<>();
 		List listSupplier = new ArrayList<>();
+        List listProduct = new ArrayList<>();
 		for (int i = 0; i < list.size(); i++) {
 			if(list.get(i).getRoom()!=null) {
 				if(!listRoom.contains(list.get(i).getRoom()) && list.get(i).getRoom().length()>0) {
@@ -7806,9 +7906,9 @@ public class StoneAnalysisController {
 					listCounter.add(list.get(i).getCounter());
 				}
 			}
-			if(list.get(i).getStyle()!=null) {
-				if(!listStyle.contains(list.get(i).getStyle()) && list.get(i).getStyle().length()>0) {
-					listStyle.add(list.get(i).getStyle());
+			if(list.get(i).getSeries()!=null) {
+				if(!listSeries.contains(list.get(i).getSeries()) && list.get(i).getSeries().length()>0) {
+                    listSeries.add(list.get(i).getSeries());
 				}
 			}if(list.get(i).getArea()!=null) {
 				if(!listArea.contains(list.get(i).getArea()) && list.get(i).getArea().length()>0) {
@@ -7820,6 +7920,11 @@ public class StoneAnalysisController {
 					listSupplier.add(list.get(i).getSupplier());
 				}
 			}
+            if (list.get(i).getProduct() != null) {
+                if (!listProduct.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
+                    listProduct.add(list.get(i).getProduct());
+                }
+            }
 		}
 		Collections.sort(listCounter, new Comparator<String>() {            
 			@Override            
@@ -7828,6 +7933,13 @@ public class StoneAnalysisController {
 				return com.compare(o1, o2);            
 			}        
 		});
+        Collections.sort(listProduct, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);
+                return com.compare(o1, o2);
+            }
+        });
 		Collections.sort(listRoom, new Comparator<String>() {            
 			@Override            
 			public int compare(String o1, String o2) {                
@@ -7842,7 +7954,7 @@ public class StoneAnalysisController {
 				return com.compare(o1, o2);            
 			}        
 		});
-		Collections.sort(listStyle, new Comparator<String>() {            
+		Collections.sort(listSeries, new Comparator<String>() {
 			@Override            
 			public int compare(String o1, String o2) {                
 				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
@@ -7858,10 +7970,12 @@ public class StoneAnalysisController {
 		});
 		
 		map.addAttribute("listArea", listArea);
-		map.addAttribute("listStyle", listStyle);
+		map.addAttribute("listSeries", listSeries);
 		map.addAttribute("listRoom", listRoom);
 		map.addAttribute("listSupplier", listSupplier);
 		map.addAttribute("listCounter", listCounter);
+        map.addAttribute("listProduct", listProduct);
+
 		
 		return "index723";
 	}
@@ -7875,7 +7989,7 @@ public class StoneAnalysisController {
 	 * created by lick on 2018年10月20日 下午10:36:47
 	 */
 	@ApiOperation(value="跳转到index726页面,圈口分析")
-	@RequestMapping(value = "index726")
+	@GetMapping(value = "index726")
 	public String index726(ModelMap map, HttpSession session) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		List<StoneAnalysis> list = stoneService.findAllStone();
@@ -7884,12 +7998,18 @@ public class StoneAnalysisController {
 		List listCircle = new ArrayList<>();
 		List listArea = new ArrayList<>();
 		List listSupplier = new ArrayList<>();
+        List listProduct = new ArrayList<>();
 		for (int i = 0; i < list.size(); i++) {
 			if(list.get(i).getRoom()!=null) {
 				if(!listRoom.contains(list.get(i).getRoom()) && list.get(i).getRoom().length()>0) {
 					listRoom.add(list.get(i).getRoom());
 				}
 			}
+            if (list.get(i).getProduct() != null) {
+                if (!listProduct.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
+                    listProduct.add(list.get(i).getProduct());
+                }
+            }
 			if(list.get(i).getCounter()!=null) {
 				if(!listCounter.contains(list.get(i).getCounter()) && list.get(i).getCounter().length()>0) {
 					listCounter.add(list.get(i).getCounter());
@@ -7917,6 +8037,13 @@ public class StoneAnalysisController {
 				return com.compare(o1, o2);            
 			}        
 		});
+        Collections.sort(listProduct, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);
+                return com.compare(o1, o2);
+            }
+        });
 		Collections.sort(listRoom, new Comparator<String>() {            
 			@Override            
 			public int compare(String o1, String o2) {                
@@ -7951,6 +8078,8 @@ public class StoneAnalysisController {
 		map.addAttribute("listRoom", listRoom);
 		map.addAttribute("listSupplier", listSupplier);
 		map.addAttribute("listCounter", listCounter);
+        map.addAttribute("listProduct", listProduct);
+
 		
 		return "index726";
 	}
@@ -7972,7 +8101,7 @@ public class StoneAnalysisController {
 		String supplier = request.getParameter("supplier");
 		String priceNo = request.getParameter("priceNo");
 		String room = request.getParameter("room");
-		String quality = request.getParameter("quality");
+		String product = request.getParameter("product");
 		String counter = request.getParameter("counter");
 		
 		String selectType = request.getParameter("selectType");
@@ -7988,6 +8117,11 @@ public class StoneAnalysisController {
 			System.out.println("有地区");
 			params.put("area", areaName);
 		}
+        if(product.contains("所有") || product.contains("名称")) {
+        }else {
+            System.out.println("有名称");
+            params.put("product", product);
+        }
 		if(room.contains("所有") || room.contains("门店")) {
 		}else {
 			System.out.println("有门店");
@@ -8087,15 +8221,15 @@ public class StoneAnalysisController {
 	 * created by lick on 2018年10月20日 下午10:56:35
 	 */
 	
-	@ApiOperation(value="index723页面,镶嵌方式销售排名分析  查询")
+	@ApiOperation(value="index723页面,系列销售排名分析  查询")
 	@RequestMapping(value = "searchForindex723", method = RequestMethod.POST)
 	@ResponseBody
 	public String searchForindex723(HttpServletRequest request, ModelMap map, HttpSession session) throws ParseException {
 		String areaName = request.getParameter("area");
 		String supplier = request.getParameter("supplier");
-		String style = request.getParameter("style");
+		String series = request.getParameter("series");
 		String room = request.getParameter("room");
-		String quality = request.getParameter("quality");
+		String product = request.getParameter("product");
 		String counter = request.getParameter("counter");
 		
 		String selectType = request.getParameter("selectType");
@@ -8111,6 +8245,12 @@ public class StoneAnalysisController {
 			System.out.println("有地区");
 			params.put("area", areaName);
 		}
+        if(product.contains("所有") || product.contains("名称")) {
+        }else {
+            System.out.println("有名称");
+            params.put("product", product);
+        }
+
 		if(room.contains("所有") || room.contains("门店")) {
 		}else {
 			System.out.println("有门店");
@@ -8121,10 +8261,10 @@ public class StoneAnalysisController {
 			System.out.println("有柜台");
 			params.put("counter", counter);
 		}
-		if(style.contains("所有") || style.contains("镶嵌")) {
+		if(series.contains("所有") || series.contains("系列")) {
 		}else {
-			System.out.println("有镶嵌");
-			params.put("priceNo", style);
+			System.out.println("有系列");
+			params.put("series", series);
 		}
 		if(supplier.contains("所有") || supplier.contains("供应商")) {
 		}else {
@@ -8149,7 +8289,7 @@ public class StoneAnalysisController {
 	
 		if(list.size()>0) {
 			for (int i = 0; i < list.size(); i++) {
-				listX.add(list.get(i).getStyle());
+				listX.add(list.get(i).getSeries());
 				if(selectType.contains("数量")) {
 					listY.add(list.get(i).getNumberSum());
 				}else if(selectType.contains("结算价")) {
@@ -8172,7 +8312,7 @@ public class StoneAnalysisController {
 		List listAllArea = new ArrayList<>();
 		List listAllRoom = new ArrayList<>();
 		List listAllCounter = new ArrayList<>();
-		List listAllStype = new ArrayList<>();
+		List listAllSeries = new ArrayList<>();
 		List listAllListprice = new ArrayList<>();
 		List listAllCenterstone = new ArrayList<>();
 		List listAllGoldweight = new ArrayList<>();
@@ -8185,7 +8325,7 @@ public class StoneAnalysisController {
 				listAllArea.add(listAll.get(i).getArea());
 				listAllRoom.add(listAll.get(i).getRoom());
 				listAllCounter.add(listAll.get(i).getCounter());
-				listAllStype.add(listAll.get(i).getStyle());
+                listAllSeries.add(listAll.get(i).getSeries()); //改为了系列
 				listAllListprice.add(listAll.get(i).getListprice());
 				listAllCenterstone.add(listAll.get(i).getCenterstone());
 				listAllGoldweight.add(listAll.get(i).getGoldweight());
@@ -8195,8 +8335,8 @@ public class StoneAnalysisController {
 		//System.out.println(listAll);
 		//System.out.println("===" + listY);
 		result = "" + listY + "@" + listX + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct + "@" + 
-		listAllSettlementprice + "@" + listAllArea+"@" + listAllRoom+"@" + listAllCounter+"@" + 
-		listAllStype+"@" + listAllListprice+"@" + listAllCenterstone+"@" + listAllGoldweight;
+		listAllSettlementprice + "@" + listAllArea+"@" + listAllRoom+"@" + listAllCounter+"@" +
+        listAllSeries+"@" + listAllListprice+"@" + listAllCenterstone+"@" + listAllGoldweight;
 		return result;
 	}
 	/**
@@ -8217,7 +8357,7 @@ public class StoneAnalysisController {
 		String supplier = request.getParameter("supplier");
 		String circle = request.getParameter("circle");
 		String room = request.getParameter("room");
-		String quality = request.getParameter("quality");
+		String product = request.getParameter("product");
 		String counter = request.getParameter("counter");
 		
 		String selectType = request.getParameter("selectType");
@@ -8233,6 +8373,11 @@ public class StoneAnalysisController {
 			System.out.println("有地区");
 			params.put("area", areaName);
 		}
+        if(product.contains("所有") || product.contains("名称")) {
+        }else {
+            System.out.println("有名称");
+            params.put("product", product);
+        }
 		if(room.contains("所有") || room.contains("门店")) {
 		}else {
 			System.out.println("有门店");
@@ -8342,7 +8487,7 @@ public class StoneAnalysisController {
 		String priceNo = conList[4];
 		String start = conList[5];
 		String end = conList[6];
-		
+		String product = conList[7];
 		
 
 		String result = "";
@@ -8355,6 +8500,11 @@ public class StoneAnalysisController {
 			System.out.println("1");
 			params.put("area", area);	
 		}
+        if(product.contains("地区")  || product.contains("所有")) {
+        }else {
+            System.out.println("1");
+            params.put("product", product);
+        }
 		if(supplier.contains("供应商") || supplier.contains("所有")) {	
 		}else {
 			System.out.println("2");
@@ -8389,7 +8539,7 @@ public class StoneAnalysisController {
 	 * @return String
 	 * created by lick on 2018年10月20日 下午11:01:43
 	 */
-	@ApiOperation(value="index723页面,镶嵌方式销售排名分析  下载excel")
+	@ApiOperation(value="index723页面,系列方式销售排名分析  下载excel")
 	@RequestMapping(value = "downloadExcelForIndex723", method = RequestMethod.POST)
 	@ResponseBody
 	public String downloadExcelForIndex723(HttpServletRequest request,HttpServletResponse response) {
@@ -8399,20 +8549,26 @@ public class StoneAnalysisController {
 		String room = conList[1];
 		String counter = conList[2];
 		String supplier = conList[3];
-		String style = conList[4];
+		String series = conList[4];
 		String start = conList[5];
 		String end = conList[6];
+        String product = conList[7];
 
 		String result = "";
 		List<StoneAnalysis> listAll = new ArrayList<>();
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("start", start);
 		params.put("end", end);
-		if(area.contains("地区")  || area.contains("所有")) {
+		if(product.contains("地区")  || product.contains("所有")) {
 		}else {
 			System.out.println("1");
-			params.put("area", area);	
+			params.put("product", product);
 		}
+        if(area.contains("名称")  || area.contains("所有")) {
+        }else {
+            System.out.println("1");
+            params.put("area", area);
+        }
 		if(supplier.contains("供应商") || supplier.contains("所有")) {	
 		}else {
 			System.out.println("2");
@@ -8428,10 +8584,10 @@ public class StoneAnalysisController {
 			System.out.println("4");
 			params.put("counter", counter);
 		}
-		if(style.contains("镶嵌") || style.contains("所有")) {	
+		if(series.contains("系列") || series.contains("所有")) {
 		}else {
 			System.out.println("4");
-			params.put("style", style);
+			params.put("series", series);
 		}
 		listAll = stoneService.findStoneFor722And723(params);
 		stoneService.downloadExcelForIndex723(listAll,response);
@@ -8460,6 +8616,7 @@ public class StoneAnalysisController {
 		String source = conList[4];
 		String start = conList[5];
 		String end = conList[6];
+		String product = conList[7];
 
 		String result = "";
 
@@ -8471,6 +8628,11 @@ public class StoneAnalysisController {
 			System.out.println("1");
 			params.put("area", area);	
 		}
+        if(product.contains("地区")  || product.contains("所有")) {
+        }else {
+            System.out.println("1");
+            params.put("product", product);
+        }
 		if(supplier.contains("供应商") || supplier.contains("所有")) {	
 		}else {
 			System.out.println("2");
@@ -8563,7 +8725,7 @@ public class StoneAnalysisController {
 		String circle = conList[4];
 		String start = conList[5];
 		String end = conList[6];
-		
+		String product = conList[7];
 		
 
 		String result = "";
@@ -8576,6 +8738,11 @@ public class StoneAnalysisController {
 			System.out.println("1");
 			params.put("area", area);	
 		}
+        if(product.contains("地区")  || product.contains("所有")) {
+        }else {
+            System.out.println("1");
+            params.put("product", product);
+        }
 		if(supplier.contains("供应商") || supplier.contains("所有")) {	
 		}else {
 			System.out.println("2");

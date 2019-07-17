@@ -8,13 +8,14 @@
 		<result column="fediff_weightDiff" property="fediff_weightDiff"/>
 		<result column="fediff_time" property="fediff_time"/>
 		<result column="fediff_batch" property="fediff_batch"/>
+		<result column="finpord_procordNo" property="finpord_procordNo"/>
 		
 	</resultMap>
 	
 	<parameterMap type="com.nenu.domain.Fediff" id="Fediff"/>
 	
 	<sql id="Base_Column_List_fediff">
-		fediff_ID,fediff_stoneNo,fediff_procordNo,fediff_weightDiff,fediff_time,fediff_batch
+		fediff_ID,fediff_stoneNo,fediff_procordNo,fediff_weightDiff,fediff_time,fediff_batch,finpord_procordNo
 	</sql>
 
 	<select id="findAllFediff" resultMap="BaseResultMapfediff">
@@ -25,9 +26,9 @@
 	
 	<insert id="insertFediff" parameterMap="Fediff" useGeneratedKeys="true" keyProperty="id">
 		insert into
-		tb_fediff(fediff_ID,fediff_stoneNo,fediff_procordNo,fediff_weightDiff,fediff_time,fediff_batch)
+		tb_fediff(fediff_ID,fediff_stoneNo,fediff_procordNo,fediff_weightDiff,fediff_time,fediff_batch,finpord_procordNo)
 		values 
-		(#{fediff_ID},#{fediff_stoneNo},#{fediff_procordNo},#{fediff_weightDiff},#{fediff_time},#{fediff_batch})
+		(#{fediff_ID},#{fediff_stoneNo},#{fediff_procordNo},#{fediff_weightDiff},#{fediff_time},#{fediff_batch},#{finpord_procordNo})
 	</insert>
 	
 	<select id="findFediffByTwoParam" resultMap="BaseResultMapfediff">

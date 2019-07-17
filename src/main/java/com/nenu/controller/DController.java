@@ -13,11 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.nenu.domain.BackStone;
 import com.nenu.domain.DatatablesViewPage;
@@ -50,8 +46,6 @@ public class DController {
 	@Autowired
 	private StoninprocService stoninprocService;
 	@Autowired
-	private FinpordService finpordService;
-	@Autowired
 	private BackStoneService backStoneService;
 	
 	/**
@@ -63,7 +57,7 @@ public class DController {
 	 * created  at 2018年6月13日
 	 */
 	@ApiOperation(value="跳转到index页面",notes="跳转到主页")
-	@RequestMapping(value = "/index")
+	@GetMapping(value = "/index")
 	public String index(ModelMap map) {
 		
 		map.addAttribute("procordList",procordService.findAllProcord());
@@ -74,7 +68,7 @@ public class DController {
 			if(list.get(i).getStone_mainStoneNo()!=null && !mainList.contains(list.get(i).getStone_mainStoneNo())) {
 				mainList.add(list.get(i).getStone_mainStoneNo());
 			}
-			if(list.get(i).getStone_substoNo()!=0 && !subList.contains(list.get(i).getStone_substoNo())  ) {
+			if(list.get(i).getStone_substoNo()!=null && !subList.contains(list.get(i).getStone_substoNo())  ) {
 				subList.add(list.get(i).getStone_substoNo());
 			}
 		}
@@ -89,7 +83,6 @@ public class DController {
 	 *
 	 * com.nenu.controller
 	 * @param stoninproc
-	 * @param requset
 	 * @param map
 	 * @return String
 	 * created  at 2018年9月25日
@@ -155,11 +148,7 @@ public class DController {
 			
 		return stoninprocList;
 	}
-	
-	
-	
-	
-	
+
 	
 	/**
 	 * 退石
@@ -170,7 +159,7 @@ public class DController {
 	 * created  at 2018年6月13日
 	 */
 	@ApiOperation(value="退石",notes="退石")
-	@RequestMapping(value="deleteStoneFromProcord",method=RequestMethod.POST)
+	@RequestMapping(value="/deleteStoneFromProcord",method=RequestMethod.POST)
 	@ResponseBody
 	public String del(HttpServletRequest requset) {
 		//1.获取石编和订单号
@@ -187,12 +176,12 @@ public class DController {
 		//3.根据石编分辨出主副石,然后获取stone库里的石数，将退的石头放回到石头库中
 		if(!stoneNo.matches(".*[a-zA-Z].*")) {//是副石编
 			//3.1 副石数量更新   
-			List<Stone> stone =  stoneService.findStoneBySubNo(Long.parseLong(stoneNo));
+			List<Stone> stone =  stoneService.findStoneBySubNo(stoneNo);
 			int stonen = stone.get(0).getStone_substoNumber();
 			int after = stonen+stoneNumber;
 			Stone newStone = new Stone();
 			newStone.setStone_substoNumber(after);
-			newStone.setStone_substoNo(Long.parseLong(stoneNo));
+			newStone.setStone_substoNo(stoneNo);
 			stoneService.updateSubStoneNumber(newStone);
 		}else {
 			//3.2主石数量更新
@@ -215,7 +204,7 @@ public class DController {
 		int back = pro.getProcord_backcount();
 		double money =pro.getProcord_pay();
 		if(!stoneNo.matches(".*[a-zA-z].*")) {//是副石编
-			List<Stone> stone =  stoneService.findStoneBySubNo(Long.parseLong(stoneNo));
+			List<Stone> stone =  stoneService.findStoneBySubNo(stoneNo);
 			double price = stone.get(0).getStone_substoPrperct();
 			double weight = stone.get(0).getStone_substoWgt();
 			double mon = price*stoneNumber*weight;
@@ -301,7 +290,7 @@ public class DController {
 	 * @throws ParseException
 	 */
 	@ApiOperation(value="导出某一订单详情表")
-	@RequestMapping(value = "downloadProcordDetails", method = RequestMethod.POST)
+	@RequestMapping(value = "/downloadProcordDetails", method = RequestMethod.POST)
 	@ResponseBody
 	public String downloadProcordDetails(HttpServletRequest request,HttpServletResponse response) throws ParseException {
 		String context  = request.getParameter("context");

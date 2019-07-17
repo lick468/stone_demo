@@ -115,6 +115,7 @@ public interface StoneAnalysisDao {
 	List<StoneAnalysis> findStoneForIndex724MainStone(Map<String, Object> params);//index724
 	List<StoneAnalysis> findStoneForIndex724ListPrice(Map<String, Object> params);//index724
 	List<StoneAnalysis> findStoneForIndex724SettlePrice(Map<String, Object> params);//index724
+	List<StoneAnalysis> findStoneForIndex724GoldWeight(Map<String, Object> params);//index724
 	List<StoneAnalysis> findStoneFor726(Map<String, Object> params);//index726
 	List<StoneAnalysis> findStoneForIndex726(Map<String, Object> params);//index726
 	int downloadExcelForIndex726(List<StoneAnalysis> list,HttpServletResponse response);//index726
