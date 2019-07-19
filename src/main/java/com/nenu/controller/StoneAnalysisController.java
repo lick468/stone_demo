@@ -8100,115 +8100,222 @@ public class StoneAnalysisController {
 		String areaName = request.getParameter("area");
 		String supplier = request.getParameter("supplier");
 		String priceNo = request.getParameter("priceNo");
+		String price = request.getParameter("price");
 		String room = request.getParameter("room");
 		String product = request.getParameter("product");
 		String counter = request.getParameter("counter");
-		
 		String selectType = request.getParameter("selectType");
+        //没有选择标价区间
+        if(price.contains("无")) {
 
-		System.out.println("地区=============" + areaName);
-		System.out.println("类别=============" + selectType);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Map<String, Object> params = new HashMap<String, Object>();
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Map<String, Object> params = new HashMap<String, Object>();
-		
-		if(areaName.contains("所有") || areaName.contains("地区")) {
-		}else {
-			System.out.println("有地区");
-			params.put("area", areaName);
-		}
-        if(product.contains("所有") || product.contains("名称")) {
+            if(areaName.contains("所有") || areaName.contains("地区")) {
+            }else {
+                System.out.println("有地区");
+                params.put("area", areaName);
+            }
+            if(product.contains("所有") || product.contains("名称")) {
+            }else {
+                System.out.println("有名称");
+                params.put("product", product);
+            }
+            if(room.contains("所有") || room.contains("门店")) {
+            }else {
+                System.out.println("有门店");
+                params.put("room", room);
+            }
+            if(counter.contains("所有") || counter.contains("柜台")) {
+            }else {
+                System.out.println("有柜台");
+                params.put("counter", counter);
+            }
+            if(priceNo.contains("所有") || priceNo.contains("款式")) {
+            }else {
+                System.out.println("有款号");
+                params.put("priceNo", priceNo);
+            }
+            if(supplier.contains("所有") || supplier.contains("供应商")) {
+            }else {
+                System.out.println("有供应商");
+                params.put("supplier", supplier);
+            }
+            String st = request.getParameter("start");
+            String ed = request.getParameter("end");
+
+            System.out.println("start===" + st + "======end" + ed);
+
+            params.put("start", st);
+            params.put("end", ed);
+
+            List<StoneAnalysis> list = new ArrayList<StoneAnalysis>(); // 图标数据
+            List<StoneAnalysis> listAll = new ArrayList<StoneAnalysis>();// 表格数据
+
+            listAll = stoneService.findStoneFor722And723(params);
+            list = stoneService.findStoneFor722(params);
+            List listX = new ArrayList<>();
+            List listY = new ArrayList<>();
+
+            if(list.size()>0) {
+                for (int i = 0; i < list.size(); i++) {
+                    listX.add(list.get(i).getPriceNo());
+                    if(selectType.contains("数量")) {
+                        listY.add(list.get(i).getNumberSum());
+                    }else if(selectType.contains("结算价")) {
+                        listY.add(list.get(i).getSettlementpriceSum());
+                    }else if(selectType.contains("标价")) {
+                        listY.add(list.get(i).getListpriceSum());
+                    }else if(selectType.contains("金重")) {
+                        listY.add(list.get(i).getGoldweightSum());
+                    }else if(selectType.contains("主石")) {
+                        listY.add(list.get(i).getCenterstoneSum());
+                    }
+                }
+            }
+            String result = "";
+
+            List listAllDate = new ArrayList<>();
+            List listAllSupplier = new ArrayList<>();
+            List listAllSettlementprice = new ArrayList<>();
+            List listAllProduct = new ArrayList<>();
+            List listAllArea = new ArrayList<>();
+            List listAllRoom = new ArrayList<>();
+            List listAllCounter = new ArrayList<>();
+            List listAllPriceNo = new ArrayList<>();
+            List listAllListprice = new ArrayList<>();
+            List listAllCenterstone = new ArrayList<>();
+            List listAllGoldweight = new ArrayList<>();
+            if (listAll != null) {
+                for (int i = 0; i < listAll.size(); i++) {
+                    listAllDate.add(sdf.format(listAll.get(i).getDate()));
+                    listAllSupplier.add(listAll.get(i).getSupplier());
+                    listAllProduct.add(listAll.get(i).getProduct());
+                    listAllSettlementprice.add(listAll.get(i).getSettlementprice());
+                    listAllArea.add(listAll.get(i).getArea());
+                    listAllRoom.add(listAll.get(i).getRoom());
+                    listAllCounter.add(listAll.get(i).getCounter());
+                    listAllPriceNo.add(listAll.get(i).getPriceNo());
+                    listAllListprice.add(listAll.get(i).getListprice());
+                    listAllCenterstone.add(listAll.get(i).getCenterstone());
+                    listAllGoldweight.add(listAll.get(i).getGoldweight());
+                }
+            }
+
+            result = "" + listY + "@" + listX + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct + "@" +
+                    listAllSettlementprice + "@" + listAllArea+"@" + listAllRoom+"@" + listAllCounter+"@" +
+                    listAllPriceNo+"@" + listAllListprice+"@" + listAllCenterstone+"@" + listAllGoldweight;
+            return result;
+        //标价区间
         }else {
-            System.out.println("有名称");
-            params.put("product", product);
+            List<ListPrice> listPricelist = new ArrayList<ListPrice>(); // 标价区间
+            listPricelist = listPriceService.findAllListPrice();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Map<String, Object> params = new HashMap<String, Object>();
+
+            if(areaName.contains("所有") || areaName.contains("地区")) {
+            }else {
+                System.out.println("有地区");
+                params.put("area", areaName);
+            }
+            if(product.contains("所有") || product.contains("名称")) {
+            }else {
+                System.out.println("有名称");
+                params.put("product", product);
+            }
+            if(room.contains("所有") || room.contains("门店")) {
+            }else {
+                System.out.println("有门店");
+                params.put("room", room);
+            }
+            if(counter.contains("所有") || counter.contains("柜台")) {
+            }else {
+                System.out.println("有柜台");
+                params.put("counter", counter);
+            }
+            if(priceNo.contains("所有") || priceNo.contains("款式")) {
+            }else {
+                System.out.println("有款号");
+                params.put("priceNo", priceNo);
+            }
+            if(supplier.contains("所有") || supplier.contains("供应商")) {
+            }else {
+                System.out.println("有供应商");
+                params.put("supplier", supplier);
+            }
+            String st = request.getParameter("start");
+            String ed = request.getParameter("end");
+
+            params.put("start", st);
+            params.put("end", ed);
+            //图标数据
+            List<StoneAnalysis> list = new ArrayList<StoneAnalysis>(); // 图标数据
+            List listX = new ArrayList<>();
+            List listY = new ArrayList<>();
+            if(listPricelist.size()>0) {
+                for (int i = 0; i < listPricelist.size(); i++) {
+                    listX.add(""+listPricelist.get(i).getListPrice_start()+"-"+listPricelist.get(i).getListPrice_end());
+                    listY.add("0");
+                }
+            }
+            list = stoneService.findStoneForIndex724ListPrice(params);
+            if(list.size()>0) {
+                for (int j = 0; j < list.size(); j++) {
+                    if(listPricelist.size()>0) {
+                        for (int i = 0; i < listPricelist.size(); i++) {
+                            if(list.get(j).getListprice()>=listPricelist.get(i).getListPrice_start() && list.get(j).getListprice()<=listPricelist.get(i).getListPrice_end()) {
+                                if(selectType.contains("数量")) {
+                                    listY.set(i, list.get(j).getNumberSum()+Integer.parseInt(listY.get(i).toString()));
+                                }else if(selectType.contains("结算价")) {
+                                    listY.set(i,list.get(j).getSettlementpriceSum()+Double.parseDouble( listY.get(i).toString()));
+                                }else if(selectType.contains("标价")) {
+                                    listY.set(i,list.get(j).getListpriceSum()+Double.parseDouble((String) listY.get(i).toString()));
+                                }else if(selectType.contains("金重")) {
+                                    listY.set(i,list.get(j).getGoldweightSum()+Double.parseDouble((String) listY.get(i).toString()));
+                                }else if(selectType.contains("主石")) {
+                                    listY.set(i,list.get(j).getCenterstoneSum()+Double.parseDouble((String) listY.get(i).toString()));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            List<StoneAnalysis> listAll = new ArrayList<StoneAnalysis>();// 表格数据
+            listAll = stoneService.findStoneFor722And723(params);
+            List listAllDate = new ArrayList<>();
+            List listAllSupplier = new ArrayList<>();
+            List listAllSettlementprice = new ArrayList<>();
+            List listAllProduct = new ArrayList<>();
+            List listAllArea = new ArrayList<>();
+            List listAllRoom = new ArrayList<>();
+            List listAllCounter = new ArrayList<>();
+            List listAllPriceNo = new ArrayList<>();
+            List listAllListprice = new ArrayList<>();
+            List listAllCenterstone = new ArrayList<>();
+            List listAllGoldweight = new ArrayList<>();
+            if (listAll != null) {
+                for (int i = 0; i < listAll.size(); i++) {
+                    listAllDate.add(sdf.format(listAll.get(i).getDate()));
+                    listAllSupplier.add(listAll.get(i).getSupplier());
+                    listAllProduct.add(listAll.get(i).getProduct());
+                    listAllSettlementprice.add(listAll.get(i).getSettlementprice());
+                    listAllArea.add(listAll.get(i).getArea());
+                    listAllRoom.add(listAll.get(i).getRoom());
+                    listAllCounter.add(listAll.get(i).getCounter());
+                    listAllPriceNo.add(listAll.get(i).getPriceNo());
+                    listAllListprice.add(listAll.get(i).getListprice());
+                    listAllCenterstone.add(listAll.get(i).getCenterstone());
+                    listAllGoldweight.add(listAll.get(i).getGoldweight());
+                }
+            }
+            String result = "";
+            result = "" + listY + "@" + listX + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct + "@" +
+                    listAllSettlementprice + "@" + listAllArea+"@" + listAllRoom+"@" + listAllCounter+"@" +
+                    listAllPriceNo+"@" + listAllListprice+"@" + listAllCenterstone+"@" + listAllGoldweight;
+            return result;
+
         }
-		if(room.contains("所有") || room.contains("门店")) {
-		}else {
-			System.out.println("有门店");
-			params.put("room", room);
-		}
-		if(counter.contains("所有") || counter.contains("柜台")) {
-		}else {
-			System.out.println("有柜台");
-			params.put("counter", counter);
-		}
-		if(priceNo.contains("所有") || priceNo.contains("款式")) {
-		}else {
-			System.out.println("有款号");
-			params.put("priceNo", priceNo);
-		}
-		if(supplier.contains("所有") || supplier.contains("供应商")) {
-		}else {
-			System.out.println("有供应商");
-			params.put("supplier", supplier);
-		}
-		String st = request.getParameter("start");
-		String ed = request.getParameter("end");
 
-		System.out.println("start===" + st + "======end" + ed);
-
-		params.put("start", st);
-		params.put("end", ed);
-	
-		List<StoneAnalysis> list = new ArrayList<StoneAnalysis>(); // 图标数据
-		List<StoneAnalysis> listAll = new ArrayList<StoneAnalysis>();// 表格数据
-
-		listAll = stoneService.findStoneFor722And723(params);
-		list = stoneService.findStoneFor722(params);
-		List listX = new ArrayList<>();
-		List listY = new ArrayList<>();
-	
-		if(list.size()>0) {
-			for (int i = 0; i < list.size(); i++) {
-				listX.add(list.get(i).getPriceNo());
-				if(selectType.contains("数量")) {
-					listY.add(list.get(i).getNumberSum());
-				}else if(selectType.contains("结算价")) {
-					listY.add(list.get(i).getSettlementpriceSum());
-				}else if(selectType.contains("标价")) {
-					listY.add(list.get(i).getListpriceSum());
-				}else if(selectType.contains("金重")) {
-					listY.add(list.get(i).getGoldweightSum());
-				}else if(selectType.contains("主石")) {
-					listY.add(list.get(i).getCenterstoneSum());
-				}
-			}
-		}	
-		String result = "";
-		
-		List listAllDate = new ArrayList<>();
-		List listAllSupplier = new ArrayList<>();
-		List listAllSettlementprice = new ArrayList<>();
-		List listAllProduct = new ArrayList<>();
-		List listAllArea = new ArrayList<>();
-		List listAllRoom = new ArrayList<>();
-		List listAllCounter = new ArrayList<>();
-		List listAllPriceNo = new ArrayList<>();
-		List listAllListprice = new ArrayList<>();
-		List listAllCenterstone = new ArrayList<>();
-		List listAllGoldweight = new ArrayList<>();
-		if (listAll != null) {
-			for (int i = 0; i < listAll.size(); i++) {
-				listAllDate.add(sdf.format(listAll.get(i).getDate()));
-				listAllSupplier.add(listAll.get(i).getSupplier());
-				listAllProduct.add(listAll.get(i).getProduct());
-				listAllSettlementprice.add(listAll.get(i).getSettlementprice());
-				listAllArea.add(listAll.get(i).getArea());
-				listAllRoom.add(listAll.get(i).getRoom());
-				listAllCounter.add(listAll.get(i).getCounter());
-				listAllPriceNo.add(listAll.get(i).getPriceNo());
-				listAllListprice.add(listAll.get(i).getListprice());
-				listAllCenterstone.add(listAll.get(i).getCenterstone());
-				listAllGoldweight.add(listAll.get(i).getGoldweight());
-			}
-		}
-		//System.out.println(list);
-		//System.out.println(listAll);
-		//System.out.println("===" + listY);
-		result = "" + listY + "@" + listX + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct + "@" + 
-		listAllSettlementprice + "@" + listAllArea+"@" + listAllRoom+"@" + listAllCounter+"@" + 
-		listAllPriceNo+"@" + listAllListprice+"@" + listAllCenterstone+"@" + listAllGoldweight;
-		return result;
 	}
 	/**
 	 * index723 查找
@@ -8657,6 +8764,9 @@ public class StoneAnalysisController {
 		
 		List<SettlementPrice> SettlementPricelist = new ArrayList<SettlementPrice>(); // 结算价区间
 		SettlementPricelist = settlementPriceService.findAllSettlementPrice();
+
+        List<GoldWeight> goldWeightList = new ArrayList<>();//金重区间
+        goldWeightList = goldWeightService.findAllGoldWeight();
 		
 		
 		
@@ -8679,7 +8789,7 @@ public class StoneAnalysisController {
 				for (int j = 0; j < listTemp.size(); j++) {
 					if(listPricelist.size()>0) {	
 						for (int i = 0; i < listPricelist.size(); i++) {		
-							if(listTemp.get(j).getCenterstone()>=listPricelist.get(i).getListPrice_start() && listTemp.get(j).getCenterstone()<=listPricelist.get(i).getListPrice_end()) {
+							if(listTemp.get(j).getListprice()>=listPricelist.get(i).getListPrice_start() && listTemp.get(j).getListprice()<=listPricelist.get(i).getListPrice_end()) {
 								listAll.add(listTemp.get(j));
 							}
 						}
@@ -8690,13 +8800,24 @@ public class StoneAnalysisController {
 				for (int j = 0; j < listTemp.size(); j++) {
 					if(SettlementPricelist.size()>0) {	
 						for (int i = 0; i < SettlementPricelist.size(); i++) {		
-							if(listTemp.get(j).getCenterstone()>=SettlementPricelist.get(i).getSettlementPrice_start() && listTemp.get(j).getCenterstone()<=SettlementPricelist.get(i).getSettlementPrice_end()) {
+							if(listTemp.get(j).getSettlementprice()>=SettlementPricelist.get(i).getSettlementPrice_start() && listTemp.get(j).getSettlementprice()<=SettlementPricelist.get(i).getSettlementPrice_end()) {
 								listAll.add(listTemp.get(j));
 							}
 						}
 					}
 				}
 			}
+            if(source.contains("金重区间")) {
+                for (int j = 0; j < listTemp.size(); j++) {
+                    if(goldWeightList.size()>0) {
+                        for (int i = 0; i < goldWeightList.size(); i++) {
+                            if(listTemp.get(j).getGoldweight()>=goldWeightList.get(i).getGoldWeight_start() && listTemp.get(j).getGoldweight()<=goldWeightList.get(i).getGoldWeight_end()) {
+                                listAll.add(listTemp.get(j));
+                            }
+                        }
+                    }
+                }
+            }
 		}
 		
 		stoneService.downloadExcelForIndex724(listAll,response);

@@ -156,7 +156,10 @@ th, td {
 						<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control" id="endtime"  style="background-color: green; color: black;" />
 					</div>
 				</div>
-				<br>
+				<select id="listPrice" class="form-control" onchange=" return areachange();" name="stone_AreaName" style="background-color: green; color: black;">
+					<option  selected="selected"  value="无">无</option>
+					<option value="标价区间">标价区间</option>
+				</select>
 				<select id="listPriceNo" class="form-control" onchange=" return areachange();" name="stone_AreaName" style="background-color: green; color: black;">
 					<option disabled="disabled" selected="selected"  value="款式">款式</option>
 					<option value="所有">所有</option>
@@ -319,6 +322,7 @@ th, td {
 			var room = document.getElementById("listRoom").value;
 			var counter = document.getElementById("listCounter").value;
 			var priceNo = document.getElementById("listPriceNo").value;
+            var price = document.getElementById("listPrice").value;
 			var start = document.getElementById("starttime").value;
 			var end = document.getElementById("endtime").value;
 			var selectType = $('input:radio:checked').val();
@@ -339,6 +343,7 @@ th, td {
                     product : product,
 					supplier : supplier,
 					priceNo : priceNo,
+                    price : price,
 					room : room,
 					counter : counter,
 					start : start,
@@ -350,7 +355,7 @@ th, td {
 					//alert(result);
 					 $('#loading').hide();
 					var rs = result.split("@");
-					document.getElementById("context").value=area+"&"+room+"&"+counter+"&"+supplier+"&"+priceNo+"&"+start+"&"+end+"&"+product;
+					document.getElementById("context").value=area+"&"+room+"&"+counter+"&"+supplier+"&"+priceNo+"&"+start+"&"+end+"&"+product+"&"+price;
 					//图标数据
 					var xData = rs[1].substring(1, rs[1].length - 1)
 							.split(", ");

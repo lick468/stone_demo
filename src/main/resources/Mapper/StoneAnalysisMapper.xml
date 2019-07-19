@@ -847,8 +847,8 @@
 		select *,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
 		SUM(listprice) AS listpriceSum,SUM(goldweight) AS goldweightSum,SUM(centerstone) AS centerstoneSum
 		from stone
-		where source in ('销售' , '退回')
-		and date <![CDATA[ >= ]]>#{start}
+		where
+		date <![CDATA[ >= ]]>#{start}
 		and date <![CDATA[ <= ]]>#{end}
 		<if test="counter!=null">
 			and counter = #{counter}
@@ -1032,6 +1032,9 @@
 		</if>
 		<if test="supplier!=null">
 			and supplier = #{supplier}
+		</if>
+		<if test="priceNo!=null">
+			and priceNo = #{priceNo}
 		</if>
 		GROUP BY listprice
 	</select>
