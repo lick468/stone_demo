@@ -684,7 +684,23 @@ public class AdminAnalysisController {
 	 */
 	@ApiOperation(value="跳转到添加页面",notes="跳转到添加页面")
 	@RequestMapping(value="/showBelongCreateForm")
-	public String showBelongCreateForm() {
+	public String showBelongCreateForm(ModelMap map) {
+        List<Counter> listCounter1 = counterService.findAllCounter();
+        List listCounter = new ArrayList<>();
+        if(listCounter1.size()>0) {
+            for (int i = 0; i < listCounter1.size(); i++) {
+                listCounter.add(listCounter1.get(i).getCounter_name());
+            }
+        }
+        Collections.sort(listCounter, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);
+                return com.compare(o1, o2);
+            }
+        });
+        map.addAttribute("listCounter", listCounter);
+
 		return "analysis/admin/belongCreateForm";
 	}
 	/**
