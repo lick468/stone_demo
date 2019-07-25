@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50556
 File Encoding         : 65001
 
-Date: 2019-07-20 09:14:08
+Date: 2019-07-24 21:05:02
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -6370,24 +6370,26 @@ CREATE TABLE `tb_fediff` (
   `fediff_time` date DEFAULT NULL,
   `fediff_batch` varchar(255) DEFAULT NULL,
   `finpord_procordNo` varchar(32) DEFAULT NULL,
+  `stone_weight` decimal(10,3) DEFAULT NULL,
+  `finpord_weight` decimal(10,3) DEFAULT NULL,
   PRIMARY KEY (`fediff_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of tb_fediff
 -- ----------------------------
-INSERT INTO `tb_fediff` VALUES ('1', 'JYT18120376', '20190121001', '-0.180', '2019-01-21', '2019.1.20', null);
-INSERT INTO `tb_fediff` VALUES ('2', 'JYT19010333', '20190125002', '0.000', '2019-01-25', '2019.1.25', null);
-INSERT INTO `tb_fediff` VALUES ('3', 'JYT190100222', '20190125002', '0.000', '2019-01-25', '2019.1.25', null);
-INSERT INTO `tb_fediff` VALUES ('4', 'JYT18120378', '20190125002', '0.000', '2019-01-25', '2019.1.25', null);
-INSERT INTO `tb_fediff` VALUES ('5', 'JYT18120379', '20190121002', '0.000', '2019-02-19', '2019.1.21', null);
-INSERT INTO `tb_fediff` VALUES ('6', 'JYT18120377', '20190125002', '0.000', '2019-02-19', '2019.1.25', null);
-INSERT INTO `tb_fediff` VALUES ('7', 'JYT18120002', '20190125001', '0.000', '2019-02-19', '2018.1.25', null);
-INSERT INTO `tb_fediff` VALUES ('8', 'JYT18120001', '20190125001', '0.000', '2019-02-19', '2018.1.25', null);
-INSERT INTO `tb_fediff` VALUES ('9', 'JYT190100202', '20190124001', '0.000', '2019-02-19', 'A*#01宋', null);
-INSERT INTO `tb_fediff` VALUES ('10', 'JYT190100203', '20190124001', '0.000', '2019-02-19', 'A*#01宋', null);
-INSERT INTO `tb_fediff` VALUES ('11', 'JYT190100201', '20190124001', '0.000', '2019-02-19', 'A*#01宋', null);
-INSERT INTO `tb_fediff` VALUES ('12', 'JYT18070092         ', '20190220005', '0.000', '2019-07-13', '2019.1.26.105', '20190220005');
+INSERT INTO `tb_fediff` VALUES ('1', 'JYT18120376', '20190121001', '-0.180', '2019-01-21', '2019.1.20', null, null, null);
+INSERT INTO `tb_fediff` VALUES ('2', 'JYT19010333', '20190125002', '0.000', '2019-01-25', '2019.1.25', null, null, null);
+INSERT INTO `tb_fediff` VALUES ('3', 'JYT190100222', '20190125002', '0.000', '2019-01-25', '2019.1.25', null, null, null);
+INSERT INTO `tb_fediff` VALUES ('4', 'JYT18120378', '20190125002', '0.000', '2019-01-25', '2019.1.25', null, null, null);
+INSERT INTO `tb_fediff` VALUES ('5', 'JYT18120379', '20190121002', '0.000', '2019-02-19', '2019.1.21', null, null, null);
+INSERT INTO `tb_fediff` VALUES ('6', 'JYT18120377', '20190125002', '0.000', '2019-02-19', '2019.1.25', null, null, null);
+INSERT INTO `tb_fediff` VALUES ('7', 'JYT18120002', '20190125001', '0.000', '2019-02-19', '2018.1.25', null, null, null);
+INSERT INTO `tb_fediff` VALUES ('8', 'JYT18120001', '20190125001', '0.000', '2019-02-19', '2018.1.25', null, null, null);
+INSERT INTO `tb_fediff` VALUES ('9', 'JYT190100202', '20190124001', '0.000', '2019-02-19', 'A*#01宋', null, null, null);
+INSERT INTO `tb_fediff` VALUES ('10', 'JYT190100203', '20190124001', '0.000', '2019-02-19', 'A*#01宋', null, null, null);
+INSERT INTO `tb_fediff` VALUES ('11', 'JYT190100201', '20190124001', '0.000', '2019-02-19', 'A*#01宋', null, null, null);
+INSERT INTO `tb_fediff` VALUES ('12', 'JYT18070092         ', '20190220005', '0.000', '2019-07-13', '2019.1.26.105', '20190220005', null, null);
 
 -- ----------------------------
 -- Table structure for tb_finpord

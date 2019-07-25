@@ -66,7 +66,7 @@ public class StoneServiceImpl implements StoneService {
 	}
 
 	@Override
-	public List<StoneCopy> excel2sql(String fileName, MultipartFile mfile, String stone_channelNo) {
+	public List<String> excel2sql(String fileName, MultipartFile mfile, String stone_channelNo) {
 		Stone stone = new Stone();
 		List<Stone> stoneList = new ArrayList<Stone>();
 		File uploadDir = new File("D:\\fileupload");
@@ -112,9 +112,10 @@ public class StoneServiceImpl implements StoneService {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private List<StoneCopy> readExcelValue(Workbook wb, File tempFile, String stone_channelNo) {
+	private List<String> readExcelValue(Workbook wb, File tempFile, String stone_channelNo) {
 
 		// 查出所有在库的石头编号
+		       List<String> stoneNo = new ArrayList<>();
 				List<StoneCopy> stoneCopyListNo = new ArrayList<StoneCopy>();
 				List<Stone> stoneListNo = new ArrayList<Stone>();
 				stoneCopyListNo = stoneCopyDao.findAllCopyNo();
@@ -517,10 +518,20 @@ public class StoneServiceImpl implements StoneService {
 					//说明此excel表中有与数据库里相同的石编
 					if ((listNo.contains(stone_substoNo) && (!stone_substoNo.isEmpty()) ) || (listNo.contains(stone_mainStoneNo)&& (!stone_mainStoneNo.isEmpty()) )) {
 						System.out.println("数据库里已有这条数据"+"main:"+stone_mainStoneNo +"-->"+stone_substoNo);
+						if(!stone_substoNo.isEmpty()) {
+						    stoneNo.add(stone_substoNo);
+                        }else {
+						    stoneNo.add(stone_mainStoneNo);
+                        }
 					} else {
 						//说明此excel表中有重复石编
 						if( (listThisNo.contains(stone_mainStoneNo) && !stone_mainStoneNo.isEmpty()) || (listThisNo.contains(String.valueOf(stone_substoNo)) && !stone_substoNo.isEmpty() )) {
 							System.out.println("Excel表里已有这条数据"+"main:"+stone_mainStoneNo +"-->"+stone_substoNo);
+                            if(!stone_substoNo.isEmpty()) {
+                                stoneNo.add(stone_substoNo);
+                            }else {
+                                stoneNo.add(stone_mainStoneNo);
+                            }
 						}else {
 							if(!stone_mainStoneNo.isEmpty()) {
 								listThisNo.add(stone_mainStoneNo);
@@ -550,7 +561,7 @@ public class StoneServiceImpl implements StoneService {
 				}
 				
 
-				return stoneList;
+				return stoneNo;
 	}
 
 	

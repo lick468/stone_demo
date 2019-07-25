@@ -675,6 +675,8 @@
 				<th>成品单号</th>
 	            <th>批次</th>
 	            <th>石编</th>
+				<th>原石重</th>
+				<th>现石重</th>
 	            <th>操作</th>
 	            <th>入料差</th>
 	             
@@ -689,6 +691,8 @@
 				<th>成品单号</th>
 				<th>批次</th>
 	            <th>石编</th>
+				<th>原石重</th>
+				<th>现石重</th>
 	             <th>操作</th>
 	            <th>入料差</th> 
             </tr>
@@ -710,6 +714,8 @@
 					<th>成品单号</th>
 					<th>批次</th>
 		            <th>石编</th>
+					<th>原石重</th>
+					<th>现石重</th>
 		            <th>操作</th>
 		            <th>入料差</th> 
 	            </tr>
@@ -725,6 +731,8 @@
 					<th>成品单号</th>
 					<th>批次</th>
 		            <th>石编</th>
+					<th>原石重</th>
+					<th>现石重</th>
 		            <th>操作</th>
 		            <th>入料差</th> 
 	            </tr>
@@ -1922,6 +1930,8 @@ function findFediffByTime() {
                           list[i].finpord_procordNo,
 		 		    	  list[i].fediff_batch,
 		 		    	  list[i].fediff_stoneNo,
+                          list[i].stone_weight,
+                          list[i].finpord_weight,
 		 		    	  "<button class='btn_edit' value="+list[i].fediff_ID +" onclick='findFediffDetails(this);'>查看详情</button>",
 		 		    	 '<span class="bndanger">'+list[i].fediff_weightDiff+'</span>',
 		 		        ] ).draw();
@@ -1933,6 +1943,8 @@ function findFediffByTime() {
                           list[i].finpord_procordNo,
 		 		    	  list[i].fediff_batch,
 		 		    	  list[i].fediff_stoneNo,
+                          list[i].stone_weight,
+                          list[i].finpord_weight,
 		 		    	  "<button class='btn_edit' value="+list[i].fediff_ID +" onclick='findFediffDetails(this);'>查看详情</button>",
 		 		    	 '<span class="bnsuccess">'+list[i].fediff_weightDiff+'</span>',
 		 		        ] ).draw();
@@ -2136,6 +2148,8 @@ $(document).ready(function() {
              },
  	   	      { "data": "fediff_batch"},
  	   	      { "data": "fediff_stoneNo" },
+              { "data": "stone_weight" },
+              { "data": "finpord_weight" },
  	   	      { "data": "fediff_ID",
  	   	    	  "render":function(data,type,full,row)
  	   	            {    	           

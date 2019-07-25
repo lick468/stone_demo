@@ -189,14 +189,18 @@ public class CController {
 								fediff.setFediff_procordNo(stoninp.getStoninproc_procordNo());//订单号
 								fediff.setFediff_batch(stoninp.getStoninproc_batch());//批次
 								fediff.setFediff_stoneNo(finpordList.get(i).getFinpord_mainstono());//石编
+
+
 								fediff.setFinpord_procordNo(finpordList.get(i).getFinpord_procordNo());//成品入库时的单号
 								double ediff = 0;
 								List<Stone> stoneList =  stoneService.findStoneByMainNo(finpordList.get(i).getFinpord_mainstono());
 								if(stoneList.size()>0) {
 									double weight = stoneList.get(0).getStone_mainWeight();//石头库里的石重
+									fediff.setStone_weight(weight);
 									double weight1 = finpordList.get(i).getFinpord_mainstowgt();//成品库的石重
 									ediff = weight-weight1;
 								}
+								fediff.setFinpord_weight(finpordList.get(i).getFinpord_mainstowgt()); //现石重
 								fediff.setFediff_weightDiff(ediff);
 								fediffService.insertFediff(fediff);//添加进入料差表
 								//2.更新订单状态
@@ -232,12 +236,14 @@ public class CController {
 								fediff.setFediff_time(new Date());//时间
 								fediff.setFediff_procordNo(stoninp.getStoninproc_procordNo());//订单号
 								fediff.setFediff_batch(stoninp.getStoninproc_batch());//批次
+                                fediff.setFinpord_weight(finpordList.get(i).getFinpord_substo1wgt());
 								fediff.setFediff_stoneNo(String.valueOf(finpordList.get(i).getFinpord_substo1no()));//石编
 								fediff.setFinpord_procordNo(finpordList.get(i).getFinpord_procordNo());//成品入库时的单号
 								double ediff = 0;
 								List<Stone> stoneList =  stoneService.findStoneBySubNo(finpordList.get(i).getFinpord_substo1no());
 								if(stoneList.size()>0) {
 									double weight = stoneList.get(0).getStone_substoWgt();//石头库里的石重
+                                    fediff.setStone_weight(weight);
 									double weight1 = finpordList.get(i).getFinpord_substo1wgt();//成品库的石重
 									ediff = weight-weight1;
 								}
@@ -275,11 +281,13 @@ public class CController {
 								fediff.setFediff_procordNo(stoninp.getStoninproc_procordNo());//订单号
 								fediff.setFediff_batch(stoninp.getStoninproc_batch());//批次
 								fediff.setFediff_stoneNo(String.valueOf(finpordList.get(i).getFinpord_substo2no()));//石编
+                                fediff.setFinpord_weight(finpordList.get(i).getFinpord_substo2wgt());
 								fediff.setFinpord_procordNo(finpordList.get(i).getFinpord_procordNo());//成品入库时的单号
 								double ediff = 0;
 								List<Stone> stoneList =  stoneService.findStoneBySubNo(finpordList.get(i).getFinpord_substo2no());
 								if(stoneList.size()>0) {
 									double weight = stoneList.get(0).getStone_substoWgt();//石头库里的石重
+                                    fediff.setStone_weight(weight);
 									double weight1 = finpordList.get(i).getFinpord_substo2wgt();//成品库的石重
 									ediff = weight-weight1;
 								}
@@ -317,12 +325,14 @@ public class CController {
 								fediff.setFediff_time(new Date());//时间
 								fediff.setFediff_procordNo(stoninp.getStoninproc_procordNo());//订单号
 								fediff.setFediff_batch(stoninp.getStoninproc_batch());//批次
+                                fediff.setFinpord_weight(finpordList.get(i).getFinpord_substo3wgt());
 								fediff.setFediff_stoneNo(String.valueOf(finpordList.get(i).getFinpord_substo3no()));//石编
 								fediff.setFinpord_procordNo(finpordList.get(i).getFinpord_procordNo());//成品入库时的单号
 								double ediff = 0;
 								List<Stone> stoneList =  stoneService.findStoneBySubNo(finpordList.get(i).getFinpord_substo3no());
 								if(stoneList.size()>0) {
 									double weight = stoneList.get(0).getStone_substoWgt();//石头库里的石重
+                                    fediff.setStone_weight(weight);
 									double weight1 = finpordList.get(i).getFinpord_substo3wgt();//成品库的石重
 									ediff = weight-weight1;
 								}
@@ -365,8 +375,8 @@ public class CController {
 					}
 					
 				}
-				//System.out.println(finpordCopyList_right);
-				//System.out.println(finpordCopyList_wrong);
+				System.out.println(finpordCopyList_right);
+				System.out.println(finpordCopyList_wrong);
 				
 				//1.清空临时表
 				finpordService.clearCopy();//清空临时表

@@ -245,9 +245,13 @@ public class BController {
 			System.out.println("文件为空");
 			return "redirect:/b/index";
 		}
-		List<StoneCopy> stoneCopyList = new ArrayList<StoneCopy>();
-		
-		stoneCopyList = stoneService.excel2sql(fileName, file, stone_channelNo);
+		List<String> stoneNoList = new ArrayList<>();
+
+		stoneNoList = stoneService.excel2sql(fileName, file, stone_channelNo);
+		// 有重复石编
+		if(stoneNoList.size() > 0) {
+            model.addFlashAttribute("stoneNoList",stoneNoList);
+        }
 			
 		String user = (String) session.getAttribute("user_name");
 		map.addAttribute("user", user);

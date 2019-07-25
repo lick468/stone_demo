@@ -19,6 +19,10 @@ public class Fediff implements Serializable {
 	private String fediff_batch;//批次
 	private long fediff_procordNo;//订单号
 	private double fediff_weightDiff;//入料差
+    private double stone_weight;//原石重
+    private double finpord_weight;//现石重
+    private Date fediff_time;//时间
+
 	private long finpord_procordNo; // 成品返回时单号
 
 
@@ -30,10 +34,23 @@ public class Fediff implements Serializable {
 		this.finpord_procordNo = finpord_procordNo;
 	}
 
+    public double getStone_weight() {
+        return stone_weight;
+    }
 
-	private Date fediff_time;//时间
-	
-	public Date getFediff_time() {
+    public void setStone_weight(double stone_weight) {
+        this.stone_weight = stone_weight;
+    }
+
+    public double getFinpord_weight() {
+        return finpord_weight;
+    }
+
+    public void setFinpord_weight(double finpord_weight) {
+        this.finpord_weight = finpord_weight;
+    }
+
+    public Date getFediff_time() {
 		return fediff_time;
 	}
 	public void setFediff_time(Date fediff_time) {

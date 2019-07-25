@@ -376,7 +376,7 @@ public class FinpordServiceImpl implements FinpordService {
 			
 			 finpord_ID = UUID.randomUUID().toString().replaceAll("-", "");// UUID
 			 
-			 for(int i=0;i<map.size()+1;i++) {//条码是计算出来的
+			 for(int i=0;i<map.size()+1;i++) {//
 				 if("finpord_procordNo".equals(map.get(i))) {//单号
 	
 				} else if("finpord_supplier".equals(map.get(i))) {

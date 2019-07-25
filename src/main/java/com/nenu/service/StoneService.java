@@ -64,7 +64,7 @@ public interface StoneService {
 	
 	List<StoneCopy> findAllStoneCopy();
 	
-	List<StoneCopy> excel2sql(String fileName, MultipartFile mfile, String stone_channelNo);
+	List<String> excel2sql(String fileName, MultipartFile mfile, String stone_channelNo);
 	
 	StoneCopy findStoneCopyByStoneIDAJAX(String stone_ID);
 	int copyToStone();
