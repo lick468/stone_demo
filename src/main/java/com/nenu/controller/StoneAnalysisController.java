@@ -74,54 +74,10 @@ public class StoneAnalysisController {
 	 */
 	@ApiOperation(value="跳转index页面",notes="显示index页面")
 	@GetMapping(value = "index")
-	public String index(ModelMap map, HttpSession session) throws ParseException {
-		List<StoneAnalysis> list = stoneService.findAllStone();
-		List listSupplier = new ArrayList<>();
-		List listCounter = new ArrayList<>();
-		List listProduct = new ArrayList<>();
-		
-		for (int i = 0; i < list.size(); i++) {
-			
-			if (list.get(i).getSupplier() != null) {
-				if (!listSupplier.contains(list.get(i).getSupplier()) && list.get(i).getSupplier().length() > 0) {
-					listSupplier.add(list.get(i).getSupplier());
-				}
-			}
-			if (list.get(i).getCounter() != null) {
-				if (!listCounter.contains(list.get(i).getCounter()) && list.get(i).getCounter().length() > 0) {
-					listCounter.add(list.get(i).getCounter());
-				}
-			}
-			if (list.get(i).getProduct() != null) {
-				if (!listProduct.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
-					listProduct.add(list.get(i).getProduct());
-				}
-			}
-		}
-		Collections.sort(listSupplier, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listCounter, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listProduct, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		map.addAttribute("listsupplier", listSupplier);
-		map.addAttribute("listCounter", listCounter);
-		map.addAttribute("listProduct", listProduct);
+	public String index(ModelMap map) {
+		map.addAttribute("listsupplier", stoneService.findDistinctSupplier());
+		map.addAttribute("listCounter", stoneService.findDistinctCounter());
+		map.addAttribute("listProduct", stoneService.findDistinctProduct());
 		return "index";
 	}
 
@@ -303,52 +259,10 @@ public class StoneAnalysisController {
 	public String productnum(ModelMap map, HttpSession session) throws ParseException {
 
 		map.addAttribute("stoneList", stoneService.findAllStone());
-		List<StoneAnalysis> list = stoneService.findAllStone();
 
-		List listSupplier = new ArrayList<>();
-		List listCounter = new ArrayList<>();
-		List listQuality = new ArrayList<>();
-		for (int i = 0; i < list.size(); i++) {
-			if(list.get(i).getSupplier()!=null) {
-				if(!listSupplier.contains(list.get(i).getSupplier()) && list.get(i).getSupplier().length()>0) {
-					listSupplier.add(list.get(i).getSupplier());
-				}
-			}
-			if(list.get(i).getCounter()!=null) {
-				if(!listCounter.contains(list.get(i).getCounter()) && list.get(i).getCounter().length()>0) {
-					listCounter.add(list.get(i).getCounter());
-				}
-			}
-			if(list.get(i).getQuality()!=null) {
-				if(!listQuality.contains(list.get(i).getQuality()) && list.get(i).getQuality().length()>0) {
-					listQuality.add(list.get(i).getQuality());
-				}
-			}
-		}
-		Collections.sort(listSupplier, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listQuality, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listCounter, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		map.addAttribute("listsupplier", listSupplier);
-		map.addAttribute("listQuality", listQuality);
-		map.addAttribute("listCounter", listCounter);
+		map.addAttribute("listsupplier", stoneService.findDistinctSupplier());
+		map.addAttribute("listQuality", stoneService.findDistinctQuality());
+		map.addAttribute("listCounter", stoneService.findDistinctCounter());
 		return "productnum";
 	}
 
@@ -521,53 +435,9 @@ public class StoneAnalysisController {
 	@SuppressWarnings("rawtypes")
 	@GetMapping(value = "index3")
 	public String index3(ModelMap map) {
-		List<StoneAnalysis> list = stoneService.findAllStone();
-		List listSupplier = new ArrayList<>();
-		List listCounter = new ArrayList<>();
-		List listProduct = new ArrayList<>();
-		if (list != null) {
-			for (int i = 0; i < list.size(); i++) {
-				if (list.get(i).getSupplier() != null) {
-					if (!listSupplier.contains(list.get(i).getSupplier()) && list.get(i).getSupplier().length() > 0) {
-						listSupplier.add(list.get(i).getSupplier());
-					}
-				}
-				if (list.get(i).getCounter() != null) {
-					if (!listCounter.contains(list.get(i).getCounter()) && list.get(i).getCounter().length() > 0) {
-						listCounter.add(list.get(i).getCounter());
-					}
-				}
-				if (list.get(i).getProduct() != null) {
-					if (!listProduct.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
-						listProduct.add(list.get(i).getProduct());
-					}
-				}
-			}
-		}
-		Collections.sort(listSupplier, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listCounter, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listProduct, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		map.addAttribute("listSupplier", listSupplier);
-		map.addAttribute("listCounter", listCounter);
-		map.addAttribute("listProduct", listProduct);
+		map.addAttribute("listSupplier", stoneService.findDistinctSupplier());
+		map.addAttribute("listCounter", stoneService.findDistinctCounter());
+		map.addAttribute("listProduct", stoneService.findDistinctProduct());
 		return "index3";
 	}
 
@@ -822,53 +692,10 @@ public class StoneAnalysisController {
 	 */
 	@ApiOperation(value="跳转到7.3.1页面  ",notes="系列商品走势页面  ")
 	@GetMapping(value = "seriesproduct")
-	public String seriesproduct(ModelMap map, HttpSession session) throws ParseException {
-		List<StoneAnalysis> list = stoneService.findAllStone();
-		List listSupplier = new ArrayList<>();
-		List listProduct = new ArrayList<>();
-		List listCounter = new ArrayList<>();
-
-		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i).getSupplier() != null) {
-				if (!listSupplier.contains(list.get(i).getSupplier()) && list.get(i).getSupplier().length() > 0) {
-					listSupplier.add(list.get(i).getSupplier());
-				}
-			}
-			if (list.get(i).getProduct() != null) {
-				if (!listProduct.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
-					listProduct.add(list.get(i).getProduct());
-				}
-			}
-			if (list.get(i).getProduct() != null) {
-				if (!listCounter.contains(list.get(i).getCounter()) && list.get(i).getCounter().length() > 0) {
-					listCounter.add(list.get(i).getCounter());
-				}
-			}
-		}
-		Collections.sort(listSupplier, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listProduct, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listCounter, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		map.addAttribute("listsupplier",  listSupplier);
-		map.addAttribute("listProduct", listProduct);
-		map.addAttribute("listCounter", listCounter);
+	public String seriesproduct(ModelMap map)  {
+		map.addAttribute("listsupplier",  stoneService.findDistinctSupplier());
+		map.addAttribute("listProduct",stoneService.findDistinctProduct());
+		map.addAttribute("listCounter", stoneService.findDistinctCounter());
 		return "7.3.1";
 	}
 	/**
@@ -1137,25 +964,8 @@ public class StoneAnalysisController {
 	@ApiOperation(value="跳转到index5页面 ",notes="分析销售增减趋势页面  ")
 	@GetMapping(value = "index5")
 	public String index5(ModelMap map, HttpSession session) throws ParseException {
-		List<StoneAnalysis> list = stoneService.findAllStone();
+		List<StoneAnalysis> listArea = stoneService.findDistinctArea();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		List listArea = new ArrayList<>();
-
-		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i).getArea() != null) {
-				if (!listArea.contains(list.get(i).getArea()) && list.get(i).getArea().length() > 0) {
-					listArea.add(list.get(i).getArea());
-				}
-			}
-
-		}
-		Collections.sort(listArea, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
 		map.addAttribute("listArea", listArea);
 		//System.out.println(listArea);
 		Date da = new Date();
@@ -1190,7 +1000,7 @@ public class StoneAnalysisController {
 		params.put("end", end);
 		List<StoneAnalysis> listAllArea = stoneService.findStoneByAreaAndTimeForNumberSumDemo(params);
 		for (int i = 0; i < listArea.size(); i++) {
-			str[i][0] = (String) listArea.get(i);
+			str[i][0] = (String) listArea.get(i).getArea();
 		}
 
 		List titleList = new ArrayList<>();// 表头
@@ -1405,26 +1215,26 @@ public class StoneAnalysisController {
 							}else if(selectType.contains("标价")) {
 								if (year_s == year_st) {
 									int month_ss = month_st - month_s + 1;
-									str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getListpriceSum()));
+									str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getListpriceSum()));
 								} else {
 									int month_ss = (year_st - year_s) * 12 + month_st - month_s + 1;
-									str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getListpriceSum()));
+									str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getListpriceSum()));
 								}
 							}else if(selectType.contains("金重")) {
 								if (year_s == year_st) {
 									int month_ss = month_st - month_s + 1;
-									str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getGoldweightSum()));
+									str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getGoldweightSum()));
 								} else {
 									int month_ss = (year_st - year_s) * 12 + month_st - month_s + 1;
-									str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getGoldweightSum()));
+									str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getGoldweightSum()));
 								}
 							}else if(selectType.contains("主石")) {
 								if (year_s == year_st) {
 									int month_ss = month_st - month_s + 1;
-									str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getCenterstoneSum()));
+									str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getCenterstoneSum()));
 								} else {
 									int month_ss = (year_st - year_s) * 12 + month_st - month_s + 1;
-									str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getCenterstoneSum()));
+									str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getCenterstoneSum()));
 								}
 							}
 						}
@@ -1458,26 +1268,26 @@ public class StoneAnalysisController {
 							}else if(selectType.contains("标价")) {
 								if (year_s == year_st) {
 									int month_ss = month_st - month_s + 1;
-									str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getListpriceSum()));
+									str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getListpriceSum()));
 								} else {
 									int month_ss = (year_st - year_s) * 12 + month_st - month_s + 1;
-									str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getListpriceSum()));
+									str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getListpriceSum()));
 								}
 							}else if(selectType.contains("金重")) {
 								if (year_s == year_st) {
 									int month_ss = month_st - month_s + 1;
-									str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getGoldweightSum()));
+									str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getGoldweightSum()));
 								} else {
 									int month_ss = (year_st - year_s) * 12 + month_st - month_s + 1;
-									str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getGoldweightSum()));
+									str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getGoldweightSum()));
 								}
 							}else if(selectType.contains("主石")) {
 								if (year_s == year_st) {
 									int month_ss = month_st - month_s + 1;
-									str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getCenterstoneSum()));
+									str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getCenterstoneSum()));
 								} else {
 									int month_ss = (year_st - year_s) * 12 + month_st - month_s + 1;
-									str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getCenterstoneSum()));
+									str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getCenterstoneSum()));
 								}
 							}
 						}
@@ -1511,26 +1321,26 @@ public class StoneAnalysisController {
 							}else if(selectType.contains("标价")) {
 								if (year_s == year_st) {
 									int month_ss = month_st - month_s + 1;
-									str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getListpriceSum()));
+									str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getListpriceSum()));
 								} else {
 									int month_ss = (year_st - year_s) * 12 + month_st - month_s + 1;
-									str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getListpriceSum()));
+									str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getListpriceSum()));
 								}
 							}else if(selectType.contains("金重")) {
 								if (year_s == year_st) {
 									int month_ss = month_st - month_s + 1;
-									str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getGoldweightSum()));
+									str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getGoldweightSum()));
 								} else {
 									int month_ss = (year_st - year_s) * 12 + month_st - month_s + 1;
-									str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getGoldweightSum()));
+									str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getGoldweightSum()));
 								}
 							}else if(selectType.contains("主石")) {
 								if (year_s == year_st) {
 									int month_ss = month_st - month_s + 1;
-									str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getCenterstoneSum()));
+									str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getCenterstoneSum()));
 								} else {
 									int month_ss = (year_st - year_s) * 12 + month_st - month_s + 1;
-									str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getCenterstoneSum()));
+									str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getCenterstoneSum()));
 								}
 							}
 						}
@@ -1555,7 +1365,7 @@ public class StoneAnalysisController {
 		
 		
 		result += "#" + titleList;
-		//System.out.println(result);
+		System.out.println(result);
 		return result;
 	}
 
@@ -1570,26 +1380,9 @@ public class StoneAnalysisController {
 	 */
 	@ApiOperation(value="跳转到s743页面",notes=" 销售结构分析")
 	@GetMapping(value = "s743")
-	public String s743(ModelMap map, HttpSession session) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	public String s743(ModelMap map) {
 		map.addAttribute("stoneList", stoneService.findAllStone());
-		List<StoneAnalysis> list = stoneService.findAllStone();
-		List listCounter = new ArrayList<>();
-		for (int i = 0; i < list.size(); i++) {
-			if(list.get(i).getCounter()!=null) {
-				if(!listCounter.contains(list.get(i).getCounter()) && list.get(i).getCounter().length()>0) {
-					listCounter.add(list.get(i).getCounter());
-				}
-			}
-		}
-		Collections.sort(listCounter, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		map.addAttribute("listcounter", listCounter);
+		map.addAttribute("listcounter", stoneService.findDistinctCounter());
 		return "s743";
 	}
 
@@ -1723,73 +1516,16 @@ public class StoneAnalysisController {
 	 * main 转s744 // s744 区域经营分析 获取地区
 	 * 
 	 * @param map
-	 * @param session
 	 * @return
-	 * @throws ParseException
 	 *             String created on 2018年7月1日 下午8:35:49
 	 */
 	@ApiOperation(value="跳转到s744页面，区域经营分析",notes="区域经营分析")
 	@GetMapping(value = "s744")
-	public String s744(ModelMap map, HttpSession session) throws ParseException {
-		List<StoneAnalysis> list = stoneService.findAllStone();
-		List listArea = new ArrayList<>();
-		List listRoom = new ArrayList<>();
-		List listQuality = new ArrayList<>();
-		List listCounter = new ArrayList<>();
-		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i).getArea() != null) {
-				if (!listArea.contains(list.get(i).getArea()) && list.get(i).getArea().length() > 0) {
-					listArea.add(list.get(i).getArea());
-				}
-			}
-			if (list.get(i).getRoom() != null) {
-				if (!listRoom.contains(list.get(i).getRoom()) && list.get(i).getRoom().length() > 0) {
-					listRoom.add(list.get(i).getRoom());
-				}
-			}
-			if (list.get(i).getCounter() != null) {
-				if (!listCounter.contains(list.get(i).getCounter()) && list.get(i).getCounter().length() > 0) {
-					listCounter.add(list.get(i).getCounter());
-				}
-			}
-			if (list.get(i).getQuality() != null) {
-				if (!listQuality.contains(list.get(i).getQuality()) && list.get(i).getQuality().length() > 0) {
-					listQuality.add(list.get(i).getQuality());
-				}
-			}
-		}
-		Collections.sort(listArea, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listRoom, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listCounter, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listQuality, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		map.addAttribute("listArea", listArea);
-		map.addAttribute("listRoom", listRoom);
-		map.addAttribute("listCounter", listCounter);
-		map.addAttribute("listQuality", listQuality);
+	public String s744(ModelMap map) {
+		map.addAttribute("listArea", stoneService.findDistinctArea());
+		map.addAttribute("listRoom", stoneService.findDistinctRoom());
+		map.addAttribute("listCounter", stoneService.findDistinctCounter());
+		map.addAttribute("listQuality", stoneService.findDistinctQuality());
 		return "s744";
 	}
 
@@ -1807,23 +1543,23 @@ public class StoneAnalysisController {
 	@RequestMapping(value = "areaFind", method = RequestMethod.POST)
 	@ResponseBody
 	public String areaFind(HttpServletRequest request, ModelMap map, HttpSession session) throws ParseException {
-		String areaName = request.getParameter("area");
+		String area = request.getParameter("area");
 		String room = request.getParameter("room");
 		String quality = request.getParameter("quality");
 		String counter = request.getParameter("counter");
 		
 		String selectType = request.getParameter("selectType");
 
-		System.out.println("地区=============" + areaName);
+		System.out.println("地区=============" + area);
 		System.out.println("类别=============" + selectType);
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Map<String, Object> params = new HashMap<String, Object>();
 		
-		if(areaName.contains("所有") || areaName.contains("地区")) {
+		if(area.contains("所有") || area.length()<3) {
 		}else {
 			System.out.println("有地区");
-			params.put("area", areaName);
+			params.put("area", area);
 		}
 		if(room.contains("所有") || room.contains("门店")) {
 		}else {
@@ -1923,7 +1659,7 @@ public class StoneAnalysisController {
 	public String downloadExcelForIndex7(HttpServletRequest request,HttpServletResponse response) {
 		String con = request.getParameter("context");
 		String conList[]=con.split("&");
-		String areaName = conList[0];
+		String area = conList[0];
 		String room = conList[1];
 		String counter = conList[2];
 		String quality = conList[3];
@@ -1934,10 +1670,10 @@ public class StoneAnalysisController {
 
 		String result = "";
 		Map<String, Object> params = new HashMap<String, Object>();
-		if(areaName.contains("所有") || areaName.contains("地区")) {
+		if(area.contains("所有") || area.length() < 3) {
 		}else {
 			System.out.println("有地区");
-			params.put("area", areaName);
+			params.put("area", area);
 		}
 		if(room.contains("所有") || room.contains("门店")) {
 		}else {
@@ -1974,26 +1710,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="跳转到index10页面,销售数据统计")
 	@GetMapping(value = "index10")
 	public String index10(ModelMap map) {
-		List<StoneAnalysis> list = stoneService.findAllStone();
-		List listArea = new ArrayList<>();
-		if (list != null) {
-			for (int i = 0; i < list.size(); i++) {
-				if (list.get(i).getArea() != null) {
-					if (!listArea.contains(list.get(i).getArea()) && list.get(i).getArea().length() > 0) {
-						listArea.add(list.get(i).getArea());
-					}
-				}
-			}
-		}
-		Collections.sort(listArea, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		map.addAttribute("listArea", listArea);
-
+		map.addAttribute("listArea", stoneService.findDistinctArea());
 		return "index10";
 	}
 
@@ -2725,74 +2442,17 @@ public class StoneAnalysisController {
 	 * 跳转到s75页面   管理分析模型
 	 * 
 	 * @param map
-	 * @param session
 	 * @return
-	 * @throws ParseException
 	 *             String created on 2018年7月2日 上午9:42:32
 	 */
 	@ApiOperation(value="跳转到s75页面,管理分析")
 	@GetMapping(value = "s75")
-	public String s75(ModelMap map, HttpSession session) throws ParseException {
+	public String s75(ModelMap map) {
 		map.addAttribute("stoneList", stoneService.findAllStone());
-		List<StoneAnalysis> list = stoneService.findAllStone();
-		List listProduct = new ArrayList<>();
-		List listRoom = new ArrayList<>();
-		List listCounter = new ArrayList<>();
-		List listArea = new ArrayList<>();
-		for (int i = 0; i < list.size(); i++) {
-			if(list.get(i).getProduct()!=null) {
-				if(!listProduct.contains(list.get(i).getProduct()) && list.get(i).getProduct().length()>0) {
-					listProduct.add(list.get(i).getProduct());
-				}
-			}
-			if(list.get(i).getRoom()!=null) {
-				if(!listRoom.contains(list.get(i).getRoom()) && list.get(i).getRoom().length()>0) {
-					listRoom.add(list.get(i).getRoom());
-				}
-			}
-			if(list.get(i).getCounter()!=null) {
-				if(!listCounter.contains(list.get(i).getCounter()) && list.get(i).getCounter().length()>0) {
-					listCounter.add(list.get(i).getCounter());
-				}
-			}
-			if(list.get(i).getArea()!=null) {
-				if(!listArea.contains(list.get(i).getArea()) && list.get(i).getArea().length()>0) {
-					listArea.add(list.get(i).getArea());
-				}
-			}
-		}
-		Collections.sort(listProduct, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listCounter, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listArea, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listRoom, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		map.addAttribute("listproduct", listProduct);
-		map.addAttribute("listCounter", listCounter);
-		map.addAttribute("listArea", listArea);
-		map.addAttribute("listRoom", listRoom);
+		map.addAttribute("listproduct", stoneService.findDistinctProduct());
+		map.addAttribute("listCounter", stoneService.findDistinctCounter());
+		map.addAttribute("listArea", stoneService.findDistinctArea());
+		map.addAttribute("listRoom", stoneService.findDistinctRoom());
 		
 		return "s75";
 	}
@@ -2835,7 +2495,7 @@ public class StoneAnalysisController {
 		}else {
 			params.put("counter", counter);
 		}
-		if(area.contains("地区")||area.contains("所有")) {
+		if(area.length() < 3 ||area.contains("所有")) {
 		}else {
 			params.put("area", area);
 		}
@@ -3042,39 +2702,9 @@ public class StoneAnalysisController {
 			}
 		}
 		
-		List<StoneAnalysis> listAll = stoneService.findAllStone();
-		List listCounter = new ArrayList<>();
-        List listProduct = new ArrayList<>();
-		if (listAll != null) {
-			for (int i = 0; i < listAll.size(); i++) {
-				if (listAll.get(i).getCounter() != null) {
-					if (!listCounter.contains(listAll.get(i).getCounter()) && listAll.get(i).getCounter().length() > 0) {
-						listCounter.add(listAll.get(i).getCounter());
-					}
-				}
-                if (listAll.get(i).getProduct() != null) {
-                    if (!listProduct.contains(listAll.get(i).getProduct()) && listAll.get(i).getProduct().length() > 0) {
-                        listProduct.add(listAll.get(i).getProduct());
-                    }
-                }
-			}
-		}
-		Collections.sort(listCounter, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-        Collections.sort(listProduct, new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);
-                return com.compare(o1, o2);
-            }
-        });
-		map.addAttribute("listProduct", listProduct);
-        map.addAttribute("listCounter", listCounter);
+
+		map.addAttribute("listProduct", stoneService.findDistinctProduct());
+        map.addAttribute("listCounter", stoneService.findDistinctCounter());
 		map.addAttribute("listSupplier", listSupplier);
 		map.addAttribute("listThisYear", listThisYear);
 		map.addAttribute("listLastYear", listLastYear);
@@ -3191,67 +2821,10 @@ public class StoneAnalysisController {
 	@ApiOperation(value="跳转到index811页面,周销售数据统计")
 	@GetMapping(value="index811")
 	public String index811(ModelMap map) {
-		List<StoneAnalysis> list = stoneService.findAllStone();
-		List listArea = new ArrayList<>();
-		List listRoom = new ArrayList<>();
-		List listCounter = new ArrayList<>();
-		List listProduct = new ArrayList<>();
-		if (list != null) {
-			for (int i = 0; i < list.size(); i++) {
-				if (list.get(i).getArea() != null) {
-					if (!listArea.contains(list.get(i).getArea()) && list.get(i).getArea().length() > 0) {
-						listArea.add(list.get(i).getArea());
-					}
-				}
-				if (list.get(i).getRoom() != null) {
-					if (!listRoom.contains(list.get(i).getRoom()) && list.get(i).getRoom().length() > 0) {
-						listRoom.add(list.get(i).getRoom());
-					}
-				}
-				if (list.get(i).getCounter() != null) {
-					if (!listCounter.contains(list.get(i).getCounter()) && list.get(i).getCounter().length() > 0) {
-						listCounter.add(list.get(i).getCounter());
-					}
-				}
-				if (list.get(i).getProduct() != null) {
-					if (!listProduct.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
-						listProduct.add(list.get(i).getProduct());
-					}
-				}
-			}
-		}
-		Collections.sort(listArea, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listRoom, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listCounter, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listProduct, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		map.addAttribute("listArea", listArea);
-		map.addAttribute("listRoom", listRoom);
-		map.addAttribute("listCounter", listCounter);
-		map.addAttribute("listProduct", listProduct);
+		map.addAttribute("listArea", stoneService.findDistinctArea());
+		map.addAttribute("listRoom", stoneService.findDistinctRoom());
+		map.addAttribute("listCounter", stoneService.findDistinctCounter());
+		map.addAttribute("listProduct", stoneService.findDistinctProduct());
 
 		return "index811";
 	}
@@ -3264,67 +2837,10 @@ public class StoneAnalysisController {
 	@ApiOperation(value="跳转到index812页面,月销售数据统计")
 	@GetMapping(value="index812")
 	public String index812(ModelMap map) {
-		List<StoneAnalysis> list = stoneService.findAllStone();
-		List listArea = new ArrayList<>();
-		List listRoom = new ArrayList<>();
-		List listCounter = new ArrayList<>();
-		List listProduct = new ArrayList<>();
-		if (list != null) {
-			for (int i = 0; i < list.size(); i++) {
-				if (list.get(i).getArea() != null) {
-					if (!listArea.contains(list.get(i).getArea()) && list.get(i).getArea().length() > 0) {
-						listArea.add(list.get(i).getArea());
-					}
-				}
-				if (list.get(i).getRoom() != null) {
-					if (!listRoom.contains(list.get(i).getRoom()) && list.get(i).getRoom().length() > 0) {
-						listRoom.add(list.get(i).getRoom());
-					}
-				}
-				if (list.get(i).getCounter() != null) {
-					if (!listCounter.contains(list.get(i).getCounter()) && list.get(i).getCounter().length() > 0) {
-						listCounter.add(list.get(i).getCounter());
-					}
-				}
-				if (list.get(i).getProduct() != null) {
-					if (!listProduct.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
-						listProduct.add(list.get(i).getProduct());
-					}
-				}
-			}
-		}
-		Collections.sort(listArea, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listRoom, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listCounter, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listProduct, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		map.addAttribute("listArea", listArea);
-		map.addAttribute("listRoom", listRoom);
-		map.addAttribute("listCounter", listCounter);
-		map.addAttribute("listProduct", listProduct);
+		map.addAttribute("listArea", stoneService.findDistinctArea());
+		map.addAttribute("listRoom", stoneService.findDistinctRoom());
+		map.addAttribute("listCounter", stoneService.findDistinctCounter());
+		map.addAttribute("listProduct", stoneService.findDistinctProduct());
 
 		return "index812";
 	}
@@ -3337,67 +2853,10 @@ public class StoneAnalysisController {
 	@ApiOperation(value="跳转到index813页面,季度销售数据统计")
 	@GetMapping(value="index813")
 	public String index813(ModelMap map) {
-		List<StoneAnalysis> list = stoneService.findAllStone();
-		List listArea = new ArrayList<>();
-		List listRoom = new ArrayList<>();
-		List listCounter = new ArrayList<>();
-		List listProduct = new ArrayList<>();
-		if (list != null) {
-			for (int i = 0; i < list.size(); i++) {
-				if (list.get(i).getArea() != null) {
-					if (!listArea.contains(list.get(i).getArea()) && list.get(i).getArea().length() > 0) {
-						listArea.add(list.get(i).getArea());
-					}
-				}
-				if (list.get(i).getRoom() != null) {
-					if (!listRoom.contains(list.get(i).getRoom()) && list.get(i).getRoom().length() > 0) {
-						listRoom.add(list.get(i).getRoom());
-					}
-				}
-				if (list.get(i).getCounter() != null) {
-					if (!listCounter.contains(list.get(i).getCounter()) && list.get(i).getCounter().length() > 0) {
-						listCounter.add(list.get(i).getCounter());
-					}
-				}
-				if (list.get(i).getProduct() != null) {
-					if (!listProduct.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
-						listProduct.add(list.get(i).getProduct());
-					}
-				}
-			}
-		}
-		Collections.sort(listArea, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listRoom, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listCounter, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listProduct, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		map.addAttribute("listArea", listArea);
-		map.addAttribute("listRoom", listRoom);
-		map.addAttribute("listCounter", listCounter);
-		map.addAttribute("listProduct", listProduct);
+		map.addAttribute("listArea", stoneService.findDistinctArea());
+		map.addAttribute("listRoom", stoneService.findDistinctRoom());
+		map.addAttribute("listCounter", stoneService.findDistinctCounter());
+		map.addAttribute("listProduct", stoneService.findDistinctProduct());
 
 		return "index813";
 	}
@@ -3410,67 +2869,10 @@ public class StoneAnalysisController {
 	@ApiOperation(value="跳转到index814页面,年销售数据统计")
 	@GetMapping(value="index814")
 	public String index814(ModelMap map ) {
-		List<StoneAnalysis> list = stoneService.findAllStone();
-		List listArea = new ArrayList<>();
-		List listRoom = new ArrayList<>();
-		List listCounter = new ArrayList<>();
-		List listProduct = new ArrayList<>();
-		if (list != null) {
-			for (int i = 0; i < list.size(); i++) {
-				if (list.get(i).getArea() != null) {
-					if (!listArea.contains(list.get(i).getArea()) && list.get(i).getArea().length() > 0) {
-						listArea.add(list.get(i).getArea());
-					}
-				}
-				if (list.get(i).getRoom() != null) {
-					if (!listRoom.contains(list.get(i).getRoom()) && list.get(i).getRoom().length() > 0) {
-						listRoom.add(list.get(i).getRoom());
-					}
-				}
-				if (list.get(i).getCounter() != null) {
-					if (!listCounter.contains(list.get(i).getCounter()) && list.get(i).getCounter().length() > 0) {
-						listCounter.add(list.get(i).getCounter());
-					}
-				}
-				if (list.get(i).getProduct() != null) {
-					if (!listProduct.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
-						listProduct.add(list.get(i).getProduct());
-					}
-				}
-			}
-		}
-		Collections.sort(listArea, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listRoom, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listCounter, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listProduct, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		map.addAttribute("listArea", listArea);
-		map.addAttribute("listRoom", listRoom);
-		map.addAttribute("listCounter", listCounter);
-		map.addAttribute("listProduct", listProduct);
+		map.addAttribute("listArea", stoneService.findDistinctArea());
+		map.addAttribute("listRoom", stoneService.findDistinctRoom());
+		map.addAttribute("listCounter", stoneService.findDistinctCounter());
+		map.addAttribute("listProduct", stoneService.findDistinctProduct());
 
 		return "index814";
 	}
@@ -6864,47 +6266,15 @@ public class StoneAnalysisController {
 	 * index7 贡献度  732  系列商品贡献度分析模型
 	 * 
 	 * @param map
-	 * @param session
 	 * @return
-	 * @throws ParseException
 	 *             String created on 2018年7月1日 下午7:55:11
 	 */
 	@ApiOperation(value="跳转到index7页面,系列商品贡献度分析模型")
 	@GetMapping(value = "index7")
-	public String index7(ModelMap map, HttpSession session) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	public String index7(ModelMap map) {
 		map.addAttribute("stoneList", stoneService.findAllStone());
-		List<StoneAnalysis> list = stoneService.findAllStone();
-		List listCounter = new ArrayList<>();
-		List listQuality = new ArrayList<>();
-		for (int i = 0; i < list.size(); i++) {
-			if(list.get(i).getCounter()!=null) {
-				if(!listCounter.contains(list.get(i).getCounter()) && list.get(i).getCounter().length()>0) {
-					listCounter.add(list.get(i).getCounter());
-				}
-			}
-			if(list.get(i).getQuality()!=null) {
-				if(!listQuality.contains(list.get(i).getQuality()) && list.get(i).getQuality().length()>0) {
-					listQuality.add(list.get(i).getQuality());
-				}
-			}
-		}
-		Collections.sort(listCounter, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listQuality, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		map.addAttribute("listCounter", listCounter);
-		map.addAttribute("listQuality", listQuality);
+		map.addAttribute("listCounter", stoneService.findDistinctCounter());
+		map.addAttribute("listQuality", stoneService.findDistinctQuality());
 		return "index7";
 	}
 
@@ -6973,34 +6343,14 @@ public class StoneAnalysisController {
 	 * 跳转到sellsort页面  管理分析模型
 	 * 
 	 * @param map
-	 * @param session
 	 * @return
-	 * @throws ParseException
 	 *             String created on 2018年7月4日 上午8:29:25
 	 */
 	@ApiOperation(value="跳转到sellsort页面,管理分析模型")
 	@GetMapping(value = "sellsort")
-	public String sellsort(ModelMap map, HttpSession session) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	public String sellsort(ModelMap map){
 		map.addAttribute("stoneList", stoneService.findAllStone());
-		List<StoneAnalysis> list = stoneService.findAllStone();
-		List listProduct = new ArrayList<>();
-		for (int i = 0; i < list.size(); i++) {
-			String product = list.get(i).getProduct();
-			int index0 = listProduct.indexOf(product);
-			if (index0 == -1) {
-				listProduct.add(product);
-			}
-		}
-		Collections.sort(listProduct, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		map.addAttribute("listproduct", listProduct);
-
+		map.addAttribute("listproduct", stoneService.findDistinctProduct());
 		return "sellsort";
 	}
 
@@ -7008,23 +6358,18 @@ public class StoneAnalysisController {
 	 * 跳转到plan页面 销售计划分析模型
 	 * 
 	 * @param map
-	 * @param session
 	 * @return
-	 * @throws ParseException
 	 *             String created on 2018年7月4日 上午8:29:25
 	 */
 	@ApiOperation(value="跳转到plan页面,销售计划分析模型")
 	@GetMapping(value = "plan")
-	public String plan(ModelMap map, HttpSession session) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	public String plan(ModelMap map){
+
 		map.addAttribute("stoneList", stoneService.findAllStone());
 		
-		List<StoneAnalysis> list = stoneService.findAllStone();
+
 		List<Belong> blist = belongService.findAllBelong();
-		
-		List listArea = new ArrayList<>();
-		List listRoom = new ArrayList<>();
-		List listCounter = new ArrayList<>();
+
 		List listBelong = new ArrayList<>();
 		
 		for (int i = 0; i < blist.size(); i++) {
@@ -7035,34 +6380,7 @@ public class StoneAnalysisController {
 			}
 		}
 		
-		for (int i = 0; i < list.size(); i++) {
-			String area = list.get(i).getArea();
-			String room = list.get(i).getRoom();
-			String counter = list.get(i).getCounter();
-			
-			int index = listArea.indexOf(area);
-			int index1 = listRoom.indexOf(room);
-			int index2 = listCounter.indexOf(counter);
-			
-			
-			if (index == -1) {
-				listArea.add(area);
-			}
-			if (index1 == -1) {
-				listRoom.add(room);
-			}
-			if (index2 == -1) {
-				listCounter.add(counter);
-			}
-			
-		}
-		Collections.sort(listRoom, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
+
 		Collections.sort(listBelong, new Comparator<String>() {            
 			@Override            
 			public int compare(String o1, String o2) {                
@@ -7070,9 +6388,8 @@ public class StoneAnalysisController {
 				return com.compare(o1, o2);            
 			}        
 		});
-		
-		map.addAttribute("listarea", listArea);
-		map.addAttribute("listroom", listRoom);
+		map.addAttribute("listarea", stoneService.findDistinctArea());
+		map.addAttribute("listroom", stoneService.findDistinctRoom());
 		map.addAttribute("listBelong", listBelong);
 		
 
@@ -7083,102 +6400,18 @@ public class StoneAnalysisController {
 	 *
 	 * com.nenu.controller
 	 * @param map
-	 * @param session
 	 * @return
-	 * @throws ParseException String
 	 * created  at 2018年10月19日
 	 */
 	@ApiOperation(value="跳转到source页面,来源分析模型")
 	@GetMapping(value = "source")
-	public String source(ModelMap map, HttpSession session) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		List<StoneAnalysis> list = stoneService.findAllStone();
-		List listRoom = new ArrayList<>();
-		List listCounter = new ArrayList<>();
-		List listSource = new ArrayList<>();
-		List listArea = new ArrayList<>();
-		List listSupplier = new ArrayList<>();
-		List listQuality = new ArrayList<>();
-		for (int i = 0; i < list.size(); i++) {
-			if(list.get(i).getRoom()!=null) {
-				if(!listRoom.contains(list.get(i).getRoom()) && list.get(i).getRoom().length()>0) {
-					listRoom.add(list.get(i).getRoom());
-				}
-			}
-			if(list.get(i).getCounter()!=null) {
-				if(!listCounter.contains(list.get(i).getCounter()) && list.get(i).getCounter().length()>0) {
-					listCounter.add(list.get(i).getCounter());
-				}
-			}
-			if(list.get(i).getSource()!=null) {
-				if(!listSource.contains(list.get(i).getSource()) && list.get(i).getSource().length()>0) {
-					listSource.add(list.get(i).getSource());
-				}
-			}if(list.get(i).getArea()!=null) {
-				if(!listArea.contains(list.get(i).getArea()) && list.get(i).getArea().length()>0) {
-					listArea.add(list.get(i).getArea());
-				}
-			}
-			if(list.get(i).getSupplier()!=null) {
-				if(!listSupplier.contains(list.get(i).getSupplier()) && list.get(i).getSupplier().length()>0) {
-					listSupplier.add(list.get(i).getSupplier());
-				}
-			}
-			if(list.get(i).getSupplier()!=null) {
-				if(!listQuality.contains(list.get(i).getQuality()) && list.get(i).getQuality().length()>0) {
-					listQuality.add(list.get(i).getQuality());
-				}
-			}
-		}
-		Collections.sort(listCounter, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listRoom, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listSupplier, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listSource, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listArea, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listQuality, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		
-		map.addAttribute("listArea", listArea);
-		map.addAttribute("listSource", listSource);
-		map.addAttribute("listRoom", listRoom);
-		map.addAttribute("listSupplier", listSupplier);
-		map.addAttribute("listCounter", listCounter);
-		map.addAttribute("listQuality", listQuality);
+	public String source(ModelMap map) {
+		map.addAttribute("listArea", stoneService.findDistinctArea());
+		map.addAttribute("listSource", stoneService.findDistinctSource());
+		map.addAttribute("listRoom", stoneService.findDistinctRoom());
+		map.addAttribute("listSupplier", stoneService.findDistinctSupplier());
+		map.addAttribute("listCounter", stoneService.findDistinctCounter());
+		map.addAttribute("listQuality", stoneService.findDistinctQuality());
 		
 		return "source";
 	}
@@ -7194,7 +6427,7 @@ public class StoneAnalysisController {
 	@RequestMapping(value = "sourceFind", method = RequestMethod.POST)
 	@ResponseBody
 	public String sourceFind(HttpServletRequest request, ModelMap map, HttpSession session) throws ParseException {
-		String areaName = request.getParameter("area");
+		String area = request.getParameter("area");
 		String supplier = request.getParameter("supplier");
 		String source = request.getParameter("source");
 		String room = request.getParameter("room");
@@ -7204,16 +6437,16 @@ public class StoneAnalysisController {
 		
 		String selectType = request.getParameter("selectType");
 
-		System.out.println("地区=============" + areaName);
+		System.out.println("地区=============" + area);
 		System.out.println("类别=============" + selectType);
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Map<String, Object> params = new HashMap<String, Object>();
 		
-		if(areaName.contains("所有") || areaName.contains("地区")) {
+		if(area.contains("所有") || area.length() < 3) {
 		}else {
 			System.out.println("有地区");
-			params.put("area", areaName);
+			params.put("area", area);
 		}
 		if(room.contains("所有") || room.contains("门店")) {
 		}else {
@@ -7343,7 +6576,7 @@ public class StoneAnalysisController {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("start", start);
 		params.put("end", end);
-		if(area.contains("地区")  || area.contains("所有")) {
+		if(area.length() < 3  || area.contains("所有")) {
 		}else {
 			System.out.println("1");
 			params.put("area", area);	
@@ -7386,103 +6619,19 @@ public class StoneAnalysisController {
 	 *
 	 * com.nenu.controller
 	 * @param map
-	 * @param session
 	 * @return
-	 * @throws ParseException String
 	 * created  at 2018年10月20日
 	 */
 	@ApiOperation(value="跳转到index724页面,主石区间销售分析 ")
 	@GetMapping(value = "index724")
-	public String index724(ModelMap map, HttpSession session) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		List<StoneAnalysis> list = stoneService.findAllStone();
-		List listRoom = new ArrayList<>();
-		List listCounter = new ArrayList<>();
-		List listSource = new ArrayList<>();
-		List listArea = new ArrayList<>();
-		List listSupplier = new ArrayList<>();
-        List listProduct = new ArrayList<>();
-		for (int i = 0; i < list.size(); i++) {
-			if(list.get(i).getRoom()!=null) {
-				if(!listRoom.contains(list.get(i).getRoom()) && list.get(i).getRoom().length()>0) {
-					listRoom.add(list.get(i).getRoom());
-				}
-			}
-            if (list.get(i).getProduct() != null) {
-                if (!listProduct.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
-                    listProduct.add(list.get(i).getProduct());
-                }
-            }
-			if(list.get(i).getCounter()!=null) {
-				if(!listCounter.contains(list.get(i).getCounter()) && list.get(i).getCounter().length()>0) {
-					listCounter.add(list.get(i).getCounter());
-				}
-			}
-			if(list.get(i).getSource()!=null) {
-				if(!listSource.contains(list.get(i).getSource()) && list.get(i).getSource().length()>0) {
-					listSource.add(list.get(i).getSource());
-				}
-			}if(list.get(i).getArea()!=null) {
-				if(!listArea.contains(list.get(i).getArea()) && list.get(i).getArea().length()>0) {
-					listArea.add(list.get(i).getArea());
-				}
-			}
-			if(list.get(i).getSupplier()!=null) {
-				if(!listSupplier.contains(list.get(i).getSupplier()) && list.get(i).getSupplier().length()>0) {
-					listSupplier.add(list.get(i).getSupplier());
-				}
-			}
-		}
-		Collections.sort(listCounter, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-        Collections.sort(listProduct, new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);
-                return com.compare(o1, o2);
-            }
-        });
+	public String index724(ModelMap map) {
 
-		Collections.sort(listRoom, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listSupplier, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listSource, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listArea, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		
-		map.addAttribute("listArea", listArea);
-		map.addAttribute("listSource", listSource);
-		map.addAttribute("listRoom", listRoom);
-		map.addAttribute("listSupplier", listSupplier);
-		map.addAttribute("listCounter", listCounter);
-        map.addAttribute("listProduct", listProduct);
+		map.addAttribute("listArea", stoneService.findDistinctArea());
+		map.addAttribute("listSource", stoneService.findDistinctSource());
+		map.addAttribute("listRoom", stoneService.findDistinctRoom());
+		map.addAttribute("listSupplier", stoneService.findDistinctSupplier());
+		map.addAttribute("listCounter", stoneService.findDistinctCounter());
+        map.addAttribute("listProduct", stoneService.findDistinctProduct());
 
 		
 		return "index724";
@@ -7502,7 +6651,7 @@ public class StoneAnalysisController {
 	@ResponseBody
 	public String searchForindex724(HttpServletRequest request, ModelMap map, HttpSession session) throws ParseException {
 		
-		String areaName = request.getParameter("area");
+		String area = request.getParameter("area");
 		String supplier = request.getParameter("supplier");
 		String source = request.getParameter("source");
 		String room = request.getParameter("room");
@@ -7514,10 +6663,10 @@ public class StoneAnalysisController {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Map<String, Object> params = new HashMap<String, Object>();
 		
-		if(areaName.contains("所有") || areaName.contains("地区")) {
+		if(area.contains("所有") || area.length() < 3) {
 		}else {
 			System.out.println("有地区");
-			params.put("area", areaName);
+			params.put("area", area);
 		}
         if(product.contains("所有") || product.contains("名称")) {
         }else {
@@ -7774,103 +6923,20 @@ public class StoneAnalysisController {
 	 * 跳转到index722
 	 * 
 	 * @param map
-	 * @param session
 	 * @return
-	 * @throws ParseException String
 	 * created by lick on 2018年10月20日 下午10:36:47
 	 */
 	
 	@ApiOperation(value="跳转到index722页面,款式销售排名分析")
 	@GetMapping(value = "index722")
-	public String index722(ModelMap map, HttpSession session) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		List<StoneAnalysis> list = stoneService.findAllStone();
-		List listRoom = new ArrayList<>();
-		List listCounter = new ArrayList<>();
-		List listPriceNo = new ArrayList<>();
-		List listArea = new ArrayList<>();
-		List listSupplier = new ArrayList<>();
-		List listProduct = new ArrayList();
-		for (int i = 0; i < list.size(); i++) {
-			if(list.get(i).getRoom()!=null) {
-				if(!listRoom.contains(list.get(i).getRoom()) && list.get(i).getRoom().length()>0) {
-					listRoom.add(list.get(i).getRoom());
-				}
-			}
-			if(list.get(i).getCounter()!=null) {
-				if(!listCounter.contains(list.get(i).getCounter()) && list.get(i).getCounter().length()>0) {
-					listCounter.add(list.get(i).getCounter());
-				}
-			}
-			if(list.get(i).getPriceNo()!=null) {
-				if(!listPriceNo.contains(list.get(i).getPriceNo()) && list.get(i).getPriceNo().length()>0) {
-					listPriceNo.add(list.get(i).getPriceNo());
-				}
-			}if(list.get(i).getArea()!=null) {
-				if(!listArea.contains(list.get(i).getArea()) && list.get(i).getArea().length()>0) {
-					listArea.add(list.get(i).getArea());
-				}
-			}
-			if(list.get(i).getSupplier()!=null) {
-				if(!listSupplier.contains(list.get(i).getSupplier()) && list.get(i).getSupplier().length()>0) {
-					listSupplier.add(list.get(i).getSupplier());
-				}
-			}
-            if (list.get(i).getProduct() != null) {
-                if (!listProduct.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
-                    listProduct.add(list.get(i).getProduct());
-                }
-            }
-		}
-		Collections.sort(listCounter, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listRoom, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listSupplier, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listPriceNo, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-        Collections.sort(listProduct, new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);
-                return com.compare(o1, o2);
-            }
-        });
-		Collections.sort(listArea, new Comparator<String>() {
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		
-		map.addAttribute("listArea", listArea);
-		map.addAttribute("listPriceNo", listPriceNo);
-		map.addAttribute("listRoom", listRoom);
-		map.addAttribute("listSupplier", listSupplier);
-		map.addAttribute("listCounter", listCounter);
-        map.addAttribute("listProduct", listProduct);
+	public String index722(ModelMap map){
+
+		map.addAttribute("listArea", stoneService.findDistinctArea());
+		map.addAttribute("listPriceNo", stoneService.findDistinctPriceNo());
+		map.addAttribute("listRoom", stoneService.findDistinctRoom());
+		map.addAttribute("listSupplier", stoneService.findDistinctSupplier());
+		map.addAttribute("listCounter", stoneService.findDistinctCounter());
+        map.addAttribute("listProduct", stoneService.findDistinctProduct());
 
 		
 		return "index722";
@@ -7879,102 +6945,19 @@ public class StoneAnalysisController {
 	 * 跳转到index723
 	 * 
 	 * @param map
-	 * @param session
 	 * @return
-	 * @throws ParseException String
 	 * created by lick on 2018年10月20日 下午10:36:47
 	 */
 	@ApiOperation(value="跳转到index723页面,系列销售排名分析")
 	@GetMapping(value = "index723")
-	public String index723(ModelMap map, HttpSession session) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		List<StoneAnalysis> list = stoneService.findAllStone();
-		List listRoom = new ArrayList<>();
-		List listCounter = new ArrayList<>();
-		List listSeries = new ArrayList<>();
-		List listArea = new ArrayList<>();
-		List listSupplier = new ArrayList<>();
-        List listProduct = new ArrayList<>();
-		for (int i = 0; i < list.size(); i++) {
-			if(list.get(i).getRoom()!=null) {
-				if(!listRoom.contains(list.get(i).getRoom()) && list.get(i).getRoom().length()>0) {
-					listRoom.add(list.get(i).getRoom());
-				}
-			}
-			if(list.get(i).getCounter()!=null) {
-				if(!listCounter.contains(list.get(i).getCounter()) && list.get(i).getCounter().length()>0) {
-					listCounter.add(list.get(i).getCounter());
-				}
-			}
-			if(list.get(i).getSeries()!=null) {
-				if(!listSeries.contains(list.get(i).getSeries()) && list.get(i).getSeries().length()>0) {
-                    listSeries.add(list.get(i).getSeries());
-				}
-			}if(list.get(i).getArea()!=null) {
-				if(!listArea.contains(list.get(i).getArea()) && list.get(i).getArea().length()>0) {
-					listArea.add(list.get(i).getArea());
-				}
-			}
-			if(list.get(i).getSupplier()!=null) {
-				if(!listSupplier.contains(list.get(i).getSupplier()) && list.get(i).getSupplier().length()>0) {
-					listSupplier.add(list.get(i).getSupplier());
-				}
-			}
-            if (list.get(i).getProduct() != null) {
-                if (!listProduct.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
-                    listProduct.add(list.get(i).getProduct());
-                }
-            }
-		}
-		Collections.sort(listCounter, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-        Collections.sort(listProduct, new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);
-                return com.compare(o1, o2);
-            }
-        });
-		Collections.sort(listRoom, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listSupplier, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listSeries, new Comparator<String>() {
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listArea, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		
-		map.addAttribute("listArea", listArea);
-		map.addAttribute("listSeries", listSeries);
-		map.addAttribute("listRoom", listRoom);
-		map.addAttribute("listSupplier", listSupplier);
-		map.addAttribute("listCounter", listCounter);
-        map.addAttribute("listProduct", listProduct);
+	public String index723(ModelMap map){
+
+		map.addAttribute("listArea", stoneService.findDistinctArea());
+		map.addAttribute("listSeries", stoneService.findDistinctSeries());
+		map.addAttribute("listRoom", stoneService.findDistinctRoom());
+		map.addAttribute("listSupplier", stoneService.findDistinctSupplier());
+		map.addAttribute("listCounter", stoneService.findDistinctCounter());
+        map.addAttribute("listProduct", stoneService.findDistinctProduct());
 
 		
 		return "index723";
@@ -7983,102 +6966,20 @@ public class StoneAnalysisController {
 	 * 跳转到index726  圈口
 	 * 
 	 * @param map
-	 * @param session
 	 * @return
-	 * @throws ParseException String
 	 * created by lick on 2018年10月20日 下午10:36:47
 	 */
 	@ApiOperation(value="跳转到index726页面,圈口分析")
 	@GetMapping(value = "index726")
-	public String index726(ModelMap map, HttpSession session) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		List<StoneAnalysis> list = stoneService.findAllStone();
-		List listRoom = new ArrayList<>();
-		List listCounter = new ArrayList<>();
-		List listCircle = new ArrayList<>();
-		List listArea = new ArrayList<>();
-		List listSupplier = new ArrayList<>();
-        List listProduct = new ArrayList<>();
-		for (int i = 0; i < list.size(); i++) {
-			if(list.get(i).getRoom()!=null) {
-				if(!listRoom.contains(list.get(i).getRoom()) && list.get(i).getRoom().length()>0) {
-					listRoom.add(list.get(i).getRoom());
-				}
-			}
-            if (list.get(i).getProduct() != null) {
-                if (!listProduct.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
-                    listProduct.add(list.get(i).getProduct());
-                }
-            }
-			if(list.get(i).getCounter()!=null) {
-				if(!listCounter.contains(list.get(i).getCounter()) && list.get(i).getCounter().length()>0) {
-					listCounter.add(list.get(i).getCounter());
-				}
-			}
-			if(list.get(i).getCircle()!=null) {
-				if(!listCircle.contains(list.get(i).getCircle()) && list.get(i).getCircle().length()>0) {
-					listCircle.add(list.get(i).getCircle());
-				}
-			}if(list.get(i).getArea()!=null) {
-				if(!listArea.contains(list.get(i).getArea()) && list.get(i).getArea().length()>0) {
-					listArea.add(list.get(i).getArea());
-				}
-			}
-			if(list.get(i).getSupplier()!=null) {
-				if(!listSupplier.contains(list.get(i).getSupplier()) && list.get(i).getSupplier().length()>0) {
-					listSupplier.add(list.get(i).getSupplier());
-				}
-			}
-		}
-		Collections.sort(listCounter, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-        Collections.sort(listProduct, new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);
-                return com.compare(o1, o2);
-            }
-        });
-		Collections.sort(listRoom, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listSupplier, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listCircle, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listArea, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		
-		map.addAttribute("listArea", listArea);
-		map.addAttribute("listCircle", listCircle);
-		map.addAttribute("listRoom", listRoom);
-		map.addAttribute("listSupplier", listSupplier);
-		map.addAttribute("listCounter", listCounter);
-        map.addAttribute("listProduct", listProduct);
+	public String index726(ModelMap map) {
+
+
+		map.addAttribute("listArea", stoneService.findDistinctArea());
+		map.addAttribute("listCircle", stoneService.findDistinctCircle());
+		map.addAttribute("listRoom", stoneService.findDistinctRoom());
+		map.addAttribute("listSupplier", stoneService.findDistinctSupplier());
+		map.addAttribute("listCounter", stoneService.findDistinctCounter());
+        map.addAttribute("listProduct", stoneService.findDistinctProduct());
 
 		
 		return "index726";
@@ -8088,16 +6989,14 @@ public class StoneAnalysisController {
 	 * 
 	 * @param request
 	 * @param map
-	 * @param session
 	 * @return
-	 * @throws ParseException String
 	 * created by lick on 2018年10月20日 下午10:56:35
 	 */
 	@ApiOperation(value="index722页面,款式销售排名分析   查询")
 	@RequestMapping(value = "searchForindex722", method = RequestMethod.POST)
 	@ResponseBody
-	public String searchForindex722(HttpServletRequest request, ModelMap map, HttpSession session) throws ParseException {
-		String areaName = request.getParameter("area");
+	public String searchForindex722(HttpServletRequest request, ModelMap map, HttpSession session) {
+		String area = request.getParameter("area");
 		String supplier = request.getParameter("supplier");
 		String priceNo = request.getParameter("priceNo");
 		String price = request.getParameter("price");
@@ -8111,10 +7010,10 @@ public class StoneAnalysisController {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Map<String, Object> params = new HashMap<String, Object>();
 
-            if(areaName.contains("所有") || areaName.contains("地区")) {
+            if(area.contains("所有") || area.length()< 3) {
             }else {
                 System.out.println("有地区");
-                params.put("area", areaName);
+                params.put("area", area);
             }
             if(product.contains("所有") || product.contains("名称")) {
             }else {
@@ -8213,10 +7112,10 @@ public class StoneAnalysisController {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Map<String, Object> params = new HashMap<String, Object>();
 
-            if(areaName.contains("所有") || areaName.contains("地区")) {
+            if(area.contains("所有") || area.length() < 3) {
             }else {
                 System.out.println("有地区");
-                params.put("area", areaName);
+                params.put("area", area);
             }
             if(product.contains("所有") || product.contains("名称")) {
             }else {
@@ -8332,7 +7231,7 @@ public class StoneAnalysisController {
 	@RequestMapping(value = "searchForindex723", method = RequestMethod.POST)
 	@ResponseBody
 	public String searchForindex723(HttpServletRequest request, ModelMap map, HttpSession session) throws ParseException {
-		String areaName = request.getParameter("area");
+		String area = request.getParameter("area");
 		String supplier = request.getParameter("supplier");
 		String series = request.getParameter("series");
 		String room = request.getParameter("room");
@@ -8341,16 +7240,16 @@ public class StoneAnalysisController {
 		
 		String selectType = request.getParameter("selectType");
 
-		System.out.println("地区=============" + areaName);
+		System.out.println("地区=============" + area);
 		System.out.println("类别=============" + selectType);
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Map<String, Object> params = new HashMap<String, Object>();
 		
-		if(areaName.contains("所有") || areaName.contains("地区")) {
+		if(area.contains("所有") || area.length() < 3) {
 		}else {
 			System.out.println("有地区");
-			params.put("area", areaName);
+			params.put("area", area);
 		}
         if(product.contains("所有") || product.contains("名称")) {
         }else {
@@ -8460,7 +7359,7 @@ public class StoneAnalysisController {
 	@RequestMapping(value = "searchForindex726", method = RequestMethod.POST)
 	@ResponseBody
 	public String searchForindex726(HttpServletRequest request, ModelMap map, HttpSession session) throws ParseException {
-		String areaName = request.getParameter("area");
+		String area = request.getParameter("area");
 		String supplier = request.getParameter("supplier");
 		String circle = request.getParameter("circle");
 		String room = request.getParameter("room");
@@ -8469,16 +7368,16 @@ public class StoneAnalysisController {
 		
 		String selectType = request.getParameter("selectType");
 
-		System.out.println("地区=============" + areaName);
+		System.out.println("地区=============" + area);
 		System.out.println("类别=============" + selectType);
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Map<String, Object> params = new HashMap<String, Object>();
 		
-		if(areaName.contains("所有") || areaName.contains("地区")) {
+		if(area.contains("所有") || area.length() < 3) {
 		}else {
 			System.out.println("有地区");
-			params.put("area", areaName);
+			params.put("area", area);
 		}
         if(product.contains("所有") || product.contains("名称")) {
         }else {
@@ -8602,12 +7501,12 @@ public class StoneAnalysisController {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("start", start);
 		params.put("end", end);
-		if(area.contains("地区")  || area.contains("所有")) {
+		if(area.length() < 3  || area.contains("所有")) {
 		}else {
 			System.out.println("1");
 			params.put("area", area);	
 		}
-        if(product.contains("地区")  || product.contains("所有")) {
+        if(product.contains("名称")  || product.contains("所有")) {
         }else {
             System.out.println("1");
             params.put("product", product);
@@ -8666,7 +7565,7 @@ public class StoneAnalysisController {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("start", start);
 		params.put("end", end);
-		if(product.contains("地区")  || product.contains("所有")) {
+		if(product.length() < 3  || product.contains("所有")) {
 		}else {
 			System.out.println("1");
 			params.put("product", product);
@@ -8730,12 +7629,12 @@ public class StoneAnalysisController {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("start", start);
 		params.put("end", end);
-		if(area.contains("地区")  || area.contains("所有")) {
+		if(area.length() < 3  || area.contains("所有")) {
 		}else {
 			System.out.println("1");
 			params.put("area", area);	
 		}
-        if(product.contains("地区")  || product.contains("所有")) {
+        if(product.contains("名称")  || product.contains("所有")) {
         }else {
             System.out.println("1");
             params.put("product", product);
@@ -8854,12 +7753,12 @@ public class StoneAnalysisController {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("start", start);
 		params.put("end", end);
-		if(area.contains("地区")  || area.contains("所有")) {
+		if(area.length() < 3 || area.contains("所有")) {
 		}else {
 			System.out.println("1");
 			params.put("area", area);	
 		}
-        if(product.contains("地区")  || product.contains("所有")) {
+        if(product.contains("名称")  || product.contains("所有")) {
         }else {
             System.out.println("1");
             params.put("product", product);

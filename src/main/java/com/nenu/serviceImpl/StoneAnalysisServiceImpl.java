@@ -2289,4 +2289,112 @@ public class StoneAnalysisServiceImpl implements StoneAnalysisService {
 		return 0;
 	}
 
+	@Override
+	public List<StoneAnalysis> findListPriceSumByProduct(Map<String, Object> params) {
+		return stoneDao.findListPriceSumByProduct(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findListPriceSumByArea(Map<String, Object> params) {
+		return stoneDao.findListPriceSumByArea(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findListPriceSumByCounter(Map<String, Object> params) {
+		return stoneDao.findListPriceSumByCounter(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findListPriceSumByRoom(Map<String, Object> params) {
+		return stoneDao.findListPriceSumByRoom(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findListPriceSumBySupplier(Map<String, Object> params) {
+		return stoneDao.findListPriceSumBySupplier(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findListPriceSumBySource(Map<String, Object> params) {
+		return stoneDao.findListPriceSumBySource(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findListPriceSumByPriceNo(Map<String, Object> params) {
+		return stoneDao.findListPriceSumByPriceNo(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findListPriceSumBySeries(Map<String, Object> params) {
+		return stoneDao.findListPriceSumBySeries(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findListPriceSumByDate(Map<String, Object> params) {
+		return stoneDao.findListPriceSumByDate(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findListPriceSumByDateAndProduct(Map<String, Object> params) {
+		return stoneDao.findListPriceSumByDateAndProduct(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findListPriceSumByDateAndArea(Map<String, Object> params) {
+		return stoneDao.findListPriceSumByDateAndArea(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findListPriceSumByDateAndCounter(Map<String, Object> params) {
+		return stoneDao.findListPriceSumByDateAndCounter(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findDistinctArea() {
+		return stoneDao.findDistinctArea();
+	}
+
+	@Override
+	public List<StoneAnalysis> findDistinctProduct() {
+		return stoneDao.findDistinctProduct();
+	}
+
+	@Override
+	public List<StoneAnalysis> findDistinctRoom() {
+		return stoneDao.findDistinctRoom();
+	}
+
+	@Override
+	public List<StoneAnalysis> findDistinctSupplier() {
+		return stoneDao.findDistinctSupplier();
+	}
+
+	@Override
+	public List<StoneAnalysis> findDistinctPriceNo() {
+		return stoneDao.findDistinctPriceNo();
+	}
+
+	@Override
+	public List<StoneAnalysis> findDistinctSeries() {
+		return stoneDao.findDistinctSeries();
+	}
+
+	@Override
+	public List<StoneAnalysis> findDistinctQuality() {
+		return stoneDao.findDistinctQuality();
+	}
+
+	@Override
+	public List<StoneAnalysis> findDistinctCounter() {
+		return stoneDao.findDistinctCounter();
+	}
+	@Override
+	public List<StoneAnalysis> findDistinctCircle() {
+		return stoneDao.findDistinctCircle();
+	}
+	@Override
+	public List<StoneAnalysis> findDistinctSource() {
+		return stoneDao.findDistinctSource();
+	}
+
 }

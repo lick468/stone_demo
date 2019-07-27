@@ -165,6 +165,7 @@ public class CController {
 		List<FinpordCopy> finpordCopyList_right = new ArrayList<>();
 		List<FinpordCopy> finpordCopyList_wrong = new ArrayList<>();
 
+
 		List<Stoninproc>   stoninprocList = stoninprocService.findAllStoninproc();
 		List stoninprocMainList = new ArrayList<>();
 		for (int i = 0; i < stoninprocList.size(); i++) {
@@ -175,14 +176,15 @@ public class CController {
 		
 		int flag=0;
 		String res = "";
+        List<Long> list = new ArrayList<>();
 		if(finpordList!=null) {
 				for(int i=0;i<finpordList.size();i++) {
 					if(finpordList.get(i).getFinpord_mainstono().matches(".*[a-zA-Z].*") && finpordList.get(i).getFinpord_mainstowgt()!=0) {
 							Stoninproc stoninp  = stoninprocService.findStoninprocByStoneNo(finpordList.get(i).getFinpord_mainstono());
 							if(stoninp!=null) {
 								
-								System.out.println("1:"+finpordList.get(i).getFinpord_mainstono());
-								System.out.println("2:"+stoninp.getStoninproc_batch() +"||" +stoninp.getStoninproc_procordNo());
+//								System.out.println("1:"+finpordList.get(i).getFinpord_mainstono());
+//								System.out.println("2:"+stoninp.getStoninproc_batch() +"||" +stoninp.getStoninproc_procordNo());
 								//1.生成入料差
 								Fediff fediff = new Fediff();
 								fediff.setFediff_time(new Date());//时间
@@ -361,58 +363,63 @@ public class CController {
 						}
 					}
 			}
-				int j2,addFlag;
-				for (int j = 0; j < finpordList.size(); j++) {
-					addFlag=0;
-					for (j2 = 0; j2 < stoninprocMainList.size(); j2++) {
-						if(finpordList.get(j).getFinpord_mainstono().contains(stoninprocMainList.get(j2).toString())) {
-							finpordCopyList_right.add(finpordList.get(j));
-							addFlag=1;
-						}
+			int j2,addFlag;
+			for (int j = 0; j < finpordList.size(); j++) {
+				addFlag=0;
+				for (j2 = 0; j2 < stoninprocMainList.size(); j2++) {
+					if(finpordList.get(j).getFinpord_mainstono().contains(stoninprocMainList.get(j2).toString())) {
+						finpordCopyList_right.add(finpordList.get(j));
+						addFlag=1;
 					}
-					if(addFlag==0) {
-						finpordCopyList_wrong.add(finpordList.get(j));
-					}
-					
 				}
-				System.out.println(finpordCopyList_right);
-				System.out.println(finpordCopyList_wrong);
-				
-				//1.清空临时表
-				finpordService.clearCopy();//清空临时表
-				//2.临时表重新插入正确的记录
-				if(finpordCopyList_right.size() > 0) {
-					finpordService.batchInsertFinpordCopy(finpordCopyList_right);
-					//3.从临时表拷贝到成品表
-					flag = 	finpordService.copyToFinpord();//从临时表拷贝到成品表
+				if(addFlag==0) {
+					finpordCopyList_wrong.add(finpordList.get(j));
 				}
-				//4.清空临时表
-				finpordService.clearCopy();//清空临时表
-				//5.临时表重新插入错误的记录
-				if(finpordCopyList_wrong.size() > 0) {
-					finpordService.batchInsertFinpordCopy(finpordCopyList_wrong);
-				}
-	
+			}
+//			System.out.println(finpordCopyList_right);
+//			System.out.println(finpordCopyList_wrong);
+
+			//1.清空临时表
+			finpordService.clearCopy();//清空临时表
+			//2.临时表重新插入正确的记录
+			if(finpordCopyList_right.size() > 0) {
+				finpordService.batchInsertFinpordCopy(finpordCopyList_right);
+				//3.从临时表拷贝到成品表
+				flag = 	finpordService.copyToFinpord();//从临时表拷贝到成品表
+			}
+			//4.清空临时表
+			finpordService.clearCopy();//清空临时表
+			//5.临时表重新插入错误的记录
+			if(finpordCopyList_wrong.size() > 0) {
+				finpordService.batchInsertFinpordCopy(finpordCopyList_wrong);
+				for (int i=0;i<finpordCopyList_wrong.size();i++) {
+				    if(finpordCopyList_wrong.get(i).getFinpord_procordNo() != 0) {
+				        list.add(finpordCopyList_wrong.get(i).getFinpord_procordNo());
+                    }
+                }
+			}
 		}
 		
 		System.out.println("flag======"+flag);
+		// flag  表示成功提交的条数
+
 		if(flag==0) {
 			if(finpordCopyList_wrong.size()>0) {
 				if(finpordCopyList_right.size()>0) {
-					res="提交入库成功,有部分主石编订单表中没有，请查看";
+					res="提交入库成功,下列单号中的主石编订单表中没有，请查看&"+list;
 				}else {
-					res="提交入库失败,有部分主石编订单表中没有，请查看";
+					res="提交入库失败,下列单号中的主石编订单表中没有，请查看&"+list;
 				}
 				
 			}else {
-				res="提交入库失败";
+				res="提交入库失败&";
 			}
 			
 		}else if(flag>0) {
 			if(finpordCopyList_wrong.size()>0) {
-				res="提交入库成功,有部分主石编订单表中没有，请查看";
+				res="提交入库成功,下列单号中的主石编订单表中没有，请查看&"+list;
 			}else {
-				res="提交入库成功,有入料差请到入料差管理查看";
+				res="提交入库成功,有入料差请到入料差管理查看&";
 			}
 		}
 	return res;	

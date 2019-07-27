@@ -1699,7 +1699,30 @@
 		<div>
 			<button class="btn_submit " onclick="CloseDiv_mydiv_fediff('mydiv_fediff')" style="width:100%;">退出</button>
 		</div>
-</div>	
+</div>
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="closeModel()">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">下列单号中的主石编订单表中没有</h4>
+			</div>
+			<div class="modal-body" style="height: 400px;overflow-y: auto">
+				<table class="table" id="repeatStoneNo">
+					<thead>
+					<tr>
+						<th>单号</th>
+					</tr>
+					</thead>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn" data-dismiss="modal" onclick="closeModel()">关闭</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
 <div id="mes" th:text="${message}" class="hide_column">  </div>
 <script type="text/javascript" th:inline="javascript">
 //统计在线人数
@@ -2727,11 +2750,23 @@ function downloadExcelFinpord() {
          async: false,//同步  
 		 dateType:"json",
 		 success:function(result) {
-			 alert(result);
+             var res = result.split("&");
+             alert(res[0]);
+             if(res[1].length > 3) {
+                 $('#myModal').modal('show')
+                 var data = res[1].substring(1, res[1].length - 1).split(", ");
+                 for(var i=0;i<data.length;i++) {
+                     $("#repeatStoneNo").append("<tr><td>"+ data[i]+"</td></tr>");
+                 }
+                 //location.reload();
+             }
 		 }
 	 });
-		 location.reload();
+		 //location.reload();
  }
+function closeModel() {
+    location.reload();
+}
  
  
  function CloseDiv(div){

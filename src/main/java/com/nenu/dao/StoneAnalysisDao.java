@@ -148,5 +148,30 @@ public interface StoneAnalysisDao {
 	int downloadGraphExcelForIndex814(String conGraph, HttpServletResponse response);
 	int downloadGraphExcelForIndex5(String conGraph, HttpServletResponse response);
 
+	List<StoneAnalysis> findListPriceSumByProduct(Map<String, Object> params);//
+	List<StoneAnalysis> findListPriceSumByArea(Map<String, Object> params);//
+	List<StoneAnalysis> findListPriceSumByCounter(Map<String, Object> params);//
+	List<StoneAnalysis> findListPriceSumByRoom(Map<String, Object> params);//
+	List<StoneAnalysis> findListPriceSumBySupplier(Map<String, Object> params);//
+	List<StoneAnalysis> findListPriceSumBySource(Map<String, Object> params);//
+	List<StoneAnalysis> findListPriceSumByPriceNo(Map<String, Object> params);//
+	List<StoneAnalysis> findListPriceSumBySeries(Map<String, Object> params);//
+	List<StoneAnalysis> findListPriceSumByDate(Map<String, Object> params);//
+	List<StoneAnalysis> findListPriceSumByDateAndProduct(Map<String, Object> params);//
+	List<StoneAnalysis> findListPriceSumByDateAndArea(Map<String, Object> params);//
+	List<StoneAnalysis> findListPriceSumByDateAndCounter(Map<String, Object> params);//
+
+    List<StoneAnalysis> findDistinctArea();//
+    List<StoneAnalysis> findDistinctProduct();//
+    List<StoneAnalysis> findDistinctRoom();//
+    List<StoneAnalysis> findDistinctSupplier();//
+    List<StoneAnalysis> findDistinctPriceNo();//
+    List<StoneAnalysis> findDistinctSeries();//
+    List<StoneAnalysis> findDistinctQuality();//
+    List<StoneAnalysis> findDistinctCounter();//
+    List<StoneAnalysis> findDistinctSource();//
+    List<StoneAnalysis> findDistinctCircle();//
+
+
 
 }

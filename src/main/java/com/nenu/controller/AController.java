@@ -1,11 +1,10 @@
 package com.nenu.controller;
 
-import java.text.Collator;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -174,6 +173,7 @@ public class AController {
 		
 		int flag=0;
 		String res = "";
+		List<Long> list = new ArrayList<>();
 		if(finpordList!=null) {
 				for(int i=0;i<finpordList.size();i++) {
 					if(finpordList.get(i).getFinpord_mainstono().matches(".*[a-zA-Z].*") && finpordList.get(i).getFinpord_mainstowgt()!=0) {
@@ -398,23 +398,24 @@ public class AController {
 		if(flag==0) {
 			if(finpordCopyList_wrong.size()>0) {
 				if(finpordCopyList_right.size()>0) {
-					res="提交入库成功,有部分主石编订单表中没有，请查看";
+					res="提交入库成功,下列单号中的主石编订单表中没有，请查看&"+list;
 				}else {
-					res="提交入库失败,有部分主石编订单表中没有，请查看";
+					res="提交入库失败,下列单号中的主石编订单表中没有，请查看&"+list;
 				}
+
 			}else {
-				res="提交入库失败";
+				res="提交入库失败&";
 			}
-			
+
 		}else if(flag>0) {
 			if(finpordCopyList_wrong.size()>0) {
-				res="提交入库成功,有部分主石编订单表中没有，请查看";
+				res="提交入库成功,下列单号中的主石编订单表中没有，请查看&"+list;
 			}else {
-				res="提交入库成功,有入料差请到入料差管理查看";
+				res="提交入库成功,有入料差请到入料差管理查看&";
 			}
 		}
-	return res;	
-}
+		return res;
+	}
 	
 	/**
 	 * 导入excel数据进入临时表

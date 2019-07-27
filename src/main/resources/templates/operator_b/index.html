@@ -1933,29 +1933,29 @@ text-align: center;
 			</form>
 </div>
 <div id="mes" th:text="${message}" class="hide_column">  </div>
-    <!-- 模态框（Modal） -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">重复的石编</h4>
-                </div>
-                <div class="modal-body" style="height: 400px;overflow-y: auto">
-                    <table class="table" id="repeatStoneNo">
-                        <thead>
-                        <tr>
-                            <th>石编</th>
-                        </tr>
-                        </thead>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal -->
-    </div>
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">重复的石编</h4>
+			</div>
+			<div class="modal-body" style="height: 400px;overflow-y: auto">
+				<table class="table" id="repeatStoneNo">
+					<thead>
+					<tr>
+						<th>石编</th>
+					</tr>
+					</thead>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
 <div id="show" style="display:none;background-color: red;width: 100px;height: 100px;">  </div>	
 	<script type="text/javascript" th:inline="javascript">
 	var result = [[${result}]];
