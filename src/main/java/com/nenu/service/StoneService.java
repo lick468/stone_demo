@@ -78,4 +78,14 @@ public interface StoneService {
 	List<Stone> findStoneByTableInfo(Map<String, Object> params);
 	List<StoneCopy> findStoneCopyByTableInfo(Map<String, Object> params);
 
+	List<StoneCopy> findMainStoneInfoCopy();
+	List<StoneCopy> findSubStoneInfoCopy();
+
+    List<Stone> findDistinctMainStoneNo();
+    List<Stone> findDistinctSubStoneNo();
+    List<Stone> findDistinctLoosdofty();
+    List<Stone> findDistinctPurchdate();
+    List<Stone> findMainStoneInfo();
+    List<Stone> findSubStoneInfo();
+
 }

@@ -160,7 +160,7 @@ th, td {
 				<select id="listcounter" class="form-control" onchange=" return counterchange();" name="stone_CounterName" style="background-color: green; color: black;">
 					<option disabled="disabled" selected="selected"  value="柜台">柜台</option>
 					<option value="所有">所有</option>
-					<option th:each="n : ${listcounter}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
+					<option th:each="n : ${listcounter}" th:value="${n.counter}" th:text="${n.counter}" style="background-color: lightgreen; color: black; text-align: left;"></option>
 				</select>
 				<br>
 				<div>

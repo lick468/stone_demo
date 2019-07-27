@@ -59,22 +59,6 @@ public class DController {
 	@ApiOperation(value="跳转到index页面",notes="跳转到主页")
 	@GetMapping(value = "/index")
 	public String index(ModelMap map) {
-		
-		map.addAttribute("procordList",procordService.findAllProcord());
-		List<Stone> list = stoneService.findAllStoneForPath();
-		List mainList = new ArrayList<>();
-		List subList = new ArrayList<>();
-		for (int i = 0; i < list.size(); i++) {
-			if(list.get(i).getStone_mainStoneNo()!=null && !mainList.contains(list.get(i).getStone_mainStoneNo())) {
-				mainList.add(list.get(i).getStone_mainStoneNo());
-			}
-			if(list.get(i).getStone_substoNo()!=null && !subList.contains(list.get(i).getStone_substoNo())  ) {
-				subList.add(list.get(i).getStone_substoNo());
-			}
-		}
-		map.addAttribute("mainList", mainList);
-		map.addAttribute("subList", subList);
-		
 		return "operator_d/index";
 	}
 	

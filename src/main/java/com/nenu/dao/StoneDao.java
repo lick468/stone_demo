@@ -64,4 +64,12 @@ public interface StoneDao {
 	
 	List<Stone> findStoneByTableInfo(Map<String, Object> params);
 
+	List<Stone> findDistinctMainStoneNo();
+    List<Stone> findDistinctSubStoneNo();
+    List<Stone> findDistinctLoosdofty();
+    List<Stone> findDistinctPurchdate();
+    List<Stone> findMainStoneInfo();
+    List<Stone> findSubStoneInfo();
+
+
 }

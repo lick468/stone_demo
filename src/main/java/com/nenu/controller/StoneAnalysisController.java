@@ -67,9 +67,7 @@ public class StoneAnalysisController {
 	 * index 711 获取供应商
 	 * 
 	 * @param map
-	 * @param session
 	 * @return
-	 * @throws ParseException
 	 *             String created on 2018年7月1日 下午7:03:29
 	 */
 	@ApiOperation(value="跳转index页面",notes="显示index页面")
@@ -92,13 +90,12 @@ public class StoneAnalysisController {
 	 * @param map
 	 * @param session
 	 * @return
-	 * @throws ParseException
 	 *             String created at 2018年6月27日
 	 */
 	@ApiOperation(value="供应商查询",notes="index页面 供应商查询")
 	@RequestMapping(value = "supplierFind", method = RequestMethod.POST)
 	@ResponseBody
-	public String supplierFind(HttpServletRequest request, ModelMap map, HttpSession session) throws ParseException {
+	public String supplierFind(HttpServletRequest request, ModelMap map, HttpSession session)  {
 		String supplierName = request.getParameter("supplier");
 		String productName = request.getParameter("product");
 		String counterName = request.getParameter("counter");
@@ -249,14 +246,12 @@ public class StoneAnalysisController {
 	 * main跳转到productnum页面 获取供应商
 	 * 
 	 * @param map
-	 * @param session
 	 * @return
-	 * @throws ParseException
 	 *             String created on 2018年7月1日 下午7:26:57
 	 */
 	@ApiOperation(value="跳转到productnum页面",notes="跳转到productnum页面")
 	@GetMapping(value = "productnum")
-	public String productnum(ModelMap map, HttpSession session) throws ParseException {
+	public String productnum(ModelMap map)  {
 
 		map.addAttribute("stoneList", stoneService.findAllStone());
 
@@ -685,9 +680,7 @@ public class StoneAnalysisController {
 	 * 跳转到7.3.1页面  系列商品走势
 	 * 
 	 * @param map
-	 * @param session
 	 * @return
-	 * @throws ParseException
 	 *             String created on 2018年7月1日 下午7:41:02
 	 */
 	@ApiOperation(value="跳转到7.3.1页面  ",notes="系列商品走势页面  ")
@@ -1373,9 +1366,7 @@ public class StoneAnalysisController {
 	 * index6 S743 销售结构分析 获取柜台
 	 * 
 	 * @param map
-	 * @param session
 	 * @return
-	 * @throws ParseException
 	 *             String created on 2018年7月1日 下午7:55:11
 	 */
 	@ApiOperation(value="跳转到s743页面",notes=" 销售结构分析")
@@ -2129,88 +2120,28 @@ public class StoneAnalysisController {
 	/**
 	 * 跳转到productsum页面 供应商品群分析
 	 * @param map
-	 * @param session
 	 * @return
-	 * @throws ParseException
 	 */
 	@ApiOperation(value="productsum页面,供应商品群分析")
 	@GetMapping(value = "productsum")
-	public String productsum(ModelMap map, HttpSession session) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		map.addAttribute("stoneList", stoneService.findAllStone());
-		List<StoneAnalysis> list = stoneService.findAllStone();
-		List listSupplier = new ArrayList<>();
-
-		for (int i = 0; i < list.size(); i++) {
-			String supplier = list.get(i).getSupplier();
-			String product = list.get(i).getProduct();
-			int index0 = listSupplier.indexOf(supplier);
-			if (index0 == -1) {
-				listSupplier.add(supplier);
-			}
-		}
-		map.addAttribute("listsupplier", listSupplier);
-
-		List listdate = (List) session.getAttribute("listdate");
-		List listnum = (List) session.getAttribute("listnum");
-		String supplierName = (String) session.getAttribute("supplierName");
-		List<StoneAnalysis> supplierList = (List<StoneAnalysis>) session.getAttribute("list");
-		List productList = (List) session.getAttribute("product");
-		List listProduct = (List) session.getAttribute("listProduct");
-		List listProductCount = (List) session.getAttribute("listProductCount");
-
-		map.addAttribute("listdate", listdate);
-		map.addAttribute("productList", productList);
-		map.addAttribute("supplierList", supplierList);
-		map.addAttribute("supplierName", supplierName);
-		map.addAttribute("listProductCount", listProductCount);
-		map.addAttribute("listProduct", listProduct);
+	public String productsum(ModelMap map) {
+		map.addAttribute("listsupplier", stoneService.findDistinctSupplier());
+		map.addAttribute("listCounter", stoneService.findDistinctCounter());
+		map.addAttribute("listQuality", stoneService.findDistinctQuality());
 		return "productsum";
 	}
 
 	/**
 	 * 跳转到index9页面 销售结构分析
 	 * @param map
-	 * @param session
 	 * @return
-	 * @throws ParseException
 	 */
 	@ApiOperation(value="index9页面,销售结构分析")
 	@GetMapping(value = "s752")
-	public String s752(ModelMap map, HttpSession session) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		map.addAttribute("stoneList", stoneService.findAllStone());
-		List<StoneAnalysis> list = stoneService.findAllStone();
-		List listCounter = new ArrayList<>();
-		List listProduct = new ArrayList<>();
-		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i).getCounter() != null) {
-				if (!listCounter.contains(list.get(i).getCounter()) && list.get(i).getCounter().length() > 0) {
-					listCounter.add(list.get(i).getCounter());
-				}
-			}
-			if (list.get(i).getProduct() != null) {
-				if (!listProduct.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
-					listProduct.add(list.get(i).getProduct());
-				}
-			}
-		}
-		Collections.sort(listCounter, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		Collections.sort(listProduct, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		map.addAttribute("listCounter", listCounter);
-		map.addAttribute("listProduct", listProduct);
+	public String s752(ModelMap map) {
+
+		map.addAttribute("listCounter", stoneService.findDistinctCounter());
+		map.addAttribute("listProduct", stoneService.findDistinctProduct());
 		
 		return "index9";
 	}

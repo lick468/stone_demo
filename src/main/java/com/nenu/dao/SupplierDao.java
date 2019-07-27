@@ -15,4 +15,6 @@ public interface SupplierDao {
 
 	Supplier findSupplierById(int supplier_ID);
 
+	List<Supplier> findDistinctSupplierName();
+
 }

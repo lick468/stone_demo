@@ -160,17 +160,17 @@ html, body {
 				<select id="listsupplier" class="form-control"  name="stone_supplierName" style="background-color: green; color: white;">
 					<option disabled selected value="供应商">供应商</option>
 					<option value="所有">所有</option>
-					<option th:each="n : ${listsupplier}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: white; text-align: left;"></option>
+					<option th:each="n : ${listsupplier}" th:value="${n.supplier}" th:text="${n.supplier}" style="background-color: lightgreen; color: white; text-align: left;"></option>
 				</select>
 				<select id="listcounter" class="form-control"  name="stone_supplierName" style="background-color: green; color: white;">
 					<option disabled selected value="柜台">柜台</option>
 					<option value="所有">所有</option>
-					<option th:each="n : ${listcounter}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: white; text-align: left;"></option>
+					<option th:each="n : ${listcounter}" th:value="${n.counter}" th:text="${n.counter}" style="background-color: lightgreen; color: white; text-align: left;"></option>
 				</select>
 				<select id="listproduct" class="form-control"  name="stone_supplierName" style="background-color: green; color: white;">
 					<option disabled selected value="名称">名称</option>
 					<option value="所有">所有</option>
-					<option th:each="n : ${listproduct}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: white; text-align: left;"></option>
+					<option th:each="n : ${listproduct}" th:value="${n.product}" th:text="${n.product}" style="background-color: lightgreen; color: white; text-align: left;"></option>
 				</select>
 				<br>
 				<div>

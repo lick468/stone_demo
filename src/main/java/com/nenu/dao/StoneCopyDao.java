@@ -52,4 +52,7 @@ public interface StoneCopyDao {
 	int deleteAllData();//删除临时库中全部数据
 	List<StoneCopy> findStoneCopyByTableInfo(Map<String, Object> params);
 
+	List<StoneCopy> findMainStoneInfoCopy();
+    List<StoneCopy> findSubStoneInfoCopy();
+
 }

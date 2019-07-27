@@ -318,4 +318,12 @@
 		select * from tb_stone_copy ORDER BY stone_purchdate DESC,stone_seqno DESC limit #{sEcho},#{len}
 	</select>
 
+	<select id="findMainStoneInfoCopy"  resultMap="BaseResultMapStoneCopy">
+       select COUNT(stone_mainStoneNo) as stone_mainNumber,sum(stone_mainWeight) as stone_mainWeight from tb_stone_copy where stone_mainStoneNo != ''
+    </select>
+
+	<select id="findSubStoneInfoCopy"  resultMap="BaseResultMapStoneCopy">
+       select COUNT(stone_substoNo) as stone_substoNumber,sum(stone_substoWgt) as stone_substoWgt from tb_stone_copy where stone_substoNo != ''
+    </select>
+
 </mapper>

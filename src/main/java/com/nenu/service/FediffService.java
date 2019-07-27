@@ -18,4 +18,6 @@ public interface FediffService {
 	List<Fediff> findFediffByTime(Date fediff_time);
 	List<Fediff> findFediffByTableInfo(Map<String, Object> params);
 
+	List<Fediff> findDistinctFediffTime();
+
 }

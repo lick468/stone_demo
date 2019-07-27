@@ -48,4 +48,8 @@
 	<select id="findFediffByTableInfo" parameterType="java.util.Map" resultMap="BaseResultMapfediff">
 		select * from tb_fediff  ORDER BY fediff_ID DESC limit #{sEcho},#{len}
 	</select>
+
+	<select id="findDistinctFediffTime"  resultMap="BaseResultMapfediff">
+        select DISTINCT fediff_time from tb_fediff where fediff_time != '' ORDER BY fediff_time desc
+    </select>
 </mapper>

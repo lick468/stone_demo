@@ -111,6 +111,10 @@ public class FediffServiceImpl implements FediffService {
 		return fediffDao.findFediffByTableInfo(params);
 	}
 
-	
+	@Override
+	public List<Fediff> findDistinctFediffTime() {
+		return fediffDao.findDistinctFediffTime();
+	}
+
 
 }

@@ -153,16 +153,16 @@ html, body {
 				<br> 
 				<select id="listsupplier" class="form-control" onchange=" return supplierchange();" name="stone_supplierName" style="background-color: green; color: white;">
 					<option disabled="disabled" selected="selected" style='display: none;'>供应商</option>
-					<option th:each="n : ${listsupplier}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: white; text-align: left;"></option>
+					<option th:each="n : ${listsupplier}" th:value="${n.supplirt}" th:text="${n.supplier}" style="background-color: lightgreen; color: white; text-align: left;"></option>
 				</select> 
 				<select id="listCounter" class="form-control" onchange=" return areachange();" name="stone_AreaName" style="background-color: green; color: black;">
 					<option disabled="disabled" selected="selected"  value="柜台">柜台</option>
 					<option value="所有">所有</option>
-					<option th:each="n : ${listCounter}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
+					<option th:each="n : ${listCounter}" th:value="${n.counter}" th:text="${n.counter}" style="background-color: lightgreen; color: black; text-align: left;"></option>
 				</select>
 				<select id="listproduct" class="form-control" onchange=" return productchange();" name="stone_supplierName" style="background-color: green; color: white;">
 					<option disabled selected value="名称">名称</option>
-					<option th:each="n : ${listproduct}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: white; text-align: left;"></option>
+					<option th:each="n : ${listproduct}" th:value="${n.product}" th:text="${n.product}" style="background-color: lightgreen; color: white; text-align: left;"></option>
 				</select> <br>
 				<div>
 					<input type="radio" name="selectTpye" value="数量" checked> 数量 <input type="radio" name="selectTpye" value="营业额"> 营业额

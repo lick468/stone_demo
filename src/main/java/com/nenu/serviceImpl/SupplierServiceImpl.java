@@ -51,4 +51,9 @@ public class SupplierServiceImpl implements SupplierService {
 		return supplierDao.findSupplierById(supplier_ID);
 	}
 
+	@Override
+	public List<Supplier> findDistinctSupplierName() {
+		return supplierDao.findDistinctSupplierName();
+	}
+
 }

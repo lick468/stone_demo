@@ -422,4 +422,15 @@
 		select * from tb_finpord ORDER BY finpord_inboundate DESC,finpord_seqno DESC limit #{sEcho},#{len}
 	</select>
 
+	<select id="findDistinctBarcode"  resultMap="BaseResultMapfinpord">
+         select DISTINCT finpord_barcode from tb_finpord where finpord_barcode != '' ORDER BY convert(finpord_barcode using gbk) asc
+    </select>
+	<select id="findDistinctInBoundate"  resultMap="BaseResultMapfinpord">
+         select DISTINCT finpord_inboundate from tb_finpord where finpord_inboundate != '' ORDER BY convert(finpord_inboundate using gbk) asc
+    </select>
+	<select id="findDistinctProcordNo"  resultMap="BaseResultMapfinpord">
+         select DISTINCT finpord_procordNo from tb_finpord where finpord_procordNo != '' ORDER BY convert(finpord_procordNo using gbk) asc
+    </select>
+
+
 </mapper>

@@ -96,105 +96,39 @@ public class BController {
 	public String index( ModelMap map, HttpServletRequest request,HttpSession session) {
 		List<Stone> allStoneList = new ArrayList<Stone>();
 		allStoneList = stoneService.findAllStone();
-		List<StoneCopy> allStoneCopyList =stoneService.findAllStoneCopy(); 
-		List<Supplier> list = supplierService.findAllSupplier();
-		List mainList = new ArrayList<>();
-		List subList = new ArrayList<>();
-		List timeList = new ArrayList<>();
-		List loosdoftyList = new ArrayList<>();
-		List listSupplier = new ArrayList<>();
-		int mainNumber=0;
-		int subNumber=0;
-		double mainWeight=0;
-		double subWeight=0;
-		int mainNumberCopy=0;
-		int subNumberCopy=0;
-		double mainWeightCopy=0;
-		double subWeightCopy=0;
+
 		Date d = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		map.addAttribute("timeshow", d);
-		
-		int i;
-		for ( i = 0; i < list.size(); i++) {
-			if (list.get(i).getSupplier_name() != null) {
-				if (!listSupplier.contains(list.get(i).getSupplier_name()) && list.get(i).getSupplier_name().length() > 0) {
-					listSupplier.add(list.get(i).getSupplier_name());
-				}
-			}
-		}
-		for (i = 0; i < allStoneList.size(); i++) {
-			if (allStoneList.get(i).getStone_mainStoneNo().matches(".*[a-zA-Z].*")) {//主石
-				mainList.add(allStoneList.get(i).getStone_mainStoneNo());
-				mainNumber++;
-				mainWeight+=allStoneList.get(i).getStone_mainWeight();
-			}
-			if (allStoneList.get(i).getStone_substoNo().length()>1) {//副石
-				subList.add(allStoneList.get(i).getStone_substoNo());
-				subNumber+=allStoneList.get(i).getStone_substoNumber();
-				subWeight+=allStoneList.get(i).getStone_substoWgt();
-			}
-			if(!timeList.contains(allStoneList.get(i).getStone_purchdate())) {
-				timeList.add(allStoneList.get(i).getStone_purchdate());
-			}
-			if(!loosdoftyList.contains(allStoneList.get(i).getStone_loosdofty())) {
-				loosdoftyList.add(allStoneList.get(i).getStone_loosdofty());
-			}
 
-		}
-		for (i = 0; i < allStoneCopyList.size(); i++) {
-			if (allStoneCopyList.get(i).getStone_mainStoneNo().matches(".*[a-zA-Z].*")) {//主石
-				mainNumberCopy++;
-				mainWeightCopy+=allStoneCopyList.get(i).getStone_mainWeight();
-			}
-			if (allStoneCopyList.get(i).getStone_substoNo().length()>1) {//副石
-				subNumberCopy+=allStoneCopyList.get(i).getStone_substoNumber();
-				subWeightCopy+=allStoneCopyList.get(i).getStone_substoWgt();
-			}
-		}
-		
-		Collections.reverse(mainList);     //实现list集合逆序排列 
-		Collections.reverse(subList);     //实现list集合逆序排列 
-		Collections.reverse(timeList);     //实现list集合逆序排列 
-		Collections.reverse(loosdoftyList);     //实现list集合逆序排列 
 		
 		map.addAttribute("allStoneList", allStoneList);// 获取石头库里所有的石头
 		map.addAttribute("stoneCopyList", stoneService.findAllStoneCopy());//获取石头库临时表的石头
 		map.addAttribute("stoneListNum", stoneService.findAllStoneNum());//获取石头库里数量不少于0的石头
-		map.addAttribute("mainList", mainList);// 获取石头库里所有主石编
-		map.addAttribute("subList", subList);// 获取石头库里所有副石编
-		map.addAttribute("timeList", timeList);// 获取石头库里所有时间
-		map.addAttribute("loosdoftyList", loosdoftyList);// 获取石头库里所有裸石厂
+//		map.addAttribute("mainList", stoneService.findDistinctMainStoneNo());// 获取石头库里所有主石编
+//		map.addAttribute("subList", stoneService.findDistinctSubStoneNo());// 获取石头库里所有副石编
+//		map.addAttribute("timeList", stoneService.findDistinctPurchdate());// 获取石头库里所有时间
+		map.addAttribute("loosdoftyList", stoneService.findDistinctLoosdofty());// 获取石头库里所有裸石厂
 		map.addAttribute("procordList", procordService.findAllProcord());//获取所有订单信息
 		map.addAttribute("staffList", staffService.findAllStaff());//获取所有员工
-	   // map.addAttribute("subList", subList);//获取石头库里所有的副石编
-		//List<Supplier> supplierList=supplierService.findAllSupplier();
-		map.addAttribute("loosdoftyList", loosdoftyList);// 获取石头库里所有裸石厂
+
 		
-		map.addAttribute("mainNumber", mainNumber);// 主石数
-		map.addAttribute("subNumber", subNumber);// 副石数
-		map.addAttribute("mainWeight", mainWeight);// 主石重
-		map.addAttribute("subWeight", subWeight);// 副石重
+		map.addAttribute("mainNumber", stoneService.findMainStoneInfo().iterator().next().getStone_mainNumber());// 主石数
+		map.addAttribute("subNumber", stoneService.findSubStoneInfo().iterator().next().getStone_substoNumber());// 副石数
+		map.addAttribute("mainWeight", stoneService.findMainStoneInfo().iterator().next().getStone_mainWeight());// 主石重
+		map.addAttribute("subWeight", stoneService.findSubStoneInfo().iterator().next().getStone_substoWgt());// 副石重
 		
-		map.addAttribute("mainNumberCopy", mainNumberCopy);// 主石数
-		map.addAttribute("subNumberCopy", subNumberCopy);// 副石数
-		map.addAttribute("mainWeightCopy", mainWeightCopy);// 主石重
-		map.addAttribute("subWeightCopy", subWeightCopy);// 副石重
+		map.addAttribute("mainNumberCopy", stoneService.findMainStoneInfoCopy().iterator().next().getStone_mainNumber());// 主石数
+		map.addAttribute("subNumberCopy", stoneService.findSubStoneInfoCopy().iterator().next().getStone_substoNumber());// 副石数
+		map.addAttribute("mainWeightCopy", stoneService.findMainStoneInfoCopy().iterator().next().getStone_mainWeight());// 主石重
+		map.addAttribute("subWeightCopy", stoneService.findSubStoneInfoCopy().iterator().next().getStone_substoWgt());// 副石重
 		
 
 		session = request.getSession();
 		String user = (String) session.getAttribute("user_name");
 		map.addAttribute("user", user);
-		
-		
-		Collections.sort(listSupplier, new Comparator<String>() {            
-			@Override            
-			public int compare(String o1, String o2) {                
-				Comparator<Object> com = Collator.getInstance(java.util.Locale.CHINA);               
-				return com.compare(o1, o2);            
-			}        
-		});
-		map.addAttribute("supplierList",listSupplier);//获取所有供应商集合
+
+		map.addAttribute("supplierList",supplierService.findDistinctSupplierName());//获取所有供应商集合
 		List<Stone> stoneList = new ArrayList<Stone>();
 		stoneList = (List<Stone>) session.getAttribute("stoneList");
 		

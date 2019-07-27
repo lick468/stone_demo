@@ -332,4 +332,26 @@
 		ORDER BY stone_purchdate DESC,stone_seqno DESC limit #{sEcho},#{len}
 	</select>
 
+	<select id="findDistinctMainStoneNo"  resultMap="BaseResultMapStone">
+       select DISTINCT stone_mainStoneNo from tb_stone where stone_mainStoneNo != '' and stone_reserved1=0 ORDER BY stone_purchdate asc
+    </select>
+
+    <select id="findDistinctSubStoneNo"  resultMap="BaseResultMapStone">
+       select DISTINCT stone_substoNo from tb_stone where stone_substoNo != ''and stone_reserved1=0 ORDER BY stone_purchdate asc
+    </select>
+    <select id="findDistinctLoosdofty"  resultMap="BaseResultMapStone">
+       select DISTINCT stone_loosdofty from tb_stone where stone_loosdofty != '' ORDER BY stone_purchdate asc
+    </select>
+    <select id="findDistinctPurchdate"  resultMap="BaseResultMapStone">
+       select DISTINCT stone_purchdate from tb_stone where stone_purchdate != '' ORDER BY stone_purchdate asc
+    </select>
+
+    <select id="findMainStoneInfo"  resultMap="BaseResultMapStone">
+       select COUNT(stone_mainStoneNo) as stone_mainNumber,sum(stone_mainWeight) as stone_mainWeight from tb_stone where stone_mainStoneNo != '' and stone_reserved1=0
+    </select>
+
+    <select id="findSubStoneInfo"  resultMap="BaseResultMapStone">
+       select COUNT(stone_substoNo) as stone_substoNumber,sum(stone_substoWgt) as stone_substoWgt from tb_stone where stone_substoNo != '' and stone_reserved1=0
+    </select>
+
 </mapper>

@@ -39,4 +39,8 @@ public interface FinpordService {
 	List<Finpord> findFinpordByTableInfo(Map<String, Object> params);
 	List<FinpordCopy> findFinpordCopyByTableInfo(Map<String, Object> params);
 
+	List<Finpord> findDistinctBarcode();
+	List<Finpord> findDistinctInBoundate();
+	List<Finpord> findDistinctProcordNo();
+
 }

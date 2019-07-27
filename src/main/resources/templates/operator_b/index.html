@@ -509,8 +509,8 @@ text-align: center;
 				<select id="loosdofty" class="form-control"
 					name="stone_loosdofty">
 					<option th:each="loosdofty : ${loosdoftyList}"
-						th:value="${loosdofty}"
-						th:text="${loosdofty}" ></option>
+						th:value="${loosdofty.stone_loosdofty}"
+						th:text="${loosdofty.stone_loosdofty}" ></option>
 				</select>
 			</div>
 			<div id="div_supplier" class="input-group col-lg-2"
@@ -519,8 +519,8 @@ text-align: center;
 					name="stone_loosdofty">
 					<option value="none"></option>
 					<option th:each="supplier : ${supplierList}"
-						th:value="${supplier}"
-						th:text="${supplier}" ></option>
+						th:value="${supplier.supplier_name}"
+						th:text="${supplier.supplier_name}" ></option>
 				</select>
 			</div>
 			<div class="input-group col-lg-2">
@@ -1229,8 +1229,8 @@ text-align: center;
 					<span class="input-group-addon">选择供应商</span> <select
 						id="supplierChoice" class="form-control" name="stone_supplierName">
 						<option th:each="supplier : ${supplierList}"
-							th:value="${supplier}"
-							th:text="${supplier}" ></option>
+							th:value="${supplier.supplier_name}"
+							th:text="${supplier.supplier_name}" ></option>
 					</select>
 				</div>
 				<br>

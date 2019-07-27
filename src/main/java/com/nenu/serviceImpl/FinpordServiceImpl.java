@@ -1241,6 +1241,21 @@ public class FinpordServiceImpl implements FinpordService {
 		return finpordCopyDao.findFinpordCopyByTableInfo(params);
 	}
 
+	@Override
+	public List<Finpord> findDistinctBarcode() {
+		return finpordDao.findDistinctBarcode();
+	}
+
+	@Override
+	public List<Finpord> findDistinctInBoundate() {
+		return finpordDao.findDistinctInBoundate();
+	}
+
+	@Override
+	public List<Finpord> findDistinctProcordNo() {
+		return finpordDao.findDistinctProcordNo();
+	}
+
 
 	@Override
 	public int batchInsertFinpord(List<Finpord> list) {

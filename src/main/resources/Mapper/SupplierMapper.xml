@@ -43,4 +43,8 @@
 		supplier_id=#{supplier_id}
 	</delete>
 
+	<select id="findDistinctSupplierName"  resultMap="supplierMap">
+        select DISTINCT supplier_name from tb_supplier where supplier_name != '' ORDER BY convert(supplier_name using gbk) asc
+    </select>
+
 </mapper>

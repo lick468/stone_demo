@@ -83,66 +83,26 @@ public class AController {
 		HttpSession session = request.getSession();
 		String user = (String) session.getAttribute("user_name");
 		List<RoleUserOfIn> list = (List<RoleUserOfIn>) session.getAttribute("roleList");
-		
+
 		String rs = "";
 		for (int i = 0; i < list.size(); i++) {
 			rs += list.get(i).getRole_type()+",";
 		}
 		List<Finpord> finpordList =finpordService.findAllFinpord();
-		List procordNoList = new ArrayList<>();
-		List orderList = new ArrayList<>();
-		List barcodeNoList = new ArrayList<>();
-		List dateList = new ArrayList<>();
-		for (int i = 0; i < finpordList.size(); i++) {
-			if(!orderList.contains(finpordList.get(i).getFinpord_procordNo())) {
-				orderList.add(String.valueOf(finpordList.get(i).getFinpord_procordNo()));
-			}
-			if(!procordNoList.contains(finpordList.get(i).getFinpord_procordNo())) {
-				procordNoList.add(finpordList.get(i).getFinpord_procordNo());
-			}
-			if(!dateList.contains(finpordList.get(i).getFinpord_inboundate())) {
-				dateList.add(finpordList.get(i).getFinpord_inboundate());
-			}
-			if(!barcodeNoList.contains(finpordList.get(i).getFinpord_barcode())) {
-				barcodeNoList.add(finpordList.get(i).getFinpord_barcode());
-			}
-		}
-		List<Fediff> fediffList = fediffService.findAllFediff();
-		List fediffTimeList = new ArrayList<>();
-		if(fediffList!=null) {
-			for (int i = 0; i < fediffList.size(); i++) {
-				if(!fediffTimeList.contains(fediffList.get(i).getFediff_time())) {
-					fediffTimeList.add(fediffList.get(i).getFediff_time());
-				}
-			}
-			
-		}
-		List<Supplier> lists = supplierService.findAllSupplier();
-		List listSupplier = new ArrayList<>();
-		for (int i = 0; i < lists.size(); i++) {
-			if (lists.get(i).getSupplier_name() != null) {
-				if (!listSupplier.contains(lists.get(i).getSupplier_name()) && lists.get(i).getSupplier_name().length() > 0) {
-					listSupplier.add(lists.get(i).getSupplier_name());
-				}
-			}
-		}
-		
-		
-		
-		Collections.reverse(fediffTimeList);     //实现list集合逆序排列 
-		
-		map.addAttribute("supplierList",listSupplier);//获取所有供应商集合
-		map.addAttribute("fediffTimeList", fediffTimeList);
-		map.addAttribute("barcodeNoList", barcodeNoList);
-		
+
+
+		map.addAttribute("supplierList",supplierService.findDistinctSupplierName());//获取所有供应商集合
+		map.addAttribute("fediffTimeList", fediffService.findDistinctFediffTime());
+		map.addAttribute("barcodeNoList", finpordService.findDistinctBarcode());
+
 		map.addAttribute("finpordList", finpordList);
 		map.addAttribute("finpordCopyList", finpordService.findAllFinpordCopy());
 		map.addAttribute("user", user);
 		map.addAttribute("rs", rs);
-		map.addAttribute("procordNoList", procordNoList);
-		map.addAttribute("orderList", orderList);
-		map.addAttribute("dateList", dateList);
-		
+		map.addAttribute("procordNoList", finpordService.findDistinctProcordNo());
+		map.addAttribute("orderList", finpordService.findDistinctProcordNo());
+		map.addAttribute("dateList", finpordService.findDistinctInBoundate());
+
 		map.addAttribute("fediffList", fediffService.findAllFediff());
 		return "operator_a/index";
 	}

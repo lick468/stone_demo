@@ -202,12 +202,12 @@ table {
 				<select id="listCounter" class="form-control"  name="stone_CounterName" style="background-color: green; color: black;">
 					<option disabled="disabled" selected="selected" >柜台</option>
 					<option value="所有" >所有</option>
-					<option th:each="n : ${listCounter}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
+					<option th:each="n : ${listCounter}" th:value="${n.counter}" th:text="${n.counter}" style="background-color: lightgreen; color: black; text-align: left;"></option>
 				</select>
 				<select id="listProduct" class="form-control"  name="stone_CounterName" style="background-color: green; color: black;">
 					<option disabled="disabled" selected="selected" >名称</option>
 					<option value="所有" >所有</option>
-					<option th:each="n : ${listProduct}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
+					<option th:each="n : ${listProduct}" th:value="${n.product}" th:text="${n.product}" style="background-color: lightgreen; color: black; text-align: left;"></option>
 				</select>
 				<br>
 				<div>

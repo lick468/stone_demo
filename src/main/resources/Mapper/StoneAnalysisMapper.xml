@@ -1860,6 +1860,6 @@
         select DISTINCT source from stone where source != '' ORDER BY convert(source using gbk) asc
     </select>
     <select id="findDistinctCircle"  resultMap="userAnalysisMap">
-        select DISTINCT circle from stone where circle != '' ORDER BY convert(cirlce using gbk) asc
+        select DISTINCT circle from stone where circle != '' ORDER BY convert(circle using gbk) asc
     </select>
 </mapper>

@@ -10,7 +10,7 @@
 <link href="/css/laydate.css" rel="stylesheet" />
 <link href="/css/bootstrap-theme.min.css" rel="stylesheet" />
 <link href="/css/jquery-editable-select.min.css" rel="stylesheet" />
-<link th:href="@{/css/loading.css}" rel="stylesheet"/>
+<link href="/css/loading.css" rel="stylesheet"/>
 
 <title>供应商销售排名分析</title>
 <style type="text/css">
@@ -147,12 +147,12 @@ html, body {
 				<select id="listCounter" class="form-control" onchange=" return counterchange();" style="background-color: green; color: black;">
 					<option disabled selected value="柜台">柜台</option>
 					<option value="所有">所有</option>
-					<option th:each="n : ${listCounter}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
+					<option th:each="n : ${listCounter}" th:value="${n.counter}" th:text="${n.counter}" style="background-color: lightgreen; color: black; text-align: left;"></option>
 				</select>
 				<select id="listProduct" class="form-control" onchange=" return supplierchange();" name="stone_supplierName" style="background-color: green; color: black;">
 					<option disabled selected value="名称">名称</option>
 					<option value="所有">所有</option>
-					<option th:each="n : ${listProduct}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
+					<option th:each="n : ${listProduct}" th:value="${n.product}" th:text="${n.product}" style="background-color: lightgreen; color: black; text-align: left;"></option>
 				</select>
 				</div>
 <br><br>

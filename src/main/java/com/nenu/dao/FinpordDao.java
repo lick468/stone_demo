@@ -22,4 +22,11 @@ public interface FinpordDao {
 	
 	int downloadprofit(String[][] dataList,HttpServletResponse response);//下载利润
 	List<Finpord> findFinpordByTableInfo(Map<String, Object> params);
+
+    List<Finpord> findDistinctBarcode();
+    List<Finpord> findDistinctInBoundate();
+    List<Finpord> findDistinctProcordNo();
+
+
+
 }

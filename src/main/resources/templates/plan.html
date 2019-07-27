@@ -153,7 +153,7 @@ html, body {
 						<select id="listRoom" class="form-control" onchange=" return productchange();" name="stone_AreaName" style="background-color: green; color: black; ">
 							<option disabled="disabled" selected="selected" value="库房">库房</option>
 							<option value="所有">所有</option>
-							<option th:each="n : ${listroom}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
+							<option th:each="n : ${listroom}" th:value="${n.room}" th:text="${n.room}" style="background-color: lightgreen; color: black; text-align: left;"></option>
 						</select>
 						<select id="listBelong" class="form-control"  name="stone_AreaName" style="background-color: green; color: black;">
 							<option disabled="disabled" selected="selected"  value="统计对象">统计对象</option>

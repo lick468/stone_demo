@@ -161,32 +161,32 @@ th, td {
 				<select id="listCircle" class="form-control" onchange=" return areachange();" name="stone_AreaName" style="background-color: green; color: black;">
 					<option disabled="disabled" selected="selected"  value="圈口">圈口</option>
 					<option value="所有">所有</option>
-					<option th:each="n : ${listCircle}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
+					<option th:each="n : ${listCircle}" th:value="${n.circle}" th:text="${n.circle}" style="background-color: lightgreen; color: black; text-align: left;"></option>
 				</select>
 				<select id="listArea" class="form-control" onchange=" return areachange();" name="stone_AreaName" style="background-color: green; color: black;">
 					<option disabled="disabled" selected="selected"  value="地区">地区</option>
 					<option value="所有">所有</option>
-					<option th:each="n : ${listArea}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
+					<option th:each="n : ${listArea}" th:value="${n.area}" th:text="${n.area}" style="background-color: lightgreen; color: black; text-align: left;"></option>
 				</select>
 				<select id="listRoom" class="form-control" onchange=" return areachange();" name="stone_AreaName" style="background-color: green; color: black;">
 					<option disabled="disabled" selected="selected"  value="门店">门店</option>
 					<option value="所有">所有</option>
-					<option th:each="n : ${listRoom}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
+					<option th:each="n : ${listRoom}" th:value="${n.room}" th:text="${n.room}" style="background-color: lightgreen; color: black; text-align: left;"></option>
 				</select>
 				<select id="listCounter" class="form-control" onchange=" return areachange();" name="stone_AreaName" style="background-color: green; color: black;">
 					<option disabled="disabled" selected="selected"  value="柜台">柜台</option>
 					<option value="所有">所有</option>
-					<option th:each="n : ${listCounter}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
+					<option th:each="n : ${listCounter}" th:value="${n.counter}" th:text="${n.counter}" style="background-color: lightgreen; color: black; text-align: left;"></option>
 				</select>
 				<select id="listSupplier" class="form-control" onchange=" return areachange();" name="stone_AreaName" style="background-color: green; color: black;">
 					<option disabled="disabled" selected="selected"  value="供应商">供应商</option>
 					<option value="所有">所有</option>
-					<option th:each="n : ${listSupplier}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
+					<option th:each="n : ${listSupplier}" th:value="${n.supplier}" th:text="${n.supplier}" style="background-color: lightgreen; color: black; text-align: left;"></option>
 				</select>
 				<select id="listProduct" class="form-control" onchange=" return supplierchange();" name="stone_supplierName" style="background-color: green; color: black;">
 					<option disabled selected value="名称">名称</option>
 					<option value="所有">所有</option>
-					<option th:each="n : ${listProduct}" th:value="${n}" th:text="${n}" style="background-color: lightgreen; color: black; text-align: left;"></option>
+					<option th:each="n : ${listProduct}" th:value="${n.product}" th:text="${n.product}" style="background-color: lightgreen; color: black; text-align: left;"></option>
 				</select>
 				<br>
 				<div>
