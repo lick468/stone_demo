@@ -10,8 +10,8 @@
 <link href="/css/laydate.css" rel="stylesheet" />
 <link href="/css/bootstrap-theme.min.css" rel="stylesheet" />
 <link href="/css/jquery-editable-select.min.css" rel="stylesheet" />
-<link th:href="@{/css/loading.css}" rel="stylesheet"/>
-<title>来源分析模型</title>
+<link href="/css/loading.css" rel="stylesheet"/>
+<title>成色分析模型</title>
 <style type="text/css">
 * {
 	margin: 0;
@@ -128,7 +128,7 @@ th, td {
 			<a class="button-red" href="/analysis/main">返回主菜单</a>
 		</span>
 
-		<div class="slogan-index">来源分析</div>
+		<div class="slogan-index">成色分析</div>
 
 	</div>
 </header>
@@ -157,11 +157,6 @@ th, td {
 					</div>
 				</div>
 				<br>
-				<select id="listSource" class="form-control" onchange=" return areachange();" name="stone_AreaName" style="background-color: green; color: black;">
-					<option disabled="disabled" selected="selected"  value="来源">来源</option>
-					<option value="所有">所有</option>
-					<option th:each="n : ${listSource}" th:value="${n.source}" th:text="${n.source}" style="background-color: lightgreen; color: black; text-align: left;"></option>
-				</select>
 				<select id="listArea" class="form-control" onchange=" return areachange();" name="stone_AreaName" style="background-color: green; color: black;">
 					<option disabled="disabled" selected="selected"  value="地区">地区</option>
 					<option value="所有">所有</option>
@@ -232,8 +227,8 @@ th, td {
 								<th>门店</th>
 								<th>柜台</th>
 								<th>名称</th>
-								<th>来源</th>
 								<th>成色</th>
+								<th>来源</th>
 								<th>标价</th>
 								<th>结算价</th>
 								<th>金重</th>
@@ -295,7 +290,6 @@ th, td {
 			var quality = document.getElementById("listQuality").value;
 			var room = document.getElementById("listRoom").value;
 			var counter = document.getElementById("listCounter").value;
-			var source = document.getElementById("listSource").value;
 			var start = document.getElementById("starttime").value;
 			var end = document.getElementById("endtime").value;
 			var selectType = $('input:radio:checked').val();
@@ -315,7 +309,6 @@ th, td {
 					area : area,
 					supplier : supplier,
 					quality : quality,
-					source : source,
 					room : room,
 					counter : counter,
 					start : start,
@@ -327,7 +320,7 @@ th, td {
 					//alert(result);
 					 $('#loading').hide();
 					var rs = result.split("@");
-					document.getElementById("context").value=area+"&"+room+"&"+counter+"&"+supplier+"&"+source+"&"+start+"&"+end+"&"+quality;
+					document.getElementById("context").value=area+"&"+room+"&"+counter+"&"+supplier+"&"+start+"&"+end+"&"+quality;
 					//图标数据
 					var xData = rs[1].substring(1, rs[1].length - 1)
 							.split(", ");

@@ -35,7 +35,7 @@ public class StoneAnalysis implements Serializable {
 	private String quality;//成色
 	private String centerstonename;//主石名
 	private String product;//名称
-	private int settlementprice;//结算价
+	private float settlementprice;//结算价
 	private float goldweight;//金重
 	private float goodweight;//货重
 	private float centerstone;//主石
@@ -192,7 +192,7 @@ public StoneAnalysis() {
 	}
 	public StoneAnalysis(int sid,String source,String room,int bouns,String cut,String cardNo,String time,float cost,String circle,
 			String supplier, String series,String style, String remark,String area, String orderNo,String barcode, 
-			String quality, String centerstonename, String product,int settlementprice,float goldweight,float goodweight,
+			String quality, String centerstonename, String product,float settlementprice,float goldweight,float goodweight,
 			float centerstone, float goldprice,float listprice,float discount,float wage,String counter,float exchangegoldweight,
 			float deprecitiongoldweight,float exchangemoney,String sort,int centerstoneNo,int count, Date date,int sidestoneNo,
 			float sidestoneweight,String certificateNo,String salesman,String color,String level,String priceNo) {
@@ -276,7 +276,7 @@ public StoneAnalysis() {
 	private int areasettlementprice;
 	private int countersettlementprice;
 	
-	private int settlementpriceSum;//结算价求和
+	private float settlementpriceSum;//结算价求和
 	private int numberSum;//数量求和
 	private float listpriceSum;//标价求和
 	private float goldweightSum;//金重求和
@@ -349,11 +349,11 @@ public StoneAnalysis() {
 		this.numberSum = numberSum;
 	}
 
-	public int getSettlementpriceSum() {
+	public float getSettlementpriceSum() {
 		return settlementpriceSum;
 	}
 
-	public void setSettlementpriceSum(int settlementpriceSum) {
+	public void setSettlementpriceSum(float settlementpriceSum) {
 		this.settlementpriceSum = settlementpriceSum;
 	}
 
@@ -740,7 +740,7 @@ public StoneAnalysis() {
 
 	
 
-	public int getSettlementprice() {
+	public float getSettlementprice() {
 		return settlementprice;
 	}
 

@@ -135,11 +135,7 @@ html, body {
 			</div>
 		</header>
 		<!-- end header -->
-	<div id="listSupplier" th:text="${listSupplier}" class="displayNone"></div>
-	<div id="listThisYear" th:text="${listThisYear}" class="displayNone"></div>
-	<div id="listLastYear" th:text="${listLastYear}" class="displayNone"></div>
 	<div class="mian-div">
-		
 		<div class="left-div">
 			<div class="left-div-inner">
 				<div class="selector" >
@@ -155,7 +151,7 @@ html, body {
 					<option th:each="n : ${listProduct}" th:value="${n.product}" th:text="${n.product}" style="background-color: lightgreen; color: black; text-align: left;"></option>
 				</select>
 				</div>
-<br><br>
+				<br><br>
 				<div>
 					    <input type="radio" name="selectTpye" value="数量" checked>
 						数量
@@ -196,15 +192,6 @@ html, body {
 	<script type="text/javascript">
 		tt();
 		function tt() {
-			var listSupplier1 = document.getElementById("listSupplier").innerHTML;
-			var listSupplier = listSupplier1.substring(1,
-					listSupplier1.length - 1).split(", ");
-			var listThisYear1 = document.getElementById("listThisYear").innerHTML;
-			var listThisYear = listThisYear1.substring(1,
-					listThisYear1.length - 1).split(", ");
-			var listLastYear1 = document.getElementById("listLastYear").innerHTML;
-			var listLastYear = listLastYear1.substring(1,
-					listLastYear1.length - 1).split(", ");
 			var dom = document.getElementById("container");
 			var myChart = echarts.init(dom);
 			var app = {};
@@ -235,17 +222,17 @@ html, body {
 				},
 				yAxis : {
 					type : 'category',
-					data : listSupplier
+					data : [6,7]
 				},
 				
 				series : [ {
 					name : '今年',
 					type : 'bar',
-					data : listThisYear
+					data : [45,56]
 				}, {
 					name : '去年',
 					type : 'bar',
-					data : listLastYear
+					data : [75,96]
 				} ]
 			};
 			;

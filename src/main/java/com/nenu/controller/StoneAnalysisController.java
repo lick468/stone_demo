@@ -79,30 +79,27 @@ public class StoneAnalysisController {
 		return "index";
 	}
 
-	
 
 	/**
-	 * 新版index页面 供应商查询
+	 * index页面 供应商查询
 	 *
 	 * com.nenu.controller
 	 * 
 	 * @param request
-	 * @param map
-	 * @param session
 	 * @return
 	 *             String created at 2018年6月27日
 	 */
 	@ApiOperation(value="供应商查询",notes="index页面 供应商查询")
 	@RequestMapping(value = "supplierFind", method = RequestMethod.POST)
 	@ResponseBody
-	public String supplierFind(HttpServletRequest request, ModelMap map, HttpSession session)  {
-		String supplierName = request.getParameter("supplier");
-		String productName = request.getParameter("product");
-		String counterName = request.getParameter("counter");
+	public String supplierFind(HttpServletRequest request)  {
+		String supplier = request.getParameter("supplier");
+		String product = request.getParameter("product");
+		String counter = request.getParameter("counter");
 		String selectType = request.getParameter("selectType");
 
-		System.out.println("名称=============" + productName);
-		System.out.println("供应商=============" + supplierName);
+		System.out.println("名称=============" + product);
+		System.out.println("供应商=============" + supplier);
 		System.out.println("类别=============" + selectType);
 		Map<String, Object> params = new HashMap<String, Object>();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -112,27 +109,22 @@ public class StoneAnalysisController {
 		params.put("start", st);
 		params.put("end", ed);
 		
-		if(supplierName.contains("所有") ||supplierName.contains("供应商"))  {
+		if(supplier.contains("所有") ||supplier.contains("供应商"))  {
 		}else {
-			params.put("supplier", supplierName);
+			params.put("supplier", supplier);
 		}
-		if(productName.contains("所有") ||productName.contains("名称"))  {
+		if(product.contains("所有") ||product.contains("名称"))  {
 		}else {
-			params.put("product", productName);
+			params.put("product", product);
 		}
-		if(counterName.contains("所有") ||counterName.contains("柜台"))  {
+		if(counter.contains("所有") ||counter.contains("柜台"))  {
 		}else {
-			params.put("counter", counterName);
+			params.put("counter", counter);
 		}
-	
-		
 
-		List<StoneAnalysis> list = new ArrayList<StoneAnalysis>(); // 图标数据
-		List<StoneAnalysis> listAll = new ArrayList<StoneAnalysis>();// 表格数据
-		
-		listAll = stoneService.findStoneBySupplier(params);
-		list = stoneService.findStoneBySupplierFor711(params);
-		
+		List<StoneAnalysis> listSale = stoneService.findSourceEqualsSaleByDate(params); // 图表数据 销售
+        List<StoneAnalysis> listBack = stoneService.findSourceEqualsBackByDate(params); // 图表数据 退回
+		List<StoneAnalysis> listAll = stoneService.findStoneByParams(params);// 表格数据
 
 		List listDate = new ArrayList<>();
 		List listNum = new ArrayList<>();
@@ -145,7 +137,7 @@ public class StoneAnalysisController {
 		List listAllGoldweight = new ArrayList<>();
 		List lisAlltCenterstone = new ArrayList<>();
 
-		String result = "";
+        StringBuilder result = new StringBuilder();
 		if (listAll != null) {
 			for (int i = 0; i < listAll.size(); i++) {
 				listAllDate.add(sdf.format(listAll.get(i).getDate()));
@@ -158,40 +150,83 @@ public class StoneAnalysisController {
 				listAllCounter.add(listAll.get(i).getCounter());
 			}
 		}
-
-		if (list != null) {
+		//销售数据
+		if (listSale != null) {
 			if (selectType.contains("数量")) {
-				for (int i = 0; i < list.size(); i++) {
-					listDate.add(sdf.format(list.get(i).getDate()));
-					listNum.add(list.get(i).getNumberSum());
+				for (int i = 0; i < listSale.size(); i++) {
+					listDate.add(sdf.format(listSale.get(i).getDate()));
+					listNum.add(listSale.get(i).getNumberSum());
 				}
 			} else if (selectType.contains("结算价")){
-				for (int i = 0; i < list.size(); i++) {
-					listDate.add(sdf.format(list.get(i).getDate()));
-					listNum.add(list.get(i).getSettlementpriceSum());
+				for (int i = 0; i < listSale.size(); i++) {
+					listDate.add(sdf.format(listSale.get(i).getDate()));
+					listNum.add(listSale.get(i).getSettlementpriceSum());
 				}
 			} else if (selectType.contains("标价")){
-				for (int i = 0; i < list.size(); i++) {
-					listDate.add(sdf.format(list.get(i).getDate()));
-					listNum.add(list.get(i).getListpriceSum());
+				for (int i = 0; i < listSale.size(); i++) {
+					listDate.add(sdf.format(listSale.get(i).getDate()));
+					listNum.add(listSale.get(i).getListpriceSum());
 				}
 			} else if (selectType.contains("金重")){
-				for (int i = 0; i < list.size(); i++) {
-					listDate.add(sdf.format(list.get(i).getDate()));
-					listNum.add(list.get(i).getGoldweightSum());
+				for (int i = 0; i < listSale.size(); i++) {
+					listDate.add(sdf.format(listSale.get(i).getDate()));
+					listNum.add(listSale.get(i).getGoldweightSum());
 				}
 			} else if (selectType.contains("主石")){
-				for (int i = 0; i < list.size(); i++) {
-					listDate.add(sdf.format(list.get(i).getDate()));
-					listNum.add(list.get(i).getCenterstoneSum());
+				for (int i = 0; i < listSale.size(); i++) {
+					listDate.add(sdf.format(listSale.get(i).getDate()));
+					listNum.add(listSale.get(i).getCenterstoneSum());
 				}
 			}
 		}
-
-		result = "" + listNum + "@" + listDate + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct 
-				+ "@" + listAllSettlementprice+ "@" + listAllListprice+ "@" 
-				+ listAllGoldweight+ "@" + lisAlltCenterstone+ "@" + listAllCounter;
-		return result;
+		//退回数据
+        if (listBack != null) {
+            if (selectType.contains("数量")) {
+                for (int i = 0; i < listBack.size(); i++) {
+                    String time = sdf.format(listBack.get(i).getDate());
+                    if(listDate.contains(time)) {
+                        int index = listDate.indexOf(time);
+                        listNum.set(index,(Integer) listNum.get(index)+listBack.get(i).getNumberSum());
+                    }
+                }
+            } else if (selectType.contains("结算价")){
+                for (int i = 0; i < listBack.size(); i++) {
+                    String time = sdf.format(listBack.get(i).getDate());
+                    if(listDate.contains(time)) {
+                        int index = listDate.indexOf(time);
+                        listNum.set(index,(Float) listNum.get(index)+listBack.get(i).getSettlementpriceSum());
+                    }
+                }
+            } else if (selectType.contains("标价")){
+                for (int i = 0; i < listBack.size(); i++) {
+                    String time = sdf.format(listBack.get(i).getDate());
+                    if(listDate.contains(time)) {
+                        int index = listDate.indexOf(time);
+                        listNum.set(index,(Float)listNum.get(index)-listBack.get(i).getListpriceSum());
+                    }
+                }
+            } else if (selectType.contains("金重")){
+                for (int i = 0; i < listBack.size(); i++) {
+                    String time = sdf.format(listBack.get(i).getDate());
+                    if(listDate.contains(time)) {
+                        int index = listDate.indexOf(time);
+                        listNum.set(index,(Float)listNum.get(index)+listBack.get(i).getGoldweightSum());
+                    }
+                }
+            } else if (selectType.contains("主石")){
+                for (int i = 0; i < listBack.size(); i++) {
+                    String time = sdf.format(listBack.get(i).getDate());
+                    if(listDate.contains(time)) {
+                        int index = listDate.indexOf(time);
+                        listNum.set(index,(Float)listNum.get(index)+listBack.get(i).getCenterstoneSum());
+                    }
+                }
+            }
+        }
+        result.append("" + listNum + "@" + listDate + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct
+                + "@" + listAllSettlementprice+ "@" + listAllListprice+ "@"
+                + listAllGoldweight+ "@" + lisAlltCenterstone+ "@" + listAllCounter);
+		return result.toString();
 	}
 
 	/**
@@ -232,11 +267,9 @@ public class StoneAnalysisController {
 		}else {
 			params.put("counter", counter);
 		}
-		List<StoneAnalysis> listAll = new ArrayList<>();
-		listAll = stoneService.findStoneBySupplier(params);
+        List<StoneAnalysis> listAll = stoneService.findStoneByParams(params);// 表格数据
 
 		stoneService.downloadExcelForIndex(listAll,response);
-		
 
 		return result;
 	}
@@ -253,7 +286,7 @@ public class StoneAnalysisController {
 	@GetMapping(value = "productnum")
 	public String productnum(ModelMap map)  {
 
-		map.addAttribute("stoneList", stoneService.findAllStone());
+		//map.addAttribute("stoneList", stoneService.findAllStone());
 
 		map.addAttribute("listsupplier", stoneService.findDistinctSupplier());
 		map.addAttribute("listQuality", stoneService.findDistinctQuality());
@@ -270,7 +303,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="productnum页面 查询",notes="productnum页面 查询")
 	@RequestMapping(value = "supplierFind2", method = RequestMethod.POST)
 	@ResponseBody
-	public String supplierFind2(HttpServletRequest request, ModelMap map, HttpSession session) throws ParseException {
+	public String supplierFind2(HttpServletRequest request){
 		String supplier = request.getParameter("supplier");
 		String counter = request.getParameter("counter");
 		String quality = request.getParameter("quality");
@@ -302,14 +335,13 @@ public class StoneAnalysisController {
 		params.put("start", st);
 		params.put("end", ed);
 
-		List<StoneAnalysis> list = new ArrayList<StoneAnalysis>(); // 图标数据
-		List<StoneAnalysis> listAll = new ArrayList<StoneAnalysis>();// 表格数据
 
-		listAll = stoneService.findStoneBySupplier(params);
-		list = stoneService.findStoneBySupplierForProductSum(params);
-		
+        List<StoneAnalysis> listSale = stoneService.findSourceEqualsSaleByProduct(params); // 图表数据 销售
+        List<StoneAnalysis> listBack = stoneService.findSourceEqualsBackByProduct(params); // 图表数据 退回
+        List<StoneAnalysis> listAll = stoneService.findStoneByParams(params);// 表格数据
 
-		List listProduct = new ArrayList<>();
+
+        List listProduct = new ArrayList<>();
 		List listProductNum = new ArrayList<>();
 		List listAllDate = new ArrayList<>();
 		List listAllQuality = new ArrayList<>();
@@ -321,7 +353,7 @@ public class StoneAnalysisController {
 		List listAllCenterstone = new ArrayList<>();
 		List listAllCounter = new ArrayList<>();
 
-		String result = "";
+		StringBuilder result = new StringBuilder();
 		if (listAll != null) {
 			for (int i = 0; i < listAll.size(); i++) {
 				listAllDate.add(sdf.format(listAll.get(i).getDate()));
@@ -335,49 +367,89 @@ public class StoneAnalysisController {
 				listAllQuality.add(listAll.get(i).getQuality());
 			}
 		}
-
-		if (list != null) {
+        //销售数据
+		if (listSale != null) {
 			if (selectType.contains("数量")) {
-				for (int i = 0; i < list.size(); i++) {
-					listProduct.add(list.get(i).getProduct());
-					listProductNum.add(list.get(i).getNumberSum());
+				for (int i = 0; i < listSale.size(); i++) {
+					listProduct.add(listSale.get(i).getProduct());
+					listProductNum.add(listSale.get(i).getNumberSum());
 				}
 			} else if(selectType.contains("结算价")) {
-				for (int i = 0; i < list.size(); i++) {
-					listProduct.add(list.get(i).getProduct());
-					listProductNum.add(list.get(i).getSettlementpriceSum());
+				for (int i = 0; i < listSale.size(); i++) {
+					listProduct.add(listSale.get(i).getProduct());
+					listProductNum.add(listSale.get(i).getSettlementpriceSum());
 				}
 			} else if(selectType.contains("标价")) {
-				for (int i = 0; i < list.size(); i++) {
-					listProduct.add(list.get(i).getProduct());
-					listProductNum.add(list.get(i).getListpriceSum());
+				for (int i = 0; i < listSale.size(); i++) {
+					listProduct.add(listSale.get(i).getProduct());
+					listProductNum.add(listSale.get(i).getListpriceSum());
 				}
 			} else if(selectType.contains("金重")) {
-				for (int i = 0; i < list.size(); i++) {
-					listProduct.add(list.get(i).getProduct());
-					listProductNum.add(list.get(i).getGoldweightSum());
+				for (int i = 0; i < listSale.size(); i++) {
+					listProduct.add(listSale.get(i).getProduct());
+					listProductNum.add(listSale.get(i).getGoldweightSum());
 				}
 			} else if(selectType.contains("主石")) {
-				for (int i = 0; i < list.size(); i++) {
-					listProduct.add(list.get(i).getProduct());
-					listProductNum.add(list.get(i).getCenterstoneSum());
+				for (int i = 0; i < listSale.size(); i++) {
+					listProduct.add(listSale.get(i).getProduct());
+					listProductNum.add(listSale.get(i).getCenterstoneSum());
 				}
 			}
 		}
 
-		//System.out.println(list);
-		//System.out.println(listAll);
-		result = "" + listProductNum + "@" + listProduct + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct 
-				+ "@" + listAllSettlementprice+ "@" + listAllListprice+ "@" + listAllGoldweight+ "@" + listAllCenterstone
-				+ "@" + listAllCounter+ "@" + listAllQuality;
-		return result;
+        //退回数据
+        if (listBack != null) {
+            if (selectType.contains("数量")) {
+                for (int i = 0; i < listBack.size(); i++) {
+                    String product = listBack.get(i).getProduct();
+                    if(listProduct.contains(product)) {
+                        int index = listProduct.indexOf(product);
+                        listProductNum.set(index,(Integer)listProductNum.get(index)+listBack.get(i).getNumberSum());
+                    }
+                }
+            } else if(selectType.contains("结算价")) {
+                for (int i = 0; i < listBack.size(); i++) {
+                    String product = listBack.get(i).getProduct();
+                    if(listProduct.contains(product)) {
+                        int index = listProduct.indexOf(product);
+                        listProductNum.set(index,(Float)listProductNum.get(index)+listBack.get(i).getSettlementpriceSum());
+                    }
+                }
+            } else if(selectType.contains("标价")) {
+                for (int i = 0; i < listBack.size(); i++) {
+                    String product = listBack.get(i).getProduct();
+                    if(listProduct.contains(product)) {
+                        int index = listProduct.indexOf(product);
+                        listProductNum.set(index,(Float)listProductNum.get(index)-listBack.get(i).getListpriceSum());
+                    }
+                }
+            } else if(selectType.contains("金重")) {
+                for (int i = 0; i < listBack.size(); i++) {
+                    String product = listBack.get(i).getProduct();
+                    if(listProduct.contains(product)) {
+                        int index = listProduct.indexOf(product);
+                        listProductNum.set(index,(Float)listProductNum.get(index)+listBack.get(i).getGoldweightSum());
+                    }
+                }
+            } else if(selectType.contains("主石")) {
+                for (int i = 0; i < listBack.size(); i++) {
+                    String product = listBack.get(i).getProduct();
+                    if(listProduct.contains(product)) {
+                        int index = listProduct.indexOf(product);
+                        listProductNum.set(index,(Float)listProductNum.get(index)+listBack.get(i).getCenterstoneSum());
+                    }
+                }
+            }
+        }
+        result.append("" + listProductNum + "@" + listProduct + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct
+        + "@" + listAllSettlementprice+ "@" + listAllListprice+ "@" + listAllGoldweight+ "@" + listAllCenterstone
+        + "@" + listAllCounter+ "@" + listAllQuality);
+
+		return result.toString();
 	}
 
 	/**
 	 * index2 productnum页面 导出excel表格
-	 *
-	 * com.nenu.controller
-	 * 
 	 * @param request
 	 * @return String created at 2018年7月1日
 	 */
@@ -412,10 +484,8 @@ public class StoneAnalysisController {
 		params.put("start", start);
 		params.put("end", end);
 
-		List<StoneAnalysis> listAll = new ArrayList<>();
-		listAll = stoneService.findStoneBySupplier(params);
+		List<StoneAnalysis> listAll = stoneService.findStoneByParams(params);
 		stoneService.downloadExcelForProductNum(listAll,response);
-		
 
 		return result;
 	}
@@ -436,15 +506,8 @@ public class StoneAnalysisController {
 		return "index3";
 	}
 
-	
-
-	
-
 	/**
 	 * index3页面 725 兑换销售排名分析
-	 *
-	 * com.nenu.controller
-	 * 
 	 * @param request
 	 * @return String created at 2018年6月28日
 	 */
@@ -461,16 +524,11 @@ public class StoneAnalysisController {
 		String selectType = request.getParameter("selectType");
 
 		System.out.println("supplier" + supplier + "\ncounter" + counter + "\nproduct" + product + "\nstart" + start + "\nend" + end + "\nselectType" + selectType);
-		/*
-		 * supplier供应商 counter柜台 product名称 start2018-06-13 end2018-06-04 selectType数量
-		 */
 		String result = "";
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("start", start);
 		params.put("end", end);
-		List<StoneAnalysis> list = new ArrayList<StoneAnalysis>();
-		List<StoneAnalysis> listAll = new ArrayList<StoneAnalysis>();
-		
+
 		
 		if(counter.contains("柜台") || counter.contains("所有")) {
 		}else {
@@ -484,10 +542,11 @@ public class StoneAnalysisController {
 		}else {
 			params.put("supplier", supplier);
 		}
-		listAll = stoneService.findExchangeByParams(params);
-		list = stoneService.findExchangeByParamsFor725(params);
-		
-		
+
+        List<StoneAnalysis> listSale = stoneService.findSourceEqualsSaleByProduct(params); // 图表数据 销售
+        List<StoneAnalysis> listBack = stoneService.findSourceEqualsBackByProduct(params); // 图表数据 退回
+        List<StoneAnalysis> listAll = stoneService.findStoneByParams(params);// 表格数据
+
 		 
 		// 图标数据
 		List listY_t = new ArrayList<>();
@@ -496,77 +555,151 @@ public class StoneAnalysisController {
 		List listY = new ArrayList<>();
 		List listXHave = new ArrayList<>();
 		List listXNotHave = new ArrayList<>();
-		if (list != null) {
-			for (int i = 0; i < list.size(); i++) {
+		//销售数据
+		if (listSale != null) {
+			for (int i = 0; i < listSale.size(); i++) {
 				if (selectType.contains("数量")) {
-					if (!listY.contains(list.get(i).getProduct())) {
-						listY.add(list.get(i).getProduct());
+					if (!listY.contains(listSale.get(i).getProduct())) {
+						listY.add(listSale.get(i).getProduct());
 					}
-					listY_t.add(list.get(i).getProduct());
+					listY_t.add(listSale.get(i).getProduct());
 
-					if (list.get(i).getSource().contains("兑换")) {
-						listXHave_t.add(list.get(i).getNumberSum());
+					if (listSale.get(i).getExchangegoldweight() > 0 || listSale.get(i).getExchangemoney() > 0) {
+						listXHave_t.add(listSale.get(i).getNumberSum());
 						listXNotHave_t.add(0);
 					} else {
-						listXNotHave_t.add(list.get(i).getNumberSum());
+						listXNotHave_t.add(listSale.get(i).getNumberSum());
 						listXHave_t.add(0);
 					}
 				} else if (selectType.contains("结算价")) {
-					if (!listY.contains(list.get(i).getProduct())) {
-						listY.add(list.get(i).getProduct());
+					if (!listY.contains(listSale.get(i).getProduct())) {
+						listY.add(listSale.get(i).getProduct());
 					}
-					listY_t.add(list.get(i).getProduct());
+					listY_t.add(listSale.get(i).getProduct());
 
-					if (list.get(i).getSource().contains("兑换")) {
-						listXHave_t.add(Math.abs(list.get(i).getSettlementpriceSum()));
+                    if (listSale.get(i).getExchangegoldweight() > 0 || listSale.get(i).getExchangemoney() > 0) {
+						listXHave_t.add(Math.abs(listSale.get(i).getSettlementpriceSum()));
 						listXNotHave_t.add(0);
 					} else {
-						listXNotHave_t.add(list.get(i).getSettlementpriceSum());
+						listXNotHave_t.add(listSale.get(i).getSettlementpriceSum());
 						listXHave_t.add(0);
 					}
 				} else if (selectType.contains("标价")) {
-					if (!listY.contains(list.get(i).getProduct())) {
-						listY.add(list.get(i).getProduct());
+					if (!listY.contains(listSale.get(i).getProduct())) {
+						listY.add(listSale.get(i).getProduct());
 					}
-					listY_t.add(list.get(i).getProduct());
+					listY_t.add(listSale.get(i).getProduct());
 
-					if (list.get(i).getSource().contains("兑换")) {
-						listXHave_t.add(Math.abs(list.get(i).getListpriceSum()));
+                    if (listSale.get(i).getExchangegoldweight() > 0 || listSale.get(i).getExchangemoney() > 0) {
+						listXHave_t.add(Math.abs(listSale.get(i).getListpriceSum()));
 						listXNotHave_t.add(0);
 					} else {
-						listXNotHave_t.add(list.get(i).getListpriceSum());
+						listXNotHave_t.add(listSale.get(i).getListpriceSum());
 						listXHave_t.add(0);
 					}
 				} else if (selectType.contains("金重")) {
-					if (!listY.contains(list.get(i).getProduct())) {
-						listY.add(list.get(i).getProduct());
+					if (!listY.contains(listSale.get(i).getProduct())) {
+						listY.add(listSale.get(i).getProduct());
 					}
-					listY_t.add(list.get(i).getProduct());
+					listY_t.add(listSale.get(i).getProduct());
 
-					if (list.get(i).getSource().contains("兑换")) {
-						listXHave_t.add(Math.abs(list.get(i).getGoldweightSum()));
+                    if (listSale.get(i).getExchangegoldweight() > 0 || listSale.get(i).getExchangemoney() > 0) {
+						listXHave_t.add(Math.abs(listSale.get(i).getGoldweightSum()));
 						listXNotHave_t.add(0);
 					} else {
-						listXNotHave_t.add(list.get(i).getGoldweightSum());
+						listXNotHave_t.add(listSale.get(i).getGoldweightSum());
 						listXHave_t.add(0);
 					}
 				} else if (selectType.contains("主石")) {
-					if (!listY.contains(list.get(i).getProduct())) {
-						listY.add(list.get(i).getProduct());
+					if (!listY.contains(listSale.get(i).getProduct())) {
+						listY.add(listSale.get(i).getProduct());
 					}
-					listY_t.add(list.get(i).getProduct());
+					listY_t.add(listSale.get(i).getProduct());
 
-					if (list.get(i).getSource().contains("兑换")) {
-						listXHave_t.add(Math.abs(list.get(i).getCenterstoneSum()));
+                    if (listSale.get(i).getExchangegoldweight() > 0 || listSale.get(i).getExchangemoney() > 0) {
+						listXHave_t.add(Math.abs(listSale.get(i).getCenterstoneSum()));
 						listXNotHave_t.add(0);
 					} else {
-						listXNotHave_t.add(list.get(i).getCenterstoneSum());
+						listXNotHave_t.add(listSale.get(i).getCenterstoneSum());
 						listXHave_t.add(0);
 					}
 				}
 
 			}
 		}
+        //退回数据
+        if (listBack != null) {
+            for (int i = 0; i < listSale.size(); i++) {
+                if (selectType.contains("数量")) {
+                    if (!listY.contains(listSale.get(i).getProduct())) {
+                        listY.add(listSale.get(i).getProduct());
+                    }
+                    listY_t.add(listSale.get(i).getProduct());
+
+                    if (listSale.get(i).getExchangegoldweight() > 0 || listSale.get(i).getExchangemoney() > 0) {
+                        listXHave_t.add(listSale.get(i).getNumberSum());
+                        listXNotHave_t.add(0);
+                    } else {
+                        listXNotHave_t.add(listSale.get(i).getNumberSum());
+                        listXHave_t.add(0);
+                    }
+                } else if (selectType.contains("结算价")) {
+                    if (!listY.contains(listSale.get(i).getProduct())) {
+                        listY.add(listSale.get(i).getProduct());
+                    }
+                    listY_t.add(listSale.get(i).getProduct());
+
+                    if (listSale.get(i).getExchangegoldweight() > 0 || listSale.get(i).getExchangemoney() > 0) {
+                        listXHave_t.add(Math.abs(listSale.get(i).getSettlementpriceSum()));
+                        listXNotHave_t.add(0);
+                    } else {
+                        listXNotHave_t.add(listSale.get(i).getSettlementpriceSum());
+                        listXHave_t.add(0);
+                    }
+                } else if (selectType.contains("标价")) {
+                    if (!listY.contains(listSale.get(i).getProduct())) {
+                        listY.add(listSale.get(i).getProduct());
+                    }
+                    listY_t.add(listSale.get(i).getProduct());
+
+                    if (listSale.get(i).getExchangegoldweight() > 0 || listSale.get(i).getExchangemoney() > 0) {
+                        listXHave_t.add(Math.abs(listSale.get(i).getListpriceSum()));
+                        listXNotHave_t.add(0);
+                    } else {
+                        listXNotHave_t.add(listSale.get(i).getListpriceSum());
+                        listXHave_t.add(0);
+                    }
+                } else if (selectType.contains("金重")) {
+                    if (!listY.contains(listSale.get(i).getProduct())) {
+                        listY.add(listSale.get(i).getProduct());
+                    }
+                    listY_t.add(listSale.get(i).getProduct());
+
+                    if (listSale.get(i).getExchangegoldweight() > 0 || listSale.get(i).getExchangemoney() > 0) {
+                        listXHave_t.add(Math.abs(listSale.get(i).getGoldweightSum()));
+                        listXNotHave_t.add(0);
+                    } else {
+                        listXNotHave_t.add(listSale.get(i).getGoldweightSum());
+                        listXHave_t.add(0);
+                    }
+                } else if (selectType.contains("主石")) {
+                    if (!listY.contains(listSale.get(i).getProduct())) {
+                        listY.add(listSale.get(i).getProduct());
+                    }
+                    listY_t.add(listSale.get(i).getProduct());
+
+                    if (listSale.get(i).getExchangegoldweight() > 0 || listSale.get(i).getExchangemoney() > 0) {
+                        listXHave_t.add(Math.abs(listSale.get(i).getCenterstoneSum()));
+                        listXNotHave_t.add(0);
+                    } else {
+                        listXNotHave_t.add(listSale.get(i).getCenterstoneSum());
+                        listXHave_t.add(0);
+                    }
+                }
+
+            }
+        }
+
 
 		if (listY != null) {
 			for (int i = 0; i < listY.size(); i++) {
@@ -606,6 +739,7 @@ public class StoneAnalysisController {
 		List listGoldweight = new ArrayList<>();
 		List listCenterstone = new ArrayList<>();
 		List listExchangegoldweight = new ArrayList<>();
+		List listExchangemoney = new ArrayList<>();
 		List listDate = new ArrayList<>();
 		if (listAll != null) {
 			for (int i = 0; i < listAll.size(); i++) {
@@ -618,13 +752,14 @@ public class StoneAnalysisController {
 				listGoldweight.add(listAll.get(i).getGoldweight());
 				listCenterstone.add(listAll.get(i).getCenterstone());
                 listExchangegoldweight.add(listAll.get(i).getExchangegoldweight());
+                listExchangemoney.add(listAll.get(i).getExchangemoney());
 				listDate.add(sdf.format(listAll.get(i).getDate()));
 			}
 		}
 
 		result = "" + listY + "@" + listXHave + "@" + listXNotHave + "@" + listSupplier + "@" + listCounter + "@" + listProduct + "@" 
 		+ listSource + "@" + listSettlementprice + "@" + listDate + "@" + listAll.size()
-		+"@"+listListprice+"@"+listGoldweight+"@"+listCenterstone+"@"+listExchangegoldweight;
+		+"@"+listListprice+"@"+listGoldweight+"@"+listCenterstone+"@"+listExchangegoldweight+"@"+listExchangemoney;
 
 		return result;
 	}
@@ -677,32 +812,29 @@ public class StoneAnalysisController {
 	}
 
 	/**
-	 * 跳转到7.3.1页面  系列商品走势
+	 * 跳转到index731页面  系列商品走势
 	 * 
 	 * @param map
 	 * @return
 	 *             String created on 2018年7月1日 下午7:41:02
 	 */
-	@ApiOperation(value="跳转到7.3.1页面  ",notes="系列商品走势页面  ")
+	@ApiOperation(value="跳转到index731页面  ",notes="系列商品走势页面  ")
 	@GetMapping(value = "seriesproduct")
 	public String seriesproduct(ModelMap map)  {
 		map.addAttribute("listsupplier",  stoneService.findDistinctSupplier());
 		map.addAttribute("listProduct",stoneService.findDistinctProduct());
 		map.addAttribute("listCounter", stoneService.findDistinctCounter());
-		return "7.3.1";
+		return "index731";
 	}
 	/**
-	 * 7.3.1 页面 查询
+	 * index731页面 查询
 	 * @param request
-	 * @param map
-	 * @param session
 	 * @return
-	 * @throws ParseException
 	 */
-	@ApiOperation(value="7.3.1页面  查询 ",notes="系列商品走势页面  ")
+	@ApiOperation(value="index731页面  查询 ",notes="系列商品走势页面  ")
 	@RequestMapping(value = "supplierFind731", method = RequestMethod.POST)
 	@ResponseBody
-	public String supplierFind731(HttpServletRequest request, ModelMap map, HttpSession session) throws ParseException {
+	public String supplierFind731(HttpServletRequest request){
 		String supplier = request.getParameter("supplier");
 		String product = request.getParameter("product");
 		String counter = request.getParameter("counter");
@@ -733,19 +865,19 @@ public class StoneAnalysisController {
 		params.put("start", start);
 		params.put("end", end);
 		
-		List<StoneAnalysis> list = new ArrayList<StoneAnalysis>(); // 图标数据
-		list = stoneService.findStoneBySupplierFor711(params);
-		
+		List<StoneAnalysis> list = new ArrayList<StoneAnalysis>(); // 图表数据
+
 
 		List listMonth = new ArrayList<>();// 年走势月份
 		List listNum = new ArrayList<>();// 年走势数量
 
-		String result = "";
 		for (int i = 0; i < 12; i++) {
 			listNum.add(0);
 			String Mon = "" + (i + 1) + "月";
 			listMonth.add(Mon);
 		}
+        //销售数据
+        list = stoneService.findSourceEqualsSaleByDate(params);
 		if (list != null) {
 			if (selectType.contains("数量")) {
 				for (int i = 0; i < list.size(); i++) {
@@ -754,7 +886,7 @@ public class StoneAnalysisController {
 						for (int j = 0; j < 12; j++) {
 							if (m == j) {
 								int num = 0;
-								num = listNum.get(j).hashCode() + list.get(i).getNumberSum();
+								num = (Integer) listNum.get(j) + list.get(i).getNumberSum();
 								listNum.set(j, num);
 							}
 						}
@@ -766,8 +898,8 @@ public class StoneAnalysisController {
 						int m = list.get(i).getDate().getMonth();
 						for (int j = 0; j < 12; j++) {
 							if (m == j) {
-								int num = 0;
-								num = listNum.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                                float num = 0;
+								num = Float.parseFloat(listNum.get(j).toString()) + list.get(i).getSettlementpriceSum();
 								listNum.set(j, num);
 							}
 						}
@@ -814,6 +946,77 @@ public class StoneAnalysisController {
 				}
 			}
 		}
+
+        //退回数据
+        list = stoneService.findSourceEqualsBackByDate(params);
+        if (list != null) {
+            if (selectType.contains("数量")) {
+                for (int i = 0; i < list.size(); i++) {
+                    if (list.get(i).getDate() != null) {
+                        int m = list.get(i).getDate().getMonth();
+                        for (int j = 0; j < 12; j++) {
+                            if (m == j) {
+                                int num = 0;
+                                num = (Integer) listNum.get(j) + list.get(i).getNumberSum();
+                                listNum.set(j, num);
+                            }
+                        }
+                    }
+                }
+            } else if (selectType.contains("结算价")){
+                for (int i = 0; i < list.size(); i++) {
+                    if (list.get(i).getDate() != null) {
+                        int m = list.get(i).getDate().getMonth();
+                        for (int j = 0; j < 12; j++) {
+                            if (m == j) {
+                                float num = 0;
+                                num = Float.parseFloat(listNum.get(j).toString()) + list.get(i).getSettlementpriceSum();
+                                listNum.set(j, num);
+                            }
+                        }
+                    }
+                }
+            } else if (selectType.contains("标价")){
+                for (int i = 0; i < list.size(); i++) {
+                    if (list.get(i).getDate() != null) {
+                        int m = list.get(i).getDate().getMonth();
+                        for (int j = 0; j < 12; j++) {
+                            if (m == j) {
+                                float num = 0;
+                                num = Float.parseFloat(listNum.get(j).toString()) - list.get(i).getListpriceSum();
+                                listNum.set(j, num);
+                            }
+                        }
+                    }
+                }
+            } else if (selectType.contains("金重")){
+                for (int i = 0; i < list.size(); i++) {
+                    if (list.get(i).getDate() != null) {
+                        int m = list.get(i).getDate().getMonth();
+                        for (int j = 0; j < 12; j++) {
+                            if (m == j) {
+                                float num = 0;
+                                num = Float.parseFloat(listNum.get(j).toString()) + list.get(i).getGoldweightSum();
+                                listNum.set(j, num);
+                            }
+                        }
+                    }
+                }
+            } else if (selectType.contains("主石")){
+                for (int i = 0; i < list.size(); i++) {
+                    if (list.get(i).getDate() != null) {
+                        int m = list.get(i).getDate().getMonth();
+                        for (int j = 0; j < 12; j++) {
+                            if (m == j) {
+                                float num = 0;
+                                num = Float.parseFloat(listNum.get(j).toString()) + list.get(i).getCenterstoneSum();
+                                listNum.set(j, num);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 		// 月走势
 		String selectMonth = request.getParameter("selectMonth");
 
@@ -870,7 +1073,8 @@ public class StoneAnalysisController {
 		params_day.put("start", strat_day);
 		System.out.println(strat_day+"------->"+strat_end);
 		List<StoneAnalysis> ListOneMonth = new ArrayList<>();
-		ListOneMonth = stoneService.findStoneBySupplierFor711(params_day);
+		//销售数据
+		ListOneMonth = stoneService.findSourceEqualsSaleByDate(params_day);
 		if (ListOneMonth != null) {
 			if (selectType.contains("数量")) {
 				for (int i = 0; i < ListOneMonth.size(); i++) {
@@ -880,7 +1084,7 @@ public class StoneAnalysisController {
 						for (int j = 0; j < 31; j++) {
 							if (m == j) {
 								int num = 0;
-								num = listMonthNum.get(j).hashCode() + ListOneMonth.get(i).getNumberSum();
+								num = (Integer) listMonthNum.get(j) + ListOneMonth.get(i).getNumberSum();
 								listMonthNum.set(j, num);
 							}
 						}
@@ -892,8 +1096,8 @@ public class StoneAnalysisController {
 						int m = ListOneMonth.get(i).getDate().getDate()-1;
 						for (int j = 0; j < 31; j++) {
 							if (m == j) {
-								int num = 0;
-								num = listMonthNum.get(j).hashCode() + ListOneMonth.get(i).getSettlementpriceSum();
+								float num = 0;
+								num = Float.parseFloat(listNum.get(j).toString()) + ListOneMonth.get(i).getSettlementpriceSum();
 								listMonthNum.set(j, num);
 							}
 						}
@@ -906,7 +1110,7 @@ public class StoneAnalysisController {
 						for (int j = 0; j < 31; j++) {
 							if (m == j) {
 								float num = 0;
-								num = listMonthNum.get(j).hashCode() + ListOneMonth.get(i).getListpriceSum();
+								num = Float.parseFloat(listNum.get(j).toString()) + ListOneMonth.get(i).getListpriceSum();
 								listMonthNum.set(j, num);
 							}
 						}
@@ -919,7 +1123,7 @@ public class StoneAnalysisController {
 						for (int j = 0; j < 31; j++) {
 							if (m == j) {
 								float num = 0;
-								num = listMonthNum.get(j).hashCode() + ListOneMonth.get(i).getGoldweightSum();
+								num = Float.parseFloat(listNum.get(j).toString()) + ListOneMonth.get(i).getGoldweightSum();
 								listMonthNum.set(j, num);
 							}
 						}
@@ -932,7 +1136,7 @@ public class StoneAnalysisController {
 						for (int j = 0; j < 31; j++) {
 							if (m == j) {
 								float num = 0;
-								num = listMonthNum.get(j).hashCode() + ListOneMonth.get(i).getCenterstoneSum();
+								num = Float.parseFloat(listNum.get(j).toString()) + ListOneMonth.get(i).getCenterstoneSum();
 								listMonthNum.set(j, num);
 							}
 						}
@@ -941,121 +1145,94 @@ public class StoneAnalysisController {
 			}
 		}
 
-		result = "" + listNum + "@" + listMonth + "@" + listMonthNum + "@" + listDate;
-		return result;
+        //退回数据
+        ListOneMonth = stoneService.findSourceEqualsBackByDate(params_day);
+        if (ListOneMonth != null) {
+            if (selectType.contains("数量")) {
+                for (int i = 0; i < ListOneMonth.size(); i++) {
+                    if (ListOneMonth.get(i).getDate() != null) {
+                        int m = ListOneMonth.get(i).getDate().getDate()-1;
+                        System.out.println("m=="+m);
+                        for (int j = 0; j < 31; j++) {
+                            if (m == j) {
+                                int num = 0;
+                                num = (Integer) listMonthNum.get(j) + ListOneMonth.get(i).getNumberSum();
+                                listMonthNum.set(j, num);
+                            }
+                        }
+                    }
+                }
+            } else if (selectType.contains("结算价")){
+                for (int i = 0; i < ListOneMonth.size(); i++) {
+                    if (ListOneMonth.get(i).getDate() != null) {
+                        int m = ListOneMonth.get(i).getDate().getDate()-1;
+                        for (int j = 0; j < 31; j++) {
+                            if (m == j) {
+                                float num = 0;
+                                num = Float.parseFloat(listNum.get(j).toString()) + ListOneMonth.get(i).getSettlementpriceSum();
+                                listMonthNum.set(j, num);
+                            }
+                        }
+                    }
+                }
+            } else if (selectType.contains("标价")){
+                for (int i = 0; i < ListOneMonth.size(); i++) {
+                    if (ListOneMonth.get(i).getDate() != null) {
+                        int m = ListOneMonth.get(i).getDate().getDate()-1;
+                        for (int j = 0; j < 31; j++) {
+                            if (m == j) {
+                                float num = 0;
+                                num = Float.parseFloat(listNum.get(j).toString()) - ListOneMonth.get(i).getListpriceSum();
+                                listMonthNum.set(j, num);
+                            }
+                        }
+                    }
+                }
+            } else if (selectType.contains("金重")){
+                for (int i = 0; i < ListOneMonth.size(); i++) {
+                    if (ListOneMonth.get(i).getDate() != null) {
+                        int m = ListOneMonth.get(i).getDate().getDate()-1;
+                        for (int j = 0; j < 31; j++) {
+                            if (m == j) {
+                                float num = 0;
+                                num = Float.parseFloat(listNum.get(j).toString()) + ListOneMonth.get(i).getGoldweightSum();
+                                listMonthNum.set(j, num);
+                            }
+                        }
+                    }
+                }
+            } else if (selectType.contains("主石")){
+                for (int i = 0; i < ListOneMonth.size(); i++) {
+                    if (ListOneMonth.get(i).getDate() != null) {
+                        int m = ListOneMonth.get(i).getDate().getDate()-1;
+                        for (int j = 0; j < 31; j++) {
+                            if (m == j) {
+                                float num = 0;
+                                num = Float.parseFloat(listNum.get(j).toString()) + ListOneMonth.get(i).getCenterstoneSum();
+                                listMonthNum.set(j, num);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        StringBuilder result = new StringBuilder();
+		result.append("" + listNum + "@" + listMonth + "@" + listMonthNum + "@" + listDate);
+		return result.toString();
 	}
 
 	/**
 	 * index5页面 跳转到index5页面 分析销售增减趋势
 	 * 
 	 * @param map
-	 * @param session
-	 * @return
-	 * @throws ParseException
 	 *             String created on 2018年6月27日
 	 */
 	@ApiOperation(value="跳转到index5页面 ",notes="分析销售增减趋势页面  ")
 	@GetMapping(value = "index5")
-	public String index5(ModelMap map, HttpSession session) throws ParseException {
+	public String index5(ModelMap map) {
 		List<StoneAnalysis> listArea = stoneService.findDistinctArea();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		map.addAttribute("listArea", listArea);
-		//System.out.println(listArea);
-		Date da = new Date();
-		Date date = null;
-		String end = sdf.format(da);
-		Calendar c = Calendar.getInstance();// 获得一个日历的实例
-		try {
-			date = sdf.parse(sdf.format(da));
-		} catch (Exception e) {
-		}
-		c.setTime(date);// 设置日历时间
-		c.add(Calendar.MONTH, -6);// 在日历的月份上减去6个月
-		// System.out.println(sdf.format(c.getTime()));//得到6个月后的日期
-		String start = sdf.format(c.getTime());
-
-		int year_s = Integer.parseInt(start.substring(0, 4));
-		int year_e = Integer.parseInt(end.substring(0, 4));
-		int month_s = Integer.parseInt(start.substring(5, 7));
-		int month_e = Integer.parseInt(end.substring(5, 7));
-		int year_diff = year_e - year_s;
-		int month_diff = month_e - month_s;
-		int diff = year_diff * 12 + month_diff + 2;
-		System.out.println(diff + "cccccc");
-		String[][] str = new String[listArea.size()][diff];
-		for (int i = 0; i < str.length; i++) {
-			for (int j = 0; j < diff; j++) {
-				str[i][j] = "0";
-			}
-		}
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("start", start);
-		params.put("end", end);
-		List<StoneAnalysis> listAllArea = stoneService.findStoneByAreaAndTimeForNumberSumDemo(params);
-		for (int i = 0; i < listArea.size(); i++) {
-			str[i][0] = (String) listArea.get(i).getArea();
-		}
-
-		List titleList = new ArrayList<>();// 表头
-		titleList.add("area");
-		String st = start.substring(0, 7);
-		titleList.add(st);
-		for (int i = 2; i < diff; i++) {
-			start = StoneAnalysisController.monthAddFrist(start);
-			titleList.add(start);
-		}
-
-		//System.out.println(titleList);
-//		for (int i = 0; i < str.length; i++) {
-//			for (int j = 0; j < diff; j++) {
-//				System.out.print(str[i][j] + "\t");
-//			}
-//			System.out.println();
-//		}
-		for (int i = 0; i < listAllArea.size(); i++) {
-			for (int j = 0; j < str.length; j++) {
-				if (listAllArea.get(i).getArea() != null) {
-					if (listAllArea.get(i).getArea().contains(str[j][0])) {
-						int year_st = Integer.parseInt(sdf.format(listAllArea.get(i).getDate()).substring(0, 4));
-						int month_st = Integer.parseInt(sdf.format(listAllArea.get(i).getDate()).substring(5, 7));
-						if (year_s == year_st) {
-							int month_ss = month_st - month_s + 1;
-							str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllArea.get(i).getNumberSum()));
-						} else {
-							int month_ss = (year_st - year_s) * 12 + month_st - month_s + 1;
-							str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllArea.get(i).getNumberSum()));
-						}
-					}
-				}
-			}
-		}
-
-//		for (int i = 0; i < str.length; i++) {
-//			for (int j = 0; j < diff; j++) {
-//				System.out.print(str[i][j] + "\t");
-//			}
-//			System.out.println();
-//		}
-
-		String result = "";
-
-		for (int i = 0; i < str.length; i++) {
-			for (int j = 0; j < diff; j++) {
-				// title.add(str[i][j]);
-				if (j == 0) {
-					result += str[i][j] + ",";
-				} else if (j == diff - 1) {
-					result += str[i][j] + "@";
-				} else {
-					result += str[i][j] + ",";
-				}
-			}
-		}
-
-		map.addAttribute("result", result);
-		map.addAttribute("titleList", titleList);
 		return "index5";
-
 	}
 
 	/**
@@ -1115,13 +1292,12 @@ public class StoneAnalysisController {
 	 * index5页面  742 销售增减分析，回显表格和图标
 	 * 
 	 * @param request
-	 * @param map
 	 * @return String created on 2018年6月28日
 	 */
 	@ApiOperation(value="index5页面  销售增减分析，回显表格和图标",notes="index5页面  742 销售增减分析，回显表格和图标")
 	@RequestMapping(value = "saleTrendFind", method = RequestMethod.POST)
 	@ResponseBody
-	public String saleTrendFind(HttpServletRequest request, ModelMap map) {
+	public String saleTrendFind(HttpServletRequest request) {
 		String selectType = request.getParameter("selectType");
 		String type = request.getParameter("type");
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -1182,7 +1358,8 @@ public class StoneAnalysisController {
 			str[i][0] = (String) listTitle.get(i);
 		}
 		if (type.contains("地区")) {
-			listAllContent = stoneService.findAreaFor742(params);
+		    //销售数据
+			listAllContent = stoneService.findSourceEqualsSaleByArea(params);
 			for (int i = 0; i < listAllContent.size(); i++) {
 				for (int j = 0; j < str.length; j++) {
 					if (listAllContent.get(i).getArea() != null) {
@@ -1200,10 +1377,10 @@ public class StoneAnalysisController {
 							}else if(selectType.contains("结算价")) {
 								if (year_s == year_st) {
 									int month_ss = month_st - month_s + 1;
-									str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getSettlementpriceSum()));
+									str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getSettlementpriceSum()));
 								} else {
 									int month_ss = (year_st - year_s) * 12 + month_st - month_s + 1;
-									str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getSettlementpriceSum()));
+									str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getSettlementpriceSum()));
 								}
 							}else if(selectType.contains("标价")) {
 								if (year_s == year_st) {
@@ -1234,6 +1411,59 @@ public class StoneAnalysisController {
 					}
 				}
 			}
+            //退回数据
+            listAllContent = stoneService.findSourceEqualsBackByArea(params);
+            for (int i = 0; i < listAllContent.size(); i++) {
+                for (int j = 0; j < str.length; j++) {
+                    if (listAllContent.get(i).getArea() != null) {
+                        if (listAllContent.get(i).getArea().contains(str[j][0])) {
+                            int year_st = Integer.parseInt(sdf.format(listAllContent.get(i).getDate()).substring(0, 4));
+                            int month_st = Integer.parseInt(sdf.format(listAllContent.get(i).getDate()).substring(5, 7));
+                            if (selectType.contains("数量")) {
+                                if (year_s == year_st) {
+                                    int month_ss = month_st - month_s + 1;
+                                    str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getNumberSum()));
+                                } else {
+                                    int month_ss = (year_st - year_s) * 12 + month_st - month_s + 1;
+                                    str[j][month_ss] = String.valueOf((Integer.parseInt(str[j][month_ss]) + listAllContent.get(i).getNumberSum()));
+                                }
+                            } else if (selectType.contains("结算价")) {
+                                if (year_s == year_st) {
+                                    int month_ss = month_st - month_s + 1;
+                                    str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getSettlementpriceSum()));
+                                } else {
+                                    int month_ss = (year_st - year_s) * 12 + month_st - month_s + 1;
+                                    str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getSettlementpriceSum()));
+                                }
+                            } else if (selectType.contains("标价")) {
+                                if (year_s == year_st) {
+                                    int month_ss = month_st - month_s + 1;
+                                    str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) - listAllContent.get(i).getListpriceSum()));
+                                } else {
+                                    int month_ss = (year_st - year_s) * 12 + month_st - month_s + 1;
+                                    str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) - listAllContent.get(i).getListpriceSum()));
+                                }
+                            } else if (selectType.contains("金重")) {
+                                if (year_s == year_st) {
+                                    int month_ss = month_st - month_s + 1;
+                                    str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getGoldweightSum()));
+                                } else {
+                                    int month_ss = (year_st - year_s) * 12 + month_st - month_s + 1;
+                                    str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getGoldweightSum()));
+                                }
+                            } else if (selectType.contains("主石")) {
+                                if (year_s == year_st) {
+                                    int month_ss = month_st - month_s + 1;
+                                    str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getCenterstoneSum()));
+                                } else {
+                                    int month_ss = (year_st - year_s) * 12 + month_st - month_s + 1;
+                                    str[j][month_ss] = String.valueOf((Float.parseFloat(str[j][month_ss]) + listAllContent.get(i).getCenterstoneSum()));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 		} else if (type.contains("柜台")) {
 			listAllContent = stoneService.findCounterFor742(params);
 			for (int i = 0; i < listAllContent.size(); i++) {
@@ -1364,7 +1594,6 @@ public class StoneAnalysisController {
 
 	/**
 	 * index6 S743 销售结构分析 获取柜台
-	 * 
 	 * @param map
 	 * @return
 	 *             String created on 2018年7月1日 下午7:55:11
@@ -1381,28 +1610,25 @@ public class StoneAnalysisController {
 	 * index6 s743页面  查询
 	 * 
 	 * @param request
-	 * @param map
-	 * @param session
 	 * @return
-	 * @throws ParseException
 	 *             String created on 2018年7月1日 下午7:56:15
 	 */
 	@ApiOperation(value="s743页面  查询",notes="销售结构分析")
 	@RequestMapping(value = "counterFind", method = RequestMethod.POST)
 	@ResponseBody
-	public String counterFind(HttpServletRequest request, ModelMap map, HttpSession session) throws ParseException {
-		String counterName = request.getParameter("counter");
+	public String counterFind(HttpServletRequest request) {
+		String counter = request.getParameter("counter");
 		String selectType = request.getParameter("selectType");
 
-		System.out.println("柜台=============" + counterName);
+		System.out.println("柜台=============" + counter);
 		System.out.println("类别=============" + selectType);
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Map<String, Object> params = new HashMap<String, Object>();
-		if(counterName.contains("所有") || counterName.contains("柜台")) {	
+		if(counter.contains("所有") || counter.contains("柜台")) {
 		}else {
 			System.out.println("有柜台");
-			params.put("counter", counterName);
+			params.put("counter", counter);
 		}
 		
 		String st = request.getParameter("start");
@@ -1412,32 +1638,64 @@ public class StoneAnalysisController {
 
 		System.out.println("start===" + st + "======end" + ed);
 
-		List<StoneAnalysis> list = new ArrayList<StoneAnalysis>(); // 图标数据
-		List<StoneAnalysis> listAll = new ArrayList<StoneAnalysis>();// 表格数据
-
-		listAll = stoneService.findStoneByCounter(params);
-		list = stoneService.findStoneByCounterFor743(params);
+        List<StoneAnalysis> listSale = stoneService.findSourceEqualsSaleByProduct(params); // 图表数据 销售
+        List<StoneAnalysis> listBack = stoneService.findSourceEqualsBackByProduct(params); // 图表数据 退回
+        List<StoneAnalysis> listAll = stoneService.findStoneByParams(params);// 表格数据
 		List listProduct = new ArrayList<>();
 		List listProductNum = new ArrayList<>();
-	
-		if(list.size()>0) {
-			for (int i = 0; i < list.size(); i++) {
-				listProduct.add(list.get(i).getProduct());
+	   //销售数据
+		if(listSale.size()>0) {
+			for (int i = 0; i < listSale.size(); i++) {
+				listProduct.add(listSale.get(i).getProduct());
 				if(selectType.contains("数量")) {
-					listProductNum.add(list.get(i).getNumberSum());
+					listProductNum.add(listSale.get(i).getNumberSum());
 				}else if(selectType.contains("结算价")) {
-					listProductNum.add(list.get(i).getSettlementpriceSum());
+					listProductNum.add(listSale.get(i).getSettlementpriceSum());
 				}else if(selectType.contains("标价")) {
-					listProductNum.add(list.get(i).getListpriceSum());
+					listProductNum.add(listSale.get(i).getListpriceSum());
 				}else if(selectType.contains("金重")) {
-					listProductNum.add(list.get(i).getGoldweightSum());
+					listProductNum.add(listSale.get(i).getGoldweightSum());
 				}else if(selectType.contains("主石")) {
-					listProductNum.add(list.get(i).getCenterstoneSum());
+					listProductNum.add(listSale.get(i).getCenterstoneSum());
 				}
 			}
-		}	
-		//System.out.println(list);
-		//System.out.println(listAll);
+		}
+        //退回数据
+        if(listBack.size()>0) {
+            for (int i = 0; i < listBack.size(); i++) {
+                if(selectType.contains("数量")) {
+                    String product = listBack.get(i).getProduct();
+                    if(listProduct.contains(product)) {
+                        int index = listProduct.indexOf(product);
+                        listProductNum.set(index,(Integer)listProductNum.get(index)+listBack.get(i).getNumberSum());
+                    }
+                }else if(selectType.contains("结算价")) {
+                    String product = listBack.get(i).getProduct();
+                    if(listProduct.contains(product)) {
+                        int index = listProduct.indexOf(product);
+                        listProductNum.set(index,(Float)listProductNum.get(index)+listBack.get(i).getSettlementpriceSum());
+                    }
+                }else if(selectType.contains("标价")) {
+                    String product = listBack.get(i).getProduct();
+                    if(listProduct.contains(product)) {
+                        int index = listProduct.indexOf(product);
+                        listProductNum.set(index,(Float)listProductNum.get(index)-listBack.get(i).getListpriceSum());
+                    }
+                }else if(selectType.contains("金重")) {
+                    String product = listBack.get(i).getProduct();
+                    if(listProduct.contains(product)) {
+                        int index = listProduct.indexOf(product);
+                        listProductNum.set(index,(Float)listProductNum.get(index)+listBack.get(i).getGoldweightSum());
+                    }
+                }else if(selectType.contains("主石")) {
+                    String product = listBack.get(i).getProduct();
+                    if(listProduct.contains(product)) {
+                        int index = listProduct.indexOf(product);
+                        listProductNum.set(index,(Float)listProductNum.get(index)+listBack.get(i).getCenterstoneSum());
+                    }
+                }
+            }
+        }
 		List listAllDate = new ArrayList<>();
 		List listAllSupplier = new ArrayList<>();
 		List listAllSettlementprice = new ArrayList<>();
@@ -1447,7 +1705,7 @@ public class StoneAnalysisController {
 		List listAllCenterstone = new ArrayList<>();
 		List listAllGoldweight = new ArrayList<>();
 
-		String result = "";
+		StringBuilder result = new StringBuilder();
 		if (listAll != null) {
 			for (int i = 0; i < listAll.size(); i++) {
 				listAllDate.add(sdf.format(listAll.get(i).getDate()));
@@ -1461,10 +1719,9 @@ public class StoneAnalysisController {
 			}
 		}
 
-
-		result = "" + listProductNum + "@" + listProduct + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct + "@" + listAllSettlementprice 
-				+ "@" + listAllCounter+ "@" + listAlllistprice+ "@" + listAllCenterstone+ "@" + listAllGoldweight;
-		return result;
+        result.append("" + listProductNum + "@" + listProduct + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct + "@" + listAllSettlementprice
+                + "@" + listAllCounter+ "@" + listAlllistprice+ "@" + listAllCenterstone+ "@" + listAllGoldweight);
+		return result.toString();
 	}
 
 	/**
@@ -1481,23 +1738,22 @@ public class StoneAnalysisController {
 	public String downloadExcelForIndex6(HttpServletRequest request,HttpServletResponse response) {
 		String con = request.getParameter("context");
 		String conList[]=con.split("&");
-		String counterName = conList[0];
+		String counter = conList[0];
 		String start = conList[1];
 		String end = conList[2];
 		
 
 		String result = "";
 		Map<String, Object> params = new HashMap<String, Object>();
-		if(counterName.contains("所有") || counterName.contains("柜台")) {	
+		if(counter.contains("所有") || counter.contains("柜台")) {
 		}else {
 			System.out.println("有柜台");
-			params.put("counter", counterName);
+			params.put("counter", counter);
 		}
 		params.put("start", start);
 		params.put("end", end);
 
-		List<StoneAnalysis> listAll = new ArrayList<>();
-		listAll = stoneService.findStoneByCounter(params);
+		List<StoneAnalysis> listAll = stoneService.findStoneByParams(params);
 		stoneService.downloadExcelFor743(listAll,response);
 		
 		return result;
@@ -1524,16 +1780,13 @@ public class StoneAnalysisController {
 	 * s744
 	 * 
 	 * @param request
-	 * @param map
-	 * @param session
 	 * @return
-	 * @throws ParseException
 	 *             String created on 2018年7月1日 下午8:36:42
 	 */
 	@ApiOperation(value="s744页面，区域经营分析 查询",notes="区域经营分析")
 	@RequestMapping(value = "areaFind", method = RequestMethod.POST)
 	@ResponseBody
-	public String areaFind(HttpServletRequest request, ModelMap map, HttpSession session) throws ParseException {
+	public String areaFind(HttpServletRequest request)  {
 		String area = request.getParameter("area");
 		String room = request.getParameter("room");
 		String quality = request.getParameter("quality");
@@ -1574,33 +1827,67 @@ public class StoneAnalysisController {
 
 		params.put("start", st);
 		params.put("end", ed);
-	
-		List<StoneAnalysis> list = new ArrayList<StoneAnalysis>(); // 图标数据
-		List<StoneAnalysis> listAll = new ArrayList<StoneAnalysis>();// 表格数据
 
-		listAll = stoneService.findStoneByArea(params);
-		list = stoneService.findStoneFor744(params);
+
+        List<StoneAnalysis> listSale = stoneService.findSourceEqualsSaleByProduct(params); // 图表数据 销售
+        List<StoneAnalysis> listBack = stoneService.findSourceEqualsBackByProduct(params); // 图表数据 退回
+        List<StoneAnalysis> listAll = stoneService.findStoneByParams(params);// 表格数据
 		List listProduct = new ArrayList<>();
 		List listProductNum = new ArrayList<>();
-	
-		if(list.size()>0) {
-			for (int i = 0; i < list.size(); i++) {
-				listProduct.add(list.get(i).getProduct());
+	   //销售数据
+		if(listSale.size()>0) {
+			for (int i = 0; i < listSale.size(); i++) {
+				listProduct.add(listSale.get(i).getProduct());
 				if(selectType.contains("数量")) {
-					listProductNum.add(list.get(i).getNumberSum());
+					listProductNum.add(listSale.get(i).getNumberSum());
 				}else if(selectType.contains("结算价")) {
-					listProductNum.add(list.get(i).getSettlementpriceSum());
+					listProductNum.add(listSale.get(i).getSettlementpriceSum());
 				}else if(selectType.contains("标价")) {
-					listProductNum.add(list.get(i).getListpriceSum());
+					listProductNum.add(listSale.get(i).getListpriceSum());
 				}else if(selectType.contains("金重")) {
-					listProductNum.add(list.get(i).getGoldweightSum());
+					listProductNum.add(listSale.get(i).getGoldweightSum());
 				}else if(selectType.contains("主石")) {
-					listProductNum.add(list.get(i).getCenterstoneSum());
+					listProductNum.add(listSale.get(i).getCenterstoneSum());
 				}
 			}
-		}	
-		String result = "";
-		
+		}
+        //退回数据
+        if(listBack.size()>0) {
+            for (int i = 0; i < listBack.size(); i++) {
+                if(selectType.contains("数量")) {
+                    String product = listBack.get(i).getProduct();
+                    if(listProduct.contains(product)) {
+                        int index = listProduct.indexOf(product);
+                        listProductNum.set(index,(Integer)listProductNum.get(index)+listBack.get(i).getNumberSum());
+                    }
+                }else if(selectType.contains("结算价")) {
+                    String product = listBack.get(i).getProduct();
+                    if(listProduct.contains(product)) {
+                        int index = listProduct.indexOf(product);
+                        listProductNum.set(index,(Float)listProductNum.get(index)+listBack.get(i).getSettlementpriceSum());
+                    }
+                }else if(selectType.contains("标价")) {
+                    String product = listBack.get(i).getProduct();
+                    if(listProduct.contains(product)) {
+                        int index = listProduct.indexOf(product);
+                        listProductNum.set(index,(Float)listProductNum.get(index)-listBack.get(i).getListpriceSum());
+                    }
+                }else if(selectType.contains("金重")) {
+                    String product = listBack.get(i).getProduct();
+                    if(listProduct.contains(product)) {
+                        int index = listProduct.indexOf(product);
+                        listProductNum.set(index,(Float)listProductNum.get(index)+listBack.get(i).getGoldweightSum());
+                    }
+                }else if(selectType.contains("主石")) {
+                    String product = listBack.get(i).getProduct();
+                    if(listProduct.contains(product)) {
+                        int index = listProduct.indexOf(product);
+                        listProductNum.set(index,(Float)listProductNum.get(index)+listBack.get(i).getCenterstoneSum());
+                    }
+                }
+            }
+        }
+		StringBuilder result = new StringBuilder();
 		List listAllDate = new ArrayList<>();
 		List listAllSupplier = new ArrayList<>();
 		List listAllSettlementprice = new ArrayList<>();
@@ -1627,13 +1914,10 @@ public class StoneAnalysisController {
 				listAllGoldweight.add(listAll.get(i).getGoldweight());
 			}
 		}
-		//System.out.println(list);
-		//System.out.println(listAll);
-		//System.out.println("===" + listProductNum);
-		result = "" + listProductNum + "@" + listProduct + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct + "@" + 
-		listAllSettlementprice + "@" + listAllArea+"@" + listAllRoom+"@" + listAllCounter+"@" + 
-		listAllQuality+"@" + listAllListprice+"@" + listAllCenterstone+"@" + listAllGoldweight;
-		return result;
+        result.append("" + listProductNum + "@" + listProduct + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct + "@" +
+                listAllSettlementprice + "@" + listAllArea+"@" + listAllRoom+"@" + listAllCounter+"@" +
+                listAllQuality+"@" + listAllListprice+"@" + listAllCenterstone+"@" + listAllGoldweight);
+		return result.toString();
 	}
 
 	/**
@@ -1654,7 +1938,6 @@ public class StoneAnalysisController {
 		String room = conList[1];
 		String counter = conList[2];
 		String quality = conList[3];
-		
 
 		String start = conList[4];
 		String end = conList[5];
@@ -1684,438 +1967,11 @@ public class StoneAnalysisController {
 		
 		params.put("start", start);
 		params.put("end", end);
-
-		List<StoneAnalysis> listAll = new ArrayList<>();
-		listAll = stoneService.findStoneByArea(params);
+		List<StoneAnalysis> listAll = stoneService.findStoneByParams(params);
 		stoneService.downloadExcelFor744(listAll,response);
-		
 		return result;
 	}
 
-	/**
-	 * index10 main跳转index10页面
-	 * 
-	 * @param map
-	 * @return String created by lick on 2018年7月1日
-	 */
-	@ApiOperation(value="跳转到index10页面,销售数据统计")
-	@GetMapping(value = "index10")
-	public String index10(ModelMap map) {
-		map.addAttribute("listArea", stoneService.findDistinctArea());
-		return "index10";
-	}
-
-	/**
-	 * index10页面 通过销售区域获取柜台
-	 * 
-	 * @param request
-	 * @return List created by lick on 2018年7月1日
-	 */
-	@ApiOperation(value="index10页面,销售数据统计,通过销售区域获取柜台")
-	@RequestMapping(value = "findCounterByAreaForIndex10", method = RequestMethod.POST)
-	@ResponseBody
-	public List findCounterByAreaForIndex10(HttpServletRequest request) {
-		String area = request.getParameter("area");
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("area", area);
-		List<StoneAnalysis> list = stoneService.findCompareDataSetByParams(params);
-		List listCounter = new ArrayList<>();
-		for (int i = 0; i < list.size(); i++) {
-			if (!listCounter.contains(list.get(i).getCounter()) && list.get(i).getCounter().length() > 0) {
-				listCounter.add(list.get(i).getCounter());
-			}
-		}
-		return listCounter;
-	}
-
-	/**
-	 * index10页面 通过销售区域和柜台获取名称
-	 * 
-	 * @param request
-	 * @return List created by lick on 2018年7月1日
-	 */
-	@ApiOperation(value="index10页面,销售数据统计, 通过销售区域和柜台获取名称")
-	@RequestMapping(value = "findProductByAreaAndCounterForIndex10", method = RequestMethod.POST)
-	@ResponseBody
-	public List findProductByAreaAndCounterForIndex10(HttpServletRequest request) {
-		String area = request.getParameter("area");
-		String counter = request.getParameter("counter");
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("area", area);
-		params.put("counter", counter);
-		List<StoneAnalysis> list = stoneService.findCompareDataSetByParams(params);
-		List listProduct = new ArrayList<>();
-		for (int i = 0; i < list.size(); i++) {
-			if (!listProduct.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
-				listProduct.add(list.get(i).getProduct());
-			}
-		}
-		return listProduct;
-	}
-
-	/**
-	 * index10页面
-	 * 
-	 * 查找数据，回显图标和表格
-	 * 
-	 * @param request
-	 * @return List created by lick on 2018年7月1日 上午1:20:28
-	 */
-	@ApiOperation(value="index10页面,销售数据统计, 查找数据,回显图标和表格")
-	@RequestMapping(value = "compareFindForIndex10", method = RequestMethod.POST)
-	@ResponseBody
-	public String compareFindForIndex10(HttpServletRequest request) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String area = request.getParameter("area");
-		String counter = request.getParameter("counter");
-		String product = request.getParameter("product");
-		String selectChoice = request.getParameter("selectChoice");//年份
-		String selectType = request.getParameter("selectType");
-		
-		
-		System.out.println("area" + area + "\ncounter" + counter + "\nproduct" + product + "\nselectChoice" + selectChoice + "\nselectType" + selectType);
-		/*
-		 * area双阳地区 counter柜台 product名称 selectChoice年度对比 selectType数量
-		 */
-		String result = "";
-		List<StoneAnalysis> list = new ArrayList<>();
-		List<StoneAnalysis> listAll = new ArrayList<>();
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("area", area);
-		if (!counter.contains("柜台")) {
-			params.put("counter", counter);
-			if (!product.contains("名称")) {
-				params.put("product", product);
-				list = stoneService.findTwoYearsDataSetForCompare(params);
-				listAll = stoneService.findCompareDataSetByParams(params);
-			} else {
-				list = stoneService.findTwoYearsDataSetForCompare(params);
-				listAll = stoneService.findCompareDataSetByParams(params);
-			}
-		} else {
-			list = stoneService.findTwoYearsDataSetForCompare(params);
-			listAll = stoneService.findCompareDataSetByParams(params);
-		}
-
-		List listY = new ArrayList<>();
-		List listThisYearX = new ArrayList<>();
-		List listLastYearX = new ArrayList<>();
-		if (list != null) {
-			Date date = new Date();
-			int year = date.getYear();
-
-			if (selectType.contains("销量")) {
-				if (selectChoice.contains("年度对比")) {
-					listY.add("年度");
-					for (int i = 0; i < 1; i++) {
-						listThisYearX.add(0);
-						listLastYearX.add(0);
-					}
-					for (int i = 0; i < list.size(); i++) {
-						int y = list.get(i).getDate().getYear();
-						if (y == year) {
-							int num = 0;
-							num = listThisYearX.get(0).hashCode() + list.get(i).getNumberSum();
-							listThisYearX.set(0, num);
-						} else {
-							int num = 0;
-							num = listLastYearX.get(0).hashCode() + list.get(i).getNumberSum();
-							listLastYearX.set(0, num);
-						}
-					}
-				} else if (selectChoice.contains("季度对比")) {
-					listY.add("第一季度");
-					listY.add("第二季度");
-					listY.add("第三季度");
-					listY.add("第四季度");
-
-					for (int i = 0; i < 4; i++) {
-						listThisYearX.add(0);
-						listLastYearX.add(0);
-					}
-					for (int i = 0; i < list.size(); i++) {
-						int y = list.get(i).getDate().getYear();
-						int m = list.get(i).getDate().getMonth() + 1;
-						if (y == year) {// 今年
-							if (m >= 1 && m <= 3) {
-								int num = 0;
-								num = listThisYearX.get(0).hashCode() + list.get(i).getNumberSum();
-								listThisYearX.set(0, num);
-							}
-							if (m >= 4 && m <= 6) {
-								int num = 0;
-								num = listThisYearX.get(1).hashCode() + list.get(i).getNumberSum();
-								listThisYearX.set(1, num);
-							}
-							if (m >= 7 && m <= 9) {
-								int num = 0;
-								num = listThisYearX.get(2).hashCode() + list.get(i).getNumberSum();
-								listThisYearX.set(2, num);
-							}
-							if (m >= 10 && m <= 12) {
-								int num = 0;
-								num = listThisYearX.get(3).hashCode() + list.get(i).getNumberSum();
-								listThisYearX.set(3, num);
-							}
-
-						} else {// 去年
-							if (m >= 1 && m <= 3) {
-								int num = 0;
-								num = listLastYearX.get(0).hashCode() + list.get(i).getNumberSum();
-								listLastYearX.set(0, num);
-							}
-							if (m >= 4 && m <= 6) {
-								int num = 0;
-								num = listLastYearX.get(1).hashCode() + list.get(i).getNumberSum();
-								listLastYearX.set(1, num);
-							}
-							if (m >= 7 && m <= 9) {
-								int num = 0;
-								num = listLastYearX.get(2).hashCode() + list.get(i).getNumberSum();
-								listLastYearX.set(2, num);
-							}
-							if (m >= 10 && m <= 12) {
-								int num = 0;
-								num = listLastYearX.get(3).hashCode() + list.get(i).getNumberSum();
-								listLastYearX.set(3, num);
-							}
-						}
-					}
-
-				} else if (selectChoice.contains("月度对比")) {
-					listY.add("1月");
-					listY.add("2月");
-					listY.add("3月");
-					listY.add("4月");
-					listY.add("5月");
-					listY.add("6月");
-					listY.add("7月");
-					listY.add("8月");
-					listY.add("9月");
-					listY.add("10月");
-					listY.add("11月");
-					listY.add("12月");
-
-					for (int i = 0; i < 12; i++) {
-						listThisYearX.add(0);
-						listLastYearX.add(0);
-					}
-					for (int i = 0; i < list.size(); i++) {
-						int y = list.get(i).getDate().getYear();
-						int m = list.get(i).getDate().getMonth() + 1;
-						if (y == year) {// 今年
-							for (int j = 0; j < 12; j++) {
-								if (m == j) {
-									int num = 0;
-									num = listThisYearX.get(j).hashCode() + list.get(i).getNumberSum();
-									listThisYearX.set(j, num);
-								}
-							}
-
-						} else {// 去年
-							for (int j = 0; j < 12; j++) {
-								if (m == j) {
-									int num = 0;
-									num = listLastYearX.get(j).hashCode() + list.get(i).getNumberSum();
-									listLastYearX.set(j, num);
-								}
-							}
-						}
-					}
-				}
-
-			} else {// 营业额
-				if (selectChoice.contains("年度对比")) {
-					listY.add("年度");
-					for (int i = 0; i < 1; i++) {
-						listThisYearX.add(0);
-						listLastYearX.add(0);
-					}
-					for (int i = 0; i < list.size(); i++) {
-						int y = list.get(i).getDate().getYear();
-						if (y == year) {
-							int num = 0;
-							num = listThisYearX.get(0).hashCode() + list.get(i).getSettlementpriceSum();
-							listThisYearX.set(0, num);
-						} else {
-							int num = 0;
-							num = listLastYearX.get(0).hashCode() + list.get(i).getSettlementpriceSum();
-							listLastYearX.set(0, num);
-						}
-					}
-				} else if (selectChoice.contains("季度对比")) {
-					listY.add("第一季度");
-					listY.add("第二季度");
-					listY.add("第三季度");
-					listY.add("第四季度");
-
-					for (int i = 0; i < 4; i++) {
-						listThisYearX.add(0);
-						listLastYearX.add(0);
-					}
-					for (int i = 0; i < list.size(); i++) {
-						int y = list.get(i).getDate().getYear();
-						int m = list.get(i).getDate().getMonth() + 1;
-						if (y == year) {// 今年
-							if (m >= 1 && m <= 3) {
-								int num = 0;
-								num = listThisYearX.get(0).hashCode() + list.get(i).getSettlementpriceSum();
-								listThisYearX.set(0, num);
-							}
-							if (m >= 4 && m <= 6) {
-								int num = 0;
-								num = listThisYearX.get(1).hashCode() + list.get(i).getSettlementpriceSum();
-								listThisYearX.set(1, num);
-							}
-							if (m >= 7 && m <= 9) {
-								int num = 0;
-								num = listThisYearX.get(2).hashCode() + list.get(i).getSettlementpriceSum();
-								listThisYearX.set(2, num);
-							}
-							if (m >= 10 && m <= 12) {
-								int num = 0;
-								num = listThisYearX.get(3).hashCode() + list.get(i).getSettlementpriceSum();
-								listThisYearX.set(3, num);
-							}
-
-						} else {// 去年
-							if (m >= 1 && m <= 3) {
-								int num = 0;
-								num = listLastYearX.get(0).hashCode() + list.get(i).getSettlementpriceSum();
-								listLastYearX.set(0, num);
-							}
-							if (m >= 4 && m <= 6) {
-								int num = 0;
-								num = listLastYearX.get(1).hashCode() + list.get(i).getSettlementpriceSum();
-								listLastYearX.set(1, num);
-							}
-							if (m >= 7 && m <= 9) {
-								int num = 0;
-								num = listLastYearX.get(2).hashCode() + list.get(i).getSettlementpriceSum();
-								listLastYearX.set(2, num);
-							}
-							if (m >= 10 && m <= 12) {
-								int num = 0;
-								num = listLastYearX.get(3).hashCode() + list.get(i).getSettlementpriceSum();
-								listLastYearX.set(3, num);
-							}
-						}
-					}
-
-				} else if (selectChoice.contains("月度对比")) {
-					listY.add("1月");
-					listY.add("2月");
-					listY.add("3月");
-					listY.add("4月");
-					listY.add("5月");
-					listY.add("6月");
-					listY.add("7月");
-					listY.add("8月");
-					listY.add("9月");
-					listY.add("10月");
-					listY.add("11月");
-					listY.add("12月");
-
-					for (int i = 0; i < 12; i++) {
-						listThisYearX.add(0);
-						listLastYearX.add(0);
-					}
-					for (int i = 0; i < list.size(); i++) {
-						int y = list.get(i).getDate().getYear();
-						int m = list.get(i).getDate().getMonth() + 1;
-						if (y == year) {// 今年
-							for (int j = 0; j < 12; j++) {
-								if (m == j) {
-									int num = 0;
-									num = listThisYearX.get(j).hashCode() + list.get(i).getSettlementpriceSum();
-									listThisYearX.set(j, num);
-								}
-							}
-
-						} else {// 去年
-							for (int j = 0; j < 12; j++) {
-								if (m == j) {
-									int num = 0;
-									num = listLastYearX.get(j).hashCode() + list.get(i).getSettlementpriceSum();
-									listLastYearX.set(j, num);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		List listArea = new ArrayList<>();
-		List listRoom = new ArrayList<>();
-		List listCounter = new ArrayList<>();
-		List listProduct = new ArrayList<>();
-		List listSettlementprice = new ArrayList<>();
-		List listDate = new ArrayList<>();
-		if (listAll != null) {
-			for (int j = 0; j < listAll.size(); j++) {
-				listArea.add(listAll.get(j).getArea());
-				listRoom.add(listAll.get(j).getRoom());
-				listCounter.add(listAll.get(j).getCounter());
-				listProduct.add(listAll.get(j).getProduct());
-				listSettlementprice.add(listAll.get(j).getSettlementprice());
-				listDate.add(sdf.format(listAll.get(j).getDate()));
-			}
-		}
-		//System.out.println(listY);
-		//System.out.println(listThisYearX);
-		//System.out.println(listLastYearX);
-		result = "" + listY + "@" + listThisYearX + "@" + listLastYearX + "@" + listArea + "@" + listCounter + "@" + listProduct + "@" + listSettlementprice + "@" + listDate + "@" + listRoom;
-		System.out.println(result);
-		return result;
-	}
-
-	/**
-	 * index10页面 导出excel表格
-	 *
-	 * com.nenu.controller
-	 * 
-	 * @param request
-	 * @return String created at 2018年7月1日
-	 */
-	@ApiOperation(value="index10页面,销售数据统计, 导出excel表格")
-	@RequestMapping(value = "downloadExcelForIndex10", method = RequestMethod.POST)
-	@ResponseBody
-	public String downloadExcelForIndex10(HttpServletRequest request) {
-		String area = request.getParameter("area");
-		String counter = request.getParameter("counter");
-		String product = request.getParameter("product");
-
-		System.out.println("area" + area + "\ncounter" + counter + "\nproduct" + product);
-
-		String result = "";
-		List<StoneAnalysis> listAll = new ArrayList<>();
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("area", area);
-		if (!counter.contains("柜台")) {
-			params.put("counter", counter);
-			if (!product.contains("名称")) {
-				params.put("product", product);
-				listAll = stoneService.findCompareDataSetByParams(params);
-			} else {
-				listAll = stoneService.findCompareDataSetByParams(params);
-			}
-		} else {
-			listAll = stoneService.findCompareDataSetByParams(params);
-		}
-		System.out.println("====" + listAll + "====");
-		if (listAll.size() != 0) {
-			int re = stoneService.downloadExcelForIndex10(listAll);
-			if (re == 1) {
-				result = "下载成功，下载文件放在D:\\analysisFile下";
-			} else {
-				result = "下载出错";
-			}
-		} else {
-			result = "没有数据，下载失败";
-		}
-
-		return result;
-	}
 
 	/**
 	 * 跳转到productsum页面 供应商品群分析
@@ -2132,17 +1988,15 @@ public class StoneAnalysisController {
 	}
 
 	/**
-	 * 跳转到index9页面 销售结构分析
+	 * 跳转到index9页面 销售趋势成长分析模型页面
 	 * @param map
 	 * @return
 	 */
-	@ApiOperation(value="index9页面,销售结构分析")
+	@ApiOperation(value="index9页面,销售趋势成长分析模型页面")
 	@GetMapping(value = "s752")
 	public String s752(ModelMap map) {
-
 		map.addAttribute("listCounter", stoneService.findDistinctCounter());
 		map.addAttribute("listProduct", stoneService.findDistinctProduct());
-		
 		return "index9";
 	}
 	/**
@@ -2150,7 +2004,7 @@ public class StoneAnalysisController {
 	 * @return
 	 * @throws ParseException
 	 */
-	@ApiOperation(value="index9页面,销售结构分析,查询")
+	@ApiOperation(value="index9页面销售趋势成长分析模型页面,查询")
 	@RequestMapping(value = "compareCounterInTwoYearOfIndex9", method = RequestMethod.POST)
 	@ResponseBody
 	public String compareCounterInTwoYearOfIndex9(HttpServletRequest request) {
@@ -2194,16 +2048,19 @@ public class StoneAnalysisController {
 			endOfY = StoneAnalysisController.monthAddFrist(endOfY);
 			endList.add(endOfY);
 		}
-		String result = "";
+
 		List listThisYearX = new ArrayList<>();// 今年每个月销售
 		List listLastYearX = new ArrayList<>();// 去年每个月销售
-		List<StoneAnalysis> list = new  ArrayList<StoneAnalysis>();
+		List<StoneAnalysis> list = new  ArrayList<StoneAnalysis>(); //销售数据
+        List<StoneAnalysis> listBack = new  ArrayList<StoneAnalysis>(); //退回数据
 		if((!counter.contains("所有") && !counter.contains("柜台")) && (product.contains("所有") || product.contains("名称")) ) {	
 			System.out.println("根据柜台查询");
-			 list = stoneService.findStoneByCounterAndTimeOfIndex9(params);
+			 list = stoneService.findSourceEqualsSaleByDateAndCounter(params);
+            listBack = stoneService.findSourceEqualsBackByDateAndCounter(params);
 		}else {
 			System.out.println("根据商品查询");
-			list = stoneService.findStoneByProductAndTimeOfIndex9(params);	
+			list = stoneService.findSourceEqualsSaleByDateAndProduct(params);
+            listBack = stoneService.findSourceEqualsBackByDateAndCounter(params);
 		}
 		
 		
@@ -2212,6 +2069,7 @@ public class StoneAnalysisController {
 				listThisYearX.add(0);
 				listLastYearX.add(0);
 			}
+			//销售数据
 			if (list != null) {
 				for (int i = 0; i < list.size(); i++) {
 					if (list.get(i).getDate() != null) {
@@ -2221,7 +2079,7 @@ public class StoneAnalysisController {
 							for (int j = 0; j < 12; j++) {
 								if (month_st == j) {
 									int num = 0;
-									num = listThisYearX.get(j).hashCode() + list.get(i).getNumberSum();
+									num = (Integer)listThisYearX.get(j) + list.get(i).getNumberSum();
 									listThisYearX.set(j, num);
 								}
 							}
@@ -2229,7 +2087,7 @@ public class StoneAnalysisController {
 							for (int j = 0; j < 12; j++) {
 								if (month_st == j) {
 									int num = 0;
-									num = listLastYearX.get(j).hashCode() + list.get(i).getNumberSum();
+									num = (Integer)listLastYearX.get(j) + list.get(i).getNumberSum();
 									listLastYearX.set(j, num);
 								}
 							}
@@ -2237,12 +2095,39 @@ public class StoneAnalysisController {
 					}
 				}
 			}
+            //退回数据
+            if (listBack != null) {
+                for (int i = 0; i < listBack.size(); i++) {
+                    if (listBack.get(i).getDate() != null) {
+                        int year_st = Integer.parseInt(sdf.format(listBack.get(i).getDate()).substring(0, 4));
+                        int month_st = Integer.parseInt(sdf.format(listBack.get(i).getDate()).substring(5, 7))-1;
+                        if (year_st == year_s) {
+                            for (int j = 0; j < 12; j++) {
+                                if (month_st == j) {
+                                    int num = 0;
+                                    num = (Integer)listThisYearX.get(j) + listBack.get(i).getNumberSum();
+                                    listThisYearX.set(j, num);
+                                }
+                            }
+                        } else if (year_st == year_e) {
+                            for (int j = 0; j < 12; j++) {
+                                if (month_st == j) {
+                                    int num = 0;
+                                    num = (Integer)listLastYearX.get(j) + listBack.get(i).getNumberSum();
+                                    listLastYearX.set(j, num);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 		} else if (selectType.contains("结算价")){// 获取营业额
 			
 			for (int i = 0; i < 12; i++) {
 				listThisYearX.add(0);
 				listLastYearX.add(0);
 			}
+			//销售数据
 			if (list != null) {
 				for (int i = 0; i < list.size(); i++) {
 					if (list.get(i).getDate() != null) {
@@ -2251,16 +2136,16 @@ public class StoneAnalysisController {
 						if (year_st == year_s) {
 							for (int j = 0; j < 12; j++) {
 								if (month_st == j) {
-									int num = 0;
-									num = listThisYearX.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+									float num = 0;
+									num = Float.parseFloat(listThisYearX.get(j).toString()) + list.get(i).getSettlementpriceSum();
 									listThisYearX.set(j, num);
 								}
 							}
 						} else if (year_st == year_e) {
 							for (int j = 0; j < 12; j++) {
 								if (month_st == j) {
-									int num = 0;
-									num = listLastYearX.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+									float num = 0;
+									num = Float.parseFloat(listLastYearX.get(j).toString()) + list.get(i).getSettlementpriceSum();
 									listLastYearX.set(j, num);
 								}
 							}
@@ -2268,12 +2153,40 @@ public class StoneAnalysisController {
 					}
 				}
 			}
+
+            //退回数据
+            if (listBack != null) {
+                for (int i = 0; i < listBack.size(); i++) {
+                    if (listBack.get(i).getDate() != null) {
+                        int year_st = Integer.parseInt(sdf.format(listBack.get(i).getDate()).substring(0, 4));
+                        int month_st = Integer.parseInt(sdf.format(listBack.get(i).getDate()).substring(5, 7))-1;
+                        if (year_st == year_s) {
+                            for (int j = 0; j < 12; j++) {
+                                if (month_st == j) {
+                                    float num = 0;
+                                    num = Float.parseFloat(listThisYearX.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                    listThisYearX.set(j, num);
+                                }
+                            }
+                        } else if (year_st == year_e) {
+                            for (int j = 0; j < 12; j++) {
+                                if (month_st == j) {
+                                    float num = 0;
+                                    num = Float.parseFloat(listLastYearX.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                    listLastYearX.set(j, num);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 		} else if (selectType.contains("标价")){// 获取营业额
 			
 			for (int i = 0; i < 12; i++) {
 				listThisYearX.add(0);
 				listLastYearX.add(0);
 			}
+			//销售数据
 			if (list != null) {
 				for (int i = 0; i < list.size(); i++) {
 					if (list.get(i).getDate() != null) {
@@ -2299,12 +2212,39 @@ public class StoneAnalysisController {
 					}
 				}
 			}
+            //退回数据
+            if (listBack != null) {
+                for (int i = 0; i < listBack.size(); i++) {
+                    if (listBack.get(i).getDate() != null) {
+                        int year_st = Integer.parseInt(sdf.format(listBack.get(i).getDate()).substring(0, 4));
+                        int month_st = Integer.parseInt(sdf.format(listBack.get(i).getDate()).substring(5, 7))-1;
+                        if (year_st == year_s) {
+                            for (int j = 0; j < 12; j++) {
+                                if (month_st == j) {
+                                    float num = 0;
+                                    num = Float.parseFloat(listThisYearX.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                    listThisYearX.set(j, num);
+                                }
+                            }
+                        } else if (year_st == year_e) {
+                            for (int j = 0; j < 12; j++) {
+                                if (month_st == j) {
+                                    float num = 0;
+                                    num = Float.parseFloat(listLastYearX.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                    listLastYearX.set(j, num);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 		} else if (selectType.contains("金重")){// 获取营业额
 			
 			for (int i = 0; i < 12; i++) {
 				listThisYearX.add(0);
 				listLastYearX.add(0);
 			}
+			//销售数据
 			if (list != null) {
 				for (int i = 0; i < list.size(); i++) {
 					if (list.get(i).getDate() != null) {
@@ -2330,11 +2270,39 @@ public class StoneAnalysisController {
 					}
 				}
 			}
+
+            //退回数据
+            if (listBack != null) {
+                for (int i = 0; i < listBack.size(); i++) {
+                    if (listBack.get(i).getDate() != null) {
+                        int year_st = Integer.parseInt(sdf.format(listBack.get(i).getDate()).substring(0, 4));
+                        int month_st = Integer.parseInt(sdf.format(listBack.get(i).getDate()).substring(5, 7))-1;
+                        if (year_st == year_s) {
+                            for (int j = 0; j < 12; j++) {
+                                if (month_st == j) {
+                                    float num = 0;
+                                    num = Float.parseFloat(listThisYearX.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                    listThisYearX.set(j, num);
+                                }
+                            }
+                        } else if (year_st == year_e) {
+                            for (int j = 0; j < 12; j++) {
+                                if (month_st == j) {
+                                    float num = 0;
+                                    num = Float.parseFloat(listLastYearX.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                    listLastYearX.set(j, num);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 		} else if (selectType.contains("主石")){// 获取营业额
 			for (int i = 0; i < 12; i++) {
 				listThisYearX.add(0);
 				listLastYearX.add(0);
 			}
+			//销售数据
 			if (list != null) {
 				for (int i = 0; i < list.size(); i++) {
 					if (list.get(i).getDate() != null) {
@@ -2360,13 +2328,36 @@ public class StoneAnalysisController {
 					}
 				}
 			}
+            //退回数据
+            if (listBack != null) {
+                for (int i = 0; i < listBack.size(); i++) {
+                    if (listBack.get(i).getDate() != null) {
+                        int year_st = Integer.parseInt(sdf.format(listBack.get(i).getDate()).substring(0, 4));
+                        int month_st = Integer.parseInt(sdf.format(listBack.get(i).getDate()).substring(5, 7))-1;
+                        if (year_st == year_s) {
+                            for (int j = 0; j < 12; j++) {
+                                if (month_st == j) {
+                                    float num = 0;
+                                    num = Float.parseFloat(listThisYearX.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                    listThisYearX.set(j, num);
+                                }
+                            }
+                        } else if (year_st == year_e) {
+                            for (int j = 0; j < 12; j++) {
+                                if (month_st == j) {
+                                    float num = 0;
+                                    num = Float.parseFloat(listLastYearX.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                    listLastYearX.set(j, num);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 		}	
-		//System.out.println(startList);
-		//System.out.println(endList);
-		//System.out.println(listThisYearX);
-		//System.out.println(listLastYearX);
-		result = "" + startList + "@" + endList + "@" + listThisYearX + "@" + listLastYearX;
-		return result;
+		StringBuilder result = new StringBuilder();
+		result.append("" + startList + "@" + endList + "@" + listThisYearX + "@" + listLastYearX);
+		return result.toString();
 	}
 
 	/**
@@ -2384,7 +2375,6 @@ public class StoneAnalysisController {
 		map.addAttribute("listCounter", stoneService.findDistinctCounter());
 		map.addAttribute("listArea", stoneService.findDistinctArea());
 		map.addAttribute("listRoom", stoneService.findDistinctRoom());
-		
 		return "s75";
 	}
 	/**
@@ -2445,139 +2435,288 @@ public class StoneAnalysisController {
 		
 			if (select.contains("地区")) {
 				if (selectType.contains("数量")) {
-					list = stoneService.findAreaAccountByProductAndTime(params);		
+					list = stoneService.findSourceEqualsSaleByArea(params); //销售数据
 					if(list.size()>0) {
 						for (int i = 0; i < list.size(); i++) {
 							listX.add(list.get(i).getArea());
 							listY.add(list.get(i).getNumberSum());
 						}
 					}
+                    list = stoneService.findSourceEqualsBackByArea(params); //退回数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            String areaName = list.get(i).getArea();
+                            if(listX.contains(areaName)) {
+                               int index = listX.indexOf(areaName);
+                               listY.set(index,(Integer)listY.get(index)+list.get(i).getNumberSum());
+                            }
+                        }
+                    }
 				} else if (selectType.contains("结算价")){
-					list = stoneService.findAreaAccountByProductAndTime(params);
-					if(list.size()>0) {
-						for (int i = 0; i < list.size(); i++) {
-							listX.add(list.get(i).getArea());
-							listY.add(list.get(i).getSettlementpriceSum());
-						}
-					}
+                    list = stoneService.findSourceEqualsSaleByArea(params); //销售数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            listX.add(list.get(i).getArea());
+                            listY.add(list.get(i).getSettlementpriceSum());
+                        }
+                    }
+                    list = stoneService.findSourceEqualsBackByArea(params); //退回数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            String areaName = list.get(i).getArea();
+                            if(listX.contains(areaName)) {
+                                int index = listX.indexOf(areaName);
+                                listY.set(index,(Float)listY.get(index)+list.get(i).getSettlementpriceSum());
+                            }
+                        }
+                    }
 				} else if (selectType.contains("标价")){
-					list = stoneService.findAreaAccountByProductAndTime(params);
-					if(list.size()>0) {
-						for (int i = 0; i < list.size(); i++) {
-							listX.add(list.get(i).getArea());
-							listY.add(list.get(i).getListpriceSum());
-						}
-					}
+                    list = stoneService.findSourceEqualsSaleByArea(params); //销售数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            listX.add(list.get(i).getArea());
+                            listY.add(list.get(i).getListpriceSum());
+                        }
+                    }
+                    list = stoneService.findSourceEqualsBackByArea(params); //退回数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            String areaName = list.get(i).getArea();
+                            if(listX.contains(areaName)) {
+                                int index = listX.indexOf(areaName);
+                                listY.set(index,(Float)listY.get(index)-list.get(i).getListpriceSum());
+                            }
+                        }
+                    }
 				} else if (selectType.contains("金重")){
-					list = stoneService.findAreaAccountByProductAndTime(params);
-					if(list.size()>0) {
-						for (int i = 0; i < list.size(); i++) {
-							listX.add(list.get(i).getArea());
-							listY.add(list.get(i).getGoldweightSum());
-						}
-					}
+                    list = stoneService.findSourceEqualsSaleByArea(params); //销售数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            listX.add(list.get(i).getArea());
+                            listY.add(list.get(i).getGoldweightSum());
+                        }
+                    }
+                    list = stoneService.findSourceEqualsBackByArea(params); //退回数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            String areaName = list.get(i).getArea();
+                            if(listX.contains(areaName)) {
+                                int index = listX.indexOf(areaName);
+                                listY.set(index,(Float)listY.get(index)+list.get(i).getGoldweightSum());
+                            }
+                        }
+                    }
 				} else if (selectType.contains("主石")){
-					list = stoneService.findAreaAccountByProductAndTime(params);
-					if(list.size()>0) {
-						for (int i = 0; i < list.size(); i++) {
-							listX.add(list.get(i).getArea());
-							listY.add(list.get(i).getCenterstoneSum());
-						}
-					}
+                    list = stoneService.findSourceEqualsSaleByArea(params); //销售数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            listX.add(list.get(i).getArea());
+                            listY.add(list.get(i).getCenterstoneSum());
+                        }
+                    }
+                    list = stoneService.findSourceEqualsBackByArea(params); //退回数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            String areaName = list.get(i).getArea();
+                            if(listX.contains(areaName)) {
+                                int index = listX.indexOf(areaName);
+                                listY.set(index,(Float)listY.get(index)+list.get(i).getCenterstoneSum());
+                            }
+                        }
+                    }
 				}
 			}
 			if (select.contains("门店")) {
 				if (selectType.contains("数量")) {
-					list = stoneService.findRoomAccountByProductAndTime(params);	
-					if(list.size()>0) {
-						for (int i = 0; i < list.size(); i++) {
-							listX.add(list.get(i).getRoom());
-							listY.add(list.get(i).getNumberSum());
-						}
-					}
+                    list = stoneService.findSourceEqualsSaleByRoom(params); //销售数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            listX.add(list.get(i).getRoom());
+                            listY.add(list.get(i).getNumberSum());
+                        }
+                    }
+                    list = stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            String roomName = list.get(i).getRoom();
+                            if(listX.contains(roomName)) {
+                                int index = listX.indexOf(roomName);
+                                listY.set(index,(Integer)listY.get(index)+list.get(i).getNumberSum());
+                            }
+                        }
+                    }
 				} else if (selectType.contains("结算价")){
-					list = stoneService.findRoomAccountByProductAndTime(params);	
-					if(list.size()>0) {
-						for (int i = 0; i < list.size(); i++) {
-							listX.add(list.get(i).getRoom());
-							listY.add(list.get(i).getSettlementpriceSum());
-						}
-					}
+                    list = stoneService.findSourceEqualsSaleByRoom(params); //销售数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            listX.add(list.get(i).getRoom());
+                            listY.add(list.get(i).getSettlementpriceSum());
+                        }
+                    }
+                    list = stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            String roomName = list.get(i).getRoom();
+                            if(listX.contains(roomName)) {
+                                int index = listX.indexOf(roomName);
+                                listY.set(index,(Float)listY.get(index)+list.get(i).getSettlementpriceSum());
+                            }
+                        }
+                    }
 				} else if (selectType.contains("标价")){
-					list = stoneService.findRoomAccountByProductAndTime(params);					
-					if(list.size()>0) {
-						for (int i = 0; i < list.size(); i++) {
-							listX.add(list.get(i).getRoom());
-							listY.add(list.get(i).getListpriceSum());
-						}
-					}
+                    list = stoneService.findSourceEqualsSaleByRoom(params); //销售数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            listX.add(list.get(i).getRoom());
+                            listY.add(list.get(i).getListpriceSum());
+                        }
+                    }
+                    list = stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            String roomName = list.get(i).getRoom();
+                            if(listX.contains(roomName)) {
+                                int index = listX.indexOf(roomName);
+                                listY.set(index,(Float)listY.get(index)-list.get(i).getListpriceSum());
+                            }
+                        }
+                    }
 				} else if (selectType.contains("金重")){
-					list = stoneService.findRoomAccountByProductAndTime(params);					
-					if(list.size()>0) {
-						for (int i = 0; i < list.size(); i++) {
-							listX.add(list.get(i).getRoom());
-							listY.add(list.get(i).getGoldweightSum());
-						}
-					}
+                    list = stoneService.findSourceEqualsSaleByRoom(params); //销售数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            listX.add(list.get(i).getRoom());
+                            listY.add(list.get(i).getGoldweightSum());
+                        }
+                    }
+                    list = stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            String roomName = list.get(i).getRoom();
+                            if(listX.contains(roomName)) {
+                                int index = listX.indexOf(roomName);
+                                listY.set(index,(Float)listY.get(index)+list.get(i).getGoldweightSum());
+                            }
+                        }
+                    }
 				} else if (selectType.contains("主石")){
-					list = stoneService.findRoomAccountByProductAndTime(params);				
-					if(list.size()>0) {
-						for (int i = 0; i < list.size(); i++) {
-							listX.add(list.get(i).getRoom());
-							listY.add(list.get(i).getCenterstoneSum());
-						}
-					}
+                    list = stoneService.findSourceEqualsSaleByRoom(params); //销售数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            listX.add(list.get(i).getRoom());
+                            listY.add(list.get(i).getCenterstoneSum());
+                        }
+                    }
+                    list = stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            String roomName = list.get(i).getRoom();
+                            if(listX.contains(roomName)) {
+                                int index = listX.indexOf(roomName);
+                                listY.set(index,(Float)listY.get(index)+list.get(i).getCenterstoneSum());
+                            }
+                        }
+                    }
 				}
 			}
 			if (select.contains("柜台")) {
 				if (selectType.contains("数量")) {
-					list = stoneService.findCounterAccountByProductAndTime(params);					
-					if(list.size()>0) {
-						for (int i = 0; i < list.size(); i++) {
-							listX.add(list.get(i).getCounter());
-							listY.add(list.get(i).getNumberSum());
-						}
-					}
+                    list = stoneService.findSourceEqualsSaleByCounter(params); //销售数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            listX.add(list.get(i).getCounter());
+                            listY.add(list.get(i).getNumberSum());
+                        }
+                    }
+                    list = stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            String counterName = list.get(i).getCounter();
+                            if(listX.contains(counterName)) {
+                                int index = listX.indexOf(counterName);
+                                listY.set(index,(Integer)listY.get(index)+list.get(i).getNumberSum());
+                            }
+                        }
+                    }
 				} else if (selectType.contains("结算价")){
-					list = stoneService.findCounterAccountByProductAndTime(params);					
-					if(list.size()>0) {
-						for (int i = 0; i < list.size(); i++) {
-							listX.add(list.get(i).getCounter());
-							listY.add(list.get(i).getSettlementpriceSum());
-						}
-					}
+                    list = stoneService.findSourceEqualsSaleByCounter(params); //销售数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            listX.add(list.get(i).getCounter());
+                            listY.add(list.get(i).getSettlementpriceSum());
+                        }
+                    }
+                    list = stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            String counterName = list.get(i).getCounter();
+                            if(listX.contains(counterName)) {
+                                int index = listX.indexOf(counterName);
+                                listY.set(index,(Float)listY.get(index)+list.get(i).getSettlementpriceSum());
+                            }
+                        }
+                    }
 				} else if (selectType.contains("标价")){
-					list = stoneService.findCounterAccountByProductAndTime(params);					
-					if(list.size()>0) {
-						for (int i = 0; i < list.size(); i++) {
-							listX.add(list.get(i).getCounter());
-							listY.add(list.get(i).getListpriceSum());
-						}
-					}
+                    list = stoneService.findSourceEqualsSaleByCounter(params); //销售数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            listX.add(list.get(i).getCounter());
+                            listY.add(list.get(i).getListpriceSum());
+                        }
+                    }
+                    list = stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            String counterName = list.get(i).getCounter();
+                            if(listX.contains(counterName)) {
+                                int index = listX.indexOf(counterName);
+                                listY.set(index,(Float)listY.get(index)-list.get(i).getListpriceSum());
+                            }
+                        }
+                    }
 				} else if (selectType.contains("金重")){
-					list = stoneService.findCounterAccountByProductAndTime(params);					
-					if(list.size()>0) {
-						for (int i = 0; i < list.size(); i++) {
-							listX.add(list.get(i).getCounter());
-							listY.add(list.get(i).getGoldweightSum());
-						}
-					}
+                    list = stoneService.findSourceEqualsSaleByCounter(params); //销售数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            listX.add(list.get(i).getCounter());
+                            listY.add(list.get(i).getGoldweightSum());
+                        }
+                    }
+                    list = stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            String counterName = list.get(i).getCounter();
+                            if(listX.contains(counterName)) {
+                                int index = listX.indexOf(counterName);
+                                listY.set(index,(Float)listY.get(index)+list.get(i).getGoldweightSum());
+                            }
+                        }
+                    }
 				} else if (selectType.contains("主石")){
-					list = stoneService.findCounterAccountByProductAndTime(params);					
-					if(list.size()>0) {
-						for (int i = 0; i < list.size(); i++) {
-							listX.add(list.get(i).getCounter());
-							listY.add(list.get(i).getCenterstoneSum());
-						}
-					}
+                    list = stoneService.findSourceEqualsSaleByCounter(params); //销售数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            listX.add(list.get(i).getCounter());
+                            listY.add(list.get(i).getCenterstoneSum());
+                        }
+                    }
+                    list = stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                    if(list.size()>0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            String counterName = list.get(i).getCounter();
+                            if(listX.contains(counterName)) {
+                                int index = listX.indexOf(counterName);
+                                listY.set(index,(Float)listY.get(index)+list.get(i).getCenterstoneSum());
+                            }
+                        }
+                    }
 				}
 			}
-		
-		String result = "";
-		result = "" + listY + "@" + listX;
-		//System.out.println(result);
 
-		return result;
+		StringBuilder result = new StringBuilder();
+		result.append("" + listY + "@" + listX);
+
+		return result.toString();
 	}
 	
 	/**
@@ -2589,57 +2728,8 @@ public class StoneAnalysisController {
 	@ApiOperation(value="跳转到index11页面,供应商销售排名分析")
 	@GetMapping(value = "index11")
 	public String index11(ModelMap map) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		
-		Date da = new Date();
-		Date date = null;
-		String end_this = sdf.format(da);//2018-07-03
-		String start_this = sdf.format(da).substring(0, 4)+"-01-01";//2018-01-01
-		Calendar c = Calendar.getInstance();// 获得一个日历的实例
-		try {
-			date = sdf.parse(sdf.format(da));
-		} catch (Exception e) {
-		}
-		c.setTime(date);// 设置日历时间
-		c.add(Calendar.MONTH, -12);// 在日历的月份上减去6个月
-		// System.out.println(sdf.format(c.getTime()));//得到6个月后的日期
-		String end_last = sdf.format(c.getTime());//2017-07-03
-		String start_last = sdf.format(c.getTime()).substring(0, 4)+"-01-01";//2017-01-01
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("start", start_this);
-		params.put("end", end_this);
-		Map<String, Object> params1 = new HashMap<String, Object>();
-		params1.put("start", start_last);
-		params1.put("end", end_last);
-		System.out.println("end_last="+end_last);
-		System.out.println("start_last="+start_last);
-		System.out.println("end_this="+end_this);
-		System.out.println("start_this="+start_this);
-		List<StoneAnalysis> list = stoneService.findSupplierForIndex11(params);
-		List listSupplier = new ArrayList<>();
-		List listThisYear = new ArrayList<>();
-		List listLastYear = new ArrayList<>();
-		if(list.size()>=10) {
-			for(int i=0;i<list.size();i++) {
-				listSupplier.add(list.get(i).getSupplier());
-				listThisYear.add(list.get(i).getNumberSum());
-				params1.put("supplier", list.get(i).getSupplier());
-				List<StoneAnalysis> one = stoneService.findOneSupplierForIndex11(params1);
-				if(one.size()>0) {
-					listLastYear.add(one.get(0).getNumberSum());
-				}else {
-					listLastYear.add(0);
-				}
-			}
-		}
-		
-
-		map.addAttribute("listProduct", stoneService.findDistinctProduct());
+	    map.addAttribute("listProduct", stoneService.findDistinctProduct());
         map.addAttribute("listCounter", stoneService.findDistinctCounter());
-		map.addAttribute("listSupplier", listSupplier);
-		map.addAttribute("listThisYear", listThisYear);
-		map.addAttribute("listLastYear", listLastYear);
-		
 		return "index11";
 	}
 	/**
@@ -2655,6 +2745,7 @@ public class StoneAnalysisController {
 	public String findSupplierForindex11(HttpServletRequest request) {
 		String selectType = request.getParameter("selectType");
 		String counter = request.getParameter("counter");
+		String product = request.getParameter("product");
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date da = new Date();
 		Date date = null;
@@ -2681,67 +2772,128 @@ public class StoneAnalysisController {
 			params.put("counter", counter);
 			params1.put("counter", counter);
 		}
-		String result="";
+		if(product.contains("所有") || product.contains("名称")) {
+		}else {
+			params.put("product", product);
+			params1.put("product", product);
+		}
+
 		List listSupplier = new ArrayList<>();
 		List listThisYear = new ArrayList<>();
 		List listLastYear = new ArrayList<>();
-		List<StoneAnalysis> list = stoneService.findSupplierForIndex11(params);
+
+        List<StoneAnalysis> list = new ArrayList<>();
+		//销售数据
+		list = stoneService.findSourceEqualsSaleBySupplier(params);
 		if(list.size()>0) {
 			for(int i=0;i<list.size();i++) {
 				listSupplier.add(list.get(i).getSupplier());
 				if(selectType.contains("数量")) {
-					listThisYear.add(list.get(i).getNumberSum());
+                    params.put("supplier", list.get(i).getSupplier());
+                    List<StoneAnalysis> listBack = stoneService.findSourceEqualsBackBySupplier(params);
+                    if(listBack.size() > 0) {
+                        listThisYear.add(list.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                    }else {
+                        listThisYear.add(list.get(i).getNumberSum());
+                    }
 					params1.put("supplier", list.get(i).getSupplier());
-					List<StoneAnalysis> one = stoneService.findOneSupplierForIndex11(params1);
+					List<StoneAnalysis> one = stoneService.findSourceEqualsSaleBySupplier(params1);
 					if(one.size()>0) {
-						listLastYear.add(one.get(0).getNumberSum());
+                        List<StoneAnalysis> listLastBack = stoneService.findSourceEqualsBackBySupplier(params1);
+                        if(listLastBack.size() > 0) {
+                            listLastYear.add(one.get(0).getNumberSum()+listLastBack.get(0).getNumberSum());
+                        }else {
+                            listLastYear.add(one.get(0).getNumberSum());
+                        }
 					}else {
 						listLastYear.add(0);
 					}
 				}else if(selectType.contains("结算价")) {
-					listThisYear.add(list.get(i).getSettlementpriceSum() );
-					params1.put("supplier", list.get(i).getSupplier());
-					List<StoneAnalysis> one = stoneService.findOneSupplierForIndex11(params1);
-					if(one.size()>0) {
-						listLastYear.add(one.get(0).getSettlementpriceSum());
-					}else {
-						listLastYear.add(0);
-					}
+                    params.put("supplier", list.get(i).getSupplier());
+                    List<StoneAnalysis> listBack = stoneService.findSourceEqualsBackBySupplier(params);
+                    if(listBack.size() > 0) {
+                        listThisYear.add(list.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                    }else {
+                        listThisYear.add(list.get(i).getSettlementpriceSum());
+                    }
+                    params1.put("supplier", list.get(i).getSupplier());
+                    List<StoneAnalysis> one = stoneService.findSourceEqualsSaleBySupplier(params1);
+                    if(one.size()>0) {
+                        List<StoneAnalysis> listLastBack = stoneService.findSourceEqualsBackBySupplier(params1);
+                        if(listLastBack.size() > 0) {
+                            listLastYear.add(one.get(0).getSettlementpriceSum()+listLastBack.get(0).getSettlementpriceSum());
+                        }else {
+                            listLastYear.add(one.get(0).getSettlementpriceSum());
+                        }
+                    }else {
+                        listLastYear.add(0);
+                    }
 				}else if(selectType.contains("标价")) {
-					listThisYear.add(list.get(i).getListpriceSum() );
-					params1.put("supplier", list.get(i).getSupplier());
-					List<StoneAnalysis> one = stoneService.findOneSupplierForIndex11(params1);
-					if(one.size()>0) {
-						listLastYear.add(one.get(0).getListpriceSum());
-					}else {
-						listLastYear.add(0);
-					}
+                    params.put("supplier", list.get(i).getSupplier());
+                    List<StoneAnalysis> listBack = stoneService.findSourceEqualsBackBySupplier(params);
+                    if(listBack.size() > 0) {
+                        listThisYear.add(list.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                    }else {
+                        listThisYear.add(list.get(i).getListpriceSum());
+                    }
+                    params1.put("supplier", list.get(i).getSupplier());
+                    List<StoneAnalysis> one = stoneService.findSourceEqualsSaleBySupplier(params1);
+                    if(one.size()>0) {
+                        List<StoneAnalysis> listLastBack = stoneService.findSourceEqualsBackBySupplier(params1);
+                        if(listLastBack.size() > 0) {
+                            listLastYear.add(one.get(0).getListpriceSum()-listLastBack.get(0).getListpriceSum());
+                        }else {
+                            listLastYear.add(one.get(0).getListpriceSum());
+                        }
+                    }else {
+                        listLastYear.add(0);
+                    }
 				}else if(selectType.contains("金重")) {
-					listThisYear.add(list.get(i).getGoldweightSum() );
-					params1.put("supplier", list.get(i).getSupplier());
-					List<StoneAnalysis> one = stoneService.findOneSupplierForIndex11(params1);
-					if(one.size()>0) {
-						listLastYear.add(one.get(0).getGoldweightSum());
-					}else {
-						listLastYear.add(0);
-					}
+                    params.put("supplier", list.get(i).getSupplier());
+                    List<StoneAnalysis> listBack = stoneService.findSourceEqualsBackBySupplier(params);
+                    if(listBack.size() > 0) {
+                        listThisYear.add(list.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                    }else {
+                        listThisYear.add(list.get(i).getGoldweightSum());
+                    }
+                    params1.put("supplier", list.get(i).getSupplier());
+                    List<StoneAnalysis> one = stoneService.findSourceEqualsSaleBySupplier(params1);
+                    if(one.size()>0) {
+                        List<StoneAnalysis> listLastBack = stoneService.findSourceEqualsBackBySupplier(params1);
+                        if(listLastBack.size() > 0) {
+                            listLastYear.add(one.get(0).getGoldweightSum()+listLastBack.get(0).getGoldweightSum());
+                        }else {
+                            listLastYear.add(one.get(0).getGoldweightSum());
+                        }
+                    }else {
+                        listLastYear.add(0);
+                    }
 				}else if(selectType.contains("主石")) {
-					listThisYear.add(list.get(i).getCenterstoneSum() );
-					params1.put("supplier", list.get(i).getSupplier());
-					List<StoneAnalysis> one = stoneService.findOneSupplierForIndex11(params1);
-					if(one.size()>0) {
-						listLastYear.add(one.get(0).getCenterstoneSum());
-					}else {
-						listLastYear.add(0);
-					}
-				}
+                    params.put("supplier", list.get(i).getSupplier());
+                    List<StoneAnalysis> listBack = stoneService.findSourceEqualsBackBySupplier(params);
+                    if (listBack.size() > 0) {
+                        listThisYear.add(list.get(i).getCenterstoneSum() + listBack.get(0).getCenterstoneSum());
+                    } else {
+                        listThisYear.add(list.get(i).getCenterstoneSum());
+                    }
+                    params1.put("supplier", list.get(i).getSupplier());
+                    List<StoneAnalysis> one = stoneService.findSourceEqualsSaleBySupplier(params1);
+                    if (one.size() > 0) {
+                        List<StoneAnalysis> listLastBack = stoneService.findSourceEqualsBackBySupplier(params1);
+                        if (listLastBack.size() > 0) {
+                            listLastYear.add(one.get(0).getCenterstoneSum() + listLastBack.get(0).getCenterstoneSum());
+                        } else {
+                            listLastYear.add(one.get(0).getCenterstoneSum());
+                        }
+                    } else {
+                        listLastYear.add(0);
+                    }
+                }
 			}
 		}
-		result = ""+listSupplier+"@"+listThisYear+"@"+listLastYear;
-		//System.out.println(listSupplier);
-		//System.out.println(listThisYear);
-		//System.out.println(listLastYear);
-		return result;
+		StringBuilder result = new StringBuilder();
+		result.append(""+listSupplier+"@"+listThisYear+"@"+listLastYear);
+		return result.toString();
 	}
 	/**
 	 * main跳转到index811页面 周销售数据统计
@@ -2833,8 +2985,6 @@ public class StoneAnalysisController {
 		/*
 		 * area双阳地区 counter柜台 product名称 selectChoice年度对比 selectType数量
 		 */
-		String result = "";
-		List<StoneAnalysis> list = new ArrayList<>();//图数据
 		List<StoneAnalysis> listAll = new ArrayList<>();//表格数据
 		
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -2861,22 +3011,25 @@ public class StoneAnalysisController {
 			System.out.println("4");
 			params.put("counter", counter);
 		}
-		list = stoneService.findProductOfIndex814(params);
 		listAll = stoneService.findDateForIndex8888(params);
+
+        List<StoneAnalysis> listSale = stoneService.findSourceEqualsSaleByDateAndProduct(params); // 图表数据 销售
+        List<StoneAnalysis> listBack = stoneService.findSourceEqualsBackByDateAndProduct(params); // 图表数据 退回
 		
 		
 		List listX = new ArrayList<>();
 		List listY = new ArrayList<>();
-		if(list.size()>0) {
-			for (int i = 0; i < list.size(); i++) {
-				if (!listX.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
+		//销售数据
+		if(listSale.size()>0) {
+			for (int i = 0; i < listSale.size(); i++) {
+				if (!listX.contains(listSale.get(i).getProduct()) && listSale.get(i).getProduct().length() > 0) {
                     String regex="^[0-9].*$";
                     Pattern p = Pattern.compile(regex);
                     //数字开头 加个下划线
-                    if(p.matcher(list.get(i).getProduct()).matches()) {
-                        listX.add("_"+list.get(i).getProduct());
+                    if(p.matcher(listSale.get(i).getProduct()).matches()) {
+                        listX.add("_"+listSale.get(i).getProduct());
                     }else {
-                        listX.add(list.get(i).getProduct());
+                        listX.add(listSale.get(i).getProduct());
                     }
 				}
 			}
@@ -2884,26 +3037,22 @@ public class StoneAnalysisController {
 		for (int i = 0; i < listX.size(); i++) {
 			listY.add(0);
 		}
-		
-		
-		
-		if(list.size()>0) {
-			for (int i = 0; i < list.size(); i++) {
-				
+		if(listSale.size()>0) {
+			for (int i = 0; i < listSale.size(); i++) {
 				if(selectType.contains("销量")) {
 					int num = 0;
 					for (int j = 0; j < listX.size(); j++) {
-						if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-							num = listY.get(j).hashCode() + list.get(i).getNumberSum();
+						if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+							num = (Integer)listY.get(j) + listSale.get(i).getNumberSum();
 							listY.set(j, num);
 						}
 					}
 				}
 				if(selectType.contains("结算价")) {
-					int num = 0;
+					float num = 0;
 					for (int j = 0; j < listX.size(); j++) {
-                        if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-							num = listY.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                        if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+							num = Float.parseFloat(listY.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 							listY.set(j, num);
 						}
 					}
@@ -2911,8 +3060,8 @@ public class StoneAnalysisController {
 				if(selectType.contains("标价")) {
 					float num = 0;
 					for (int j = 0; j < listX.size(); j++) {
-                        if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-							num = Float.parseFloat(listY.get(j).toString()) + list.get(i).getListpriceSum();
+                        if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+							num = Float.parseFloat(listY.get(j).toString()) + listSale.get(i).getListpriceSum();
 							listY.set(j, num);
 						}
 					}
@@ -2920,8 +3069,8 @@ public class StoneAnalysisController {
 				if(selectType.contains("金重")) {
 					float num = 0;
 					for (int j = 0; j < listX.size(); j++) {
-                        if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-							num = Float.parseFloat(listY.get(j).toString()) + list.get(i).getGoldweightSum();
+                        if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+							num = Float.parseFloat(listY.get(j).toString()) + listSale.get(i).getGoldweightSum();
 							listY.set(j, num);
 						}
 					}
@@ -2929,14 +3078,64 @@ public class StoneAnalysisController {
 				if(selectType.contains("主石")) {
 					float num = 0;
 					for (int j = 0; j < listX.size(); j++) {
-                        if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-							num = Float.parseFloat(listY.get(j).toString()) + list.get(i).getCenterstoneSum();
+                        if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+							num = Float.parseFloat(listY.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 							listY.set(j, num);
 						}
 					}
 				}
 			}
 		}
+        //退回数据
+        if(listBack.size()>0) {
+            for (int i = 0; i < listBack.size(); i++) {
+                if(selectType.contains("销量")) {
+                    int num = 0;
+                    for (int j = 0; j < listX.size(); j++) {
+                        if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                            num = (Integer)listY.get(j) + listBack.get(i).getNumberSum();
+                            listY.set(j, num);
+                        }
+                    }
+                }
+                if(selectType.contains("结算价")) {
+                    float num = 0;
+                    for (int j = 0; j < listX.size(); j++) {
+                        if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                            num = Float.parseFloat(listY.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                            listY.set(j, num);
+                        }
+                    }
+                }
+                if(selectType.contains("标价")) {
+                    float num = 0;
+                    for (int j = 0; j < listX.size(); j++) {
+                        if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                            num = Float.parseFloat(listY.get(j).toString()) - listBack.get(i).getListpriceSum();
+                            listY.set(j, num);
+                        }
+                    }
+                }
+                if(selectType.contains("金重")) {
+                    float num = 0;
+                    for (int j = 0; j < listX.size(); j++) {
+                        if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                            num = Float.parseFloat(listY.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                            listY.set(j, num);
+                        }
+                    }
+                }
+                if(selectType.contains("主石")) {
+                    float num = 0;
+                    for (int j = 0; j < listX.size(); j++) {
+                        if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                            num = Float.parseFloat(listY.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                            listY.set(j, num);
+                        }
+                    }
+                }
+            }
+        }
 
 		List listArea = new ArrayList<>();
 		List listRoom = new ArrayList<>();
@@ -2961,12 +3160,11 @@ public class StoneAnalysisController {
 			}
 		}
 		
-		
-		result=""+listX+"@"+listY+"@"+listArea+"@"+listRoom+"@"+listCounter+"@"+
-		listProduct+"@"+listSettlementprice+"@"+listDate+"@"+listListprice+"@"+listGoldweight+"@"+listCenterstone;
-		
-		
-		return result;
+		StringBuilder result = new StringBuilder();
+		result.append(""+listX+"@"+listY+"@"+listArea+"@"+listRoom+"@"+listCounter+"@"+
+		listProduct+"@"+listSettlementprice+"@"+listDate+"@"+listListprice+"@"+listGoldweight+"@"+listCenterstone);
+
+		return result.toString();
 	}
 	/**
 	 * index812页面
@@ -2990,13 +3188,7 @@ public class StoneAnalysisController {
 		String selectType = request.getParameter("selectType");
 
 		System.out.println("area" + area + "\ncounter" + counter + "\nproduct" + product + "\nselectChoice" + selectChoice + "\nselectType" + selectType);
-		/*
-		 * area双阳地区 counter柜台 product名称 selectChoice年度对比 selectType数量
-		 */
-		String result = "";
-		List<StoneAnalysis> list = new ArrayList<>();//图数据
-		List<StoneAnalysis> listAll = new ArrayList<>();//表格数据
-		
+
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("start", start);
 		params.put("end", end);
@@ -3021,11 +3213,14 @@ public class StoneAnalysisController {
 			System.out.println("4");
 			params.put("counter", counter);
 		}
-		list = stoneService.findProductOfIndex812(params);
-		listAll = stoneService.findDateForIndex8888(params);
-		
-		
-		List listX = new ArrayList<>();
+
+        List<StoneAnalysis> listAll = stoneService.findDateForIndex8888(params);//表格数据
+
+        List<StoneAnalysis> listSale = stoneService.findSourceEqualsSaleByDateAndProduct(params); // 图表数据 销售
+        List<StoneAnalysis> listBack = stoneService.findSourceEqualsBackByDateAndProduct(params); // 图表数据 退回
+
+
+        List listX = new ArrayList<>();
 		List listY1 = new ArrayList<>();
 		List listY2 = new ArrayList<>();
 		List listY3 = new ArrayList<>();
@@ -3039,21 +3234,20 @@ public class StoneAnalysisController {
 		List listY11 = new ArrayList<>();
 		List listY12 = new ArrayList<>();
 		
-			if(list.size()>0) {
-				for (int i = 0; i < list.size(); i++) {
-					if (!listX.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
-                        String regex="^[0-9].*$";
-                        Pattern p = Pattern.compile(regex);
-                        //数字开头 加个下划线
-                        if(p.matcher(list.get(i).getProduct()).matches()) {
-                            listX.add("_"+list.get(i).getProduct());
-                        }else {
-                            listX.add(list.get(i).getProduct());
-                        }
-					}
-				}
-			}
-		
+        if(listSale.size()>0) {
+            for (int i = 0; i < listSale.size(); i++) {
+                if (!listX.contains(listSale.get(i).getProduct()) && listSale.get(i).getProduct().length() > 0) {
+                    String regex="^[0-9].*$";
+                    Pattern p = Pattern.compile(regex);
+                    //数字开头 加个下划线
+                    if(p.matcher(listSale.get(i).getProduct()).matches()) {
+                        listX.add("_"+listSale.get(i).getProduct());
+                    }else {
+                        listX.add(listSale.get(i).getProduct());
+                    }
+                }
+            }
+        }
 		for (int i = 0; i <listX.size(); i++) {
 			listY1.add(0);
 			listY2.add(0);
@@ -3069,18 +3263,17 @@ public class StoneAnalysisController {
 			listY12.add(0);
 			
 		}
-		
 		if(selectType.contains("销量")) {
-			if(list.size()>0) {
-				for (int i = 0; i < list.size(); i++) {
+			if(listSale.size()>0) {
+				for (int i = 0; i < listSale.size(); i++) {
 					
-					int m = list.get(i).getDate().getMonth() + 1;
+					int m = listSale.get(i).getDate().getMonth() + 1;
 		
 					if (m == 1) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY1.get(j).hashCode() + list.get(i).getNumberSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = (Integer) listY1.get(j) + listSale.get(i).getNumberSum();
 								listY1.set(j, num);
 							}
 						}
@@ -3088,8 +3281,8 @@ public class StoneAnalysisController {
 					if (m == 2) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY2.get(j).hashCode() + list.get(i).getNumberSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = (Integer) listY2.get(j) + listSale.get(i).getNumberSum();
 								listY2.set(j, num);
 							}
 						}
@@ -3097,8 +3290,8 @@ public class StoneAnalysisController {
 					if (m == 3) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY3.get(j).hashCode() + list.get(i).getNumberSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = (Integer) listY3.get(j) + listSale.get(i).getNumberSum();
 								listY3.set(j, num);
 							}
 						}
@@ -3106,8 +3299,8 @@ public class StoneAnalysisController {
 					if (m == 4) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY4.get(j).hashCode() + list.get(i).getNumberSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = (Integer) listY4.get(j) + listSale.get(i).getNumberSum();
 								listY4.set(j, num);
 							}
 						}
@@ -3115,8 +3308,8 @@ public class StoneAnalysisController {
 					if (m == 5) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY5.get(j).hashCode() + list.get(i).getNumberSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = (Integer) listY5.get(j) + listSale.get(i).getNumberSum();
 								listY5.set(j, num);
 							}
 						}
@@ -3124,8 +3317,8 @@ public class StoneAnalysisController {
 					if (m == 6) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY6.get(j).hashCode() + list.get(i).getNumberSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = (Integer) listY6.get(j) + listSale.get(i).getNumberSum();
 								listY6.set(j, num);
 							}
 						}
@@ -3133,8 +3326,8 @@ public class StoneAnalysisController {
 					if (m == 7) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY7.get(j).hashCode() + list.get(i).getNumberSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = (Integer) listY7.get(j) + listSale.get(i).getNumberSum();
 								listY7.set(j, num);
 							}
 						}
@@ -3142,8 +3335,8 @@ public class StoneAnalysisController {
 					if (m == 8) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY8.get(j).hashCode() + list.get(i).getNumberSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = (Integer) listY8.get(j) + listSale.get(i).getNumberSum();
 								listY8.set(j, num);
 							}
 						}
@@ -3151,8 +3344,8 @@ public class StoneAnalysisController {
 					if (m == 9) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY9.get(j).hashCode() + list.get(i).getNumberSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = (Integer) listY9.get(j) + listSale.get(i).getNumberSum();
 								listY9.set(j, num);
 							}
 						}
@@ -3160,8 +3353,8 @@ public class StoneAnalysisController {
 					if (m == 10) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY10.get(j).hashCode() + list.get(i).getNumberSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = (Integer) listY10.get(j) + listSale.get(i).getNumberSum();
 								listY10.set(j, num);
 							}
 						}
@@ -3169,8 +3362,8 @@ public class StoneAnalysisController {
 					if (m == 11) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY11.get(j).hashCode() + list.get(i).getNumberSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = (Integer) listY11.get(j) + listSale.get(i).getNumberSum();
 								listY11.set(j, num);
 							}
 						}
@@ -3178,8 +3371,8 @@ public class StoneAnalysisController {
 					if (m == 12) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY12.get(j).hashCode() + list.get(i).getNumberSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = (Integer) listY12.get(j) + listSale.get(i).getNumberSum();
 								listY12.set(j, num);
 							}
 						}
@@ -3189,114 +3382,114 @@ public class StoneAnalysisController {
 				}
 			}
 		}else if(selectType.contains("结算价")){//标价
-			if(list.size()>0) {
-				for (int i = 0; i < list.size(); i++) {
+			if(listSale.size()>0) {
+				for (int i = 0; i < listSale.size(); i++) {
 					
-					int m = list.get(i).getDate().getMonth() + 1;
+					int m = listSale.get(i).getDate().getMonth() + 1;
 					if (m == 1) {
-						int num = 0;
+						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY1.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY1.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 								listY1.set(j, num);
 							}
 						}
 					}
 					if (m == 2) {
-						int num = 0;
+                        float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY2.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY2.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 								listY2.set(j, num);
 							}
 						}
 					}
 					if (m == 3) {
-						int num = 0;
+                        float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY3.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY3.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 								listY3.set(j, num);
 							}
 						}
 					}
 					if (m == 4) {
-						int num = 0;
+                        float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY4.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY4.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 								listY4.set(j, num);
 							}
 						}
 					}
 					if (m == 5) {
-						int num = 0;
+                        float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY5.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY5.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 								listY5.set(j, num);
 							}
 						}
 					}
 					if (m == 6) {
-						int num = 0;
+                        float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY6.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY6.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 								listY6.set(j, num);
 							}
 						}
 					}
 					if (m == 7) {
-						int num = 0;
+                        float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY7.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY7.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 								listY7.set(j, num);
 							}
 						}
 					}
 					if (m == 8) {
-						int num = 0;
+                        float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY8.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY8.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 								listY8.set(j, num);
 							}
 						}
 					}
 					if (m == 9) {
-						int num = 0;
+                        float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY9.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY9.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 								listY9.set(j, num);
 							}
 						}
 					}
 					if (m == 10) {
-						int num = 0;
+                        float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY10.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY10.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 								listY10.set(j, num);
 							}
 						}
 					}
 					if (m == 11) {
-						int num = 0;
+                        float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY11.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY11.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 								listY11.set(j, num);
 							}
 						}
 					}
 					if (m == 12) {
-						int num = 0;
+                        float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY12.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY12.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 								listY12.set(j, num);
 							}
 						}
@@ -3304,15 +3497,15 @@ public class StoneAnalysisController {
 				}
 			}
 		}else if(selectType.contains("标价")){//标价
-			if(list.size()>0) {
-				for (int i = 0; i < list.size(); i++) {
+			if(listSale.size()>0) {
+				for (int i = 0; i < listSale.size(); i++) {
 					
-					int m = list.get(i).getDate().getMonth() + 1;
+					int m = listSale.get(i).getDate().getMonth() + 1;
 					if (m == 1) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY1.get(j).toString()) + list.get(i).getListpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY1.get(j).toString()) + listSale.get(i).getListpriceSum();
 								listY1.set(j, num);
 							}
 						}
@@ -3320,8 +3513,8 @@ public class StoneAnalysisController {
 					if (m == 2) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY2.get(j).toString()) + list.get(i).getListpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY2.get(j).toString()) + listSale.get(i).getListpriceSum();
 								listY2.set(j, num);
 							}
 						}
@@ -3329,8 +3522,8 @@ public class StoneAnalysisController {
 					if (m == 3) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY3.get(j).toString()) + list.get(i).getListpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY3.get(j).toString()) + listSale.get(i).getListpriceSum();
 								listY3.set(j, num);
 							}
 						}
@@ -3338,8 +3531,8 @@ public class StoneAnalysisController {
 					if (m == 4) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY4.get(j).toString()) + list.get(i).getListpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY4.get(j).toString()) + listSale.get(i).getListpriceSum();
 								listY4.set(j, num);
 							}
 						}
@@ -3347,8 +3540,8 @@ public class StoneAnalysisController {
 					if (m == 5) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY5.get(j).toString()) + list.get(i).getListpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY5.get(j).toString()) + listSale.get(i).getListpriceSum();
 								listY5.set(j, num);
 							}
 						}
@@ -3356,8 +3549,8 @@ public class StoneAnalysisController {
 					if (m == 6) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY6.get(j).toString()) + list.get(i).getListpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY6.get(j).toString()) + listSale.get(i).getListpriceSum();
 								listY6.set(j, num);
 							}
 						}
@@ -3365,8 +3558,8 @@ public class StoneAnalysisController {
 					if (m == 7) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY7.get(j).toString()) + list.get(i).getListpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY7.get(j).toString()) + listSale.get(i).getListpriceSum();
 								listY7.set(j, num);
 							}
 						}
@@ -3374,8 +3567,8 @@ public class StoneAnalysisController {
 					if (m == 8) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY8.get(j).toString()) + list.get(i).getListpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY8.get(j).toString()) + listSale.get(i).getListpriceSum();
 								listY8.set(j, num);
 							}
 						}
@@ -3383,8 +3576,8 @@ public class StoneAnalysisController {
 					if (m == 9) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY9.get(j).toString()) + list.get(i).getListpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY9.get(j).toString()) + listSale.get(i).getListpriceSum();
 								listY9.set(j, num);
 							}
 						}
@@ -3392,8 +3585,8 @@ public class StoneAnalysisController {
 					if (m == 10) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY10.get(j).toString()) + list.get(i).getListpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY10.get(j).toString()) + listSale.get(i).getListpriceSum();
 								listY10.set(j, num);
 							}
 						}
@@ -3401,8 +3594,8 @@ public class StoneAnalysisController {
 					if (m == 11) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY11.get(j).toString()) + list.get(i).getListpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY11.get(j).toString()) + listSale.get(i).getListpriceSum();
 								listY11.set(j, num);
 							}
 						}
@@ -3410,8 +3603,8 @@ public class StoneAnalysisController {
 					if (m == 12) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY12.get(j).toString()) + list.get(i).getListpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY12.get(j).toString()) + listSale.get(i).getListpriceSum();
 								listY12.set(j, num);
 							}
 						}
@@ -3419,15 +3612,15 @@ public class StoneAnalysisController {
 				}
 			}
 		}else if(selectType.contains("金重")){
-			if(list.size()>0) {
-				for (int i = 0; i < list.size(); i++) {
+			if(listSale.size()>0) {
+				for (int i = 0; i < listSale.size(); i++) {
 					
-					int m = list.get(i).getDate().getMonth() + 1;
+					int m = listSale.get(i).getDate().getMonth() + 1;
 					if (m == 1) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY1.get(j).toString()) + list.get(i).getGoldweightSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY1.get(j).toString()) + listSale.get(i).getGoldweightSum();
 								listY1.set(j, num);
 							}
 						}
@@ -3435,8 +3628,8 @@ public class StoneAnalysisController {
 					if (m == 2) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY2.get(j).toString()) + list.get(i).getGoldweightSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY2.get(j).toString()) + listSale.get(i).getGoldweightSum();
 								listY2.set(j, num);
 							}
 						}
@@ -3444,8 +3637,8 @@ public class StoneAnalysisController {
 					if (m == 3) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY3.get(j).toString()) + list.get(i).getGoldweightSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY3.get(j).toString()) + listSale.get(i).getGoldweightSum();
 								listY3.set(j, num);
 							}
 						}
@@ -3453,8 +3646,8 @@ public class StoneAnalysisController {
 					if (m == 4) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY4.get(j).toString()) + list.get(i).getGoldweightSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY4.get(j).toString()) + listSale.get(i).getGoldweightSum();
 								listY4.set(j, num);
 							}
 						}
@@ -3462,8 +3655,8 @@ public class StoneAnalysisController {
 					if (m == 5) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY5.get(j).toString()) + list.get(i).getGoldweightSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY5.get(j).toString()) + listSale.get(i).getGoldweightSum();
 								listY5.set(j, num);
 							}
 						}
@@ -3471,8 +3664,8 @@ public class StoneAnalysisController {
 					if (m == 6) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY6.get(j).toString()) + list.get(i).getGoldweightSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY6.get(j).toString()) + listSale.get(i).getGoldweightSum();
 								listY6.set(j, num);
 							}
 						}
@@ -3480,8 +3673,8 @@ public class StoneAnalysisController {
 					if (m == 7) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY7.get(j).toString()) + list.get(i).getGoldweightSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY7.get(j).toString()) + listSale.get(i).getGoldweightSum();
 								listY7.set(j, num);
 							}
 						}
@@ -3489,8 +3682,8 @@ public class StoneAnalysisController {
 					if (m == 8) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY8.get(j).toString()) + list.get(i).getGoldweightSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY8.get(j).toString()) + listSale.get(i).getGoldweightSum();
 								listY8.set(j, num);
 							}
 						}
@@ -3498,8 +3691,8 @@ public class StoneAnalysisController {
 					if (m == 9) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY9.get(j).toString()) + list.get(i).getGoldweightSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY9.get(j).toString()) + listSale.get(i).getGoldweightSum();
 								listY9.set(j, num);
 							}
 						}
@@ -3507,8 +3700,8 @@ public class StoneAnalysisController {
 					if (m == 10) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY10.get(j).toString()) + list.get(i).getGoldweightSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY10.get(j).toString()) + listSale.get(i).getGoldweightSum();
 								listY10.set(j, num);
 							}
 						}
@@ -3516,8 +3709,8 @@ public class StoneAnalysisController {
 					if (m == 11) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY11.get(j).toString()) + list.get(i).getGoldweightSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY11.get(j).toString()) + listSale.get(i).getGoldweightSum();
 								listY11.set(j, num);
 							}
 						}
@@ -3525,8 +3718,8 @@ public class StoneAnalysisController {
 					if (m == 12) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY12.get(j).toString()) + list.get(i).getGoldweightSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY12.get(j).toString()) + listSale.get(i).getGoldweightSum();
 								listY12.set(j, num);
 							}
 						}
@@ -3534,15 +3727,15 @@ public class StoneAnalysisController {
 				}
 			}
 		}else if(selectType.contains("主石")){
-			if(list.size()>0) {
-				for (int i = 0; i < list.size(); i++) {
+			if(listSale.size()>0) {
+				for (int i = 0; i < listSale.size(); i++) {
 					
-					int m = list.get(i).getDate().getMonth() + 1;
+					int m = listSale.get(i).getDate().getMonth() + 1;
 					if (m == 1) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY1.get(j).toString()) + list.get(i).getCenterstoneSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY1.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 								listY1.set(j, num);
 							}
 						}
@@ -3550,8 +3743,8 @@ public class StoneAnalysisController {
 					if (m == 2) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY2.get(j).toString()) + list.get(i).getCenterstoneSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY2.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 								listY2.set(j, num);
 							}
 						}
@@ -3559,8 +3752,8 @@ public class StoneAnalysisController {
 					if (m == 3) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY3.get(j).toString()) + list.get(i).getCenterstoneSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY3.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 								listY3.set(j, num);
 							}
 						}
@@ -3568,8 +3761,8 @@ public class StoneAnalysisController {
 					if (m == 4) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY4.get(j).toString()) + list.get(i).getCenterstoneSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY4.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 								listY4.set(j, num);
 							}
 						}
@@ -3577,8 +3770,8 @@ public class StoneAnalysisController {
 					if (m == 5) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY5.get(j).toString()) + list.get(i).getCenterstoneSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY5.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 								listY5.set(j, num);
 							}
 						}
@@ -3586,8 +3779,8 @@ public class StoneAnalysisController {
 					if (m == 6) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY6.get(j).toString()) + list.get(i).getCenterstoneSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY6.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 								listY6.set(j, num);
 							}
 						}
@@ -3595,8 +3788,8 @@ public class StoneAnalysisController {
 					if (m == 7) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY7.get(j).toString()) + list.get(i).getCenterstoneSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY7.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 								listY7.set(j, num);
 							}
 						}
@@ -3604,8 +3797,8 @@ public class StoneAnalysisController {
 					if (m == 8) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY8.get(j).toString()) + list.get(i).getCenterstoneSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY8.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 								listY8.set(j, num);
 							}
 						}
@@ -3613,8 +3806,8 @@ public class StoneAnalysisController {
 					if (m == 9) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY9.get(j).toString()) + list.get(i).getCenterstoneSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY9.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 								listY9.set(j, num);
 							}
 						}
@@ -3622,8 +3815,8 @@ public class StoneAnalysisController {
 					if (m == 10) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY10.get(j).toString()) + list.get(i).getCenterstoneSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY10.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 								listY10.set(j, num);
 							}
 						}
@@ -3631,8 +3824,8 @@ public class StoneAnalysisController {
 					if (m == 11) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY11.get(j).toString()) + list.get(i).getCenterstoneSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY11.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 								listY11.set(j, num);
 							}
 						}
@@ -3640,8 +3833,8 @@ public class StoneAnalysisController {
 					if (m == 12) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY12.get(j).toString()) + list.get(i).getCenterstoneSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY12.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 								listY12.set(j, num);
 							}
 						}
@@ -3649,6 +3842,585 @@ public class StoneAnalysisController {
 				}
 			}
 		}
+        if(selectType.contains("销量")) {
+            if(listBack.size()>0) {
+                for (int i = 0; i < listBack.size(); i++) {
+
+                    int m = listBack.get(i).getDate().getMonth() + 1;
+
+                    if (m == 1) {
+                        int num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = (Integer) listY1.get(j) + listBack.get(i).getNumberSum();
+                                listY1.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 2) {
+                        int num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = (Integer) listY2.get(j) + listBack.get(i).getNumberSum();
+                                listY2.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 3) {
+                        int num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = (Integer) listY3.get(j) + listBack.get(i).getNumberSum();
+                                listY3.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 4) {
+                        int num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = (Integer) listY4.get(j) + listBack.get(i).getNumberSum();
+                                listY4.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 5) {
+                        int num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = (Integer) listY5.get(j) + listBack.get(i).getNumberSum();
+                                listY5.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 6) {
+                        int num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = (Integer) listY6.get(j) + listBack.get(i).getNumberSum();
+                                listY6.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 7) {
+                        int num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = (Integer) listY7.get(j) + listBack.get(i).getNumberSum();
+                                listY7.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 8) {
+                        int num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = (Integer) listY8.get(j) + listBack.get(i).getNumberSum();
+                                listY8.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 9) {
+                        int num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = (Integer) listY9.get(j) + listBack.get(i).getNumberSum();
+                                listY9.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 10) {
+                        int num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = (Integer) listY10.get(j) + listBack.get(i).getNumberSum();
+                                listY10.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 11) {
+                        int num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = (Integer) listY11.get(j) + listBack.get(i).getNumberSum();
+                                listY11.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 12) {
+                        int num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = (Integer) listY12.get(j) + listBack.get(i).getNumberSum();
+                                listY12.set(j, num);
+                            }
+                        }
+                    }
+
+
+                }
+            }
+        }else if(selectType.contains("结算价")){//结算价
+            if(listBack.size()>0) {
+                for (int i = 0; i < listBack.size(); i++) {
+
+                    int m = listBack.get(i).getDate().getMonth() + 1;
+                    if (m == 1) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY1.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                listY1.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 2) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY2.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                listY2.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 3) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY3.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                listY3.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 4) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY4.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                listY4.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 5) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY5.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                listY5.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 6) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY6.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                listY6.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 7) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY7.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                listY7.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 8) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY8.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                listY8.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 9) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY9.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                listY9.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 10) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY10.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                listY10.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 11) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY11.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                listY11.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 12) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY12.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                listY12.set(j, num);
+                            }
+                        }
+                    }
+                }
+            }
+        }else if(selectType.contains("标价")){//标价
+            if(listBack.size()>0) {
+                for (int i = 0; i < listBack.size(); i++) {
+
+                    int m = listBack.get(i).getDate().getMonth() + 1;
+                    if (m == 1) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY1.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                listY1.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 2) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY2.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                listY2.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 3) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY3.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                listY3.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 4) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+                                num = Float.parseFloat(listY4.get(j).toString()) + listSale.get(i).getListpriceSum();
+                                listY4.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 5) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY5.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                listY5.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 6) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY6.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                listY6.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 7) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY7.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                listY7.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 8) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY8.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                listY8.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 9) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY9.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                listY9.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 10) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY10.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                listY10.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 11) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY11.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                listY11.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 12) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY12.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                listY12.set(j, num);
+                            }
+                        }
+                    }
+                }
+            }
+        }else if(selectType.contains("金重")){
+            if(listBack.size()>0) {
+                for (int i = 0; i < listBack.size(); i++) {
+
+                    int m = listBack.get(i).getDate().getMonth() + 1;
+                    if (m == 1) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY1.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                listY1.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 2) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY2.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                listY2.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 3) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY3.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                listY3.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 4) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY4.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                listY4.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 5) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY5.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                listY5.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 6) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY6.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                listY6.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 7) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY7.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                listY7.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 8) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY8.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                listY8.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 9) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+                                num = Float.parseFloat(listY9.get(j).toString()) + listSale.get(i).getGoldweightSum();
+                                listY9.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 10) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY10.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                listY10.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 11) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY11.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                listY11.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 12) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY12.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                listY12.set(j, num);
+                            }
+                        }
+                    }
+                }
+            }
+        }else if(selectType.contains("主石")){
+            if(listBack.size()>0) {
+                for (int i = 0; i < listBack.size(); i++) {
+
+                    int m = listBack.get(i).getDate().getMonth() + 1;
+                    if (m == 1) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY1.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                listY1.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 2) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY2.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                listY2.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 3) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY3.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                listY3.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 4) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY4.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                listY4.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 5) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY5.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                listY5.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 6) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY6.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                listY6.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 7) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY7.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                listY7.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 8) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY8.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                listY8.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 9) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY9.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                listY9.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 10) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY10.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                listY10.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 11) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY11.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                listY11.set(j, num);
+                            }
+                        }
+                    }
+                    if (m == 12) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY12.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                listY12.set(j, num);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 		List listArea = new ArrayList<>();
 		List listRoom = new ArrayList<>();
 		List listCounter = new ArrayList<>();
@@ -3671,18 +4443,14 @@ public class StoneAnalysisController {
 				listDate.add(sdf.format(listAll.get(j).getDate()));
 			}
 		}
-		//System.out.println("listY1="+listY1);
-		//System.out.println("listY2="+listY2);
-		//System.out.println("listY3="+listY3);
-		//System.out.println("listY4="+listY4);
-		
-		result=""+listX+"@"+listY1+"@"+listArea+"@"+listRoom+"@"+listCounter+"@"+
+
+		StringBuilder result = new StringBuilder();
+		result.append(""+listX+"@"+listY1+"@"+listArea+"@"+listRoom+"@"+listCounter+"@"+
 		listProduct+"@"+listSettlementprice+"@"+listDate+"@"+listY2+"@"+listY3+"@"+listY4+"@"+
 				listY5+"@"+listY6+"@"+listY7+"@"+listY8+"@"+listY9+"@"+listY10+"@"+listY11+"@"+listY12
-				+"@"+listListprice+"@"+listGoldweight+"@"+listCenterstone;
-		
-		
-		return result;
+				+"@"+listListprice+"@"+listGoldweight+"@"+listCenterstone);
+
+		return result.toString();
 	}
 	/**
 	 * index813页面
@@ -3706,12 +4474,7 @@ public class StoneAnalysisController {
 		String selectType = request.getParameter("selectType");
 
 		System.out.println("area" + area + "\ncounter" + counter + "\nproduct" + product + "\nselectChoice" + selectChoice + "\nselectType" + selectType);
-		/*
-		 * area双阳地区 counter柜台 product名称 selectChoice年度对比 selectType数量
-		 */
-		String result = "";
-		List<StoneAnalysis> list = new ArrayList<>();//图数据
-		List<StoneAnalysis> listAll = new ArrayList<>();//表格数据
+
 		
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("start", start);
@@ -3737,8 +4500,12 @@ public class StoneAnalysisController {
 			System.out.println("4");
 			params.put("counter", counter);
 		}
-		list = stoneService.findProductOfIndex813(params);
-		listAll = stoneService.findDateForIndex8888(params);
+
+
+        List<StoneAnalysis> listAll = stoneService.findDateForIndex8888(params);//表格数据
+
+        List<StoneAnalysis> listSale = stoneService.findSourceEqualsSaleByDateAndProduct(params); // 图表数据 销售
+        List<StoneAnalysis> listBack = stoneService.findSourceEqualsBackByDateAndProduct(params); // 图表数据 退回
 		
 		List listX = new ArrayList<>();
 		List listY1 = new ArrayList<>();
@@ -3746,16 +4513,16 @@ public class StoneAnalysisController {
 		List listY3 = new ArrayList<>();
 		List listY4 = new ArrayList<>();
 		
-		if(list.size()>0) {
-			for (int i = 0; i < list.size(); i++) {
-				if (!listX.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
+		if(listSale.size()>0) {
+			for (int i = 0; i < listSale.size(); i++) {
+				if (!listX.contains(listSale.get(i).getProduct()) && listSale.get(i).getProduct().length() > 0) {
                     String regex="^[0-9].*$";
                     Pattern p = Pattern.compile(regex);
                     //数字开头 加个下划线
-                    if(p.matcher(list.get(i).getProduct()).matches()) {
-                        listX.add("_"+list.get(i).getProduct());
+                    if(p.matcher(listSale.get(i).getProduct()).matches()) {
+                        listX.add("_"+listSale.get(i).getProduct());
                     }else {
-                        listX.add(list.get(i).getProduct());
+                        listX.add(listSale.get(i).getProduct());
                     }
 				}
 			}
@@ -3769,16 +4536,16 @@ public class StoneAnalysisController {
 		}
 		
 		
-		
+		//销售数据
 		if(selectType.contains("销量")) {
-			if(list.size()>0) {
-				for (int i = 0; i < list.size(); i++) {
-					int m = list.get(i).getDate().getMonth() + 1;
+			if(listSale.size()>0) {
+				for (int i = 0; i < listSale.size(); i++) {
+					int m = listSale.get(i).getDate().getMonth() + 1;
 					if (m >= 1 && m <= 3) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY1.get(j).hashCode() + list.get(i).getNumberSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = (Integer) listY1.get(j) + listSale.get(i).getNumberSum();
 								listY1.set(j, num);
 							}
 						}
@@ -3786,8 +4553,8 @@ public class StoneAnalysisController {
 					if (m >= 4 && m <= 6) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY2.get(j).hashCode() + list.get(i).getNumberSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = (Integer) listY2.get(j) + listSale.get(i).getNumberSum();
 								listY2.set(j, num);
 							}
 						}
@@ -3795,8 +4562,8 @@ public class StoneAnalysisController {
 					if (m >= 7 && m <= 9) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY3.get(j).hashCode() + list.get(i).getNumberSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = (Integer) listY3.get(j) + listSale.get(i).getNumberSum();
 								listY3.set(j, num);
 							}
 						}
@@ -3804,8 +4571,8 @@ public class StoneAnalysisController {
 					if (m >= 10 && m <= 12) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY4.get(j).hashCode() + list.get(i).getNumberSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = (Integer) listY4.get(j) + listSale.get(i).getNumberSum();
 								listY4.set(j, num);
 							}
 						}
@@ -3814,43 +4581,43 @@ public class StoneAnalysisController {
 				}
 			}
 		}else if(selectType.contains("结算价")){//营业额
-			if(list.size()>0) {
-				for (int i = 0; i < list.size(); i++) {
+			if(listSale.size()>0) {
+				for (int i = 0; i < listSale.size(); i++) {
 					
-					int m = list.get(i).getDate().getMonth() + 1;
+					int m = listSale.get(i).getDate().getMonth() + 1;
 		
 					if (m >= 1 && m <= 3) {
-						int num = 0;
+						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY1.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY1.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 								listY1.set(j, num);
 							}
 						}
 					}
 					if (m >= 4 && m <= 6) {
-						int num = 0;
+                        float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY2.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY2.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 								listY2.set(j, num);
 							}
 						}
 					}
 					if (m >= 7 && m <= 9) {
-						int num = 0;
+                        float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY3.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY3.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 								listY3.set(j, num);
 							}
 						}
 					}
 					if (m >= 10 && m <= 12) {
-						int num = 0;
+                        float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY4.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY4.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 								listY4.set(j, num);
 							}
 						}
@@ -3859,16 +4626,16 @@ public class StoneAnalysisController {
 				}
 			}
 		}else if(selectType.contains("标价")){//营业额
-			if(list.size()>0) {
-				for (int i = 0; i < list.size(); i++) {
+			if(listSale.size()>0) {
+				for (int i = 0; i < listSale.size(); i++) {
 					
-					int m = list.get(i).getDate().getMonth() + 1;
+					int m = listSale.get(i).getDate().getMonth() + 1;
 		
 					if (m >= 1 && m <= 3) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY1.get(j).toString()) + list.get(i).getListpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY1.get(j).toString()) + listSale.get(i).getListpriceSum();
 								listY1.set(j, num);
 							}
 						}
@@ -3877,8 +4644,8 @@ public class StoneAnalysisController {
 					if (m >= 4 && m <= 6) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY2.get(j).toString()) + list.get(i).getListpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY2.get(j).toString()) + listSale.get(i).getListpriceSum();
 								listY2.set(j, num);
 							}
 						}
@@ -3886,8 +4653,8 @@ public class StoneAnalysisController {
 					if (m >= 7 && m <= 9) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY3.get(j).toString()) + list.get(i).getListpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY3.get(j).toString()) + listSale.get(i).getListpriceSum();
 								listY3.set(j, num);
 							}
 						}
@@ -3895,8 +4662,8 @@ public class StoneAnalysisController {
 					if (m >= 10 && m <= 12) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY4.get(j).toString()) + list.get(i).getListpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY4.get(j).toString()) + listSale.get(i).getListpriceSum();
 								listY4.set(j, num);
 							}
 						}
@@ -3905,16 +4672,16 @@ public class StoneAnalysisController {
 				}
 			}
 		}else if(selectType.contains("金重")){//营业额
-			if(list.size()>0) {
-				for (int i = 0; i < list.size(); i++) {
+			if(listSale.size()>0) {
+				for (int i = 0; i < listSale.size(); i++) {
 					
-					int m = list.get(i).getDate().getMonth() + 1;
+					int m = listSale.get(i).getDate().getMonth() + 1;
 		
 					if (m >= 1 && m <= 3) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY1.get(j).toString()) + list.get(i).getGoldweightSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY1.get(j).toString()) + listSale.get(i).getGoldweightSum();
 								listY1.set(j, num);
 							}
 						}
@@ -3923,8 +4690,8 @@ public class StoneAnalysisController {
 					if (m >= 4 && m <= 6) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY2.get(j).toString()) + list.get(i).getGoldweightSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY2.get(j).toString()) + listSale.get(i).getGoldweightSum();
 								listY2.set(j, num);
 							}
 						}
@@ -3932,8 +4699,8 @@ public class StoneAnalysisController {
 					if (m >= 7 && m <= 9) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY3.get(j).toString()) + list.get(i).getGoldweightSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY3.get(j).toString()) + listSale.get(i).getGoldweightSum();
 								listY3.set(j, num);
 							}
 						}
@@ -3941,8 +4708,8 @@ public class StoneAnalysisController {
 					if (m >= 10 && m <= 12) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY4.get(j).toString()) + list.get(i).getGoldweightSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY4.get(j).toString()) + listSale.get(i).getGoldweightSum();
 								listY4.set(j, num);
 							}
 						}
@@ -3951,16 +4718,16 @@ public class StoneAnalysisController {
 				}
 			}
 		}else if(selectType.contains("主石")){//营业额
-			if(list.size()>0) {
-				for (int i = 0; i < list.size(); i++) {
+			if(listSale.size()>0) {
+				for (int i = 0; i < listSale.size(); i++) {
 					
-					int m = list.get(i).getDate().getMonth() + 1;
+					int m = listSale.get(i).getDate().getMonth() + 1;
 		
 					if (m >= 1 && m <= 3) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY1.get(j).toString()) + list.get(i).getCenterstoneSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY1.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 								listY1.set(j, num);
 							}
 						}
@@ -3969,8 +4736,8 @@ public class StoneAnalysisController {
 					if (m >= 4 && m <= 6) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY2.get(j).toString()) + list.get(i).getCenterstoneSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY2.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 								listY2.set(j, num);
 							}
 						}
@@ -3978,8 +4745,8 @@ public class StoneAnalysisController {
 					if (m >= 7 && m <= 9) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY3.get(j).toString()) + list.get(i).getCenterstoneSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY3.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 								listY3.set(j, num);
 							}
 						}
@@ -3987,8 +4754,8 @@ public class StoneAnalysisController {
 					if (m >= 10 && m <= 12) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY4.get(j).toString()) + list.get(i).getCenterstoneSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY4.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 								listY4.set(j, num);
 							}
 						}
@@ -3997,6 +4764,235 @@ public class StoneAnalysisController {
 				}
 			}
 		}
+
+        //退回数据
+        if(selectType.contains("销量")) {
+            if(listBack.size()>0) {
+                for (int i = 0; i < listBack.size(); i++) {
+                    int m = listBack.get(i).getDate().getMonth() + 1;
+                    if (m >= 1 && m <= 3) {
+                        int num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = (Integer) listY1.get(j) + listBack.get(i).getNumberSum();
+                                listY1.set(j, num);
+                            }
+                        }
+                    }
+                    if (m >= 4 && m <= 6) {
+                        int num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = (Integer) listY2.get(j) + listBack.get(i).getNumberSum();
+                                listY2.set(j, num);
+                            }
+                        }
+                    }
+                    if (m >= 7 && m <= 9) {
+                        int num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = (Integer) listY3.get(j) + listBack.get(i).getNumberSum();
+                                listY3.set(j, num);
+                            }
+                        }
+                    }
+                    if (m >= 10 && m <= 12) {
+                        int num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = (Integer) listY4.get(j) + listBack.get(i).getNumberSum();
+                                listY4.set(j, num);
+                            }
+                        }
+                    }
+
+                }
+            }
+        }else if(selectType.contains("结算价")){//营业额
+            if(listBack.size()>0) {
+                for (int i = 0; i < listBack.size(); i++) {
+
+                    int m = listBack.get(i).getDate().getMonth() + 1;
+
+                    if (m >= 1 && m <= 3) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY1.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                listY1.set(j, num);
+                            }
+                        }
+                    }
+                    if (m >= 4 && m <= 6) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY2.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                listY2.set(j, num);
+                            }
+                        }
+                    }
+                    if (m >= 7 && m <= 9) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY3.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                listY3.set(j, num);
+                            }
+                        }
+                    }
+                    if (m >= 10 && m <= 12) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY4.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                listY4.set(j, num);
+                            }
+                        }
+                    }
+
+                }
+            }
+        }else if(selectType.contains("标价")){//营业额
+            if(listBack.size()>0) {
+                for (int i = 0; i < listBack.size(); i++) {
+
+                    int m = listBack.get(i).getDate().getMonth() + 1;
+
+                    if (m >= 1 && m <= 3) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY1.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                listY1.set(j, num);
+                            }
+                        }
+
+                    }
+                    if (m >= 4 && m <= 6) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY2.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                listY2.set(j, num);
+                            }
+                        }
+                    }
+                    if (m >= 7 && m <= 9) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY3.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                listY3.set(j, num);
+                            }
+                        }
+                    }
+                    if (m >= 10 && m <= 12) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY4.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                listY4.set(j, num);
+                            }
+                        }
+                    }
+
+                }
+            }
+        }else if(selectType.contains("金重")){//营业额
+            if(listBack.size()>0) {
+                for (int i = 0; i < listBack.size(); i++) {
+
+                    int m = listBack.get(i).getDate().getMonth() + 1;
+
+                    if (m >= 1 && m <= 3) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY1.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                listY1.set(j, num);
+                            }
+                        }
+
+                    }
+                    if (m >= 4 && m <= 6) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY2.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                listY2.set(j, num);
+                            }
+                        }
+                    }
+                    if (m >= 7 && m <= 9) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY3.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                listY3.set(j, num);
+                            }
+                        }
+                    }
+                    if (m >= 10 && m <= 12) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY4.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                listY4.set(j, num);
+                            }
+                        }
+                    }
+
+                }
+            }
+        }else if(selectType.contains("主石")){//营业额
+            if(listBack.size()>0) {
+                for (int i = 0; i < listBack.size(); i++) {
+
+                    int m = listBack.get(i).getDate().getMonth() + 1;
+
+                    if (m >= 1 && m <= 3) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY1.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                listY1.set(j, num);
+                            }
+                        }
+
+                    }
+                    if (m >= 4 && m <= 6) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY2.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                listY2.set(j, num);
+                            }
+                        }
+                    }
+                    if (m >= 7 && m <= 9) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY3.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                listY3.set(j, num);
+                            }
+                        }
+                    }
+                    if (m >= 10 && m <= 12) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY4.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                listY4.set(j, num);
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
 		List listArea = new ArrayList<>();
 		List listRoom = new ArrayList<>();
 		List listCounter = new ArrayList<>();
@@ -4019,17 +5015,13 @@ public class StoneAnalysisController {
 				listDate.add(sdf.format(listAll.get(j).getDate()));
 			}
 		}
-		//System.out.println("listX="+listX);
-		//System.out.println("listY1="+listY1);
-		//System.out.println("listY2="+listY2);
-		//System.out.println("listY3="+listY3);
-		//System.out.println("listY4="+listY4);
-		
-		result=""+listX+"@"+listY1+"@"+listArea+"@"+listRoom+"@"+listCounter+"@"+
-		listProduct+"@"+listSettlementprice+"@"+listDate+"@"+listY2+"@"+listY3+"@"+listY4+"@"+listListprice+"@"+listGoldweight+"@"+listCenterstone;
-		
-		
-		return result;
+
+		StringBuilder result  = new StringBuilder();
+		result.append(""+listX+"@"+listY1+"@"+listArea+"@"+listRoom+"@"+listCounter+"@"+
+		listProduct+"@"+listSettlementprice+"@"+listDate+"@"+listY2+"@"+listY3+"@"+listY4+"@"+
+                listListprice+"@"+listGoldweight+"@"+listCenterstone);
+
+		return result.toString();
 	}
 	/**
 	 * index811页面
@@ -4083,12 +5075,7 @@ public class StoneAnalysisController {
 		String selectType = request.getParameter("selectType");
 
 		System.out.println("area" + area + "\ncounter" + counter + "\nproduct" + product + "\nselectType" + selectType+"\nyear="+selectChoiceYear+"\nmonth="+selectChoiceMonth);
-		/*
-		 * area双阳地区 counter柜台 product名称 selectChoice年度对比 selectType数量
-		 */
-		String result = "";
-		List<StoneAnalysis> list = new ArrayList<>();//图数据
-		List<StoneAnalysis> listAll = new ArrayList<>();//表格数据
+
 		
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("start", start);
@@ -4116,8 +5103,10 @@ public class StoneAnalysisController {
 			System.out.println("4");
 			params.put("counter", counter);
 		}
-		list = stoneService.findProductOfIndex811(params);
-		listAll = stoneService.findDateForIndex8888(params);
+        List<StoneAnalysis> listAll = stoneService.findDateForIndex8888(params);//表格数据
+
+        List<StoneAnalysis> listSale = stoneService.findSourceEqualsSaleByDateAndProduct(params); // 图表数据 销售
+        List<StoneAnalysis> listBack = stoneService.findSourceEqualsBackByDateAndProduct(params); // 图表数据 退回
 		
 		List listX = new ArrayList<>();
 		List listY1 = new ArrayList<>();
@@ -4127,16 +5116,16 @@ public class StoneAnalysisController {
 		List listY5 = new ArrayList<>();
 		List listY6 = new ArrayList<>();
 		
-			if(list.size()>0) {
-				for (int i = 0; i < list.size(); i++) {
-					if (!listX.contains(list.get(i).getProduct()) && list.get(i).getProduct().length() > 0) {
+			if(listSale.size()>0) {
+				for (int i = 0; i < listSale.size(); i++) {
+					if (!listX.contains(listSale.get(i).getProduct()) && listSale.get(i).getProduct().length() > 0) {
                         String regex="^[0-9].*$";
                         Pattern p = Pattern.compile(regex);
                         //数字开头 加个下划线
-                        if(p.matcher(list.get(i).getProduct()).matches()) {
-                            listX.add("_"+list.get(i).getProduct());
+                        if(p.matcher(listSale.get(i).getProduct()).matches()) {
+                            listX.add("_"+listSale.get(i).getProduct());
                         }else {
-                            listX.add(list.get(i).getProduct());
+                            listX.add(listSale.get(i).getProduct());
                         }
 					}
 				}
@@ -4160,133 +5149,130 @@ public class StoneAnalysisController {
 			}
 			
 		}
-		//System.out.println("sum="+sum);
-		//System.out.println("listMonday="+listMonday);
+        //销售数据
 		if(selectType.contains("销量")) {
-			if(list.size()>0) {
-				for (int i = 0; i < list.size(); i++) {
+			if(listSale.size()>0) {
+				for (int i = 0; i < listSale.size(); i++) {
 					
-					int thisday = Integer.parseInt(list.get(i).getDate().toString().substring(8, 10));//这个月的几号
+					int thisday = Integer.parseInt(listSale.get(i).getDate().toString().substring(8, 10));//这个月的几号
 					//System.out.println(thisday+"---------");
-					if(thisday>=1 && thisday <listMonday.get(0).hashCode()) {
+					if(thisday>=1 && thisday <(Integer) listMonday.get(0)) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY1.get(j).hashCode() + list.get(i).getNumberSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = (Integer) listY1.get(j) + listSale.get(i).getNumberSum();
 								listY1.set(j, num);
 							}
 						}
 					}
-					if(thisday>=listMonday.get(0).hashCode() && thisday <listMonday.get(1).hashCode()) {
+					if(thisday>=(Integer) listMonday.get(0) && thisday <(Integer)listMonday.get(1)) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY2.get(j).hashCode() + list.get(i).getNumberSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = (Integer) listY2.get(j) + listSale.get(i).getNumberSum();
 								listY2.set(j, num);
 							}
 						}
 					}
-					if(thisday>=listMonday.get(1).hashCode() && thisday <listMonday.get(2).hashCode()) {
+					if(thisday>=(Integer)listMonday.get(1) && thisday <(Integer)listMonday.get(2)) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY3.get(j).hashCode() + list.get(i).getNumberSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = (Integer) listY3.get(j) + listSale.get(i).getNumberSum();
 								listY3.set(j, num);
 							}
 						}
 					}
-					if(thisday>=listMonday.get(2).hashCode() && thisday <listMonday.get(3).hashCode()) {
+					if(thisday>=(Integer)listMonday.get(2) && thisday <(Integer)listMonday.get(3)) {
 						int num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY4.get(j).hashCode() + list.get(i).getNumberSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = (Integer) listY4.get(j) + listSale.get(i).getNumberSum();
 								listY4.set(j, num);
 							}
 						}
 					}
 					if(sum>4) {
-						if(thisday>=listMonday.get(3).hashCode() && thisday <listMonday.get(4).hashCode()) {
+						if(thisday>=(Integer)listMonday.get(3) && thisday <(Integer)listMonday.get(4)) {
 							int num = 0;
 							for (int j = 0; j < listX.size(); j++) {
-                                if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-									num = listY5.get(j).hashCode() + list.get(i).getNumberSum();
+                                if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+									num = (Integer) listY5.get(j) + listSale.get(i).getNumberSum();
 									listY5.set(j, num);
 								}
 							}
 						}
 						if(sum==6) {
-							if(thisday>=listMonday.get(4).hashCode() && thisday <listMonday.get(5).hashCode()) {
+							if(thisday>=(Integer) listMonday.get(4) && thisday <(Integer)listMonday.get(5)) {
 								int num = 0;
 								for (int j = 0; j < listX.size(); j++) {
-                                    if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-										num = listY6.get(j).hashCode() + list.get(i).getNumberSum();
+                                    if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+										num = (Integer) listY6.get(j) + listSale.get(i).getNumberSum();
 										listY6.set(j, num);
 									}
 								}
 							}
 						}
 					}
-					
-					
 				}
 			}
 		}else if(selectType.contains("结算价")){//营业额
-			if(list.size()>0) {
-				for (int i = 0; i < list.size(); i++) {
+			if(listSale.size()>0) {
+				for (int i = 0; i < listSale.size(); i++) {
 					
-					int thisday = Integer.parseInt(list.get(i).getDate().toString().substring(8, 10));//这个月的几号
-					if(thisday>=1 && thisday <listMonday.get(0).hashCode()) {
-						int num = 0;
+					int thisday = Integer.parseInt(listSale.get(i).getDate().toString().substring(8, 10));//这个月的几号
+					if(thisday>=1 && thisday <(Integer)listMonday.get(0)) {
+						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY1.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY1.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 								listY1.set(j, num);
 							}
 						}
 					}
-					if(thisday>=listMonday.get(0).hashCode() && thisday <listMonday.get(1).hashCode()) {
-						int num = 0;
+					if(thisday>=(Integer)listMonday.get(0) && thisday <(Integer)listMonday.get(1)) {
+                        float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY2.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY2.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 								listY2.set(j, num);
 							}
 						}
 					}
-					if(thisday>=listMonday.get(1).hashCode() && thisday <listMonday.get(2).hashCode()) {
-						int num = 0;
+					if(thisday>=(Integer)listMonday.get(1) && thisday <(Integer)listMonday.get(2)) {
+                        float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY3.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY3.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 								listY3.set(j, num);
 							}
 						}
 					}
-					if(thisday>=listMonday.get(2).hashCode() && thisday <listMonday.get(3).hashCode()) {
-						int num = 0;
+					if(thisday>=(Integer) listMonday.get(2) && thisday <(Integer)listMonday.get(3)) {
+                        float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = listY4.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY4.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 								listY4.set(j, num);
 							}
 						}
 					}
 					if(sum>4) {
-						if(thisday>=listMonday.get(3).hashCode() && thisday <listMonday.get(4).hashCode()) {
-							int num = 0;
+						if(thisday>=(Integer) listMonday.get(3) && thisday <(Integer)listMonday.get(4)) {
+                            float num = 0;
 							for (int j = 0; j < listX.size(); j++) {
-                                if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-									num = listY5.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                                if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+									num = Float.parseFloat(listY5.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 									listY5.set(j, num);
 								}
 							}
 						}
 						if(sum==6) {
-							if(thisday>=listMonday.get(4).hashCode() && thisday <listMonday.get(5).hashCode()) {
-								int num = 0;
+							if(thisday>=(Integer) listMonday.get(4) && thisday <(Integer)listMonday.get(5)) {
+                                float num = 0;
 								for (int j = 0; j < listX.size(); j++) {
-                                    if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-										num = listY6.get(j).hashCode() + list.get(i).getSettlementpriceSum();
+                                    if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+										num = Float.parseFloat(listY6.get(j).toString()) + listSale.get(i).getSettlementpriceSum();
 										listY6.set(j, num);
 									}
 								}
@@ -4296,64 +5282,64 @@ public class StoneAnalysisController {
 				}
 			}
 		}else if(selectType.contains("标价")){//营业额
-			if(list.size()>0) {
-				for (int i = 0; i < list.size(); i++) {
+			if(listSale.size()>0) {
+				for (int i = 0; i < listSale.size(); i++) {
 					
-					int thisday = Integer.parseInt(list.get(i).getDate().toString().substring(8, 10));//这个月的几号
-					if(thisday>=1 && thisday <listMonday.get(0).hashCode()) {
+					int thisday = Integer.parseInt(listSale.get(i).getDate().toString().substring(8, 10));//这个月的几号
+					if(thisday>=1 && thisday <(Integer) listMonday.get(0)) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY1.get(j).toString()) + list.get(i).getListpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY1.get(j).toString()) + listSale.get(i).getListpriceSum();
 								listY1.set(j, num);
 							}
 						}
 					
 					}
-					if(thisday>=listMonday.get(0).hashCode() && thisday <listMonday.get(1).hashCode()) {
+					if(thisday>=(Integer)listMonday.get(0) && thisday <(Integer)listMonday.get(1)) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY2.get(j).toString()) + list.get(i).getListpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY2.get(j).toString()) + listSale.get(i).getListpriceSum();
 								listY2.set(j, num);
 							}
 						}
 					}
-					if(thisday>=listMonday.get(1).hashCode() && thisday <listMonday.get(2).hashCode()) {
+					if(thisday>=(Integer)listMonday.get(1) && thisday <(Integer)listMonday.get(2)) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY3.get(j).toString()) + list.get(i).getListpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY3.get(j).toString()) + listSale.get(i).getListpriceSum();
 								listY3.set(j, num);
 							}
 						}
 					}
-					if(thisday>=listMonday.get(2).hashCode() && thisday <listMonday.get(3).hashCode()) {
+					if(thisday>=(Integer)listMonday.get(2) && thisday <(Integer)listMonday.get(3)) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY4.get(j).toString()) + list.get(i).getListpriceSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY4.get(j).toString()) + listSale.get(i).getListpriceSum();
 								listY1.set(4, num);
 							}
 						}
 					}
 					System.out.println("sum="+sum);
 					if(sum>4) {
-						if(thisday>=listMonday.get(3).hashCode() && thisday <listMonday.get(4).hashCode()) {
+						if(thisday>=(Integer)listMonday.get(3) && thisday <(Integer)listMonday.get(4)) {
 							float num = 0;
 							for (int j = 0; j < listX.size(); j++) {
-                                if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-									num = Float.parseFloat(listY5.get(j).toString()) + list.get(i).getListpriceSum();
+                                if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+									num = Float.parseFloat(listY5.get(j).toString()) + listSale.get(i).getListpriceSum();
 									listY5.set(j, num);
 								}
 							}
 						}
 						if(sum==6) {
-							if(thisday>=listMonday.get(4).hashCode() && thisday <listMonday.get(5).hashCode()) {
+							if(thisday>=(Integer)listMonday.get(4) && thisday <(Integer)listMonday.get(5)) {
 								float num = 0;
 								for (int j = 0; j < listX.size(); j++) {
-                                    if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-										num = Float.parseFloat(listY6.get(j).toString()) + list.get(i).getListpriceSum();
+                                    if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+										num = Float.parseFloat(listY6.get(j).toString()) + listSale.get(i).getListpriceSum();
 										listY6.set(j, num);
 									}
 								}
@@ -4363,63 +5349,63 @@ public class StoneAnalysisController {
 				}
 			}
 		}else if(selectType.contains("金重")){//营业额
-			if(list.size()>0) {
-				for (int i = 0; i < list.size(); i++) {
+			if(listSale.size()>0) {
+				for (int i = 0; i < listSale.size(); i++) {
 					
-					int thisday = Integer.parseInt(list.get(i).getDate().toString().substring(8, 10));//这个月的几号
-					if(thisday>=1 && thisday <listMonday.get(0).hashCode()) {
+					int thisday = Integer.parseInt(listSale.get(i).getDate().toString().substring(8, 10));//这个月的几号
+					if(thisday>=1 && thisday <(Integer)listMonday.get(0)) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY1.get(j).toString()) + list.get(i).getGoldweightSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY1.get(j).toString()) + listSale.get(i).getGoldweightSum();
 								listY1.set(j, num);
 							}
 						}
 					}
-					if(thisday>=listMonday.get(0).hashCode() && thisday <listMonday.get(1).hashCode()) {
+					if(thisday>=(Integer)listMonday.get(0) && thisday <(Integer)listMonday.get(1)) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY2.get(j).toString()) + list.get(i).getGoldweightSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY2.get(j).toString()) + listSale.get(i).getGoldweightSum();
 								listY2.set(j, num);
 							}
 						}
 					}
-					if(thisday>=listMonday.get(1).hashCode() && thisday <listMonday.get(2).hashCode()) {
+					if(thisday>=(Integer)listMonday.get(1) && thisday <(Integer)listMonday.get(2)) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY3.get(j).toString()) + list.get(i).getGoldweightSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY3.get(j).toString()) + listSale.get(i).getGoldweightSum();
 								listY3.set(j, num);
 							}
 						}
 					}
-					if(thisday>=listMonday.get(2).hashCode() && thisday <listMonday.get(3).hashCode()) {
+					if(thisday>=(Integer)listMonday.get(2) && thisday <(Integer)listMonday.get(3)) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY4.get(j).toString()) + list.get(i).getGoldweightSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY4.get(j).toString()) + listSale.get(i).getGoldweightSum();
 								listY4.set(j, num);
 							}
 						}
 					}
 					
 					if(sum>4) {
-						if(thisday>=listMonday.get(3).hashCode() && thisday <listMonday.get(4).hashCode()) {
+						if(thisday>=(Integer)listMonday.get(3) && thisday <(Integer)listMonday.get(4)) {
 							float num = 0;
 							for (int j = 0; j < listX.size(); j++) {
-                                if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-									num = Float.parseFloat(listY5.get(j).toString()) + list.get(i).getGoldweightSum();
+                                if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+									num = Float.parseFloat(listY5.get(j).toString()) + listSale.get(i).getGoldweightSum();
 									listY5.set(j, num);
 								}
 							}
 						}
 						if(sum==6) {
-							if(thisday>=listMonday.get(4).hashCode() && thisday <listMonday.get(5).hashCode()) {
+							if(thisday>=(Integer)listMonday.get(4)&& thisday <(Integer)listMonday.get(5)) {
 								float num = 0;
 								for (int j = 0; j < listX.size(); j++) {
-                                    if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-										num = Float.parseFloat(listY6.get(j).toString()) + list.get(i).getGoldweightSum();
+                                    if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+										num = Float.parseFloat(listY6.get(j).toString()) + listSale.get(i).getGoldweightSum();
 										listY6.set(j, num);
 									}
 								}
@@ -4429,62 +5415,62 @@ public class StoneAnalysisController {
 				}
 			}
 		}else if(selectType.contains("主石")){//营业额
-			if(list.size()>0) {
-				for (int i = 0; i < list.size(); i++) {
+			if(listSale.size()>0) {
+				for (int i = 0; i < listSale.size(); i++) {
 					
-					int thisday = Integer.parseInt(list.get(i).getDate().toString().substring(8, 10));//这个月的几号
-					if(thisday>=1 && thisday <listMonday.get(0).hashCode()) {
+					int thisday = Integer.parseInt(listSale.get(i).getDate().toString().substring(8, 10));//这个月的几号
+					if(thisday>=1 && thisday <(Integer)listMonday.get(0)) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY1.get(j).toString()) + list.get(i).getCenterstoneSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY1.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 								listY1.set(j, num);
 							}
 						}
 					}
-					if(thisday>=listMonday.get(0).hashCode() && thisday <listMonday.get(1).hashCode()) {
+					if(thisday>=(Integer)listMonday.get(0) && thisday <(Integer)listMonday.get(1)) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY2.get(j).toString()) + list.get(i).getCenterstoneSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY2.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 								listY2.set(j, num);
 							}
 						}
 					}
-					if(thisday>=listMonday.get(1).hashCode() && thisday <listMonday.get(2).hashCode()) {
+					if(thisday>=(Integer)listMonday.get(1) && thisday <(Integer)listMonday.get(2)) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY3.get(j).toString()) + list.get(i).getCenterstoneSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY3.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 								listY3.set(j, num);
 							}
 						}
 					}
-					if(thisday>=listMonday.get(2).hashCode() && thisday <listMonday.get(3).hashCode()) {
+					if(thisday>=(Integer)listMonday.get(2) && thisday <(Integer)listMonday.get(3)) {
 						float num = 0;
 						for (int j = 0; j < listX.size(); j++) {
-                            if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-								num = Float.parseFloat(listY4.get(j).toString()) + list.get(i).getCenterstoneSum();
+                            if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+								num = Float.parseFloat(listY4.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 								listY4.set(j, num);
 							}
 						}
 					}
 					if(sum>4) {
-						if(thisday>=listMonday.get(3).hashCode() && thisday <listMonday.get(4).hashCode()) {
+						if(thisday>=(Integer)listMonday.get(3) && thisday <(Integer)listMonday.get(4)) {
 							float num = 0;
 							for (int j = 0; j < listX.size(); j++) {
-                                if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-									num = Float.parseFloat(listY5.get(j).toString()) + list.get(i).getCenterstoneSum();
+                                if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+									num = Float.parseFloat(listY5.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 									listY5.set(j, num);
 								}
 							}
 						}
 						if(sum==6) {
-							if(thisday>=listMonday.get(4).hashCode() && thisday <listMonday.get(5).hashCode()) {
+							if(thisday>=(Integer)listMonday.get(4) && thisday <(Integer)listMonday.get(5)) {
 								float num = 0;
 								for (int j = 0; j < listX.size(); j++) {
-                                    if(listX.get(j).toString().contains(list.get(i).getProduct())) {
-										num = Float.parseFloat(listY6.get(j).toString()) + list.get(i).getCenterstoneSum();
+                                    if(listX.get(j).toString().contains(listSale.get(i).getProduct())) {
+										num = Float.parseFloat(listY6.get(j).toString()) + listSale.get(i).getCenterstoneSum();
 										listY6.set(j, num);
 									}
 								}
@@ -4494,6 +5480,338 @@ public class StoneAnalysisController {
 				}
 			}
 		}
+
+        //退回数据
+        if(selectType.contains("销量")) {
+            if(listBack.size()>0) {
+                for (int i = 0; i < listBack.size(); i++) {
+
+                    int thisday = Integer.parseInt(listBack.get(i).getDate().toString().substring(8, 10));//这个月的几号
+                    //System.out.println(thisday+"---------");
+                    if(thisday>=1 && thisday <(Integer)listMonday.get(0)) {
+                        int num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = (Integer)listY1.get(j) + listBack.get(i).getNumberSum();
+                                listY1.set(j, num);
+                            }
+                        }
+                    }
+                    if(thisday>=(Integer)listMonday.get(0) && thisday <(Integer)listMonday.get(1)) {
+                        int num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = (Integer)listY2.get(j) + listBack.get(i).getNumberSum();
+                                listY2.set(j, num);
+                            }
+                        }
+                    }
+                    if(thisday>=(Integer)listMonday.get(1) && thisday <(Integer)listMonday.get(2)) {
+                        int num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = (Integer)listY3.get(j) + listBack.get(i).getNumberSum();
+                                listY3.set(j, num);
+                            }
+                        }
+                    }
+                    if(thisday>=(Integer)listMonday.get(2) && thisday <(Integer)listMonday.get(3)) {
+                        int num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = (Integer)listY4.get(j) + listBack.get(i).getNumberSum();
+                                listY4.set(j, num);
+                            }
+                        }
+                    }
+                    if(sum>4) {
+                        if(thisday>=(Integer)listMonday.get(3) && thisday <(Integer)listMonday.get(4)) {
+                            int num = 0;
+                            for (int j = 0; j < listX.size(); j++) {
+                                if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                    num = (Integer)listY5.get(j) + listBack.get(i).getNumberSum();
+                                    listY5.set(j, num);
+                                }
+                            }
+                        }
+                        if(sum==6) {
+                            if(thisday>=(Integer)listMonday.get(4) && thisday <(Integer)listMonday.get(5)) {
+                                int num = 0;
+                                for (int j = 0; j < listX.size(); j++) {
+                                    if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                        num = (Integer)listY6.get(j) + listBack.get(i).getNumberSum();
+                                        listY6.set(j, num);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }else if(selectType.contains("结算价")){//营业额
+            if(listBack.size()>0) {
+                for (int i = 0; i < listBack.size(); i++) {
+
+                    int thisday = Integer.parseInt(listBack.get(i).getDate().toString().substring(8, 10));//这个月的几号
+                    if(thisday>=1 && thisday <(Integer)listMonday.get(0)) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY1.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                listY1.set(j, num);
+                            }
+                        }
+                    }
+                    if(thisday>=(Integer)listMonday.get(0) && thisday <(Integer)listMonday.get(1)) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY2.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                listY2.set(j, num);
+                            }
+                        }
+                    }
+                    if(thisday>=(Integer)listMonday.get(1) && thisday <(Integer)listMonday.get(2)) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY3.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                listY3.set(j, num);
+                            }
+                        }
+                    }
+                    if(thisday>=(Integer)listMonday.get(2) && thisday <(Integer)listMonday.get(3)) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY4.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                listY4.set(j, num);
+                            }
+                        }
+                    }
+                    if(sum>4) {
+                        if(thisday>=(Integer)listMonday.get(3) && thisday <(Integer)listMonday.get(4)) {
+                            float num = 0;
+                            for (int j = 0; j < listX.size(); j++) {
+                                if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                    num = Float.parseFloat(listY5.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                    listY5.set(j, num);
+                                }
+                            }
+                        }
+                        if(sum==6) {
+                            if(thisday>=(Integer)listMonday.get(4) && thisday <(Integer)listMonday.get(5)) {
+                                float num = 0;
+                                for (int j = 0; j < listX.size(); j++) {
+                                    if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                        num = Float.parseFloat(listY6.get(j).toString()) + listBack.get(i).getSettlementpriceSum();
+                                        listY6.set(j, num);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }else if(selectType.contains("标价")){//营业额
+            if(listBack.size()>0) {
+                for (int i = 0; i < listBack.size(); i++) {
+
+                    int thisday = Integer.parseInt(listBack.get(i).getDate().toString().substring(8, 10));//这个月的几号
+                    if(thisday>=1 && thisday <(Integer)listMonday.get(0)) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY1.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                listY1.set(j, num);
+                            }
+                        }
+
+                    }
+                    if(thisday>=(Integer)listMonday.get(0) && thisday <(Integer)listMonday.get(1)) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY2.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                listY2.set(j, num);
+                            }
+                        }
+                    }
+                    if(thisday>=(Integer)listMonday.get(1) && thisday <(Integer)listMonday.get(2)) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY3.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                listY3.set(j, num);
+                            }
+                        }
+                    }
+                    if(thisday>=(Integer)listMonday.get(2) && thisday <(Integer)listMonday.get(3)) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY4.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                listY1.set(4, num);
+                            }
+                        }
+                    }
+                    System.out.println("sum="+sum);
+                    if(sum>4) {
+                        if(thisday>=(Integer)listMonday.get(3) && thisday <(Integer)listMonday.get(4)) {
+                            float num = 0;
+                            for (int j = 0; j < listX.size(); j++) {
+                                if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                    num = Float.parseFloat(listY5.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                    listY5.set(j, num);
+                                }
+                            }
+                        }
+                        if(sum==6) {
+                            if(thisday>=(Integer)listMonday.get(4) && thisday <(Integer)listMonday.get(5)) {
+                                float num = 0;
+                                for (int j = 0; j < listX.size(); j++) {
+                                    if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                        num = Float.parseFloat(listY6.get(j).toString()) - listBack.get(i).getListpriceSum();
+                                        listY6.set(j, num);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }else if(selectType.contains("金重")){//营业额
+            if(listBack.size()>0) {
+                for (int i = 0; i < listBack.size(); i++) {
+
+                    int thisday = Integer.parseInt(listBack.get(i).getDate().toString().substring(8, 10));//这个月的几号
+                    if(thisday>=1 && thisday <(Integer)listMonday.get(0)) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY1.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                listY1.set(j, num);
+                            }
+                        }
+                    }
+                    if(thisday>=(Integer)listMonday.get(0) && thisday <(Integer)listMonday.get(1)) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY2.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                listY2.set(j, num);
+                            }
+                        }
+                    }
+                    if(thisday>=(Integer)listMonday.get(1) && thisday <(Integer)listMonday.get(2)) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY3.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                listY3.set(j, num);
+                            }
+                        }
+                    }
+                    if(thisday>=(Integer)listMonday.get(2) && thisday <(Integer)listMonday.get(3)) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY4.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                listY4.set(j, num);
+                            }
+                        }
+                    }
+
+                    if(sum>4) {
+                        if(thisday>=(Integer)listMonday.get(3) && thisday <(Integer)listMonday.get(4)) {
+                            float num = 0;
+                            for (int j = 0; j < listX.size(); j++) {
+                                if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                    num = Float.parseFloat(listY5.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                    listY5.set(j, num);
+                                }
+                            }
+                        }
+                        if(sum==6) {
+                            if(thisday>=(Integer)listMonday.get(4) && thisday <(Integer)listMonday.get(5)) {
+                                float num = 0;
+                                for (int j = 0; j < listX.size(); j++) {
+                                    if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                        num = Float.parseFloat(listY6.get(j).toString()) + listBack.get(i).getGoldweightSum();
+                                        listY6.set(j, num);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }else if(selectType.contains("主石")){//营业额
+            if(listBack.size()>0) {
+                for (int i = 0; i < listBack.size(); i++) {
+
+                    int thisday = Integer.parseInt(listBack.get(i).getDate().toString().substring(8, 10));//这个月的几号
+                    if(thisday>=1 && thisday <(Integer)listMonday.get(0)) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY1.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                listY1.set(j, num);
+                            }
+                        }
+                    }
+                    if(thisday>=(Integer)listMonday.get(0) && thisday <(Integer)listMonday.get(1)) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY2.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                listY2.set(j, num);
+                            }
+                        }
+                    }
+                    if(thisday>=(Integer)listMonday.get(1) && thisday <(Integer)listMonday.get(2)) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY3.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                listY3.set(j, num);
+                            }
+                        }
+                    }
+                    if(thisday>=(Integer)listMonday.get(2) && thisday <(Integer)listMonday.get(3)) {
+                        float num = 0;
+                        for (int j = 0; j < listX.size(); j++) {
+                            if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                num = Float.parseFloat(listY4.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                listY4.set(j, num);
+                            }
+                        }
+                    }
+                    if(sum>4) {
+                        if(thisday>=(Integer)listMonday.get(3) && thisday <(Integer)listMonday.get(4)) {
+                            float num = 0;
+                            for (int j = 0; j < listX.size(); j++) {
+                                if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                    num = Float.parseFloat(listY5.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                    listY5.set(j, num);
+                                }
+                            }
+                        }
+                        if(sum==6) {
+                            if(thisday>=(Integer)listMonday.get(4) && thisday <(Integer)listMonday.get(5)) {
+                                float num = 0;
+                                for (int j = 0; j < listX.size(); j++) {
+                                    if(listX.get(j).toString().contains(listBack.get(i).getProduct())) {
+                                        num = Float.parseFloat(listY6.get(j).toString()) + listBack.get(i).getCenterstoneSum();
+                                        listY6.set(j, num);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 		List listArea = new ArrayList<>();
 		List listRoom = new ArrayList<>();
 		List listCounter = new ArrayList<>();
@@ -4516,20 +5834,13 @@ public class StoneAnalysisController {
 				listDate.add(sdf.format(listAll.get(j).getDate()));
 			}
 		}
-		//System.out.println("listX="+listX);
-		//System.out.println("listY1="+listY1);
-		//System.out.println("listY2="+listY2);
-		//System.out.println("listY3="+listY3);
-		//System.out.println("listY4="+listY4);
-		//System.out.println("listY5="+listY5);
-		//System.out.println("listY6="+listY6);
-		
-		result=""+listX+"@"+listY1+"@"+listArea+"@"+listRoom+"@"+listCounter+"@"+
+
+		StringBuilder result = new StringBuilder();
+		result.append(""+listX+"@"+listY1+"@"+listArea+"@"+listRoom+"@"+listCounter+"@"+
 		listProduct+"@"+listSettlementprice+"@"+listDate+"@"+listY2+"@"+listY3+"@"+listY4
-		+"@"+listY5+"@"+listY6+"@"+sum+"@"+listListprice+"@"+listGoldweight+"@"+listCenterstone;
-		
-		
-		return result;
+		+"@"+listY5+"@"+listY6+"@"+sum+"@"+listListprice+"@"+listGoldweight+"@"+listCenterstone);
+
+		return result.toString();
 	}
 	/**
 	 * index811下载Excel表格
@@ -4872,7 +6183,7 @@ public class StoneAnalysisController {
 		List listLastYearX = new ArrayList<>();
 		List listDiffX = new ArrayList<>();
 		if(selectSerachType.contains("销售区域")) {
-			listAll = stoneService.findCompareDateAreaOfIndex822(params);
+			listAll = stoneService.findSourceEqualsSaleByArea(params); //销售数据
 			if (listAll.size()>0) {
 				for (int i = 0; i < listAll.size(); i++) {
 					listY.add(listAll.get(i).getArea());
@@ -4880,239 +6191,506 @@ public class StoneAnalysisController {
 					group.setAttribute(listAll.get(i).getArea());
 					//根据指标选择不同的求和结果
 					if(selectType.contains("销量")) {
-						listThisYearX.add(listAll.get(i).getNumberSum());
-						group.setNewData(listAll.get(i).getNumberSum());
+                        params.put("area", listAll.get(i).getArea());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum());
+                        }
 					}else if(selectType.contains("结算价")){
-						listThisYearX.add(listAll.get(i).getSettlementpriceSum());
-						group.setNewData(listAll.get(i).getSettlementpriceSum());
+                        params.put("area", listAll.get(i).getArea());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum());
+                        }
 					}else if(selectType.contains("标价")){
-						listThisYearX.add(listAll.get(i).getListpriceSum());
-						group.setNewData(listAll.get(i).getListpriceSum());
+                        params.put("area", listAll.get(i).getArea());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum());
+                        }
 					}else if(selectType.contains("金重")){
-						listThisYearX.add(listAll.get(i).getGoldweightSum());
-						group.setNewData(listAll.get(i).getGoldweightSum());
+                        params.put("area", listAll.get(i).getArea());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum());
+                        }
 					}else if(selectType.contains("主石")){
-						listThisYearX.add(listAll.get(i).getCenterstoneSum());
-						group.setNewData(listAll.get(i).getCenterstoneSum());
+                        params.put("area", listAll.get(i).getArea());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum());
+                        }
 					}
 					params1.put("area", listAll.get(i).getArea());
-					listCompare = stoneService.findCompareDateAreaOfIndex822(params1);
+					listCompare = stoneService.findSourceEqualsSaleByArea(params1);
+                    List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params1); //退回数据
 					if(listCompare.size()>0 ) {//去年同期有销售数据 
 						
 						if(selectType.contains("销量")) {
-							listLastYearX.add(listCompare.get(0).getNumberSum());
-							group.setOldData(listCompare.get(0).getNumberSum());
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getNumberSum()+ listBack.get(0).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum());
+                            }
 						}else if(selectType.contains("结算价")){
-							listLastYearX.add(listCompare.get(0).getSettlementpriceSum());
-							group.setOldData(listCompare.get(0).getSettlementpriceSum());
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum()+ listBack.get(0).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum());
+                            }
 						}else if(selectType.contains("标价")){
-							listLastYearX.add(listAll.get(i).getListpriceSum());
-							group.setOldData(listCompare.get(0).getListpriceSum());
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum());
+                            }
 						}else if(selectType.contains("金重")){
-							listLastYearX.add(listAll.get(i).getGoldweightSum());
-							group.setOldData(listCompare.get(0).getGoldweightSum());
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum());
+                            }
 						}else if(selectType.contains("主石")){
-							listLastYearX.add(listAll.get(i).getCenterstoneSum());
-							group.setOldData(listCompare.get(0).getCenterstoneSum());
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum());
+                            }
 						}
 					}else {//去年同期没有销售数据 
 						listLastYearX.add(0);
 						group.setOldData(0);
-					}	
-					if(listLastYearX.get(i).hashCode()==0) {
+					}
+                    if(listLastYearX.get(i).toString().equals("0")) {
 						listDiffX.add("100%");
 						group.setGroupper("100%");
 					}else {
-						double diff = ((double)listThisYearX.get(i).hashCode()-((double)listLastYearX.get(i).hashCode()))/(double)listLastYearX.get(i).hashCode();
-					    listDiffX.add(diff+"%");
-					    group.setGroupper(""+diff+"%");
+						if(selectType.contains("销量")) {
+							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
+						}else {
+							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
+						}
 					}
 				groupList.add(group);	
 				}
 			}
 		}
-		if(selectSerachType.contains("柜台")) {
-			listAll = stoneService.findCompareDateCounterOfIndex822(params);
-			if (listAll.size()>0) {
-				for (int i = 0; i < listAll.size(); i++) {
-					listY.add(listAll.get(i).getCounter());
-					Group group =  new Group();
-					group.setAttribute(listAll.get(i).getCounter());
-					//根据指标选择不同的求和结果
-					if(selectType.contains("销量")) {
-						listThisYearX.add(listAll.get(i).getNumberSum());
-						group.setNewData(listAll.get(i).getNumberSum());
-					}else if(selectType.contains("结算价")){
-						listThisYearX.add(listAll.get(i).getSettlementpriceSum());
-						group.setNewData(listAll.get(i).getSettlementpriceSum());
-					}else if(selectType.contains("标价")){
-						listThisYearX.add(listAll.get(i).getListpriceSum());
-						group.setNewData(listAll.get(i).getListpriceSum());
-					}else if(selectType.contains("金重")){
-						listThisYearX.add(listAll.get(i).getGoldweightSum());
-						group.setNewData(listAll.get(i).getGoldweightSum());
-					}else if(selectType.contains("主石")){
-						listThisYearX.add(listAll.get(i).getCenterstoneSum());
-						group.setNewData(listAll.get(i).getCenterstoneSum());
-					}
-					params1.put("counter", listAll.get(i).getCounter());
-					listCompare = stoneService.findCompareDateCounterOfIndex822(params1);
-					if(listCompare.size()>0 ) {//去年同期有销售数据 
-						
+        if(selectSerachType.contains("柜台")) {
+            listAll = stoneService.findSourceEqualsSaleByCounter(params); //销售数据
+            if (listAll.size()>0) {
+                for (int i = 0; i < listAll.size(); i++) {
+                    listY.add(listAll.get(i).getCounter());
+                    Group group =  new Group();
+                    group.setAttribute(listAll.get(i).getCounter());
+                    //根据指标选择不同的求和结果
+                    if(selectType.contains("销量")) {
+                        params.put("counter", listAll.get(i).getCounter());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum());
+                        }
+                    }else if(selectType.contains("结算价")){
+                        params.put("counter", listAll.get(i).getCounter());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum());
+                        }
+                    }else if(selectType.contains("标价")){
+                        params.put("counter", listAll.get(i).getCounter());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum());
+                        }
+                    }else if(selectType.contains("金重")){
+                        params.put("counter", listAll.get(i).getCounter());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum());
+                        }
+                    }else if(selectType.contains("主石")){
+                        params.put("counter", listAll.get(i).getCounter());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum());
+                        }
+                    }
+                    params1.put("counter", listAll.get(i).getCounter());
+                    listCompare = stoneService.findSourceEqualsSaleByCounter(params1);
+                    List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params1); //退回数据
+                    if(listCompare.size()>0 ) {//去年同期有销售数据
+
+                        if(selectType.contains("销量")) {
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getNumberSum()+ listBack.get(0).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum());
+                            }
+                        }else if(selectType.contains("结算价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum()+ listBack.get(0).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum());
+                            }
+                        }else if(selectType.contains("标价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum());
+                            }
+                        }else if(selectType.contains("金重")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum());
+                            }
+                        }else if(selectType.contains("主石")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum());
+                            }
+                        }
+                    }else {//去年同期没有销售数据
+                        listLastYearX.add(0);
+                        group.setOldData(0);
+                    }
+                    if(listLastYearX.get(i).toString().equals("0")) {
+                        listDiffX.add("100%");
+                        group.setGroupper("100%");
+                    }else {
 						if(selectType.contains("销量")) {
-							listLastYearX.add(listCompare.get(0).getNumberSum());
-							group.setOldData(listCompare.get(0).getNumberSum());
-						}else if(selectType.contains("结算价")){
-							listLastYearX.add(listCompare.get(0).getSettlementpriceSum());
-							group.setOldData(listCompare.get(0).getSettlementpriceSum());
-						}else if(selectType.contains("标价")){
-							listLastYearX.add(listAll.get(i).getListpriceSum());
-							group.setOldData(listCompare.get(0).getListpriceSum());
-						}else if(selectType.contains("金重")){
-							listLastYearX.add(listAll.get(i).getGoldweightSum());
-							group.setOldData(listCompare.get(0).getGoldweightSum());
-						}else if(selectType.contains("主石")){
-							listLastYearX.add(listAll.get(i).getCenterstoneSum());
-							group.setOldData(listCompare.get(0).getCenterstoneSum());
+							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
+						}else {
+							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
 						}
-					}else {//去年同期没有销售数据 
-						listLastYearX.add(0);
-						group.setOldData(0);
-					}	
-					if(listLastYearX.get(i).hashCode()==0) {
-						listDiffX.add("100%");
-						group.setGroupper("100%");
-					}else {
-						double diff = ((double)listThisYearX.get(i).hashCode()-((double)listLastYearX.get(i).hashCode()))/(double)listLastYearX.get(i).hashCode();
-					    listDiffX.add(diff+"%");
-					    group.setGroupper(""+diff+"%");
-					}
-				groupList.add(group);
-				}
-			}
-		}
-		if(selectSerachType.contains("名称")) {
-			listAll = stoneService.findCompareDateProductOfIndex822(params);
-			if (listAll.size()>0) {
-				for (int i = 0; i < listAll.size(); i++) {
-					listY.add(listAll.get(i).getProduct());
-					Group group =  new Group();
-					group.setAttribute(listAll.get(i).getProduct());
-					//根据指标选择不同的求和结果
-					if(selectType.contains("销量")) {
-						listThisYearX.add(listAll.get(i).getNumberSum());
-						group.setNewData(listAll.get(i).getNumberSum());
-					}else if(selectType.contains("结算价")){
-						listThisYearX.add(listAll.get(i).getSettlementpriceSum());
-						group.setNewData(listAll.get(i).getSettlementpriceSum());
-					}else if(selectType.contains("标价")){
-						listThisYearX.add(listAll.get(i).getListpriceSum());
-						group.setNewData(listAll.get(i).getListpriceSum());
-					}else if(selectType.contains("金重")){
-						listThisYearX.add(listAll.get(i).getGoldweightSum());
-						group.setNewData(listAll.get(i).getGoldweightSum());
-					}else if(selectType.contains("主石")){
-						listThisYearX.add(listAll.get(i).getCenterstoneSum());
-						group.setNewData(listAll.get(i).getCenterstoneSum());
-					}
-					params1.put("product", listAll.get(i).getProduct());
-					listCompare = stoneService.findCompareDateProductOfIndex822(params1);
-					if(listCompare.size()>0 ) {//去年同期有销售数据 
-						
+                    }
+                    groupList.add(group);
+                }
+            }
+        }
+        if(selectSerachType.contains("名称")) {
+            listAll = stoneService.findSourceEqualsSaleByProduct(params); //销售数据
+            if (listAll.size()>0) {
+                for (int i = 0; i < listAll.size(); i++) {
+                    listY.add(listAll.get(i).getProduct());
+                    Group group =  new Group();
+                    group.setAttribute(listAll.get(i).getProduct());
+                    //根据指标选择不同的求和结果
+                    if(selectType.contains("销量")) {
+                        params.put("product", listAll.get(i).getProduct());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum());
+                        }
+                    }else if(selectType.contains("结算价")){
+                        params.put("product", listAll.get(i).getProduct());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum());
+                        }
+                    }else if(selectType.contains("标价")){
+                        params.put("product", listAll.get(i).getProduct());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum());
+                        }
+                    }else if(selectType.contains("金重")){
+                        params.put("product", listAll.get(i).getProduct());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum());
+                        }
+                    }else if(selectType.contains("主石")){
+                        params.put("product", listAll.get(i).getProduct());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum());
+                        }
+                    }
+                    params1.put("product", listAll.get(i).getProduct());
+                    listCompare = stoneService.findSourceEqualsSaleByProduct(params1);
+                    List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params1); //退回数据
+                    if(listCompare.size()>0 ) {//去年同期有销售数据
+
+                        if(selectType.contains("销量")) {
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getNumberSum()+ listBack.get(0).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum());
+                            }
+                        }else if(selectType.contains("结算价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum()+ listBack.get(0).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum());
+                            }
+                        }else if(selectType.contains("标价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum());
+                            }
+                        }else if(selectType.contains("金重")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum());
+                            }
+                        }else if(selectType.contains("主石")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum());
+                            }
+                        }
+                    }else {//去年同期没有销售数据
+                        listLastYearX.add(0);
+                        group.setOldData(0);
+                    }
+                    if(listLastYearX.get(i).toString().equals("0")) {
+                        listDiffX.add("100%");
+                        group.setGroupper("100%");
+                    }else {
 						if(selectType.contains("销量")) {
-							listLastYearX.add(listCompare.get(0).getNumberSum());
-							group.setOldData(listCompare.get(0).getNumberSum());
-						}else if(selectType.contains("结算价")){
-							listLastYearX.add(listCompare.get(0).getSettlementpriceSum());
-							group.setOldData(listCompare.get(0).getSettlementpriceSum());
-						}else if(selectType.contains("标价")){
-							listLastYearX.add(listAll.get(i).getListpriceSum());
-							group.setOldData(listCompare.get(0).getListpriceSum());
-						}else if(selectType.contains("金重")){
-							listLastYearX.add(listAll.get(i).getGoldweightSum());
-							group.setOldData(listCompare.get(0).getGoldweightSum());
-						}else if(selectType.contains("主石")){
-							listLastYearX.add(listAll.get(i).getCenterstoneSum());
-							group.setOldData(listCompare.get(0).getCenterstoneSum());
+							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
+						}else {
+							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
 						}
-					}else {//去年同期没有销售数据 
-						
-							listLastYearX.add(0);
-							group.setOldData(0);
-						
-					}	
-					if(listLastYearX.get(i).hashCode()==0) {
-						listDiffX.add("100%");
-						group.setGroupper("100%");
-					}else {
-						double diff = ((double)listThisYearX.get(i).hashCode()-((double)listLastYearX.get(i).hashCode()))/(double)listLastYearX.get(i).hashCode();
-					    listDiffX.add(diff+"%");
-					    group.setGroupper(""+diff+"%");
-					}
-					groupList.add(group);
-				}
-			}
-		}
-		if(selectSerachType.contains("门店")) {
-			listAll = stoneService.findCompareDateRoomOfIndex822(params);
-			if (listAll.size()>0) {
-				for (int i = 0; i < listAll.size(); i++) {
-					listY.add(listAll.get(i).getRoom());
-					Group group =  new Group();
-					group.setAttribute(listAll.get(i).getRoom());
-					//根据指标选择不同的求和结果
-					if(selectType.contains("销量")) {
-						listThisYearX.add(listAll.get(i).getNumberSum());
-						group.setNewData(listAll.get(i).getNumberSum());
-					}else if(selectType.contains("结算价")){
-						listThisYearX.add(listAll.get(i).getSettlementpriceSum());
-						group.setNewData(listAll.get(i).getSettlementpriceSum());
-					}else if(selectType.contains("标价")){
-						listThisYearX.add(listAll.get(i).getListpriceSum());
-						group.setNewData(listAll.get(i).getListpriceSum());
-					}else if(selectType.contains("金重")){
-						listThisYearX.add(listAll.get(i).getGoldweightSum());
-						group.setNewData(listAll.get(i).getGoldweightSum());
-					}else if(selectType.contains("主石")){
-						listThisYearX.add(listAll.get(i).getCenterstoneSum());
-						group.setNewData(listAll.get(i).getCenterstoneSum());
-					}
-					params1.put("room", listAll.get(i).getRoom());
-					listCompare = stoneService.findCompareDateRoomOfIndex822(params1);
-					if(listCompare.size()>0 ) {//去年同期有销售数据 
-						
+                    }
+                    groupList.add(group);
+                }
+            }
+        }
+        if(selectSerachType.contains("门店")) {
+            listAll = stoneService.findSourceEqualsSaleByRoom(params); //销售数据
+            if (listAll.size()>0) {
+                for (int i = 0; i < listAll.size(); i++) {
+                    listY.add(listAll.get(i).getRoom());
+                    Group group =  new Group();
+                    group.setAttribute(listAll.get(i).getRoom());
+                    //根据指标选择不同的求和结果
+                    if(selectType.contains("销量")) {
+                        params.put("room", listAll.get(i).getRoom());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum());
+                        }
+                    }else if(selectType.contains("结算价")){
+                        params.put("room", listAll.get(i).getRoom());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum());
+                        }
+                    }else if(selectType.contains("标价")){
+                        params.put("room", listAll.get(i).getRoom());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum());
+                        }
+                    }else if(selectType.contains("金重")){
+                        params.put("room", listAll.get(i).getRoom());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum());
+                        }
+                    }else if(selectType.contains("主石")){
+                        params.put("room", listAll.get(i).getRoom());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum());
+                        }
+                    }
+                    params1.put("room", listAll.get(i).getRoom());
+                    listCompare = stoneService.findSourceEqualsSaleByRoom(params1);
+                    List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params1); //退回数据
+                    if(listCompare.size()>0 ) {//去年同期有销售数据
+
+                        if(selectType.contains("销量")) {
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getNumberSum()+ listBack.get(0).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum());
+                            }
+                        }else if(selectType.contains("结算价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum()+ listBack.get(0).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum());
+                            }
+                        }else if(selectType.contains("标价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum());
+                            }
+                        }else if(selectType.contains("金重")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum());
+                            }
+                        }else if(selectType.contains("主石")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum());
+                            }
+                        }
+                    }else {//去年同期没有销售数据
+                        listLastYearX.add(0);
+                        group.setOldData(0);
+                    }
+                    if(listLastYearX.get(i).toString().equals("0")) {
+                        listDiffX.add("100%");
+                        group.setGroupper("100%");
+                    }else {
 						if(selectType.contains("销量")) {
-							listLastYearX.add(listCompare.get(0).getNumberSum());
-							group.setOldData(listCompare.get(0).getNumberSum());
-						}else if(selectType.contains("结算价")){
-							listLastYearX.add(listCompare.get(0).getSettlementpriceSum());
-							group.setOldData(listCompare.get(0).getSettlementpriceSum());
-						}else if(selectType.contains("标价")){
-							listLastYearX.add(listAll.get(i).getListpriceSum());
-							group.setOldData(listCompare.get(0).getListpriceSum());
-						}else if(selectType.contains("金重")){
-							listLastYearX.add(listAll.get(i).getGoldweightSum());
-							group.setOldData(listCompare.get(0).getGoldweightSum());
-						}else if(selectType.contains("主石")){
-							listLastYearX.add(listAll.get(i).getCenterstoneSum());
-							group.setOldData(listCompare.get(0).getCenterstoneSum());
+							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
+						}else {
+							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
 						}
-					}else {//去年同期没有销售数据 						
-							listLastYearX.add(0);
-							group.setOldData(0);
-					}	
-					if(listLastYearX.get(i).hashCode()==0) {
-						listDiffX.add("100%");
-						group.setGroupper("100%");
-					}else {
-						double diff = ((double)listThisYearX.get(i).hashCode()-((double)listLastYearX.get(i).hashCode()))/(double)listLastYearX.get(i).hashCode();
-					    listDiffX.add(diff+"%");
-					    group.setGroupper(""+diff+"%");
-					}
-				groupList.add(group);
-				}
-			}
-		}
+                    }
+                    groupList.add(group);
+                }
+            }
+        }
+
 		
 		//清空表
 		groupService.deleteAllGroup();
@@ -5216,257 +6794,528 @@ public class StoneAnalysisController {
 		List listThisYearX = new ArrayList<>();
 		List listLastYearX = new ArrayList<>();
 		List listDiffX = new ArrayList<>();
-		if(selectSerachType.contains("销售区域")) {
-			listAll = stoneService.findCompareDateAreaOfIndex822(params);
-			if (listAll.size()>0) {//有销售数据 
-				for (int i = 0; i < listAll.size(); i++) {
-					listY.add(listAll.get(i).getArea());
-					Group group =  new Group();
-					group.setAttribute(listAll.get(i).getArea());
-					//根据指标选择不同的求和结果
-					if(selectType.contains("销量")) {
-						listThisYearX.add(listAll.get(i).getNumberSum());
-						group.setNewData(listAll.get(i).getNumberSum());
-					}else if(selectType.contains("结算价")){
-						listThisYearX.add(listAll.get(i).getSettlementpriceSum());
-						group.setNewData(listAll.get(i).getSettlementpriceSum());
-					}else if(selectType.contains("标价")){
-						listThisYearX.add(listAll.get(i).getListpriceSum());
-						group.setNewData(listAll.get(i).getListpriceSum());
-					}else if(selectType.contains("金重")){
-						listThisYearX.add(listAll.get(i).getGoldweightSum());
-						group.setNewData(listAll.get(i).getGoldweightSum());
-					}else if(selectType.contains("主石")){
-						listThisYearX.add(listAll.get(i).getCenterstoneSum());
-						group.setNewData(listAll.get(i).getCenterstoneSum());
-					}
-					params1.put("room", listAll.get(i).getRoom());
-					listCompare = stoneService.findCompareDateRoomOfIndex822(params1);
-					if(listCompare.size()>0 ) {//去年同期有销售数据 
-						
+        if(selectSerachType.contains("销售区域")) {
+            listAll = stoneService.findSourceEqualsSaleByArea(params); //销售数据
+            if (listAll.size()>0) {
+                for (int i = 0; i < listAll.size(); i++) {
+                    listY.add(listAll.get(i).getArea());
+                    Group group =  new Group();
+                    group.setAttribute(listAll.get(i).getArea());
+                    //根据指标选择不同的求和结果
+                    if(selectType.contains("销量")) {
+                        params.put("area", listAll.get(i).getArea());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum());
+                        }
+                    }else if(selectType.contains("结算价")){
+                        params.put("area", listAll.get(i).getArea());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum());
+                        }
+                    }else if(selectType.contains("标价")){
+                        params.put("area", listAll.get(i).getArea());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum());
+                        }
+                    }else if(selectType.contains("金重")){
+                        params.put("area", listAll.get(i).getArea());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum());
+                        }
+                    }else if(selectType.contains("主石")){
+                        params.put("area", listAll.get(i).getArea());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum());
+                        }
+                    }
+                    params1.put("area", listAll.get(i).getArea());
+                    listCompare = stoneService.findSourceEqualsSaleByArea(params1);
+                    List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params1); //退回数据
+                    if(listCompare.size()>0 ) {//去年同期有销售数据
+
+                        if(selectType.contains("销量")) {
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getNumberSum()+ listBack.get(0).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum());
+                            }
+                        }else if(selectType.contains("结算价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum()+ listBack.get(0).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum());
+                            }
+                        }else if(selectType.contains("标价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum());
+                            }
+                        }else if(selectType.contains("金重")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum());
+                            }
+                        }else if(selectType.contains("主石")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum());
+                            }
+                        }
+                    }else {//去年同期没有销售数据
+                        listLastYearX.add(0);
+                        group.setOldData(0);
+                    }
+                    if(listLastYearX.get(i).toString().equals("0")) {
+                        listDiffX.add("100%");
+                        group.setGroupper("100%");
+                    }else {
 						if(selectType.contains("销量")) {
-							listLastYearX.add(listCompare.get(0).getNumberSum());
-							group.setOldData(listCompare.get(0).getNumberSum());
-						}else if(selectType.contains("结算价")){
-							listLastYearX.add(listCompare.get(0).getSettlementpriceSum());
-							group.setOldData(listCompare.get(0).getSettlementpriceSum());
-						}else if(selectType.contains("标价")){
-							listLastYearX.add(listAll.get(i).getListpriceSum());
-							group.setOldData(listCompare.get(0).getListpriceSum());
-						}else if(selectType.contains("金重")){
-							listLastYearX.add(listAll.get(i).getGoldweightSum());
-							group.setOldData(listCompare.get(0).getGoldweightSum());
-						}else if(selectType.contains("主石")){
-							listLastYearX.add(listAll.get(i).getCenterstoneSum());
-							group.setOldData(listCompare.get(0).getCenterstoneSum());
+							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
+						}else {
+							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
 						}
-					}else {//去年同期没有销售数据 						
-							listLastYearX.add(0);
-							group.setOldData(0);
-					}	
-					if(listLastYearX.get(i).hashCode()==0) {
-						listDiffX.add("100%");
-						group.setGroupper("100%");
-					}else {
-						double diff = ((double)listThisYearX.get(i).hashCode()-((double)listLastYearX.get(i).hashCode()))/(double)listLastYearX.get(i).hashCode();
-					    listDiffX.add(diff+"%");
-					    group.setGroupper(""+diff+"%");
-					}
-				groupList.add(group);
-				}
-			}
-		}
-		if(selectSerachType.contains("柜台")) {
-			listAll = stoneService.findCompareDateCounterOfIndex822(params);
-			if (listAll.size()>0) {
-				for (int i = 0; i < listAll.size(); i++) {
-					listY.add(listAll.get(i).getCounter());
-					Group group =  new Group();
-					group.setAttribute(listAll.get(i).getCounter());
-					//根据指标选择不同的求和结果
-					if(selectType.contains("销量")) {
-						listThisYearX.add(listAll.get(i).getNumberSum());
-						group.setNewData(listAll.get(i).getNumberSum());
-					}else if(selectType.contains("结算价")){
-						listThisYearX.add(listAll.get(i).getSettlementpriceSum());
-						group.setNewData(listAll.get(i).getSettlementpriceSum());
-					}else if(selectType.contains("标价")){
-						listThisYearX.add(listAll.get(i).getListpriceSum());
-						group.setNewData(listAll.get(i).getListpriceSum());
-					}else if(selectType.contains("金重")){
-						listThisYearX.add(listAll.get(i).getGoldweightSum());
-						group.setNewData(listAll.get(i).getGoldweightSum());
-					}else if(selectType.contains("主石")){
-						listThisYearX.add(listAll.get(i).getCenterstoneSum());
-						group.setNewData(listAll.get(i).getCenterstoneSum());
-					}
-					params1.put("room", listAll.get(i).getRoom());
-					listCompare = stoneService.findCompareDateRoomOfIndex822(params1);
-					if(listCompare.size()>0 ) {//去年同期有销售数据 
-						
+                    }
+                    groupList.add(group);
+                }
+            }
+        }
+        if(selectSerachType.contains("柜台")) {
+            listAll = stoneService.findSourceEqualsSaleByCounter(params); //销售数据
+            if (listAll.size()>0) {
+                for (int i = 0; i < listAll.size(); i++) {
+                    listY.add(listAll.get(i).getCounter());
+                    Group group =  new Group();
+                    group.setAttribute(listAll.get(i).getCounter());
+                    //根据指标选择不同的求和结果
+                    if(selectType.contains("销量")) {
+                        params.put("counter", listAll.get(i).getCounter());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum());
+                        }
+                    }else if(selectType.contains("结算价")){
+                        params.put("counter", listAll.get(i).getCounter());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum());
+                        }
+                    }else if(selectType.contains("标价")){
+                        params.put("counter", listAll.get(i).getCounter());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum());
+                        }
+                    }else if(selectType.contains("金重")){
+                        params.put("counter", listAll.get(i).getCounter());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum());
+                        }
+                    }else if(selectType.contains("主石")){
+                        params.put("counter", listAll.get(i).getCounter());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum());
+                        }
+                    }
+                    params1.put("counter", listAll.get(i).getCounter());
+                    listCompare = stoneService.findSourceEqualsSaleByCounter(params1);
+                    List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params1); //退回数据
+                    if(listCompare.size()>0 ) {//去年同期有销售数据
+
+                        if(selectType.contains("销量")) {
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getNumberSum()+ listBack.get(0).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum());
+                            }
+                        }else if(selectType.contains("结算价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum()+ listBack.get(0).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum());
+                            }
+                        }else if(selectType.contains("标价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum());
+                            }
+                        }else if(selectType.contains("金重")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum());
+                            }
+                        }else if(selectType.contains("主石")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum());
+                            }
+                        }
+                    }else {//去年同期没有销售数据
+                        listLastYearX.add(0);
+                        group.setOldData(0);
+                    }
+                    if(listLastYearX.get(i).toString().equals("0")) {
+                        listDiffX.add("100%");
+                        group.setGroupper("100%");
+                    }else {
 						if(selectType.contains("销量")) {
-							listLastYearX.add(listCompare.get(0).getNumberSum());
-							group.setOldData(listCompare.get(0).getNumberSum());
-						}else if(selectType.contains("结算价")){
-							listLastYearX.add(listCompare.get(0).getSettlementpriceSum());
-							group.setOldData(listCompare.get(0).getSettlementpriceSum());
-						}else if(selectType.contains("标价")){
-							listLastYearX.add(listAll.get(i).getListpriceSum());
-							group.setOldData(listCompare.get(0).getListpriceSum());
-						}else if(selectType.contains("金重")){
-							listLastYearX.add(listAll.get(i).getGoldweightSum());
-							group.setOldData(listCompare.get(0).getGoldweightSum());
-						}else if(selectType.contains("主石")){
-							listLastYearX.add(listAll.get(i).getCenterstoneSum());
-							group.setOldData(listCompare.get(0).getCenterstoneSum());
+							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
+						}else {
+							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
 						}
-					}else {//去年同期没有销售数据 						
-							listLastYearX.add(0);
-							group.setOldData(0);
-					}	
-					if(listLastYearX.get(i).hashCode()==0) {
-						listDiffX.add("100%");
-						group.setGroupper("100%");
-					}else {
-						double diff = ((double)listThisYearX.get(i).hashCode()-((double)listLastYearX.get(i).hashCode()))/(double)listLastYearX.get(i).hashCode();
-					    listDiffX.add(diff+"%");
-					    group.setGroupper(""+diff+"%");
-					}
-				groupList.add(group);
-				}
-			}
-		}
-		if(selectSerachType.contains("名称")) {
-			listAll = stoneService.findCompareDateProductOfIndex822(params);
-			if (listAll.size()>0) {
-				for (int i = 0; i < listAll.size(); i++) {
-					listY.add(listAll.get(i).getProduct());
-					Group group =  new Group();
-					group.setAttribute(listAll.get(i).getProduct());
-					//根据指标选择不同的求和结果
-					if(selectType.contains("销量")) {
-						listThisYearX.add(listAll.get(i).getNumberSum());
-						group.setNewData(listAll.get(i).getNumberSum());
-					}else if(selectType.contains("结算价")){
-						listThisYearX.add(listAll.get(i).getSettlementpriceSum());
-						group.setNewData(listAll.get(i).getSettlementpriceSum());
-					}else if(selectType.contains("标价")){
-						listThisYearX.add(listAll.get(i).getListpriceSum());
-						group.setNewData(listAll.get(i).getListpriceSum());
-					}else if(selectType.contains("金重")){
-						listThisYearX.add(listAll.get(i).getGoldweightSum());
-						group.setNewData(listAll.get(i).getGoldweightSum());
-					}else if(selectType.contains("主石")){
-						listThisYearX.add(listAll.get(i).getCenterstoneSum());
-						group.setNewData(listAll.get(i).getCenterstoneSum());
-					}
-					params1.put("room", listAll.get(i).getRoom());
-					listCompare = stoneService.findCompareDateRoomOfIndex822(params1);
-					if(listCompare.size()>0 ) {//去年同期有销售数据 
-						
+                    }
+                    groupList.add(group);
+                }
+            }
+        }
+        if(selectSerachType.contains("名称")) {
+            listAll = stoneService.findSourceEqualsSaleByProduct(params); //销售数据
+            if (listAll.size()>0) {
+                for (int i = 0; i < listAll.size(); i++) {
+                    listY.add(listAll.get(i).getProduct());
+                    Group group =  new Group();
+                    group.setAttribute(listAll.get(i).getProduct());
+                    //根据指标选择不同的求和结果
+                    if(selectType.contains("销量")) {
+                        params.put("product", listAll.get(i).getProduct());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum());
+                        }
+                    }else if(selectType.contains("结算价")){
+                        params.put("product", listAll.get(i).getProduct());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum());
+                        }
+                    }else if(selectType.contains("标价")){
+                        params.put("product", listAll.get(i).getProduct());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum());
+                        }
+                    }else if(selectType.contains("金重")){
+                        params.put("product", listAll.get(i).getProduct());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum());
+                        }
+                    }else if(selectType.contains("主石")){
+                        params.put("product", listAll.get(i).getProduct());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum());
+                        }
+                    }
+                    params1.put("product", listAll.get(i).getProduct());
+                    listCompare = stoneService.findSourceEqualsSaleByProduct(params1);
+                    List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params1); //退回数据
+                    if(listCompare.size()>0 ) {//去年同期有销售数据
+
+                        if(selectType.contains("销量")) {
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getNumberSum()+ listBack.get(0).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum());
+                            }
+                        }else if(selectType.contains("结算价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum()+ listBack.get(0).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum());
+                            }
+                        }else if(selectType.contains("标价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum());
+                            }
+                        }else if(selectType.contains("金重")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum());
+                            }
+                        }else if(selectType.contains("主石")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum());
+                            }
+                        }
+                    }else {//去年同期没有销售数据
+                        listLastYearX.add(0);
+                        group.setOldData(0);
+                    }
+                    if(listLastYearX.get(i).toString().equals("0")) {
+                        listDiffX.add("100%");
+                        group.setGroupper("100%");
+                    }else {
 						if(selectType.contains("销量")) {
-							listLastYearX.add(listCompare.get(0).getNumberSum());
-							group.setOldData(listCompare.get(0).getNumberSum());
-						}else if(selectType.contains("结算价")){
-							listLastYearX.add(listCompare.get(0).getSettlementpriceSum());
-							group.setOldData(listCompare.get(0).getSettlementpriceSum());
-						}else if(selectType.contains("标价")){
-							listLastYearX.add(listAll.get(i).getListpriceSum());
-							group.setOldData(listCompare.get(0).getListpriceSum());
-						}else if(selectType.contains("金重")){
-							listLastYearX.add(listAll.get(i).getGoldweightSum());
-							group.setOldData(listCompare.get(0).getGoldweightSum());
-						}else if(selectType.contains("主石")){
-							listLastYearX.add(listAll.get(i).getCenterstoneSum());
-							group.setOldData(listCompare.get(0).getCenterstoneSum());
+							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
+						}else {
+							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
 						}
-					}else {//去年同期没有销售数据 						
-							listLastYearX.add(0);
-							group.setOldData(0);
-					}	
-					if(listLastYearX.get(i).hashCode()==0) {
-						listDiffX.add("100%");
-						group.setGroupper("100%");
-					}else {
-						double diff = ((double)listThisYearX.get(i).hashCode()-((double)listLastYearX.get(i).hashCode()))/(double)listLastYearX.get(i).hashCode();
-					    listDiffX.add(diff+"%");
-					    group.setGroupper(""+diff+"%");
-					}
-				groupList.add(group);
-				}
-			}
-		}
-		if(selectSerachType.contains("门店")) {
-			listAll = stoneService.findCompareDateRoomOfIndex822(params);
-			if (listAll.size()>0) {
-				for (int i = 0; i < listAll.size(); i++) {
-					listY.add(listAll.get(i).getRoom());
-					Group group =  new Group();
-					group.setAttribute(listAll.get(i).getRoom());
-					//根据指标选择不同的求和结果
-					if(selectType.contains("销量")) {
-						listThisYearX.add(listAll.get(i).getNumberSum());
-						group.setNewData(listAll.get(i).getNumberSum());
-					}else if(selectType.contains("结算价")){
-						listThisYearX.add(listAll.get(i).getSettlementpriceSum());
-						group.setNewData(listAll.get(i).getSettlementpriceSum());
-					}else if(selectType.contains("标价")){
-						listThisYearX.add(listAll.get(i).getListpriceSum());
-						group.setNewData(listAll.get(i).getListpriceSum());
-					}else if(selectType.contains("金重")){
-						listThisYearX.add(listAll.get(i).getGoldweightSum());
-						group.setNewData(listAll.get(i).getGoldweightSum());
-					}else if(selectType.contains("主石")){
-						listThisYearX.add(listAll.get(i).getCenterstoneSum());
-						group.setNewData(listAll.get(i).getCenterstoneSum());
-					}
-					params1.put("room", listAll.get(i).getRoom());
-					listCompare = stoneService.findCompareDateRoomOfIndex822(params1);
-					if(listCompare.size()>0 ) {//去年同期有销售数据 
-						
+                    }
+                    groupList.add(group);
+                }
+            }
+        }
+        if(selectSerachType.contains("门店")) {
+            listAll = stoneService.findSourceEqualsSaleByRoom(params); //销售数据
+            if (listAll.size()>0) {
+                for (int i = 0; i < listAll.size(); i++) {
+                    listY.add(listAll.get(i).getRoom());
+                    Group group =  new Group();
+                    group.setAttribute(listAll.get(i).getRoom());
+                    //根据指标选择不同的求和结果
+                    if(selectType.contains("销量")) {
+                        params.put("room", listAll.get(i).getRoom());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum());
+                        }
+                    }else if(selectType.contains("结算价")){
+                        params.put("room", listAll.get(i).getRoom());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum());
+                        }
+                    }else if(selectType.contains("标价")){
+                        params.put("room", listAll.get(i).getRoom());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum());
+                        }
+                    }else if(selectType.contains("金重")){
+                        params.put("room", listAll.get(i).getRoom());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum());
+                        }
+                    }else if(selectType.contains("主石")){
+                        params.put("room", listAll.get(i).getRoom());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum());
+                        }
+                    }
+                    params1.put("room", listAll.get(i).getRoom());
+                    listCompare = stoneService.findSourceEqualsSaleByRoom(params1);
+                    List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params1); //退回数据
+                    if(listCompare.size()>0 ) {//去年同期有销售数据
+
+                        if(selectType.contains("销量")) {
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getNumberSum()+ listBack.get(0).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum());
+                            }
+                        }else if(selectType.contains("结算价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum()+ listBack.get(0).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum());
+                            }
+                        }else if(selectType.contains("标价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum());
+                            }
+                        }else if(selectType.contains("金重")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum());
+                            }
+                        }else if(selectType.contains("主石")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum());
+                            }
+                        }
+                    }else {//去年同期没有销售数据
+                        listLastYearX.add(0);
+                        group.setOldData(0);
+                    }
+                    if(listLastYearX.get(i).toString().equals("0")) {
+                        listDiffX.add("100%");
+                        group.setGroupper("100%");
+                    }else {
 						if(selectType.contains("销量")) {
-							listLastYearX.add(listCompare.get(0).getNumberSum());
-							group.setOldData(listCompare.get(0).getNumberSum());
-						}else if(selectType.contains("结算价")){
-							listLastYearX.add(listCompare.get(0).getSettlementpriceSum());
-							group.setOldData(listCompare.get(0).getSettlementpriceSum());
-						}else if(selectType.contains("标价")){
-							listLastYearX.add(listAll.get(i).getListpriceSum());
-							group.setOldData(listCompare.get(0).getListpriceSum());
-						}else if(selectType.contains("金重")){
-							listLastYearX.add(listAll.get(i).getGoldweightSum());
-							group.setOldData(listCompare.get(0).getGoldweightSum());
-						}else if(selectType.contains("主石")){
-							listLastYearX.add(listAll.get(i).getCenterstoneSum());
-							group.setOldData(listCompare.get(0).getCenterstoneSum());
+							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
+						}else {
+							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
 						}
-					}else {//去年同期没有销售数据 						
-							listLastYearX.add(0);
-							group.setOldData(0);
-					}	
-					if(listLastYearX.get(i).hashCode()==0) {
-						listDiffX.add("100%");
-						group.setGroupper("100%");
-					}else {
-						double diff = ((double)listThisYearX.get(i).hashCode()-((double)listLastYearX.get(i).hashCode()))/(double)listLastYearX.get(i).hashCode();
-					    listDiffX.add(diff+"%");
-					    group.setGroupper(""+diff+"%");
-					}
-				groupList.add(group);
-				}
-			}
-		}
-		//清空表
-			groupService.deleteAllGroup();
-			//插入表数据
-			for (int i = 0; i < groupList.size(); i++) {
-				groupService.insertGroup(groupList.get(i));
-				//System.out.println(groupList.get(i).getAttribute()+"==="+groupList.get(i).getGroupper()+"==="+groupList.get(i).getNewData());
-			}
-			//获取表数据
-			List<Group> listGroup = new ArrayList<>();
-			listGroup = groupService.findAllGroup();
-		return listGroup;
+                    }
+                    groupList.add(group);
+                }
+            }
+        }
+
+
+        //清空表
+        groupService.deleteAllGroup();
+        //插入表数据
+        for (int i = 0; i < groupList.size(); i++) {
+            groupService.insertGroup(groupList.get(i));
+            //System.out.println(groupList.get(i).getAttribute()+"==="+groupList.get(i).getGroupper()+"==="+groupList.get(i).getNewData());
+        }
+        //获取表数据
+        List<Group> listGroup = new ArrayList<>();
+        listGroup = groupService.findAllGroup();
+
+        return listGroup;
 	}
 	/**
 	 * index832页面 导出excel表格
@@ -5557,257 +7406,528 @@ public class StoneAnalysisController {
 		List listThisYearX = new ArrayList<>();
 		List listLastYearX = new ArrayList<>();
 		List listDiffX = new ArrayList<>();
-		if(selectSerachType.contains("销售区域")) {
-			listAll = stoneService.findCompareDateAreaOfIndex822(params);
-			if (listAll.size()>0) {//有销售数据 
-				for (int i = 0; i < listAll.size(); i++) {
-					listY.add(listAll.get(i).getArea());
-					Group group =  new Group();
-					group.setAttribute(listAll.get(i).getArea());
-					//根据指标选择不同的求和结果
-					if(selectType.contains("销量")) {
-						listThisYearX.add(listAll.get(i).getNumberSum());
-						group.setNewData(listAll.get(i).getNumberSum());
-					}else if(selectType.contains("结算价")){
-						listThisYearX.add(listAll.get(i).getSettlementpriceSum());
-						group.setNewData(listAll.get(i).getSettlementpriceSum());
-					}else if(selectType.contains("标价")){
-						listThisYearX.add(listAll.get(i).getListpriceSum());
-						group.setNewData(listAll.get(i).getListpriceSum());
-					}else if(selectType.contains("金重")){
-						listThisYearX.add(listAll.get(i).getGoldweightSum());
-						group.setNewData(listAll.get(i).getGoldweightSum());
-					}else if(selectType.contains("主石")){
-						listThisYearX.add(listAll.get(i).getCenterstoneSum());
-						group.setNewData(listAll.get(i).getCenterstoneSum());
-					}
-					params1.put("room", listAll.get(i).getRoom());
-					listCompare = stoneService.findCompareDateRoomOfIndex822(params1);
-					if(listCompare.size()>0 ) {//去年同期有销售数据 
-						
+        if(selectSerachType.contains("销售区域")) {
+            listAll = stoneService.findSourceEqualsSaleByArea(params); //销售数据
+            if (listAll.size()>0) {
+                for (int i = 0; i < listAll.size(); i++) {
+                    listY.add(listAll.get(i).getArea());
+                    Group group =  new Group();
+                    group.setAttribute(listAll.get(i).getArea());
+                    //根据指标选择不同的求和结果
+                    if(selectType.contains("销量")) {
+                        params.put("area", listAll.get(i).getArea());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum());
+                        }
+                    }else if(selectType.contains("结算价")){
+                        params.put("area", listAll.get(i).getArea());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum());
+                        }
+                    }else if(selectType.contains("标价")){
+                        params.put("area", listAll.get(i).getArea());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum());
+                        }
+                    }else if(selectType.contains("金重")){
+                        params.put("area", listAll.get(i).getArea());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum());
+                        }
+                    }else if(selectType.contains("主石")){
+                        params.put("area", listAll.get(i).getArea());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum());
+                        }
+                    }
+                    params1.put("area", listAll.get(i).getArea());
+                    listCompare = stoneService.findSourceEqualsSaleByArea(params1);
+                    List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params1); //退回数据
+                    if(listCompare.size()>0 ) {//去年同期有销售数据
+
+                        if(selectType.contains("销量")) {
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getNumberSum()+ listBack.get(0).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum());
+                            }
+                        }else if(selectType.contains("结算价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum()+ listBack.get(0).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum());
+                            }
+                        }else if(selectType.contains("标价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum());
+                            }
+                        }else if(selectType.contains("金重")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum());
+                            }
+                        }else if(selectType.contains("主石")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum());
+                            }
+                        }
+                    }else {//去年同期没有销售数据
+                        listLastYearX.add(0);
+                        group.setOldData(0);
+                    }
+                    if(listLastYearX.get(i).toString().equals("0")) {
+                        listDiffX.add("100%");
+                        group.setGroupper("100%");
+                    }else {
 						if(selectType.contains("销量")) {
-							listLastYearX.add(listCompare.get(0).getNumberSum());
-							group.setOldData(listCompare.get(0).getNumberSum());
-						}else if(selectType.contains("结算价")){
-							listLastYearX.add(listCompare.get(0).getSettlementpriceSum());
-							group.setOldData(listCompare.get(0).getSettlementpriceSum());
-						}else if(selectType.contains("标价")){
-							listLastYearX.add(listAll.get(i).getListpriceSum());
-							group.setOldData(listCompare.get(0).getListpriceSum());
-						}else if(selectType.contains("金重")){
-							listLastYearX.add(listAll.get(i).getGoldweightSum());
-							group.setOldData(listCompare.get(0).getGoldweightSum());
-						}else if(selectType.contains("主石")){
-							listLastYearX.add(listAll.get(i).getCenterstoneSum());
-							group.setOldData(listCompare.get(0).getCenterstoneSum());
+							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
+						}else {
+							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
 						}
-					}else {//去年同期没有销售数据 						
-							listLastYearX.add(0);
-							group.setOldData(0);
-					}	
-					if(listLastYearX.get(i).hashCode()==0) {
-						listDiffX.add("100%");
-						group.setGroupper("100%");
-					}else {
-						double diff = ((double)listThisYearX.get(i).hashCode()-((double)listLastYearX.get(i).hashCode()))/(double)listLastYearX.get(i).hashCode();
-					    listDiffX.add(diff+"%");
-					    group.setGroupper(""+diff+"%");
-					}
-				groupList.add(group);
-				}
-			}
-		}
-		if(selectSerachType.contains("柜台")) {
-			listAll = stoneService.findCompareDateCounterOfIndex822(params);
-			if (listAll.size()>0) {
-				for (int i = 0; i < listAll.size(); i++) {
-					listY.add(listAll.get(i).getCounter());
-					Group group =  new Group();
-					group.setAttribute(listAll.get(i).getCounter());
-					//根据指标选择不同的求和结果
-					if(selectType.contains("销量")) {
-						listThisYearX.add(listAll.get(i).getNumberSum());
-						group.setNewData(listAll.get(i).getNumberSum());
-					}else if(selectType.contains("结算价")){
-						listThisYearX.add(listAll.get(i).getSettlementpriceSum());
-						group.setNewData(listAll.get(i).getSettlementpriceSum());
-					}else if(selectType.contains("标价")){
-						listThisYearX.add(listAll.get(i).getListpriceSum());
-						group.setNewData(listAll.get(i).getListpriceSum());
-					}else if(selectType.contains("金重")){
-						listThisYearX.add(listAll.get(i).getGoldweightSum());
-						group.setNewData(listAll.get(i).getGoldweightSum());
-					}else if(selectType.contains("主石")){
-						listThisYearX.add(listAll.get(i).getCenterstoneSum());
-						group.setNewData(listAll.get(i).getCenterstoneSum());
-					}
-					params1.put("room", listAll.get(i).getRoom());
-					listCompare = stoneService.findCompareDateRoomOfIndex822(params1);
-					if(listCompare.size()>0 ) {//去年同期有销售数据 
-						
+                    }
+                    groupList.add(group);
+                }
+            }
+        }
+        if(selectSerachType.contains("柜台")) {
+            listAll = stoneService.findSourceEqualsSaleByCounter(params); //销售数据
+            if (listAll.size()>0) {
+                for (int i = 0; i < listAll.size(); i++) {
+                    listY.add(listAll.get(i).getCounter());
+                    Group group =  new Group();
+                    group.setAttribute(listAll.get(i).getCounter());
+                    //根据指标选择不同的求和结果
+                    if(selectType.contains("销量")) {
+                        params.put("counter", listAll.get(i).getCounter());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum());
+                        }
+                    }else if(selectType.contains("结算价")){
+                        params.put("counter", listAll.get(i).getCounter());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum());
+                        }
+                    }else if(selectType.contains("标价")){
+                        params.put("counter", listAll.get(i).getCounter());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum());
+                        }
+                    }else if(selectType.contains("金重")){
+                        params.put("counter", listAll.get(i).getCounter());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum());
+                        }
+                    }else if(selectType.contains("主石")){
+                        params.put("counter", listAll.get(i).getCounter());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum());
+                        }
+                    }
+                    params1.put("counter", listAll.get(i).getCounter());
+                    listCompare = stoneService.findSourceEqualsSaleByCounter(params1);
+                    List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params1); //退回数据
+                    if(listCompare.size()>0 ) {//去年同期有销售数据
+
+                        if(selectType.contains("销量")) {
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getNumberSum()+ listBack.get(0).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum());
+                            }
+                        }else if(selectType.contains("结算价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum()+ listBack.get(0).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum());
+                            }
+                        }else if(selectType.contains("标价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum());
+                            }
+                        }else if(selectType.contains("金重")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum());
+                            }
+                        }else if(selectType.contains("主石")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum());
+                            }
+                        }
+                    }else {//去年同期没有销售数据
+                        listLastYearX.add(0);
+                        group.setOldData(0);
+                    }
+                    if(listLastYearX.get(i).toString().equals("0")) {
+                        listDiffX.add("100%");
+                        group.setGroupper("100%");
+                    }else {
 						if(selectType.contains("销量")) {
-							listLastYearX.add(listCompare.get(0).getNumberSum());
-							group.setOldData(listCompare.get(0).getNumberSum());
-						}else if(selectType.contains("结算价")){
-							listLastYearX.add(listCompare.get(0).getSettlementpriceSum());
-							group.setOldData(listCompare.get(0).getSettlementpriceSum());
-						}else if(selectType.contains("标价")){
-							listLastYearX.add(listAll.get(i).getListpriceSum());
-							group.setOldData(listCompare.get(0).getListpriceSum());
-						}else if(selectType.contains("金重")){
-							listLastYearX.add(listAll.get(i).getGoldweightSum());
-							group.setOldData(listCompare.get(0).getGoldweightSum());
-						}else if(selectType.contains("主石")){
-							listLastYearX.add(listAll.get(i).getCenterstoneSum());
-							group.setOldData(listCompare.get(0).getCenterstoneSum());
+							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
+						}else {
+							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
 						}
-					}else {//去年同期没有销售数据 						
-							listLastYearX.add(0);
-							group.setOldData(0);
-					}	
-					if(listLastYearX.get(i).hashCode()==0) {
-						listDiffX.add("100%");
-						group.setGroupper("100%");
-					}else {
-						double diff = ((double)listThisYearX.get(i).hashCode()-((double)listLastYearX.get(i).hashCode()))/(double)listLastYearX.get(i).hashCode();
-					    listDiffX.add(diff+"%");
-					    group.setGroupper(""+diff+"%");
-					}
-				groupList.add(group);
-				}
-			}
-		}
-		if(selectSerachType.contains("名称")) {
-			listAll = stoneService.findCompareDateProductOfIndex822(params);
-			if (listAll.size()>0) {
-				for (int i = 0; i < listAll.size(); i++) {
-					listY.add(listAll.get(i).getProduct());
-					Group group =  new Group();
-					group.setAttribute(listAll.get(i).getProduct());
-					//根据指标选择不同的求和结果
-					if(selectType.contains("销量")) {
-						listThisYearX.add(listAll.get(i).getNumberSum());
-						group.setNewData(listAll.get(i).getNumberSum());
-					}else if(selectType.contains("结算价")){
-						listThisYearX.add(listAll.get(i).getSettlementpriceSum());
-						group.setNewData(listAll.get(i).getSettlementpriceSum());
-					}else if(selectType.contains("标价")){
-						listThisYearX.add(listAll.get(i).getListpriceSum());
-						group.setNewData(listAll.get(i).getListpriceSum());
-					}else if(selectType.contains("金重")){
-						listThisYearX.add(listAll.get(i).getGoldweightSum());
-						group.setNewData(listAll.get(i).getGoldweightSum());
-					}else if(selectType.contains("主石")){
-						listThisYearX.add(listAll.get(i).getCenterstoneSum());
-						group.setNewData(listAll.get(i).getCenterstoneSum());
-					}
-					params1.put("room", listAll.get(i).getRoom());
-					listCompare = stoneService.findCompareDateRoomOfIndex822(params1);
-					if(listCompare.size()>0 ) {//去年同期有销售数据 
-						
+                    }
+                    groupList.add(group);
+                }
+            }
+        }
+        if(selectSerachType.contains("名称")) {
+            listAll = stoneService.findSourceEqualsSaleByProduct(params); //销售数据
+            if (listAll.size()>0) {
+                for (int i = 0; i < listAll.size(); i++) {
+                    listY.add(listAll.get(i).getProduct());
+                    Group group =  new Group();
+                    group.setAttribute(listAll.get(i).getProduct());
+                    //根据指标选择不同的求和结果
+                    if(selectType.contains("销量")) {
+                        params.put("product", listAll.get(i).getProduct());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum());
+                        }
+                    }else if(selectType.contains("结算价")){
+                        params.put("product", listAll.get(i).getProduct());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum());
+                        }
+                    }else if(selectType.contains("标价")){
+                        params.put("product", listAll.get(i).getProduct());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum());
+                        }
+                    }else if(selectType.contains("金重")){
+                        params.put("product", listAll.get(i).getProduct());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum());
+                        }
+                    }else if(selectType.contains("主石")){
+                        params.put("product", listAll.get(i).getProduct());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum());
+                        }
+                    }
+                    params1.put("product", listAll.get(i).getProduct());
+                    listCompare = stoneService.findSourceEqualsSaleByProduct(params1);
+                    List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params1); //退回数据
+                    if(listCompare.size()>0 ) {//去年同期有销售数据
+
+                        if(selectType.contains("销量")) {
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getNumberSum()+ listBack.get(0).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum());
+                            }
+                        }else if(selectType.contains("结算价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum()+ listBack.get(0).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum());
+                            }
+                        }else if(selectType.contains("标价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum());
+                            }
+                        }else if(selectType.contains("金重")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum());
+                            }
+                        }else if(selectType.contains("主石")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum());
+                            }
+                        }
+                    }else {//去年同期没有销售数据
+                        listLastYearX.add(0);
+                        group.setOldData(0);
+                    }
+                    if(listLastYearX.get(i).toString().equals("0")) {
+                        listDiffX.add("100%");
+                        group.setGroupper("100%");
+                    }else {
 						if(selectType.contains("销量")) {
-							listLastYearX.add(listCompare.get(0).getNumberSum());
-							group.setOldData(listCompare.get(0).getNumberSum());
-						}else if(selectType.contains("结算价")){
-							listLastYearX.add(listCompare.get(0).getSettlementpriceSum());
-							group.setOldData(listCompare.get(0).getSettlementpriceSum());
-						}else if(selectType.contains("标价")){
-							listLastYearX.add(listAll.get(i).getListpriceSum());
-							group.setOldData(listCompare.get(0).getListpriceSum());
-						}else if(selectType.contains("金重")){
-							listLastYearX.add(listAll.get(i).getGoldweightSum());
-							group.setOldData(listCompare.get(0).getGoldweightSum());
-						}else if(selectType.contains("主石")){
-							listLastYearX.add(listAll.get(i).getCenterstoneSum());
-							group.setOldData(listCompare.get(0).getCenterstoneSum());
+							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
+						}else {
+							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
 						}
-					}else {//去年同期没有销售数据 						
-							listLastYearX.add(0);
-							group.setOldData(0);
-					}	
-					if(listLastYearX.get(i).hashCode()==0) {
-						listDiffX.add("100%");
-						group.setGroupper("100%");
-					}else {
-						double diff = ((double)listThisYearX.get(i).hashCode()-((double)listLastYearX.get(i).hashCode()))/(double)listLastYearX.get(i).hashCode();
-					    listDiffX.add(diff+"%");
-					    group.setGroupper(""+diff+"%");
-					}
-				groupList.add(group);
-				}
-			}
-		}
-		if(selectSerachType.contains("门店")) {
-			listAll = stoneService.findCompareDateRoomOfIndex822(params);
-			if (listAll.size()>0) {
-				for (int i = 0; i < listAll.size(); i++) {
-					listY.add(listAll.get(i).getRoom());
-					Group group =  new Group();
-					group.setAttribute(listAll.get(i).getRoom());
-					//根据指标选择不同的求和结果
-					if(selectType.contains("销量")) {
-						listThisYearX.add(listAll.get(i).getNumberSum());
-						group.setNewData(listAll.get(i).getNumberSum());
-					}else if(selectType.contains("结算价")){
-						listThisYearX.add(listAll.get(i).getSettlementpriceSum());
-						group.setNewData(listAll.get(i).getSettlementpriceSum());
-					}else if(selectType.contains("标价")){
-						listThisYearX.add(listAll.get(i).getListpriceSum());
-						group.setNewData(listAll.get(i).getListpriceSum());
-					}else if(selectType.contains("金重")){
-						listThisYearX.add(listAll.get(i).getGoldweightSum());
-						group.setNewData(listAll.get(i).getGoldweightSum());
-					}else if(selectType.contains("主石")){
-						listThisYearX.add(listAll.get(i).getCenterstoneSum());
-						group.setNewData(listAll.get(i).getCenterstoneSum());
-					}
-					params1.put("room", listAll.get(i).getRoom());
-					listCompare = stoneService.findCompareDateRoomOfIndex822(params1);
-					if(listCompare.size()>0 ) {//去年同期有销售数据 
-						
+                    }
+                    groupList.add(group);
+                }
+            }
+        }
+        if(selectSerachType.contains("门店")) {
+            listAll = stoneService.findSourceEqualsSaleByRoom(params); //销售数据
+            if (listAll.size()>0) {
+                for (int i = 0; i < listAll.size(); i++) {
+                    listY.add(listAll.get(i).getRoom());
+                    Group group =  new Group();
+                    group.setAttribute(listAll.get(i).getRoom());
+                    //根据指标选择不同的求和结果
+                    if(selectType.contains("销量")) {
+                        params.put("room", listAll.get(i).getRoom());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum());
+                        }
+                    }else if(selectType.contains("结算价")){
+                        params.put("room", listAll.get(i).getRoom());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum());
+                        }
+                    }else if(selectType.contains("标价")){
+                        params.put("room", listAll.get(i).getRoom());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum());
+                        }
+                    }else if(selectType.contains("金重")){
+                        params.put("room", listAll.get(i).getRoom());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum());
+                        }
+                    }else if(selectType.contains("主石")){
+                        params.put("room", listAll.get(i).getRoom());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum());
+                        }
+                    }
+                    params1.put("room", listAll.get(i).getRoom());
+                    listCompare = stoneService.findSourceEqualsSaleByRoom(params1);
+                    List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params1); //退回数据
+                    if(listCompare.size()>0 ) {//去年同期有销售数据
+
+                        if(selectType.contains("销量")) {
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getNumberSum()+ listBack.get(0).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum());
+                            }
+                        }else if(selectType.contains("结算价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum()+ listBack.get(0).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum());
+                            }
+                        }else if(selectType.contains("标价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum());
+                            }
+                        }else if(selectType.contains("金重")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum());
+                            }
+                        }else if(selectType.contains("主石")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum());
+                            }
+                        }
+                    }else {//去年同期没有销售数据
+                        listLastYearX.add(0);
+                        group.setOldData(0);
+                    }
+                    if(listLastYearX.get(i).toString().equals("0")) {
+                        listDiffX.add("100%");
+                        group.setGroupper("100%");
+                    }else {
 						if(selectType.contains("销量")) {
-							listLastYearX.add(listCompare.get(0).getNumberSum());
-							group.setOldData(listCompare.get(0).getNumberSum());
-						}else if(selectType.contains("结算价")){
-							listLastYearX.add(listCompare.get(0).getSettlementpriceSum());
-							group.setOldData(listCompare.get(0).getSettlementpriceSum());
-						}else if(selectType.contains("标价")){
-							listLastYearX.add(listAll.get(i).getListpriceSum());
-							group.setOldData(listCompare.get(0).getListpriceSum());
-						}else if(selectType.contains("金重")){
-							listLastYearX.add(listAll.get(i).getGoldweightSum());
-							group.setOldData(listCompare.get(0).getGoldweightSum());
-						}else if(selectType.contains("主石")){
-							listLastYearX.add(listAll.get(i).getCenterstoneSum());
-							group.setOldData(listCompare.get(0).getCenterstoneSum());
+							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
+						}else {
+							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
 						}
-					}else {//去年同期没有销售数据 						
-							listLastYearX.add(0);
-							group.setOldData(0);
-					}	
-					if(listLastYearX.get(i).hashCode()==0) {
-						listDiffX.add("100%");
-						group.setGroupper("100%");
-					}else {
-						double diff = ((double)listThisYearX.get(i).hashCode()-((double)listLastYearX.get(i).hashCode()))/(double)listLastYearX.get(i).hashCode();
-					    listDiffX.add(diff+"%");
-					    group.setGroupper(""+diff+"%");
-					}
-				   groupList.add(group);
-				}
-			}
-		}
-		//清空表
-		groupService.deleteAllGroup();
-		//插入表数据
-		for (int i = 0; i < groupList.size(); i++) {
-			groupService.insertGroup(groupList.get(i));
-			//System.out.println(groupList.get(i).getAttribute()+"==="+groupList.get(i).getGroupper()+"==="+groupList.get(i).getNewData());
-		}
-		//获取表数据
-		List<Group> listGroup = new ArrayList<>();
-		listGroup = groupService.findAllGroup();
-		return listGroup;
+                    }
+                    groupList.add(group);
+                }
+            }
+        }
+
+
+        //清空表
+        groupService.deleteAllGroup();
+        //插入表数据
+        for (int i = 0; i < groupList.size(); i++) {
+            groupService.insertGroup(groupList.get(i));
+            //System.out.println(groupList.get(i).getAttribute()+"==="+groupList.get(i).getGroupper()+"==="+groupList.get(i).getNewData());
+        }
+        //获取表数据
+        List<Group> listGroup = new ArrayList<>();
+        listGroup = groupService.findAllGroup();
+
+        return listGroup;
 	}
 	/**
 	 * index831页面 
@@ -5849,7 +7969,7 @@ public class StoneAnalysisController {
 			last_end = (Integer.parseInt(selectChoiceYear)-1)+"-12"+"-31";
 		}else {
 			last_start = selectChoiceYear+"-"+(Integer.parseInt(selectChoiceMonth)-1)+"-01";
-			last_start = selectChoiceYear+"-"+(Integer.parseInt(selectChoiceMonth)-1)+"-"+last_days;
+			last_end = selectChoiceYear+"-"+(Integer.parseInt(selectChoiceMonth)-1)+"-"+last_days;
 		}
 		
 		System.out.println("this_start="+this_start);
@@ -5870,257 +7990,528 @@ public class StoneAnalysisController {
 		List listThisYearX = new ArrayList<>();
 		List listLastYearX = new ArrayList<>();
 		List listDiffX = new ArrayList<>();
-		if(selectSerachType.contains("销售区域")) {
-			listAll = stoneService.findCompareDateAreaOfIndex822(params);
-			if (listAll.size()>0) {//有销售数据 
-				for (int i = 0; i < listAll.size(); i++) {
-					listY.add(listAll.get(i).getArea());
-					Group group =  new Group();
-					group.setAttribute(listAll.get(i).getArea());
-					//根据指标选择不同的求和结果
-					if(selectType.contains("销量")) {
-						listThisYearX.add(listAll.get(i).getNumberSum());
-						group.setNewData(listAll.get(i).getNumberSum());
-					}else if(selectType.contains("结算价")){
-						listThisYearX.add(listAll.get(i).getSettlementpriceSum());
-						group.setNewData(listAll.get(i).getSettlementpriceSum());
-					}else if(selectType.contains("标价")){
-						listThisYearX.add(listAll.get(i).getListpriceSum());
-						group.setNewData(listAll.get(i).getListpriceSum());
-					}else if(selectType.contains("金重")){
-						listThisYearX.add(listAll.get(i).getGoldweightSum());
-						group.setNewData(listAll.get(i).getGoldweightSum());
-					}else if(selectType.contains("主石")){
-						listThisYearX.add(listAll.get(i).getCenterstoneSum());
-						group.setNewData(listAll.get(i).getCenterstoneSum());
-					}
-					params1.put("room", listAll.get(i).getRoom());
-					listCompare = stoneService.findCompareDateRoomOfIndex822(params1);
-					if(listCompare.size()>0 ) {//去年同期有销售数据 
-						
+        if(selectSerachType.contains("销售区域")) {
+            listAll = stoneService.findSourceEqualsSaleByArea(params); //销售数据
+            if (listAll.size()>0) {
+                for (int i = 0; i < listAll.size(); i++) {
+                    listY.add(listAll.get(i).getArea());
+                    Group group =  new Group();
+                    group.setAttribute(listAll.get(i).getArea());
+                    //根据指标选择不同的求和结果
+                    if(selectType.contains("销量")) {
+                        params.put("area", listAll.get(i).getArea());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum());
+                        }
+                    }else if(selectType.contains("结算价")){
+                        params.put("area", listAll.get(i).getArea());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum());
+                        }
+                    }else if(selectType.contains("标价")){
+                        params.put("area", listAll.get(i).getArea());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum());
+                        }
+                    }else if(selectType.contains("金重")){
+                        params.put("area", listAll.get(i).getArea());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum());
+                        }
+                    }else if(selectType.contains("主石")){
+                        params.put("area", listAll.get(i).getArea());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum());
+                        }
+                    }
+                    params1.put("area", listAll.get(i).getArea());
+                    listCompare = stoneService.findSourceEqualsSaleByArea(params1);
+                    List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByArea(params1); //退回数据
+                    if(listCompare.size()>0 ) {//去年同期有销售数据
+
+                        if(selectType.contains("销量")) {
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getNumberSum()+ listBack.get(0).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum());
+                            }
+                        }else if(selectType.contains("结算价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum()+ listBack.get(0).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum());
+                            }
+                        }else if(selectType.contains("标价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum());
+                            }
+                        }else if(selectType.contains("金重")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum());
+                            }
+                        }else if(selectType.contains("主石")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum());
+                            }
+                        }
+                    }else {//去年同期没有销售数据
+                        listLastYearX.add(0);
+                        group.setOldData(0);
+                    }
+                    if(listLastYearX.get(i).toString().equals("0")) {
+                        listDiffX.add("100%");
+                        group.setGroupper("100%");
+                    }else {
 						if(selectType.contains("销量")) {
-							listLastYearX.add(listCompare.get(0).getNumberSum());
-							group.setOldData(listCompare.get(0).getNumberSum());
-						}else if(selectType.contains("结算价")){
-							listLastYearX.add(listCompare.get(0).getSettlementpriceSum());
-							group.setOldData(listCompare.get(0).getSettlementpriceSum());
-						}else if(selectType.contains("标价")){
-							listLastYearX.add(listAll.get(i).getListpriceSum());
-							group.setOldData(listCompare.get(0).getListpriceSum());
-						}else if(selectType.contains("金重")){
-							listLastYearX.add(listAll.get(i).getGoldweightSum());
-							group.setOldData(listCompare.get(0).getGoldweightSum());
-						}else if(selectType.contains("主石")){
-							listLastYearX.add(listAll.get(i).getCenterstoneSum());
-							group.setOldData(listCompare.get(0).getCenterstoneSum());
+							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
+						}else {
+							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
 						}
-					}else {//去年同期没有销售数据 						
-							listLastYearX.add(0);
-							group.setOldData(0);
-					}	
-					if(listLastYearX.get(i).hashCode()==0) {
-						listDiffX.add("100%");
-						group.setGroupper("100%");
-					}else {
-						double diff = ((double)listThisYearX.get(i).hashCode()-((double)listLastYearX.get(i).hashCode()))/(double)listLastYearX.get(i).hashCode();
-					    listDiffX.add(diff+"%");
-					    group.setGroupper(""+diff+"%");
-					}
-				   groupList.add(group);
-				}
-			}
-		}
-		if(selectSerachType.contains("柜台")) {
-			listAll = stoneService.findCompareDateCounterOfIndex822(params);
-			if (listAll.size()>0) {
-				for (int i = 0; i < listAll.size(); i++) {
-					listY.add(listAll.get(i).getCounter());
-					Group group =  new Group();
-					group.setAttribute(listAll.get(i).getCounter());
-					//根据指标选择不同的求和结果
-					if(selectType.contains("销量")) {
-						listThisYearX.add(listAll.get(i).getNumberSum());
-						group.setNewData(listAll.get(i).getNumberSum());
-					}else if(selectType.contains("结算价")){
-						listThisYearX.add(listAll.get(i).getSettlementpriceSum());
-						group.setNewData(listAll.get(i).getSettlementpriceSum());
-					}else if(selectType.contains("标价")){
-						listThisYearX.add(listAll.get(i).getListpriceSum());
-						group.setNewData(listAll.get(i).getListpriceSum());
-					}else if(selectType.contains("金重")){
-						listThisYearX.add(listAll.get(i).getGoldweightSum());
-						group.setNewData(listAll.get(i).getGoldweightSum());
-					}else if(selectType.contains("主石")){
-						listThisYearX.add(listAll.get(i).getCenterstoneSum());
-						group.setNewData(listAll.get(i).getCenterstoneSum());
-					}
-					params1.put("room", listAll.get(i).getRoom());
-					listCompare = stoneService.findCompareDateRoomOfIndex822(params1);
-					if(listCompare.size()>0 ) {//去年同期有销售数据 
-						
+                    }
+                    groupList.add(group);
+                }
+            }
+        }
+        if(selectSerachType.contains("柜台")) {
+            listAll = stoneService.findSourceEqualsSaleByCounter(params); //销售数据
+            if (listAll.size()>0) {
+                for (int i = 0; i < listAll.size(); i++) {
+                    listY.add(listAll.get(i).getCounter());
+                    Group group =  new Group();
+                    group.setAttribute(listAll.get(i).getCounter());
+                    //根据指标选择不同的求和结果
+                    if(selectType.contains("销量")) {
+                        params.put("counter", listAll.get(i).getCounter());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum());
+                        }
+                    }else if(selectType.contains("结算价")){
+                        params.put("counter", listAll.get(i).getCounter());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum());
+                        }
+                    }else if(selectType.contains("标价")){
+                        params.put("counter", listAll.get(i).getCounter());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum());
+                        }
+                    }else if(selectType.contains("金重")){
+                        params.put("counter", listAll.get(i).getCounter());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum());
+                        }
+                    }else if(selectType.contains("主石")){
+                        params.put("counter", listAll.get(i).getCounter());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum());
+                        }
+                    }
+                    params1.put("counter", listAll.get(i).getCounter());
+                    listCompare = stoneService.findSourceEqualsSaleByCounter(params1);
+                    List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByCounter(params1); //退回数据
+                    if(listCompare.size()>0 ) {//去年同期有销售数据
+
+                        if(selectType.contains("销量")) {
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getNumberSum()+ listBack.get(0).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum());
+                            }
+                        }else if(selectType.contains("结算价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum()+ listBack.get(0).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum());
+                            }
+                        }else if(selectType.contains("标价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum());
+                            }
+                        }else if(selectType.contains("金重")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum());
+                            }
+                        }else if(selectType.contains("主石")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum());
+                            }
+                        }
+                    }else {//去年同期没有销售数据
+                        listLastYearX.add(0);
+                        group.setOldData(0);
+                    }
+                    if(listLastYearX.get(i).toString().equals("0")) {
+                        listDiffX.add("100%");
+                        group.setGroupper("100%");
+                    }else {
 						if(selectType.contains("销量")) {
-							listLastYearX.add(listCompare.get(0).getNumberSum());
-							group.setOldData(listCompare.get(0).getNumberSum());
-						}else if(selectType.contains("结算价")){
-							listLastYearX.add(listCompare.get(0).getSettlementpriceSum());
-							group.setOldData(listCompare.get(0).getSettlementpriceSum());
-						}else if(selectType.contains("标价")){
-							listLastYearX.add(listAll.get(i).getListpriceSum());
-							group.setOldData(listCompare.get(0).getListpriceSum());
-						}else if(selectType.contains("金重")){
-							listLastYearX.add(listAll.get(i).getGoldweightSum());
-							group.setOldData(listCompare.get(0).getGoldweightSum());
-						}else if(selectType.contains("主石")){
-							listLastYearX.add(listAll.get(i).getCenterstoneSum());
-							group.setOldData(listCompare.get(0).getCenterstoneSum());
+							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
+						}else {
+							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
 						}
-					}else {//去年同期没有销售数据 						
-							listLastYearX.add(0);
-							group.setOldData(0);
-					}	
-					if(listLastYearX.get(i).hashCode()==0) {
-						listDiffX.add("100%");
-						group.setGroupper("100%");
-					}else {
-						double diff = ((double)listThisYearX.get(i).hashCode()-((double)listLastYearX.get(i).hashCode()))/(double)listLastYearX.get(i).hashCode();
-					    listDiffX.add(diff+"%");
-					    group.setGroupper(""+diff+"%");
-					}
-				   groupList.add(group);
-				}
-			}
-		}
-		if(selectSerachType.contains("名称")) {
-			listAll = stoneService.findCompareDateProductOfIndex822(params);
-			if (listAll.size()>0) {
-				for (int i = 0; i < listAll.size(); i++) {
-					listY.add(listAll.get(i).getProduct());
-					Group group =  new Group();
-					group.setAttribute(listAll.get(i).getProduct());
-					//根据指标选择不同的求和结果
-					if(selectType.contains("销量")) {
-						listThisYearX.add(listAll.get(i).getNumberSum());
-						group.setNewData(listAll.get(i).getNumberSum());
-					}else if(selectType.contains("结算价")){
-						listThisYearX.add(listAll.get(i).getSettlementpriceSum());
-						group.setNewData(listAll.get(i).getSettlementpriceSum());
-					}else if(selectType.contains("标价")){
-						listThisYearX.add(listAll.get(i).getListpriceSum());
-						group.setNewData(listAll.get(i).getListpriceSum());
-					}else if(selectType.contains("金重")){
-						listThisYearX.add(listAll.get(i).getGoldweightSum());
-						group.setNewData(listAll.get(i).getGoldweightSum());
-					}else if(selectType.contains("主石")){
-						listThisYearX.add(listAll.get(i).getCenterstoneSum());
-						group.setNewData(listAll.get(i).getCenterstoneSum());
-					}
-					params1.put("room", listAll.get(i).getRoom());
-					listCompare = stoneService.findCompareDateRoomOfIndex822(params1);
-					if(listCompare.size()>0 ) {//去年同期有销售数据 
-						
+                    }
+                    groupList.add(group);
+                }
+            }
+        }
+        if(selectSerachType.contains("名称")) {
+            listAll = stoneService.findSourceEqualsSaleByProduct(params); //销售数据
+            if (listAll.size()>0) {
+                for (int i = 0; i < listAll.size(); i++) {
+                    listY.add(listAll.get(i).getProduct());
+                    Group group =  new Group();
+                    group.setAttribute(listAll.get(i).getProduct());
+                    //根据指标选择不同的求和结果
+                    if(selectType.contains("销量")) {
+                        params.put("product", listAll.get(i).getProduct());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum());
+                        }
+                    }else if(selectType.contains("结算价")){
+                        params.put("product", listAll.get(i).getProduct());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum());
+                        }
+                    }else if(selectType.contains("标价")){
+                        params.put("product", listAll.get(i).getProduct());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum());
+                        }
+                    }else if(selectType.contains("金重")){
+                        params.put("product", listAll.get(i).getProduct());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum());
+                        }
+                    }else if(selectType.contains("主石")){
+                        params.put("product", listAll.get(i).getProduct());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum());
+                        }
+                    }
+                    params1.put("product", listAll.get(i).getProduct());
+                    listCompare = stoneService.findSourceEqualsSaleByProduct(params1);
+                    List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByProduct(params1); //退回数据
+                    if(listCompare.size()>0 ) {//去年同期有销售数据
+
+                        if(selectType.contains("销量")) {
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getNumberSum()+ listBack.get(0).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum());
+                            }
+                        }else if(selectType.contains("结算价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum()+ listBack.get(0).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum());
+                            }
+                        }else if(selectType.contains("标价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum());
+                            }
+                        }else if(selectType.contains("金重")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum());
+                            }
+                        }else if(selectType.contains("主石")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum());
+                            }
+                        }
+                    }else {//去年同期没有销售数据
+                        listLastYearX.add(0);
+                        group.setOldData(0);
+                    }
+                    if(listLastYearX.get(i).toString().equals("0")) {
+                        listDiffX.add("100%");
+                        group.setGroupper("100%");
+                    }else {
 						if(selectType.contains("销量")) {
-							listLastYearX.add(listCompare.get(0).getNumberSum());
-							group.setOldData(listCompare.get(0).getNumberSum());
-						}else if(selectType.contains("结算价")){
-							listLastYearX.add(listCompare.get(0).getSettlementpriceSum());
-							group.setOldData(listCompare.get(0).getSettlementpriceSum());
-						}else if(selectType.contains("标价")){
-							listLastYearX.add(listAll.get(i).getListpriceSum());
-							group.setOldData(listCompare.get(0).getListpriceSum());
-						}else if(selectType.contains("金重")){
-							listLastYearX.add(listAll.get(i).getGoldweightSum());
-							group.setOldData(listCompare.get(0).getGoldweightSum());
-						}else if(selectType.contains("主石")){
-							listLastYearX.add(listAll.get(i).getCenterstoneSum());
-							group.setOldData(listCompare.get(0).getCenterstoneSum());
+							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
+						}else {
+							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
 						}
-					}else {//去年同期没有销售数据 						
-							listLastYearX.add(0);
-							group.setOldData(0);
-					}	
-					if(listLastYearX.get(i).hashCode()==0) {
-						listDiffX.add("100%");
-						group.setGroupper("100%");
-					}else {
-						double diff = ((double)listThisYearX.get(i).hashCode()-((double)listLastYearX.get(i).hashCode()))/(double)listLastYearX.get(i).hashCode();
-					    listDiffX.add(diff+"%");
-					    group.setGroupper(""+diff+"%");
-					}
-				   groupList.add(group);
-				}
-			}
-		}
-		if(selectSerachType.contains("门店")) {
-			listAll = stoneService.findCompareDateRoomOfIndex822(params);
-			if (listAll.size()>0) {
-				for (int i = 0; i < listAll.size(); i++) {
-					listY.add(listAll.get(i).getRoom());
-					Group group =  new Group();
-					group.setAttribute(listAll.get(i).getRoom());
-					//根据指标选择不同的求和结果
-					if(selectType.contains("销量")) {
-						listThisYearX.add(listAll.get(i).getNumberSum());
-						group.setNewData(listAll.get(i).getNumberSum());
-					}else if(selectType.contains("结算价")){
-						listThisYearX.add(listAll.get(i).getSettlementpriceSum());
-						group.setNewData(listAll.get(i).getSettlementpriceSum());
-					}else if(selectType.contains("标价")){
-						listThisYearX.add(listAll.get(i).getListpriceSum());
-						group.setNewData(listAll.get(i).getListpriceSum());
-					}else if(selectType.contains("金重")){
-						listThisYearX.add(listAll.get(i).getGoldweightSum());
-						group.setNewData(listAll.get(i).getGoldweightSum());
-					}else if(selectType.contains("主石")){
-						listThisYearX.add(listAll.get(i).getCenterstoneSum());
-						group.setNewData(listAll.get(i).getCenterstoneSum());
-					}
-					params1.put("room", listAll.get(i).getRoom());
-					listCompare = stoneService.findCompareDateRoomOfIndex822(params1);
-					if(listCompare.size()>0 ) {//去年同期有销售数据 
-						
+                    }
+                    groupList.add(group);
+                }
+            }
+        }
+        if(selectSerachType.contains("门店")) {
+            listAll = stoneService.findSourceEqualsSaleByRoom(params); //销售数据
+            if (listAll.size()>0) {
+                for (int i = 0; i < listAll.size(); i++) {
+                    listY.add(listAll.get(i).getRoom());
+                    Group group =  new Group();
+                    group.setAttribute(listAll.get(i).getRoom());
+                    //根据指标选择不同的求和结果
+                    if(selectType.contains("销量")) {
+                        params.put("room", listAll.get(i).getRoom());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getNumberSum());
+                            group.setNewData(listAll.get(i).getNumberSum());
+                        }
+                    }else if(selectType.contains("结算价")){
+                        params.put("room", listAll.get(i).getRoom());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getSettlementpriceSum());
+                            group.setNewData(listAll.get(i).getSettlementpriceSum());
+                        }
+                    }else if(selectType.contains("标价")){
+                        params.put("room", listAll.get(i).getRoom());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getListpriceSum());
+                            group.setNewData(listAll.get(i).getListpriceSum());
+                        }
+                    }else if(selectType.contains("金重")){
+                        params.put("room", listAll.get(i).getRoom());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getGoldweightSum());
+                            group.setNewData(listAll.get(i).getGoldweightSum());
+                        }
+                    }else if(selectType.contains("主石")){
+                        params.put("room", listAll.get(i).getRoom());
+                        List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params); //退回数据
+                        if(listBack.size() > 0) {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                        }else {
+                            listThisYearX.add(listAll.get(i).getCenterstoneSum());
+                            group.setNewData(listAll.get(i).getCenterstoneSum());
+                        }
+                    }
+                    params1.put("room", listAll.get(i).getRoom());
+                    listCompare = stoneService.findSourceEqualsSaleByRoom(params1);
+                    List<StoneAnalysis> listBack =  stoneService.findSourceEqualsBackByRoom(params1); //退回数据
+                    if(listCompare.size()>0 ) {//去年同期有销售数据
+
+                        if(selectType.contains("销量")) {
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getNumberSum()+ listBack.get(0).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum()+listBack.get(0).getNumberSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getNumberSum());
+                                group.setOldData(listAll.get(i).getNumberSum());
+                            }
+                        }else if(selectType.contains("结算价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum()+ listBack.get(0).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum()+listBack.get(0).getSettlementpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getSettlementpriceSum());
+                                group.setOldData(listAll.get(i).getSettlementpriceSum());
+                            }
+                        }else if(selectType.contains("标价")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getListpriceSum()- listBack.get(0).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum()-listBack.get(0).getListpriceSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getListpriceSum());
+                                group.setOldData(listAll.get(i).getListpriceSum());
+                            }
+                        }else if(selectType.contains("金重")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum()+ listBack.get(0).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum()+listBack.get(0).getGoldweightSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getGoldweightSum());
+                                group.setOldData(listAll.get(i).getGoldweightSum());
+                            }
+                        }else if(selectType.contains("主石")){
+                            if(listBack.size() > 0) {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum()+ listBack.get(0).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum()+listBack.get(0).getCenterstoneSum());
+                            }else {
+                                listLastYearX.add(listAll.get(i).getCenterstoneSum());
+                                group.setOldData(listAll.get(i).getCenterstoneSum());
+                            }
+                        }
+                    }else {//去年同期没有销售数据
+                        listLastYearX.add(0);
+                        group.setOldData(0);
+                    }
+                    if(listLastYearX.get(i).toString().equals("0")) {
+                        listDiffX.add("100%");
+                        group.setGroupper("100%");
+                    }else {
 						if(selectType.contains("销量")) {
-							listLastYearX.add(listCompare.get(0).getNumberSum());
-							group.setOldData(listCompare.get(0).getNumberSum());
-						}else if(selectType.contains("结算价")){
-							listLastYearX.add(listCompare.get(0).getSettlementpriceSum());
-							group.setOldData(listCompare.get(0).getSettlementpriceSum());
-						}else if(selectType.contains("标价")){
-							listLastYearX.add(listAll.get(i).getListpriceSum());
-							group.setOldData(listCompare.get(0).getListpriceSum());
-						}else if(selectType.contains("金重")){
-							listLastYearX.add(listAll.get(i).getGoldweightSum());
-							group.setOldData(listCompare.get(0).getGoldweightSum());
-						}else if(selectType.contains("主石")){
-							listLastYearX.add(listAll.get(i).getCenterstoneSum());
-							group.setOldData(listCompare.get(0).getCenterstoneSum());
+							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
+						}else {
+							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
+							listDiffX.add(diff+"%");
+							group.setGroupper(""+diff+"%");
 						}
-					}else {//去年同期没有销售数据 						
-							listLastYearX.add(0);
-							group.setOldData(0);
-					}	
-					if(listLastYearX.get(i).hashCode()==0) {
-						listDiffX.add("100%");
-						group.setGroupper("100%");
-					}else {
-						double diff = ((double)listThisYearX.get(i).hashCode()-((double)listLastYearX.get(i).hashCode()))/(double)listLastYearX.get(i).hashCode();
-					    listDiffX.add(diff+"%");
-					    group.setGroupper(""+diff+"%");
-					}
-				   groupList.add(group);
-				}
-			}
-		}
-		//清空表
-				groupService.deleteAllGroup();
-				//插入表数据
-				for (int i = 0; i < groupList.size(); i++) {
-					groupService.insertGroup(groupList.get(i));
-					//System.out.println(groupList.get(i).getAttribute()+"==="+groupList.get(i).getGroupper()+"==="+groupList.get(i).getNewData());
-				}
-				//获取表数据
-				List<Group> listGroup = new ArrayList<>();
-				listGroup = groupService.findAllGroup();
-				return listGroup;
+                    }
+                    groupList.add(group);
+                }
+            }
+        }
+
+
+        //清空表
+        groupService.deleteAllGroup();
+        //插入表数据
+        for (int i = 0; i < groupList.size(); i++) {
+            groupService.insertGroup(groupList.get(i));
+            //System.out.println(groupList.get(i).getAttribute()+"==="+groupList.get(i).getGroupper()+"==="+groupList.get(i).getNewData());
+        }
+        //获取表数据
+        List<Group> listGroup = new ArrayList<>();
+        listGroup = groupService.findAllGroup();
+
+        return listGroup;
 	}
 	/**
 	 * index821页面 导出excel表格
@@ -6213,15 +8604,11 @@ public class StoneAnalysisController {
 	 * index7  732  系列商品贡献度分析模型
 	 * 
 	 * @param request
-	 * @param map
-	 * @param session
-	 * @return
-	 * @throws ParseException
 	 */
 	@ApiOperation(value="index7页面,系列商品贡献度分析模型,查询")
 	@RequestMapping(value = "productFind", method = RequestMethod.POST)
 	@ResponseBody
-	public String productFind(HttpServletRequest request, ModelMap map, HttpSession session) throws ParseException {
+	public String productFind(HttpServletRequest request) {
 		String selectType = request.getParameter("selectType");
 		String counter = request.getParameter("counter");
 		String quality = request.getParameter("quality");
@@ -6240,34 +8627,67 @@ public class StoneAnalysisController {
 		System.out.println("start===" + st + "======end" + ed);
 		params.put("start", st);
 		params.put("end", ed);
-		
-		List<StoneAnalysis> list = new ArrayList<StoneAnalysis>(); // 图标数据
-		list = stoneService.findProductByTime(params);
+
+        List<StoneAnalysis> listSale = stoneService.findSourceEqualsSaleByProduct(params); // 图表数据 销售
+        List<StoneAnalysis> listBack = stoneService.findSourceEqualsBackByProduct(params); // 图表数据 退回
 		List listProduct = new ArrayList<>();
 		List listProductNum = new ArrayList<>();
-		String result = "";
 		
-		if (list != null) {
-			for (int i = 0; i < list.size(); i++) {
-				listProduct.add(list.get(i).getProduct());
+		if (listSale != null) {
+			for (int i = 0; i < listSale.size(); i++) {
+				listProduct.add(listSale.get(i).getProduct());
 				if (selectType.contains("数量")) {
-					listProductNum.add(list.get(i).getNumberSum());
+					listProductNum.add(listSale.get(i).getNumberSum());
 				}else if (selectType.contains("结算价")) {
-					listProductNum.add(list.get(i).getSettlementpriceSum());
+					listProductNum.add(listSale.get(i).getSettlementpriceSum());
 				}else if (selectType.contains("标价")) {
-					listProductNum.add(list.get(i).getListpriceSum());
+					listProductNum.add(listSale.get(i).getListpriceSum());
 				}else if (selectType.contains("金重")) {
-					listProductNum.add(list.get(i).getGoldweightSum());
+					listProductNum.add(listSale.get(i).getGoldweightSum());
 				}else if (selectType.contains("主石")) {
-					listProductNum.add(list.get(i).getCenterstoneSum());
+					listProductNum.add(listSale.get(i).getCenterstoneSum());
 				}
 			}
 		}
-
-		System.out.println(list);
-		System.out.println("===" + listProductNum);
-		result = "" + listProductNum + "@" + listProduct;
-		return result;
+        //退回数据
+        if(listBack.size()>0) {
+            for (int i = 0; i < listBack.size(); i++) {
+                if(selectType.contains("数量")) {
+                    String product = listBack.get(i).getProduct();
+                    if(listProduct.contains(product)) {
+                        int index = listProduct.indexOf(product);
+                        listProductNum.set(index,(Integer)listProductNum.get(index)+listBack.get(i).getNumberSum());
+                    }
+                }else if(selectType.contains("结算价")) {
+                    String product = listBack.get(i).getProduct();
+                    if(listProduct.contains(product)) {
+                        int index = listProduct.indexOf(product);
+                        listProductNum.set(index,(Float)listProductNum.get(index)+listBack.get(i).getSettlementpriceSum());
+                    }
+                }else if(selectType.contains("标价")) {
+                    String product = listBack.get(i).getProduct();
+                    if(listProduct.contains(product)) {
+                        int index = listProduct.indexOf(product);
+                        listProductNum.set(index,(Float)listProductNum.get(index)-listBack.get(i).getListpriceSum());
+                    }
+                }else if(selectType.contains("金重")) {
+                    String product = listBack.get(i).getProduct();
+                    if(listProduct.contains(product)) {
+                        int index = listProduct.indexOf(product);
+                        listProductNum.set(index,(Float)listProductNum.get(index)+listBack.get(i).getGoldweightSum());
+                    }
+                }else if(selectType.contains("主石")) {
+                    String product = listBack.get(i).getProduct();
+                    if(listProduct.contains(product)) {
+                        int index = listProduct.indexOf(product);
+                        listProductNum.set(index,(Float)listProductNum.get(index)+listBack.get(i).getCenterstoneSum());
+                    }
+                }
+            }
+        }
+        StringBuilder result = new StringBuilder();
+		result.append("" + listProductNum + "@" + listProduct);
+		return result.toString();
 	}
 
 	/**
@@ -6297,10 +8717,7 @@ public class StoneAnalysisController {
 	public String plan(ModelMap map){
 
 		map.addAttribute("stoneList", stoneService.findAllStone());
-		
-
 		List<Belong> blist = belongService.findAllBelong();
-
 		List listBelong = new ArrayList<>();
 		
 		for (int i = 0; i < blist.size(); i++) {
@@ -6310,7 +8727,6 @@ public class StoneAnalysisController {
 				}
 			}
 		}
-		
 
 		Collections.sort(listBelong, new Comparator<String>() {            
 			@Override            
@@ -6322,45 +8738,37 @@ public class StoneAnalysisController {
 		map.addAttribute("listarea", stoneService.findDistinctArea());
 		map.addAttribute("listroom", stoneService.findDistinctRoom());
 		map.addAttribute("listBelong", listBelong);
-		
 
 		return "plan";
 	}
 	/**
-	 * 来源分析   source.html
+	 * 成色分析   source.html
 	 *
 	 * com.nenu.controller
 	 * @param map
 	 * @return
 	 * created  at 2018年10月19日
 	 */
-	@ApiOperation(value="跳转到source页面,来源分析模型")
+	@ApiOperation(value="跳转到source页面,成色分析模型")
 	@GetMapping(value = "source")
 	public String source(ModelMap map) {
 		map.addAttribute("listArea", stoneService.findDistinctArea());
-		map.addAttribute("listSource", stoneService.findDistinctSource());
 		map.addAttribute("listRoom", stoneService.findDistinctRoom());
 		map.addAttribute("listSupplier", stoneService.findDistinctSupplier());
 		map.addAttribute("listCounter", stoneService.findDistinctCounter());
 		map.addAttribute("listQuality", stoneService.findDistinctQuality());
-		
 		return "source";
 	}
 	/**
-	 * source页面,来源分析模型  查询
+	 * source页面,成色分析模型  查询
 	 * @param request
-	 * @param map
-	 * @param session
-	 * @return
-	 * @throws ParseException
 	 */
-	@ApiOperation(value="source页面,来源分析模型  查询")
+	@ApiOperation(value="source页面,成色分析模型  查询")
 	@RequestMapping(value = "sourceFind", method = RequestMethod.POST)
 	@ResponseBody
-	public String sourceFind(HttpServletRequest request, ModelMap map, HttpSession session) throws ParseException {
+	public String sourceFind(HttpServletRequest request) {
 		String area = request.getParameter("area");
 		String supplier = request.getParameter("supplier");
-		String source = request.getParameter("source");
 		String room = request.getParameter("room");
 		String quality = request.getParameter("quality");
 		String counter = request.getParameter("counter");
@@ -6368,76 +8776,98 @@ public class StoneAnalysisController {
 		
 		String selectType = request.getParameter("selectType");
 
-		System.out.println("地区=============" + area);
-		System.out.println("类别=============" + selectType);
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Map<String, Object> params = new HashMap<String, Object>();
 		
 		if(area.contains("所有") || area.length() < 3) {
 		}else {
-			System.out.println("有地区");
 			params.put("area", area);
 		}
 		if(room.contains("所有") || room.contains("门店")) {
 		}else {
-			System.out.println("有门店");
 			params.put("room", room);
 		}
 		if(counter.contains("所有") || counter.contains("柜台")) {
 		}else {
-			System.out.println("有柜台");
 			params.put("counter", counter);
-		}
-		if(source.contains("所有") || source.contains("来源")) {
-		}else {
-			System.out.println("有来源");
-			params.put("source", source);
 		}
 		if(supplier.contains("所有") || supplier.contains("供应商")) {
 		}else {
-			System.out.println("有供应商");
 			params.put("supplier", supplier);
 		}
 		if(quality.contains("所有") || quality.contains("成色")) {
 		}else {
-			System.out.println("有成色");
 			params.put("quality", quality);
 		}
 		
 		String st = request.getParameter("start");
 		String ed = request.getParameter("end");
 
-		System.out.println("start===" + st + "======end" + ed);
-
 		params.put("start", st);
 		params.put("end", ed);
-	
-		List<StoneAnalysis> list = new ArrayList<StoneAnalysis>(); // 图标数据
-		List<StoneAnalysis> listAll = new ArrayList<StoneAnalysis>();// 表格数据
 
-		listAll = stoneService.findStoneBySource(params);
-		list = stoneService.findStoneForSource(params);
+        List<StoneAnalysis> listSale = stoneService.findSourceEqualsSaleByQuality(params); // 图表数据 销售
+        List<StoneAnalysis> listBack = stoneService.findSourceEqualsBackByQuality(params); // 图表数据 退回
+        List<StoneAnalysis> listAll = stoneService.findStoneByParams(params);// 表格数据
+
+
 		List listProduct = new ArrayList<>();
 		List listProductNum = new ArrayList<>();
 	
-		if(list.size()>0) {
-			for (int i = 0; i < list.size(); i++) {
-				listProduct.add(list.get(i).getSource());
+		if(listSale.size()>0) {
+			for (int i = 0; i < listSale.size(); i++) {
+				listProduct.add(listSale.get(i).getQuality());
 				if(selectType.contains("数量")) {
-					listProductNum.add(list.get(i).getNumberSum());
+					listProductNum.add(listSale.get(i).getNumberSum());
 				}else if(selectType.contains("结算价")) {
-					listProductNum.add(list.get(i).getSettlementpriceSum());
+					listProductNum.add(listSale.get(i).getSettlementpriceSum());
 				}else if(selectType.contains("标价")) {
-					listProductNum.add(list.get(i).getListpriceSum());
+					listProductNum.add(listSale.get(i).getListpriceSum());
 				}else if(selectType.contains("金重")) {
-					listProductNum.add(list.get(i).getGoldweightSum());
+					listProductNum.add(listSale.get(i).getGoldweightSum());
 				}else if(selectType.contains("主石")) {
-					listProductNum.add(list.get(i).getCenterstoneSum());
+					listProductNum.add(listSale.get(i).getCenterstoneSum());
 				}
 			}
-		}	
-		String result = "";
+		}
+        //退回数据
+        if(listBack.size()>0) {
+            for (int i = 0; i < listBack.size(); i++) {
+                if(selectType.contains("数量")) {
+                    String quality1 = listBack.get(i).getQuality();
+                    if(listProduct.contains(quality1)) {
+                        int index = listProduct.indexOf(quality1);
+                        listProductNum.set(index,(Integer)listProductNum.get(index)+listBack.get(i).getNumberSum());
+                    }
+                }else if(selectType.contains("结算价")) {
+                    String quality1 = listBack.get(i).getQuality();
+                    if(listProduct.contains(quality1)) {
+                        int index = listProduct.indexOf(quality1);
+                        listProductNum.set(index,(Float)listProductNum.get(index)+listBack.get(i).getSettlementpriceSum());
+                    }
+                }else if(selectType.contains("标价")) {
+                    String quality1 = listBack.get(i).getQuality();
+                    if(listProduct.contains(quality1)) {
+                        int index = listProduct.indexOf(quality1);
+                        listProductNum.set(index,(Float)listProductNum.get(index)-listBack.get(i).getListpriceSum());
+                    }
+                }else if(selectType.contains("金重")) {
+                    String quality1 = listBack.get(i).getQuality();
+                    if(listProduct.contains(quality1)) {
+                        int index = listProduct.indexOf(quality1);
+                        listProductNum.set(index,(Float)listProductNum.get(index)+listBack.get(i).getGoldweightSum());
+                    }
+                }else if(selectType.contains("主石")) {
+                    String quality1 = listBack.get(i).getQuality();
+                    if(listProduct.contains(quality1)) {
+                        int index = listProduct.indexOf(quality1);
+                        listProductNum.set(index,(Float)listProductNum.get(index)+listBack.get(i).getCenterstoneSum());
+                    }
+                }
+            }
+        }
+
 		
 		List listAllDate = new ArrayList<>();
 		List listAllSupplier = new ArrayList<>();
@@ -6467,13 +8897,11 @@ public class StoneAnalysisController {
 				listAllGoldweight.add(listAll.get(i).getGoldweight());
 			}
 		}
-		//System.out.println(list);
-		//System.out.println(listAll);
-		//System.out.println("===" + listProductNum);
-		result = "" + listProductNum + "@" + listProduct + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct + "@" + 
+	    StringBuilder result = new StringBuilder();
+		result.append("" + listProductNum + "@" + listProduct + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct + "@" +
 		listAllSettlementprice + "@" + listAllArea+"@" + listAllRoom+"@" + listAllCounter+"@" + 
-		listAllSource+"@" + listAllListprice+"@" + listAllCenterstone+"@" + listAllGoldweight+"@"+listAllQuality;
-		return result;
+		listAllSource+"@" + listAllListprice+"@" + listAllCenterstone+"@" + listAllGoldweight+"@"+listAllQuality);
+		return result.toString();
 	}
 	/**
 	 * 下载excel  source
@@ -6485,7 +8913,7 @@ public class StoneAnalysisController {
 	 * created  at 2018年10月19日
 	 */
 	
-	@ApiOperation(value="source页面,来源分析模型 下载excel")
+	@ApiOperation(value="source页面,成色分析模型 下载excel")
 	@RequestMapping(value = "downloadExcelForSource", method = RequestMethod.POST)
 	@ResponseBody
 	public String downloadExcelForSource(HttpServletRequest request,HttpServletResponse response) {
@@ -6495,10 +8923,9 @@ public class StoneAnalysisController {
 		String room = conList[1];
 		String counter = conList[2];
 		String supplier = conList[3];
-		String source = conList[4];
-		String start = conList[5];
-		String end = conList[6];
-		String quality = conList[7];
+		String start = conList[4];
+		String end = conList[5];
+		String quality = conList[6];
 		
 		
 
@@ -6527,19 +8954,13 @@ public class StoneAnalysisController {
 			System.out.println("4");
 			params.put("counter", counter);
 		}
-		if(source.contains("来源") || source.contains("所有")) {	
-		}else {
-			System.out.println("4");
-			params.put("source", source);
-		}
 		if(quality.contains("成色") || quality.contains("所有")) {	
 		}else {
 			System.out.println("4");
 			params.put("quality", quality);
 		}
-		listAll = stoneService.findStoneBySource(params);
-		
-		System.out.println("====" + listAll + "====");
+		listAll = stoneService.findStoneByParams(params);
+
 		stoneService.downloadExcelForIndexSource(listAll,response);
 		
 
@@ -6556,31 +8977,24 @@ public class StoneAnalysisController {
 	@ApiOperation(value="跳转到index724页面,主石区间销售分析 ")
 	@GetMapping(value = "index724")
 	public String index724(ModelMap map) {
-
 		map.addAttribute("listArea", stoneService.findDistinctArea());
 		map.addAttribute("listSource", stoneService.findDistinctSource());
 		map.addAttribute("listRoom", stoneService.findDistinctRoom());
 		map.addAttribute("listSupplier", stoneService.findDistinctSupplier());
 		map.addAttribute("listCounter", stoneService.findDistinctCounter());
         map.addAttribute("listProduct", stoneService.findDistinctProduct());
-
-		
-		return "index724";
+        return "index724";
 	}
 	/**
 	 * index724   分析
 	 * 
 	 * @param request
-	 * @param map
-	 * @param session
-	 * @return
-	 * @throws ParseException String
 	 * created by lick on 2018年10月20日 下午11:08:48
 	 */
 	@ApiOperation(value="跳转到index724页面,主石区间销售分析   查询 ")
 	@RequestMapping(value = "searchForindex724", method = RequestMethod.POST)
 	@ResponseBody
-	public String searchForindex724(HttpServletRequest request, ModelMap map, HttpSession session) throws ParseException {
+	public String searchForindex724(HttpServletRequest request) {
 		
 		String area = request.getParameter("area");
 		String supplier = request.getParameter("supplier");
@@ -6649,7 +9063,8 @@ public class StoneAnalysisController {
 					listY.add("0");
 				}
 			}
-			list = stoneService.findStoneForIndex724MainStone(params);
+            //销售数据
+			list = stoneService.findSourceEqualsSaleByCenterstone(params);
 			if(list.size()>0) {
 				for (int j = 0; j < list.size(); j++) {
 					if(mainStonelist.size()>0) {	
@@ -6671,6 +9086,29 @@ public class StoneAnalysisController {
 					}	
 				}
 			}
+            //退回数据
+            list = stoneService.findSourceEqualsBackByCenterstone(params);
+            if(list.size()>0) {
+                for (int j = 0; j < list.size(); j++) {
+                    if(mainStonelist.size()>0) {
+                        for (int i = 0; i < mainStonelist.size(); i++) {
+                            if(list.get(j).getCenterstone()>=mainStonelist.get(i).getMainStone_start() && list.get(j).getCenterstone()<=mainStonelist.get(i).getMainStone_end()) {
+                                if(selectType.contains("数量")) {
+                                    listY.set(i, list.get(j).getNumberSum()+Integer.parseInt(listY.get(i).toString()));
+                                }else if(selectType.contains("结算价")) {
+                                    listY.set(i,list.get(j).getSettlementpriceSum()+Double.parseDouble( listY.get(i).toString()));
+                                }else if(selectType.contains("标价")) {
+                                    listY.set(i,Double.parseDouble((String) listY.get(i).toString())-list.get(j).getListpriceSum());
+                                }else if(selectType.contains("金重")) {
+                                    listY.set(i,list.get(j).getGoldweightSum()+Double.parseDouble((String) listY.get(i).toString()));
+                                }else if(selectType.contains("主石")) {
+                                    listY.set(i,list.get(j).getCenterstoneSum()+Double.parseDouble((String) listY.get(i).toString()));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 		}else if(source.contains("标价区间")) {
 			if(listPricelist.size()>0) {
 				for (int i = 0; i < listPricelist.size(); i++) {
@@ -6678,7 +9116,8 @@ public class StoneAnalysisController {
 					listY.add("0");
 				}
 			}
-			list = stoneService.findStoneForIndex724ListPrice(params);
+			//销售数据
+			list = stoneService.findSourceEqualsSaleByListprice(params);
 			if(list.size()>0) {
 				for (int j = 0; j < list.size(); j++) {
 					if(listPricelist.size()>0) {	
@@ -6700,6 +9139,29 @@ public class StoneAnalysisController {
 					}	
 				}
 			}
+            //退回数据
+            list = stoneService.findSourceEqualsBackByListprice(params);
+            if(list.size()>0) {
+                for (int j = 0; j < list.size(); j++) {
+                    if(listPricelist.size()>0) {
+                        for (int i = 0; i < listPricelist.size(); i++) {
+                            if(list.get(j).getListprice()>=listPricelist.get(i).getListPrice_start() && list.get(j).getListprice()<=listPricelist.get(i).getListPrice_end()) {
+                                if(selectType.contains("数量")) {
+                                    listY.set(i, list.get(j).getNumberSum()+Integer.parseInt(listY.get(i).toString()));
+                                }else if(selectType.contains("结算价")) {
+                                    listY.set(i,list.get(j).getSettlementpriceSum()+Double.parseDouble( listY.get(i).toString()));
+                                }else if(selectType.contains("标价")) {
+                                    listY.set(i,Double.parseDouble((String) listY.get(i).toString())-list.get(j).getListpriceSum());
+                                }else if(selectType.contains("金重")) {
+                                    listY.set(i,list.get(j).getGoldweightSum()+Double.parseDouble((String) listY.get(i).toString()));
+                                }else if(selectType.contains("主石")) {
+                                    listY.set(i,list.get(j).getCenterstoneSum()+Double.parseDouble((String) listY.get(i).toString()));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 		}else if(source.contains("结算价区间")) {
 			if(SettlementPricelist.size()>0) {
 				for (int i = 0; i < SettlementPricelist.size(); i++) {
@@ -6707,7 +9169,8 @@ public class StoneAnalysisController {
 					listY.add("0");
 				}
 			}
-			list = stoneService.findStoneForIndex724SettlePrice(params);
+			//销售数据
+			list = stoneService.findSourceEqualsSaleBySettlementprice(params);
 			if(list.size()>0) {
 				for (int j = 0; j < list.size(); j++) {
 					if(SettlementPricelist.size()>0) {	
@@ -6729,6 +9192,29 @@ public class StoneAnalysisController {
 					}	
 				}
 			}
+            //退回数据
+            list = stoneService.findSourceEqualsBackBySettlementprice(params);
+            if(list.size()>0) {
+                for (int j = 0; j < list.size(); j++) {
+                    if(SettlementPricelist.size()>0) {
+                        for (int i = 0; i < SettlementPricelist.size(); i++) {
+                            if(list.get(j).getSettlementprice()>=SettlementPricelist.get(i).getSettlementPrice_start() && list.get(j).getSettlementprice()<=SettlementPricelist.get(i).getSettlementPrice_end()) {
+                                if(selectType.contains("数量")) {
+                                    listY.set(i, list.get(j).getNumberSum()+Integer.parseInt(listY.get(i).toString()));
+                                }else if(selectType.contains("结算价")) {
+                                    listY.set(i,list.get(j).getSettlementpriceSum()+Double.parseDouble( listY.get(i).toString()));
+                                }else if(selectType.contains("标价")) {
+                                    listY.set(i,Double.parseDouble((String) listY.get(i).toString())-list.get(j).getListpriceSum());
+                                }else if(selectType.contains("金重")) {
+                                    listY.set(i,list.get(j).getGoldweightSum()+Double.parseDouble((String) listY.get(i).toString()));
+                                }else if(selectType.contains("主石")) {
+                                    listY.set(i,list.get(j).getCenterstoneSum()+Double.parseDouble((String) listY.get(i).toString()));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }else if(source.contains("金重区间")) {
             if(goldWeightList.size()>0) {
                 for (int i = 0; i < goldWeightList.size(); i++) {
@@ -6736,7 +9222,7 @@ public class StoneAnalysisController {
                     listY.add("0");
                 }
             }
-            list = stoneService.findStoneForIndex724GoldWeight(params);
+            list = stoneService.findSourceEqualsSaleByGoldweight(params);
             if(list.size()>0) {
                 for (int j = 0; j < list.size(); j++) {
                     if(goldWeightList.size()>0) {
@@ -6758,13 +9244,36 @@ public class StoneAnalysisController {
                     }
                 }
             }
+            //退回数据
+            list = stoneService.findSourceEqualsBackByGoldweight(params);
+            if(list.size()>0) {
+                for (int j = 0; j < list.size(); j++) {
+                    if(goldWeightList.size()>0) {
+                        for (int i = 0; i < goldWeightList.size(); i++) {
+                            if(list.get(j).getGoldweight()>=goldWeightList.get(i).getGoldWeight_start() && list.get(j).getGoldweight()<=goldWeightList.get(i).getGoldWeight_end()) {
+                                if(selectType.contains("数量")) {
+                                    listY.set(i, list.get(j).getNumberSum()+Integer.parseInt(listY.get(i).toString()));
+                                }else if(selectType.contains("结算价")) {
+                                    listY.set(i,list.get(j).getSettlementpriceSum()+Double.parseDouble( listY.get(i).toString()));
+                                }else if(selectType.contains("标价")) {
+                                    listY.set(i,Double.parseDouble((String) listY.get(i).toString())-list.get(j).getListpriceSum());
+                                }else if(selectType.contains("金重")) {
+                                    listY.set(i,list.get(j).getGoldweightSum()+Double.parseDouble((String) listY.get(i).toString()));
+                                }else if(selectType.contains("主石")) {
+                                    listY.set(i,list.get(j).getCenterstoneSum()+Double.parseDouble((String) listY.get(i).toString()));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 		
 		
 		
 		List<StoneAnalysis> listTemp = new ArrayList<StoneAnalysis>();// 表格数据
 		List<StoneAnalysis> listAll = new ArrayList<StoneAnalysis>();// 表格数据
-		listTemp = stoneService.findStoneBySource(params);
+		listTemp = stoneService.findStoneByParams(params);
 		if(listTemp.size()>0) {
 			if(source.contains("主石区间")) {
 				for (int j = 0; j < listTemp.size(); j++) {
@@ -6812,8 +9321,7 @@ public class StoneAnalysisController {
             }
 		}
 		
-		
-		String result = "";
+
 		List listAllDate = new ArrayList<>();
 		List listAllSupplier = new ArrayList<>();
 		List listAllSettlementprice = new ArrayList<>();
@@ -6842,13 +9350,11 @@ public class StoneAnalysisController {
 				listAllGoldweight.add(listAll.get(i).getGoldweight());
 			}
 		}
-		//System.out.println(list);
-		//System.out.println(listAll);
-		//System.out.println("===" + listY);
-		result = "" + listY + "@" + listX + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct + "@" + 
+        StringBuilder result = new StringBuilder();
+		result.append("" + listY + "@" + listX + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct + "@" +
 		listAllSettlementprice + "@" + listAllArea+"@" + listAllRoom+"@" + listAllCounter+"@" + 
-		listAllSource+"@" + listAllListprice+"@" + listAllCenterstone+"@" + listAllGoldweight;
-		return result;
+		listAllSource+"@" + listAllListprice+"@" + listAllCenterstone+"@" + listAllGoldweight);
+		return result.toString();
 	}
 	/**
 	 * 跳转到index722
@@ -6857,19 +9363,15 @@ public class StoneAnalysisController {
 	 * @return
 	 * created by lick on 2018年10月20日 下午10:36:47
 	 */
-	
 	@ApiOperation(value="跳转到index722页面,款式销售排名分析")
 	@GetMapping(value = "index722")
 	public String index722(ModelMap map){
-
 		map.addAttribute("listArea", stoneService.findDistinctArea());
 		map.addAttribute("listPriceNo", stoneService.findDistinctPriceNo());
 		map.addAttribute("listRoom", stoneService.findDistinctRoom());
 		map.addAttribute("listSupplier", stoneService.findDistinctSupplier());
 		map.addAttribute("listCounter", stoneService.findDistinctCounter());
         map.addAttribute("listProduct", stoneService.findDistinctProduct());
-
-		
 		return "index722";
 	}
 	/**
@@ -6882,15 +9384,12 @@ public class StoneAnalysisController {
 	@ApiOperation(value="跳转到index723页面,系列销售排名分析")
 	@GetMapping(value = "index723")
 	public String index723(ModelMap map){
-
 		map.addAttribute("listArea", stoneService.findDistinctArea());
 		map.addAttribute("listSeries", stoneService.findDistinctSeries());
 		map.addAttribute("listRoom", stoneService.findDistinctRoom());
 		map.addAttribute("listSupplier", stoneService.findDistinctSupplier());
 		map.addAttribute("listCounter", stoneService.findDistinctCounter());
         map.addAttribute("listProduct", stoneService.findDistinctProduct());
-
-		
 		return "index723";
 	}
 	/**
@@ -6903,30 +9402,25 @@ public class StoneAnalysisController {
 	@ApiOperation(value="跳转到index726页面,圈口分析")
 	@GetMapping(value = "index726")
 	public String index726(ModelMap map) {
-
-
 		map.addAttribute("listArea", stoneService.findDistinctArea());
 		map.addAttribute("listCircle", stoneService.findDistinctCircle());
 		map.addAttribute("listRoom", stoneService.findDistinctRoom());
 		map.addAttribute("listSupplier", stoneService.findDistinctSupplier());
 		map.addAttribute("listCounter", stoneService.findDistinctCounter());
         map.addAttribute("listProduct", stoneService.findDistinctProduct());
-
-		
 		return "index726";
 	}
 	/**
 	 * index722 查找
 	 * 
 	 * @param request
-	 * @param map
 	 * @return
 	 * created by lick on 2018年10月20日 下午10:56:35
 	 */
 	@ApiOperation(value="index722页面,款式销售排名分析   查询")
 	@RequestMapping(value = "searchForindex722", method = RequestMethod.POST)
 	@ResponseBody
-	public String searchForindex722(HttpServletRequest request, ModelMap map, HttpSession session) {
+	public String searchForindex722(HttpServletRequest request) {
 		String area = request.getParameter("area");
 		String supplier = request.getParameter("supplier");
 		String priceNo = request.getParameter("priceNo");
@@ -6979,32 +9473,66 @@ public class StoneAnalysisController {
             params.put("start", st);
             params.put("end", ed);
 
-            List<StoneAnalysis> list = new ArrayList<StoneAnalysis>(); // 图标数据
-            List<StoneAnalysis> listAll = new ArrayList<StoneAnalysis>();// 表格数据
 
-            listAll = stoneService.findStoneFor722And723(params);
-            list = stoneService.findStoneFor722(params);
+            List<StoneAnalysis> listSale = stoneService.findSourceEqualsSaleByPriceNo(params); // 图表数据 销售
+            List<StoneAnalysis> listBack = stoneService.findSourceEqualsBackByPriceNo(params); // 图表数据 退回
+            List<StoneAnalysis> listAll = stoneService.findStoneByParams(params);// 表格数据
+
             List listX = new ArrayList<>();
             List listY = new ArrayList<>();
 
-            if(list.size()>0) {
-                for (int i = 0; i < list.size(); i++) {
-                    listX.add(list.get(i).getPriceNo());
+            if(listSale.size()>0) {
+                for (int i = 0; i < listSale.size(); i++) {
+                    listX.add(listSale.get(i).getPriceNo());
                     if(selectType.contains("数量")) {
-                        listY.add(list.get(i).getNumberSum());
+                        listY.add(listSale.get(i).getNumberSum());
                     }else if(selectType.contains("结算价")) {
-                        listY.add(list.get(i).getSettlementpriceSum());
+                        listY.add(listSale.get(i).getSettlementpriceSum());
                     }else if(selectType.contains("标价")) {
-                        listY.add(list.get(i).getListpriceSum());
+                        listY.add(listSale.get(i).getListpriceSum());
                     }else if(selectType.contains("金重")) {
-                        listY.add(list.get(i).getGoldweightSum());
+                        listY.add(listSale.get(i).getGoldweightSum());
                     }else if(selectType.contains("主石")) {
-                        listY.add(list.get(i).getCenterstoneSum());
+                        listY.add(listSale.get(i).getCenterstoneSum());
                     }
                 }
             }
-            String result = "";
-
+            //退回数据
+            if(listBack.size()>0) {
+                for (int i = 0; i < listBack.size(); i++) {
+                    if(selectType.contains("数量")) {
+                        String priceNo1 = listBack.get(i).getPriceNo();
+                        if(listX.contains(priceNo1)) {
+                            int index = listX.indexOf(priceNo1);
+                            listY.set(index,(Integer)listY.get(index)+listBack.get(i).getNumberSum());
+                        }
+                    }else if(selectType.contains("结算价")) {
+                        String priceNo1 = listBack.get(i).getPriceNo();
+                        if(listX.contains(priceNo1)) {
+                            int index = listX.indexOf(priceNo1);
+                            listY.set(index,(Float)listY.get(index)+listBack.get(i).getSettlementpriceSum());
+                        }
+                    }else if(selectType.contains("标价")) {
+                        String priceNo1 = listBack.get(i).getPriceNo();
+                        if(listX.contains(priceNo1)) {
+                            int index = listX.indexOf(priceNo1);
+                            listY.set(index,(Float)listY.get(index)-listBack.get(i).getListpriceSum());
+                        }
+                    }else if(selectType.contains("金重")) {
+                        String priceNo1 = listBack.get(i).getPriceNo();
+                        if(listX.contains(priceNo1)) {
+                            int index = listX.indexOf(priceNo1);
+                            listY.set(index,(Float)listY.get(index)+listBack.get(i).getGoldweightSum());
+                        }
+                    }else if(selectType.contains("主石")) {
+                        String priceNo1 = listBack.get(i).getPriceNo();
+                        if(listX.contains(priceNo1)) {
+                            int index = listX.indexOf(priceNo1);
+                            listY.set(index,(Float)listY.get(index)+listBack.get(i).getCenterstoneSum());
+                        }
+                    }
+                }
+            }
             List listAllDate = new ArrayList<>();
             List listAllSupplier = new ArrayList<>();
             List listAllSettlementprice = new ArrayList<>();
@@ -7031,11 +9559,11 @@ public class StoneAnalysisController {
                     listAllGoldweight.add(listAll.get(i).getGoldweight());
                 }
             }
-
-            result = "" + listY + "@" + listX + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct + "@" +
+            StringBuilder result = new StringBuilder();
+            result.append("" + listY + "@" + listX + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct + "@" +
                     listAllSettlementprice + "@" + listAllArea+"@" + listAllRoom+"@" + listAllCounter+"@" +
-                    listAllPriceNo+"@" + listAllListprice+"@" + listAllCenterstone+"@" + listAllGoldweight;
-            return result;
+                    listAllPriceNo+"@" + listAllListprice+"@" + listAllCenterstone+"@" + listAllGoldweight);
+            return result.toString();
         //标价区间
         }else {
             List<ListPrice> listPricelist = new ArrayList<ListPrice>(); // 标价区间
@@ -7088,7 +9616,8 @@ public class StoneAnalysisController {
                     listY.add("0");
                 }
             }
-            list = stoneService.findStoneForIndex724ListPrice(params);
+            //销售数据
+            list = stoneService.findSourceEqualsSaleByListprice(params);
             if(list.size()>0) {
                 for (int j = 0; j < list.size(); j++) {
                     if(listPricelist.size()>0) {
@@ -7110,8 +9639,30 @@ public class StoneAnalysisController {
                     }
                 }
             }
-            List<StoneAnalysis> listAll = new ArrayList<StoneAnalysis>();// 表格数据
-            listAll = stoneService.findStoneFor722And723(params);
+            //退回数据
+            list = stoneService.findSourceEqualsBackByListprice(params);
+            if(list.size()>0) {
+                for (int j = 0; j < list.size(); j++) {
+                    if(listPricelist.size()>0) {
+                        for (int i = 0; i < listPricelist.size(); i++) {
+                            if(list.get(j).getListprice()>=listPricelist.get(i).getListPrice_start() && list.get(j).getListprice()<=listPricelist.get(i).getListPrice_end()) {
+                                if(selectType.contains("数量")) {
+                                    listY.set(i, list.get(j).getNumberSum()+Integer.parseInt(listY.get(i).toString()));
+                                }else if(selectType.contains("结算价")) {
+                                    listY.set(i,list.get(j).getSettlementpriceSum()+Double.parseDouble( listY.get(i).toString()));
+                                }else if(selectType.contains("标价")) {
+                                    listY.set(i,Double.parseDouble((String) listY.get(i).toString())-list.get(j).getListpriceSum());
+                                }else if(selectType.contains("金重")) {
+                                    listY.set(i,list.get(j).getGoldweightSum()+Double.parseDouble((String) listY.get(i).toString()));
+                                }else if(selectType.contains("主石")) {
+                                    listY.set(i,list.get(j).getCenterstoneSum()+Double.parseDouble((String) listY.get(i).toString()));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            List<StoneAnalysis> listAll = stoneService.findStoneByParams(params);;// 表格数据
             List listAllDate = new ArrayList<>();
             List listAllSupplier = new ArrayList<>();
             List listAllSettlementprice = new ArrayList<>();
@@ -7138,11 +9689,11 @@ public class StoneAnalysisController {
                     listAllGoldweight.add(listAll.get(i).getGoldweight());
                 }
             }
-            String result = "";
-            result = "" + listY + "@" + listX + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct + "@" +
+            StringBuilder result = new StringBuilder();
+            result.append("" + listY + "@" + listX + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct + "@" +
                     listAllSettlementprice + "@" + listAllArea+"@" + listAllRoom+"@" + listAllCounter+"@" +
-                    listAllPriceNo+"@" + listAllListprice+"@" + listAllCenterstone+"@" + listAllGoldweight;
-            return result;
+                    listAllPriceNo+"@" + listAllListprice+"@" + listAllCenterstone+"@" + listAllGoldweight);
+            return result.toString();
 
         }
 
@@ -7151,17 +9702,12 @@ public class StoneAnalysisController {
 	 * index723 查找
 	 * 
 	 * @param request
-	 * @param map
-	 * @param session
-	 * @return
-	 * @throws ParseException String
 	 * created by lick on 2018年10月20日 下午10:56:35
 	 */
-	
 	@ApiOperation(value="index723页面,系列销售排名分析  查询")
 	@RequestMapping(value = "searchForindex723", method = RequestMethod.POST)
 	@ResponseBody
-	public String searchForindex723(HttpServletRequest request, ModelMap map, HttpSession session) throws ParseException {
+	public String searchForindex723(HttpServletRequest request){
 		String area = request.getParameter("area");
 		String supplier = request.getParameter("supplier");
 		String series = request.getParameter("series");
@@ -7215,32 +9761,68 @@ public class StoneAnalysisController {
 
 		params.put("start", st);
 		params.put("end", ed);
-	
-		List<StoneAnalysis> list = new ArrayList<StoneAnalysis>(); // 图标数据
-		List<StoneAnalysis> listAll = new ArrayList<StoneAnalysis>();// 表格数据
 
-		listAll = stoneService.findStoneFor722And723(params);
-		list = stoneService.findStoneFor723(params);
-		List listX = new ArrayList<>();
-		List listY = new ArrayList<>();
-	
-		if(list.size()>0) {
-			for (int i = 0; i < list.size(); i++) {
-				listX.add(list.get(i).getSeries());
-				if(selectType.contains("数量")) {
-					listY.add(list.get(i).getNumberSum());
-				}else if(selectType.contains("结算价")) {
-					listY.add(list.get(i).getSettlementpriceSum());
-				}else if(selectType.contains("标价")) {
-					listY.add(list.get(i).getListpriceSum());
-				}else if(selectType.contains("金重")) {
-					listY.add(list.get(i).getGoldweightSum());
-				}else if(selectType.contains("主石")) {
-					listY.add(list.get(i).getCenterstoneSum());
-				}
-			}
-		}	
-		String result = "";
+
+        List<StoneAnalysis> listSale = stoneService.findSourceEqualsSaleBySeries(params); // 图表数据 销售
+        List<StoneAnalysis> listBack = stoneService.findSourceEqualsBackBySeries(params); // 图表数据 退回
+        List<StoneAnalysis> listAll = stoneService.findStoneByParams(params);// 表格数据
+
+        List listX = new ArrayList<>();
+        List listY = new ArrayList<>();
+
+        if(listSale.size()>0) {
+            for (int i = 0; i < listSale.size(); i++) {
+                listX.add(listSale.get(i).getSeries());
+                if(selectType.contains("数量")) {
+                    listY.add(listSale.get(i).getNumberSum());
+                }else if(selectType.contains("结算价")) {
+                    listY.add(listSale.get(i).getSettlementpriceSum());
+                }else if(selectType.contains("标价")) {
+                    listY.add(listSale.get(i).getListpriceSum());
+                }else if(selectType.contains("金重")) {
+                    listY.add(listSale.get(i).getGoldweightSum());
+                }else if(selectType.contains("主石")) {
+                    listY.add(listSale.get(i).getCenterstoneSum());
+                }
+            }
+        }
+        //退回数据
+        if(listBack.size()>0) {
+            for (int i = 0; i < listBack.size(); i++) {
+                if(selectType.contains("数量")) {
+                    String series1 = listBack.get(i).getSeries();
+                    if(listX.contains(series1)) {
+                        int index = listX.indexOf(series1);
+                        listY.set(index,(Integer)listY.get(index)+listBack.get(i).getNumberSum());
+                    }
+                }else if(selectType.contains("结算价")) {
+                    String series1 = listBack.get(i).getSeries();
+                    if(listX.contains(series1)) {
+                        int index = listX.indexOf(series1);
+                        listY.set(index,(Float)listY.get(index)+listBack.get(i).getSettlementpriceSum());
+                    }
+                }else if(selectType.contains("标价")) {
+                    String series1 = listBack.get(i).getSeries();
+                    if(listX.contains(series1)) {
+                        int index = listX.indexOf(series1);
+                        listY.set(index,(Float)listY.get(index)-listBack.get(i).getListpriceSum());
+                    }
+                }else if(selectType.contains("金重")) {
+                    String series1 = listBack.get(i).getSeries();
+                    if(listX.contains(series1)) {
+                        int index = listX.indexOf(series1);
+                        listY.set(index,(Float)listY.get(index)+listBack.get(i).getGoldweightSum());
+                    }
+                }else if(selectType.contains("主石")) {
+                    String series1 = listBack.get(i).getSeries();
+                    if(listX.contains(series1)) {
+                        int index = listX.indexOf(series1);
+                        listY.set(index,(Float)listY.get(index)+listBack.get(i).getCenterstoneSum());
+                    }
+                }
+            }
+        }
+
 		
 		List listAllDate = new ArrayList<>();
 		List listAllSupplier = new ArrayList<>();
@@ -7268,28 +9850,22 @@ public class StoneAnalysisController {
 				listAllGoldweight.add(listAll.get(i).getGoldweight());
 			}
 		}
-		//System.out.println(list);
-		//System.out.println(listAll);
-		//System.out.println("===" + listY);
-		result = "" + listY + "@" + listX + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct + "@" + 
+        StringBuilder result = new StringBuilder();
+		result.append("" + listY + "@" + listX + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct + "@" +
 		listAllSettlementprice + "@" + listAllArea+"@" + listAllRoom+"@" + listAllCounter+"@" +
-        listAllSeries+"@" + listAllListprice+"@" + listAllCenterstone+"@" + listAllGoldweight;
-		return result;
+        listAllSeries+"@" + listAllListprice+"@" + listAllCenterstone+"@" + listAllGoldweight);
+		return result.toString();
 	}
 	/**
 	 * index726 查找
 	 * 
 	 * @param request
-	 * @param map
-	 * @param session
-	 * @return
-	 * @throws ParseException String
 	 * created by lick on 2018年10月20日 下午10:56:35
 	 */
 	@ApiOperation(value="index726页面,圈口分析  查询")
 	@RequestMapping(value = "searchForindex726", method = RequestMethod.POST)
 	@ResponseBody
-	public String searchForindex726(HttpServletRequest request, ModelMap map, HttpSession session) throws ParseException {
+	public String searchForindex726(HttpServletRequest request) {
 		String area = request.getParameter("area");
 		String supplier = request.getParameter("supplier");
 		String circle = request.getParameter("circle");
@@ -7342,32 +9918,66 @@ public class StoneAnalysisController {
 
 		params.put("start", st);
 		params.put("end", ed);
-	
-		List<StoneAnalysis> list = new ArrayList<StoneAnalysis>(); // 图标数据
-		List<StoneAnalysis> listAll = new ArrayList<StoneAnalysis>();// 表格数据
 
-		listAll = stoneService.findStoneFor726(params);
-		list = stoneService.findStoneForIndex726(params);
-		List listX = new ArrayList<>();
-		List listY = new ArrayList<>();
-	
-		if(list.size()>0) {
-			for (int i = 0; i < list.size(); i++) {
-				listX.add(list.get(i).getCircle());
-				if(selectType.contains("数量")) {
-					listY.add(list.get(i).getNumberSum());
-				}else if(selectType.contains("结算价")) {
-					listY.add(list.get(i).getSettlementpriceSum());
-				}else if(selectType.contains("标价")) {
-					listY.add(list.get(i).getListpriceSum());
-				}else if(selectType.contains("金重")) {
-					listY.add(list.get(i).getGoldweightSum());
-				}else if(selectType.contains("主石")) {
-					listY.add(list.get(i).getCenterstoneSum());
-				}
-			}
-		}	
-		String result = "";
+        List<StoneAnalysis> listSale = stoneService.findSourceEqualsSaleByCircle(params); // 图表数据 销售
+        List<StoneAnalysis> listBack = stoneService.findSourceEqualsBackByCircle(params); // 图表数据 退回
+        List<StoneAnalysis> listAll = stoneService.findStoneByParams(params);// 表格数据
+
+        List listX = new ArrayList<>();
+        List listY = new ArrayList<>();
+
+        if(listSale.size()>0) {
+            for (int i = 0; i < listSale.size(); i++) {
+                listX.add(listSale.get(i).getCircle());
+                if(selectType.contains("数量")) {
+                    listY.add(listSale.get(i).getNumberSum());
+                }else if(selectType.contains("结算价")) {
+                    listY.add(listSale.get(i).getSettlementpriceSum());
+                }else if(selectType.contains("标价")) {
+                    listY.add(listSale.get(i).getListpriceSum());
+                }else if(selectType.contains("金重")) {
+                    listY.add(listSale.get(i).getGoldweightSum());
+                }else if(selectType.contains("主石")) {
+                    listY.add(listSale.get(i).getCenterstoneSum());
+                }
+            }
+        }
+        //退回数据
+        if(listBack.size()>0) {
+            for (int i = 0; i < listBack.size(); i++) {
+                if(selectType.contains("数量")) {
+                    String circle1 = listBack.get(i).getCircle();
+                    if(listX.contains(circle1)) {
+                        int index = listX.indexOf(circle1);
+                        listY.set(index,(Integer)listY.get(index)+listBack.get(i).getNumberSum());
+                    }
+                }else if(selectType.contains("结算价")) {
+                    String circle1 = listBack.get(i).getCircle();
+                    if(listX.contains(circle1)) {
+                        int index = listX.indexOf(circle1);
+                        listY.set(index,(Float)listY.get(index)+listBack.get(i).getSettlementpriceSum());
+                    }
+                }else if(selectType.contains("标价")) {
+                    String circle1 = listBack.get(i).getCircle();
+                    if(listX.contains(circle1)) {
+                        int index = listX.indexOf(circle1);
+                        listY.set(index,(Float)listY.get(index)-listBack.get(i).getListpriceSum());
+                    }
+                }else if(selectType.contains("金重")) {
+                    String circle1 = listBack.get(i).getCircle();
+                    if(listX.contains(circle1)) {
+                        int index = listX.indexOf(circle1);
+                        listY.set(index,(Float)listY.get(index)+listBack.get(i).getGoldweightSum());
+                    }
+                }else if(selectType.contains("主石")) {
+                    String circle1 = listBack.get(i).getCircle();
+                    if(listX.contains(circle1)) {
+                        int index = listX.indexOf(circle1);
+                        listY.set(index,(Float)listY.get(index)+listBack.get(i).getCenterstoneSum());
+                    }
+                }
+            }
+        }
 		
 		List listAllDate = new ArrayList<>();
 		List listAllSupplier = new ArrayList<>();
@@ -7395,13 +10005,11 @@ public class StoneAnalysisController {
 				listAllGoldweight.add(listAll.get(i).getGoldweight());
 			}
 		}
-		//System.out.println(list);
-		//System.out.println(listAll);
-		//System.out.println("===" + listY);
-		result = "" + listY + "@" + listX + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct + "@" + 
+        StringBuilder result = new StringBuilder();
+		result.append("" + listY + "@" + listX + "@" + listAllDate + "@" + listAllSupplier + "@" + listAllProduct + "@" +
 		listAllSettlementprice + "@" + listAllArea+"@" + listAllRoom+"@" + listAllCounter+"@" + 
-		listAllCircle+"@" + listAllListprice+"@" + listAllCenterstone+"@" + listAllGoldweight;
-		return result;
+		listAllCircle+"@" + listAllListprice+"@" + listAllCenterstone+"@" + listAllGoldweight);
+		return result.toString();
 	}
 	/**
 	 * index722  下载
@@ -7462,7 +10070,7 @@ public class StoneAnalysisController {
 			System.out.println("4");
 			params.put("priceNo", priceNo);
 		}
-		listAll = stoneService.findStoneFor722And723(params);
+		listAll = stoneService.findStoneByParams(params);
 		stoneService.downloadExcelForIndex722(listAll,response);
 		
 
@@ -7526,7 +10134,7 @@ public class StoneAnalysisController {
 			System.out.println("4");
 			params.put("series", series);
 		}
-		listAll = stoneService.findStoneFor722And723(params);
+		listAll = stoneService.findStoneByParams(params);
 		stoneService.downloadExcelForIndex723(listAll,response);
 		
 
@@ -7602,7 +10210,7 @@ public class StoneAnalysisController {
 		
 		List<StoneAnalysis> listTemp = new ArrayList<StoneAnalysis>();// 表格数据
 		List<StoneAnalysis> listAll = new ArrayList<StoneAnalysis>();// 表格数据
-		listTemp = stoneService.findStoneBySource(params);
+		listTemp = stoneService.findStoneByParams(params);
 		if(listTemp.size()>0) {
 			if(source.contains("主石区间")) {
 				for (int j = 0; j < listTemp.size(); j++) {
@@ -7714,7 +10322,7 @@ public class StoneAnalysisController {
 			System.out.println("4");
 			params.put("circle", circle);
 		}
-		listAll = stoneService.findStoneFor726(params);
+		listAll = stoneService.findStoneByParams(params);
 		stoneService.downloadExcelForIndex726(listAll,response);
 		
 
@@ -7725,16 +10333,12 @@ public class StoneAnalysisController {
 	 *
 	 * com.nenu.controller
 	 * @param request
-	 * @param map
-	 * @param session
-	 * @return
-	 * @throws ParseException String
 	 * created  at 2018年10月24日
 	 */
 	@ApiOperation(value="plan页面,销售计划分析模型  查询")
 	@RequestMapping(value = "searchForIndex741", method = RequestMethod.POST)
 	@ResponseBody
-	public String searchForIndex741(HttpServletRequest request, ModelMap map, HttpSession session) throws ParseException {
+	public String searchForIndex741(HttpServletRequest request)  {
 		
 		String room = request.getParameter("room");
 		String belong = request.getParameter("belong");
@@ -7771,38 +10375,52 @@ public class StoneAnalysisController {
 			}
 
 			for (int i = 0; i < planList.size(); i++) {
-				
-					 Plan  plan = planList.get(i);
-					 String plan_belong = plan.getPlan_belong();
-					 List<BelongAndCounter> bcList = belongAndCounterService.findAllBelongAndCounterByBelong(plan_belong);
-					 if(bcList.size()>0) {
-						 for (int j = 0; j < bcList.size(); j++) {
-							 Map<String, Object> pa = new HashMap<String, Object>();
-							 pa.put("start", st);
-							 pa.put("end", ed);
-							 pa.put("room", plan.getPlan_room());
-							 pa.put("counter", bcList.get(j).getBc_counter_name());
-							 List<StoneAnalysis> listStone = stoneService.findStoneForIndex741(pa);
-							 if(listStone.size()>0) {
-								 if(selectType.contains("数量")) {
-									 ListTrue.set(i, listStone.get(0).getNumberSum()+Integer.parseInt(ListTrue.get(i).toString()));
-								 }else if(selectType.contains("标价")) {
-									 ListTrue.set(i, df.format(listStone.get(0).getListpriceSum()+Double.parseDouble(ListTrue.get(i).toString())));
-								 }else if(selectType.contains("结算价")) {
-									 ListTrue.set(i, df.format(listStone.get(0).getSettlementpriceSum()+Double.parseDouble(ListTrue.get(i).toString())));
-								 }else if(selectType.contains("金重")) {
-									 ListTrue.set(i,  df.format(listStone.get(0).getGoldweightSum()+Double.parseDouble(ListTrue.get(i).toString())));
-								 }else if(selectType.contains("主石")) {
-									 ListTrue.set(i,  df.format(listStone.get(0).getCenterstoneSum()+Double.parseDouble(ListTrue.get(i).toString())));
-								 }			 
-							 }	 
-						 }
-					 }
-				}
+                 Plan  plan = planList.get(i);
+                 String plan_belong = plan.getPlan_belong();
+                 List<BelongAndCounter> bcList = belongAndCounterService.findAllBelongAndCounterByBelong(plan_belong);
+                 if(bcList.size()>0) {
+                     for (int j = 0; j < bcList.size(); j++) {
+                         Map<String, Object> pa = new HashMap<String, Object>();
+                         pa.put("start", st);
+                         pa.put("end", ed);
+                         pa.put("room", plan.getPlan_room());
+                         pa.put("counter", bcList.get(j).getBc_counter_name());
+                         List<StoneAnalysis> listStone = new ArrayList<>();
+                         //销售数据
+                         listStone = stoneService.findSourceEqualsSaleByCounter(pa);
+                         if(listStone.size()>0) {
+                             if(selectType.contains("数量")) {
+                                 ListTrue.set(i, listStone.get(0).getNumberSum()+Integer.parseInt(ListTrue.get(i).toString()));
+                             }else if(selectType.contains("标价")) {
+                                 ListTrue.set(i, df.format(listStone.get(0).getListpriceSum()+Double.parseDouble(ListTrue.get(i).toString())));
+                             }else if(selectType.contains("结算价")) {
+                                 ListTrue.set(i, df.format(listStone.get(0).getSettlementpriceSum()+Double.parseDouble(ListTrue.get(i).toString())));
+                             }else if(selectType.contains("金重")) {
+                                 ListTrue.set(i,  df.format(listStone.get(0).getGoldweightSum()+Double.parseDouble(ListTrue.get(i).toString())));
+                             }else if(selectType.contains("主石")) {
+                                 ListTrue.set(i,  df.format(listStone.get(0).getCenterstoneSum()+Double.parseDouble(ListTrue.get(i).toString())));
+                             }
+                         }
+                         //退回数据
+                         listStone = stoneService.findSourceEqualsBackByCounter(pa);
+                         if(listStone.size()>0) {
+                             if(selectType.contains("数量")) {
+                                 ListTrue.set(i, listStone.get(0).getNumberSum()+Integer.parseInt(ListTrue.get(i).toString()));
+                             }else if(selectType.contains("标价")) {
+                                 ListTrue.set(i, df.format(Double.parseDouble(ListTrue.get(i).toString())-listStone.get(0).getListpriceSum()));
+                             }else if(selectType.contains("结算价")) {
+                                 ListTrue.set(i, df.format(listStone.get(0).getSettlementpriceSum()+Double.parseDouble(ListTrue.get(i).toString())));
+                             }else if(selectType.contains("金重")) {
+                                 ListTrue.set(i,  df.format(listStone.get(0).getGoldweightSum()+Double.parseDouble(ListTrue.get(i).toString())));
+                             }else if(selectType.contains("主石")) {
+                                 ListTrue.set(i,  df.format(listStone.get(0).getCenterstoneSum()+Double.parseDouble(ListTrue.get(i).toString())));
+                             }
+                         }
+                     }
+                 }
 			}
-		//System.out.println(ListX);
-		//System.out.println(ListTrue);
-		//System.out.println(ListFalse);
+		}
+
 		List listStart = new ArrayList<>();
 		List listEnd = new ArrayList<>();
 		List listRoom = new ArrayList<>();
@@ -7823,8 +10441,10 @@ public class StoneAnalysisController {
 				listDiff.add(df.format(Double.parseDouble(ListTrue.get(i).toString())-Double.parseDouble(ListFalse.get(i).toString())));
 			}
 		}
+		StringBuilder result = new StringBuilder();
+		result.append(""+ListX+"#"+ListTrue+"#"+ListFalse+"#"+listStart+"#"+listEnd+"#"+listRoom+"#"+listBelong+"#"+listNum+"#"+listIndex+"#"+listDo+"#"+listDiff);
 		
-		return ""+ListX+"#"+ListTrue+"#"+ListFalse+"#"+listStart+"#"+listEnd+"#"+listRoom+"#"+listBelong+"#"+listNum+"#"+listIndex+"#"+listDo+"#"+listDiff;
+		return result.toString();
 		}
 	/**
 	 * plan页面 下载  销售计划分析模型
@@ -7869,7 +10489,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="下载excel")
 	@RequestMapping(value = "downloadGraphExcelFor711", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadGraphExcelFor711(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+	public String downloadGraphExcelFor711(HttpServletRequest request,HttpServletResponse response) {
 		String conGraph  = request.getParameter("context");
 		String result = "";
 		stoneService.downloadGraphExcelFor711(conGraph,response);
@@ -7878,7 +10498,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="下载excel")
 	@RequestMapping(value = "downloadGraphExcelFor712", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadGraphExcelFor712(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+	public String downloadGraphExcelFor712(HttpServletRequest request,HttpServletResponse response) {
 		String conGraph  = request.getParameter("context");
 		String result = "";
 		stoneService.downloadGraphExcelFor712(conGraph,response);
@@ -7887,7 +10507,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="下载excel")
 	@RequestMapping(value = "downloadGraphExcelForSource", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadGraphExcelForSource(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+	public String downloadGraphExcelForSource(HttpServletRequest request,HttpServletResponse response) {
 		String conGraph  = request.getParameter("context");
 		String result = "";
 		stoneService.downloadGraphExcelForSource(conGraph,response);
@@ -7896,7 +10516,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="下载excel")
 	@RequestMapping(value = "downloadGraphExcelFor722", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadGraphExcelFor722(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+	public String downloadGraphExcelFor722(HttpServletRequest request,HttpServletResponse response) {
 		String conGraph  = request.getParameter("context");
 		String result = "";
 		stoneService.downloadGraphExcelFor722(conGraph,response);
@@ -7905,7 +10525,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="下载excel")
 	@RequestMapping(value = "downloadGraphExcelFor723", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadGraphExcelFor723(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+	public String downloadGraphExcelFor723(HttpServletRequest request,HttpServletResponse response) {
 		String conGraph  = request.getParameter("context");
 		String result = "";
 		stoneService.downloadGraphExcelFor723(conGraph,response);
@@ -7914,7 +10534,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="下载excel")
 	@RequestMapping(value = "downloadGraphExcelFor724", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadGraphExcelFor724(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+	public String downloadGraphExcelFor724(HttpServletRequest request,HttpServletResponse response)  {
 		String conGraph  = request.getParameter("context");
 		String result = "";
 		stoneService.downloadGraphExcelFor724(conGraph,response);
@@ -7923,7 +10543,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="下载excel")
 	@RequestMapping(value = "downloadGraphExcelFor726", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadGraphExcelFor726(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+	public String downloadGraphExcelFor726(HttpServletRequest request,HttpServletResponse response)  {
 		String conGraph  = request.getParameter("context");
 		String result = "";
 		stoneService.downloadGraphExcelFor726(conGraph,response);
@@ -7932,7 +10552,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="下载excel")
 	@RequestMapping(value = "downloadGraphExcelForIndex7", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadGraphExcelForIndex7(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+	public String downloadGraphExcelForIndex7(HttpServletRequest request,HttpServletResponse response)  {
 		String conGraph  = request.getParameter("context");
 		String result = "";
 		stoneService.downloadGraphExcelForIndex7(conGraph,response);
@@ -7941,7 +10561,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="下载excel")
 	@RequestMapping(value = "downloadGraphExcelFor743", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadGraphExcelFor743(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+	public String downloadGraphExcelFor743(HttpServletRequest request,HttpServletResponse response) {
 		String conGraph  = request.getParameter("context");
 		String result = "";
 		stoneService.downloadGraphExcelFor743(conGraph,response);
@@ -7950,7 +10570,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="下载excel")
 	@RequestMapping(value = "downloadGraphExcelFor744", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadGraphExcelFor744(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+	public String downloadGraphExcelFor744(HttpServletRequest request,HttpServletResponse response)  {
 		String conGraph  = request.getParameter("context");
 		String result = "";
 		stoneService.downloadGraphExcelFor744(conGraph,response);
@@ -7959,7 +10579,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="下载excel")
 	@RequestMapping(value = "downloadGraphExcelForS75", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadGraphExcelForS75(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+	public String downloadGraphExcelForS75(HttpServletRequest request,HttpServletResponse response)  {
 		String conGraph  = request.getParameter("context");
 		String result = "";
 		stoneService.downloadGraphExcelForS75(conGraph,response);
@@ -7968,7 +10588,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="下载excel")
 	@RequestMapping(value = "downloadGraphExcelForS752", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadGraphExcelForS752(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+	public String downloadGraphExcelForS752(HttpServletRequest request,HttpServletResponse response) {
 		String conGraph  = request.getParameter("context");
 		String result = "";
 		stoneService.downloadGraphExcelForS752(conGraph,response);
@@ -7977,7 +10597,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="下载excel")
 	@RequestMapping(value = "downloadGraphExcelForIndex3", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadGraphExcelForIndex3(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+	public String downloadGraphExcelForIndex3(HttpServletRequest request,HttpServletResponse response)  {
 		String conGraph  = request.getParameter("context");
 		String result = "";
 		stoneService.downloadGraphExcelForIndex3(conGraph,response);
@@ -7986,7 +10606,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="下载excel")
 	@RequestMapping(value = "downloadGraphExcelForIndex11", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadGraphExcelForIndex11(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+	public String downloadGraphExcelForIndex11(HttpServletRequest request,HttpServletResponse response)  {
 		String conGraph  = request.getParameter("context");
 		String result = "";
 		stoneService.downloadGraphExcelForIndex11(conGraph,response);
@@ -7995,7 +10615,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="下载excel")
 	@RequestMapping(value = "downloadGraphExcelFor7311", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadGraphExcelFor7311(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+	public String downloadGraphExcelFor7311(HttpServletRequest request,HttpServletResponse response)  {
 		String conGraph  = request.getParameter("context");
 		String result = "";
 		stoneService.downloadGraphExcelFor7311(conGraph,response);
@@ -8004,7 +10624,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="下载excel")
 	@RequestMapping(value = "downloadGraphExcelFor7312", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadGraphExcelFor7312(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+	public String downloadGraphExcelFor7312(HttpServletRequest request,HttpServletResponse response)  {
 		String conGraph  = request.getParameter("context");
 		String result = "";
 		stoneService.downloadGraphExcelFor7312(conGraph,response);
@@ -8013,7 +10633,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="下载excel")
 	@RequestMapping(value = "downloadGraphExcelForIndex811", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadGraphExcelForIndex811(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+	public String downloadGraphExcelForIndex811(HttpServletRequest request,HttpServletResponse response)  {
 		String conGraph  = request.getParameter("context");
 		String result = "";
 		stoneService.downloadGraphExcelForIndex811(conGraph,response);
@@ -8022,7 +10642,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="下载excel")
 	@RequestMapping(value = "downloadGraphExcelForIndex812", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadGraphExcelForIndex812(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+	public String downloadGraphExcelForIndex812(HttpServletRequest request,HttpServletResponse response) {
 		String conGraph  = request.getParameter("context");
 		String result = "";
 		stoneService.downloadGraphExcelForIndex812(conGraph,response);
@@ -8031,7 +10651,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="下载excel")
 	@RequestMapping(value = "downloadGraphExcelForIndex813", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadGraphExcelForIndex813(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+	public String downloadGraphExcelForIndex813(HttpServletRequest request,HttpServletResponse response) {
 		String conGraph  = request.getParameter("context");
 		String result = "";
 		stoneService.downloadGraphExcelForIndex813(conGraph,response);
@@ -8040,7 +10660,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="下载excel")
 	@RequestMapping(value = "downloadGraphExcelForIndex814", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadGraphExcelForIndex814(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+	public String downloadGraphExcelForIndex814(HttpServletRequest request,HttpServletResponse response) {
 		String conGraph  = request.getParameter("context");
 		String result = "";
 		stoneService.downloadGraphExcelForIndex814(conGraph,response);
@@ -8049,7 +10669,7 @@ public class StoneAnalysisController {
 	@ApiOperation(value="下载excel")
 	@RequestMapping(value = "downloadGraphExcelForIndex5", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadGraphExcelForIndex5(HttpServletRequest request,HttpServletResponse response) throws ParseException {
+	public String downloadGraphExcelForIndex5(HttpServletRequest request,HttpServletResponse response)  {
 		String conGraph  = request.getParameter("context");
 		String result = "";
 		if(conGraph.length()<=0) {
@@ -8067,7 +10687,6 @@ public class StoneAnalysisController {
 					conGraph +=tit[i]+"&"+m[0]+"&"+m[i]+"&";
 				}
 			}
-			//System.out.println(conGraph);
 			stoneService.downloadGraphExcelForIndex5(conGraph,response);
 			return result;
 		}

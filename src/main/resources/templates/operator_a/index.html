@@ -181,28 +181,28 @@
 		<div id="div_datestart" class="input-group col-lg-2" >	
              <!-- <input id="start" class="form-control layer-date" placeholder="开始时间 " onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">  -->
              <select id="start" class="form-control" name="finpord_inboundate">
-					<option th:each="date : ${dateList}" th:value="${#dates.format(date,'yyyy-MM-dd')}" 
-					th:text="${#dates.format(date,'yyyy-MM-dd')}" ></option>
+					<option th:each="date : ${dateList}" th:value="${#dates.format(date.finpord_inboundate,'yyyy-MM-dd')}"
+					th:text="${#dates.format(date.finpord_inboundate,'yyyy-MM-dd')}" ></option>
 			</select>
 		</div>	
 		<div id="div_dateend" class="input-group col-lg-2" >	
             
              <!-- <input id="end" class="form-control layer-date" placeholder="开始时间 " onclick="laydate({istime: true, format: 'YYYY-MM-DD'})">  -->
              <select id="end" class="form-control" name="finpord_inboundate">
-					<option th:each="date : ${dateList}" th:value="${#dates.format(date,'yyyy-MM-dd')}" 
-					th:text="${#dates.format(date,'yyyy-MM-dd')}" ></option>
+					<option th:each="date : ${dateList}" th:value="${#dates.format(date.finpord_inboundate,'yyyy-MM-dd')}"
+					th:text="${#dates.format(date.finpord_inboundate,'yyyy-MM-dd')}" ></option>
 			</select>
 		</div>
 		<div id="div_order" class="input-group col-lg-2" style="display:none;">
 				<!-- <input type="text" id="procordNo" class="form-control" placeholder="订单号" /> -->
 				<select id="procordNo" class="form-control" name="finpord_procordNo">
-					<option th:each="procordNo : ${procordNoList}" th:value="${procordNo}" th:text="${procordNo}" ></option>
+					<option th:each="procordNo : ${procordNoList}" th:value="${procordNo.finpord_procordNo}" th:text="${procordNo.finpord_procordNo}" ></option>
 				</select>	       
 		</div>	
 		<div id="div_barcode" class="input-group col-lg-2" style="display:none;">
 				<!-- <input type="text" id="barcodeNo" class="form-control" placeholder="条码号" /> -->
 				<select id="barcodeNo" class="form-control" name="finpord_barcodeNo">
-					<option th:each="barcodeNo : ${barcodeNoList}" th:value="${barcodeNo}" th:text="${barcodeNo}" ></option>
+					<option th:each="barcodeNo : ${barcodeNoList}" th:value="${barcodeNo.finpord_barcode}" th:text="${barcodeNo.finpord_barcode}" ></option>
 				</select>	       
 		</div>
 		<div class="input-group col-lg-2">
@@ -653,8 +653,8 @@
 		<div class="input-group col-lg-2 "  >
 				<span class="input-group-addon"  >时间</span>
 				<select id="fediff_time_search" class="form-control" name="fediff_time">
-						<option th:each="date : ${fediffTimeList}" th:value="${#dates.format(date,'yyyy-MM-dd')}" 
-						th:text="${#dates.format(date,'yyyy-MM-dd')}" ></option>
+						<option th:each="date : ${fediffTimeList}" th:value="${#dates.format(date.fediff_time,'yyyy-MM-dd')}"
+						th:text="${#dates.format(date.fediff_time,'yyyy-MM-dd')}" ></option>
 				</select>
 		</div>
 		<div class="input-group col-lg-2">

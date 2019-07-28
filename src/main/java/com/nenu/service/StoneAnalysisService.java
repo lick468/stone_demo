@@ -140,31 +140,59 @@ public interface StoneAnalysisService {
 	int downloadGraphExcelForIndex814(String conGraph, HttpServletResponse response);
 	int downloadGraphExcelForIndex5(String conGraph, HttpServletResponse response);
 
-    List<StoneAnalysis> findListPriceSumByProduct(Map<String, Object> params);//
-    List<StoneAnalysis> findListPriceSumByArea(Map<String, Object> params);//
-    List<StoneAnalysis> findListPriceSumByCounter(Map<String, Object> params);//
-    List<StoneAnalysis> findListPriceSumByRoom(Map<String, Object> params);//
-    List<StoneAnalysis> findListPriceSumBySupplier(Map<String, Object> params);//
-    List<StoneAnalysis> findListPriceSumBySource(Map<String, Object> params);//
-    List<StoneAnalysis> findListPriceSumByPriceNo(Map<String, Object> params);//
-    List<StoneAnalysis> findListPriceSumBySeries(Map<String, Object> params);//
-    List<StoneAnalysis> findListPriceSumByDate(Map<String, Object> params);//
-    List<StoneAnalysis> findListPriceSumByDateAndProduct(Map<String, Object> params);//
-    List<StoneAnalysis> findListPriceSumByDateAndArea(Map<String, Object> params);//
-    List<StoneAnalysis> findListPriceSumByDateAndCounter(Map<String, Object> params);//
+	List<StoneAnalysis> findDistinctArea();//
+	List<StoneAnalysis> findDistinctProduct();//
+	List<StoneAnalysis> findDistinctRoom();//
+	List<StoneAnalysis> findDistinctSupplier();//
+	List<StoneAnalysis> findDistinctPriceNo();//
+	List<StoneAnalysis> findDistinctSeries();//
+	List<StoneAnalysis> findDistinctQuality();//
+	List<StoneAnalysis> findDistinctCounter();//
+	List<StoneAnalysis> findDistinctSource();//
+	List<StoneAnalysis> findDistinctCircle();//
+
+	List<StoneAnalysis> findSourceEqualsBackByProduct(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsBackByArea(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsBackByCounter(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsBackByRoom(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsBackBySupplier(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsBackBySource(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsBackByPriceNo(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsBackBySeries(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsBackByDate(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsBackByDateAndProduct(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsBackByDateAndArea(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsBackByDateAndCounter(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsBackByProductAndSource(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsBackByCenterstone(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsBackBySettlementprice(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsBackByGoldweight(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsBackByListprice(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsBackByCircle(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsBackByQuality(Map<String, Object> params);//
+
+	List<StoneAnalysis> findSourceEqualsSaleByQuality(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsSaleByCircle(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsSaleByProduct(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsSaleByArea(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsSaleByCounter(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsSaleByRoom(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsSaleBySupplier(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsSaleBySource(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsSaleByPriceNo(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsSaleBySeries(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsSaleByDate(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsSaleByDateAndProduct(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsSaleByDateAndArea(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsSaleByDateAndCounter(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsSaleByProductAndSource(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsSaleByCenterstone(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsSaleBySettlementprice(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsSaleByGoldweight(Map<String, Object> params);//
+	List<StoneAnalysis> findSourceEqualsSaleByListprice(Map<String, Object> params);//
 
 
-    List<StoneAnalysis> findDistinctArea();//
-    List<StoneAnalysis> findDistinctProduct();//
-    List<StoneAnalysis> findDistinctRoom();//
-    List<StoneAnalysis> findDistinctSupplier();//
-    List<StoneAnalysis> findDistinctPriceNo();//
-    List<StoneAnalysis> findDistinctSeries();//
-    List<StoneAnalysis> findDistinctQuality();//
-    List<StoneAnalysis> findDistinctCounter();//
-    List<StoneAnalysis> findDistinctSource();//
-    List<StoneAnalysis> findDistinctCircle();//
-
+	List<StoneAnalysis> findStoneByParams(Map<String, Object> params);//条件查询
 
 
 

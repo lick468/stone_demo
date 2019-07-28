@@ -15,14 +15,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -406,7 +404,7 @@ public class StoneAnalysisServiceImpl implements StoneAnalysisService {
 		String barcode = null;
 		String quality = null;
 		String centerstonename = null;
-		int settlementprice = 0;
+        float settlementprice = 0;
 		float goldweight = 0;
 		float goodweight = 0;
 		float centerstone = 0;
@@ -457,7 +455,7 @@ public class StoneAnalysisServiceImpl implements StoneAnalysisService {
 							product =  getCellValue(row.getCell(i));//名称
 						}else if("settlementprice".equals(map.get(i))) {
 							if( getCellValue(row.getCell(i)).length()>0) {
-								settlementprice = (int) Float.parseFloat(getCellValue(row.getCell(i)));//结算价				
+								settlementprice = Float.parseFloat(getCellValue(row.getCell(i)));//结算价
 							}
 						}else if("goldweight".equals(map.get(i))) {
 							if( getCellValue(row.getCell(i)).length()>0) {
@@ -1362,9 +1360,9 @@ public class StoneAnalysisServiceImpl implements StoneAnalysisService {
 	@Override
 	public int downloadExcelForIndexSource(List<StoneAnalysis> list, HttpServletResponse response) {
 		// TODO Auto-generated method stub
-		String sheetName = "来源销售数据表单";
-		String titleName = "来源销售数据统计表";
-		String fileName = "来源销售数据统计表单";
+		String sheetName = "成色销售数据表单";
+		String titleName = "成色销售数据统计表";
+		String fileName = "成色销售数据统计表单";
 		int columnNumber = 12;
 		int[] columnWidth = { 15, 15, 15, 15,15, 15, 15, 15,15, 15, 15,15 };
 		String[][] dataList = new String[list.size()][12];
@@ -2290,66 +2288,6 @@ public class StoneAnalysisServiceImpl implements StoneAnalysisService {
 	}
 
 	@Override
-	public List<StoneAnalysis> findListPriceSumByProduct(Map<String, Object> params) {
-		return stoneDao.findListPriceSumByProduct(params);
-	}
-
-	@Override
-	public List<StoneAnalysis> findListPriceSumByArea(Map<String, Object> params) {
-		return stoneDao.findListPriceSumByArea(params);
-	}
-
-	@Override
-	public List<StoneAnalysis> findListPriceSumByCounter(Map<String, Object> params) {
-		return stoneDao.findListPriceSumByCounter(params);
-	}
-
-	@Override
-	public List<StoneAnalysis> findListPriceSumByRoom(Map<String, Object> params) {
-		return stoneDao.findListPriceSumByRoom(params);
-	}
-
-	@Override
-	public List<StoneAnalysis> findListPriceSumBySupplier(Map<String, Object> params) {
-		return stoneDao.findListPriceSumBySupplier(params);
-	}
-
-	@Override
-	public List<StoneAnalysis> findListPriceSumBySource(Map<String, Object> params) {
-		return stoneDao.findListPriceSumBySource(params);
-	}
-
-	@Override
-	public List<StoneAnalysis> findListPriceSumByPriceNo(Map<String, Object> params) {
-		return stoneDao.findListPriceSumByPriceNo(params);
-	}
-
-	@Override
-	public List<StoneAnalysis> findListPriceSumBySeries(Map<String, Object> params) {
-		return stoneDao.findListPriceSumBySeries(params);
-	}
-
-	@Override
-	public List<StoneAnalysis> findListPriceSumByDate(Map<String, Object> params) {
-		return stoneDao.findListPriceSumByDate(params);
-	}
-
-	@Override
-	public List<StoneAnalysis> findListPriceSumByDateAndProduct(Map<String, Object> params) {
-		return stoneDao.findListPriceSumByDateAndProduct(params);
-	}
-
-	@Override
-	public List<StoneAnalysis> findListPriceSumByDateAndArea(Map<String, Object> params) {
-		return stoneDao.findListPriceSumByDateAndArea(params);
-	}
-
-	@Override
-	public List<StoneAnalysis> findListPriceSumByDateAndCounter(Map<String, Object> params) {
-		return stoneDao.findListPriceSumByDateAndCounter(params);
-	}
-
-	@Override
 	public List<StoneAnalysis> findDistinctArea() {
 		return stoneDao.findDistinctArea();
 	}
@@ -2392,6 +2330,202 @@ public class StoneAnalysisServiceImpl implements StoneAnalysisService {
 	public List<StoneAnalysis> findDistinctCircle() {
 		return stoneDao.findDistinctCircle();
 	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsBackByProduct(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsBackByProduct(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsBackByArea(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsBackByArea(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsBackByCounter(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsBackByCounter(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsBackByRoom(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsBackByRoom(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsBackBySupplier(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsBackBySupplier(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsBackBySource(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsBackBySource(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsBackByPriceNo(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsBackByPriceNo(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsBackBySeries(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsBackBySeries(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsBackByDate(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsBackByDate(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsBackByDateAndProduct(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsBackByDateAndProduct(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsBackByDateAndArea(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsBackByDateAndArea(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsBackByDateAndCounter(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsBackByDateAndCounter(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsBackByProductAndSource(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsBackByProductAndSource(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsBackByCenterstone(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsBackByCenterstone(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsBackBySettlementprice(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsBackBySettlementprice(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsBackByGoldweight(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsBackByGoldweight(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsBackByListprice(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsBackByListprice(params);
+	}
+
+    @Override
+    public List<StoneAnalysis> findSourceEqualsBackByCircle(Map<String, Object> params) {
+        return stoneDao.findSourceEqualsBackByCircle(params);
+    }
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsBackByQuality(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsBackByQuality(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsSaleByQuality(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsSaleByQuality(params);
+	}
+
+	@Override
+    public List<StoneAnalysis> findSourceEqualsSaleByCircle(Map<String, Object> params) {
+        return stoneDao.findSourceEqualsSaleByCircle(params);
+    }
+
+    @Override
+	public List<StoneAnalysis> findSourceEqualsSaleByProduct(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsSaleByProduct(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsSaleByArea(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsSaleByArea(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsSaleByCounter(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsSaleByCounter(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsSaleByRoom(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsSaleByRoom(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsSaleBySupplier(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsSaleBySupplier(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsSaleBySource(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsSaleBySource(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsSaleByPriceNo(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsSaleByPriceNo(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsSaleBySeries(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsSaleBySeries(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsSaleByDate(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsSaleByDate(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsSaleByDateAndProduct(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsSaleByDateAndProduct(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsSaleByDateAndArea(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsSaleByDateAndArea(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsSaleByDateAndCounter(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsSaleByDateAndCounter(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsSaleByProductAndSource(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsSaleByProductAndSource(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsSaleByCenterstone(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsSaleByCenterstone(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsSaleBySettlementprice(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsSaleBySettlementprice(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsSaleByGoldweight(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsSaleByGoldweight(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findSourceEqualsSaleByListprice(Map<String, Object> params) {
+		return stoneDao.findSourceEqualsSaleByListprice(params);
+	}
+
+	@Override
+	public List<StoneAnalysis> findStoneByParams(Map<String, Object> params) {
+		return stoneDao.findStoneByParams(params);
+	}
+
 	@Override
 	public List<StoneAnalysis> findDistinctSource() {
 		return stoneDao.findDistinctSource();
