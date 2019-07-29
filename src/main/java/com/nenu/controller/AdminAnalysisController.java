@@ -1,12 +1,9 @@
 package com.nenu.controller;
 
 import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -354,28 +351,57 @@ public class AdminAnalysisController {
 	@ApiOperation(value="获取数据",notes="获取数据")
 	@RequestMapping(value="/getTableData")
 	@ResponseBody
-	public DatatablesViewPage<StoneAnalysis> getTableData(@RequestParam String aoData, HttpServletRequest request )  {
+	public DatatablesViewPage<StoneAnalysis> getTableData(@RequestParam String aoData, @RequestParam String room,
+                                                          @RequestParam String orderNo, @RequestParam String barcode,
+                                                          @RequestParam String product, @RequestParam String counter,
+                                                          @RequestParam String supplier, @RequestParam String starttime,
+                                                          @RequestParam String endtime, HttpServletRequest request )  {
 		Map<String, Object> map = new HashMap<String, Object>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        ParsePosition pos = new ParsePosition(0);
+        Date start = sdf.parse(starttime, pos);
+
+        Date end = sdf.parse(endtime, pos);
+
 		//System.out.println("这里");
 		Map<String, Object> params = new HashMap<String, Object>();
-		
+        System.out.println("room="+room+"\norderNo="+orderNo+"\nproduct="+product+"starttime="+starttime+"\nstart="+start);
 		int sEcho =Integer.parseInt(aoData.split(":")[2].split("}")[0]); 
 		int iDisplayStart = Integer.parseInt(aoData.split(":")[8].split("}")[0]);
 		 //System.out.println(sEcho);
 		 sEcho = (sEcho-1)*10;
 		 params.put("sEcho",iDisplayStart);
 		 params.put("len", 10);
+		 if(room.length() > 0) {
+             params.put("room",room);
+         }
+        if(orderNo.length() > 0) {
+            params.put("orderNo",orderNo);
+        }
+        if(barcode.length() > 0) {
+            params.put("barcode",barcode);
+        }
+        if(product.length() > 0) {
+            params.put("product",product);
+        }
+        if(counter.length() > 0) {
+            params.put("counter",counter);
+        }
+        if(supplier.length() > 0) {
+            params.put("supplier",supplier);
+        }
+
+
+
+
+
+
+        //params.put("start",start);
+        //params.put("end",end);
 		 List<StoneAnalysis> stoneList = new ArrayList<StoneAnalysis>();
-		 List<StoneAnalysis> stoneNum = stoneService.findAllStone();
+		 List<StoneAnalysis> stoneNum = stoneService.findStoneForTableInfo(params);
 		stoneList = stoneService.findStoneByTableInfo(params);
-		 
-		//获取分页控件的信息
-	    String start = request.getParameter("start");
-	   // System.out.println(start);
-	    String length = request.getParameter("length");
-	   // System.out.println(length);
-	//获取前台额外传递过来的查询条件
-	    String extra_search = request.getParameter("extra_search");
+
 	    //System.out.println(extra_search);
 	    DatatablesViewPage<StoneAnalysis> view = new DatatablesViewPage<StoneAnalysis>();
 	    view.setiTotalDisplayRecords(stoneNum.size());

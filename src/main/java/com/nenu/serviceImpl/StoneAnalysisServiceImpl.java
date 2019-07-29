@@ -1346,6 +1346,11 @@ public class StoneAnalysisServiceImpl implements StoneAnalysisService {
 	}
 
 	@Override
+	public List<StoneAnalysis> findStoneForTableInfo(Map<String, Object> params) {
+		return stoneDao.findStoneForTableInfo(params);
+	}
+
+	@Override
 	public List<StoneAnalysis> findStoneBySource(Map<String, Object> params) {
 		// TODO Auto-generated method stub
 		return stoneDao.findStoneBySource(params);

@@ -13,6 +13,7 @@ import com.nenu.domain.StoneAnalysis;
 public interface StoneAnalysisService {
 	List<StoneAnalysis> findAllStone();
 	List<StoneAnalysis> findStoneByTableInfo(Map<String, Object> params);
+	List<StoneAnalysis> findStoneForTableInfo(Map<String, Object> params);
 	List<StoneAnalysis> findRoom();
 	List<StoneAnalysis> findArea();
 	List<StoneAnalysis> findCounter();

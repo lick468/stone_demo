@@ -475,12 +475,27 @@ text-align: center;
 	<!-- 查询与统计 -->
 	<div id="searchAndsum" style="display: none; border: 1px solid #00BFFF; height: 90px;">
 		<div style="height: 10px;"></div>
+		<ul id="myTab" class="nav nav-tabs">
+			<li class="active">
+				<a href="#myList" data-toggle="tab">供应商库存</a>
+			</li>
+			<li>
+				<a href="#newList" data-toggle="tab">石库库存</a>
+			</li>
+		</ul>
+		<div id="myTabContent" class="tab-content">
+			<div class="tab-pane fade in active" id="myList">
+			</div>
+			<div class="tab-pane fade " id="newList">
+
+			</div>
+		</div>
+
 		<input id="result" type="text" style="display: none;" value="all">
 		<div class="row" style="margin-left: 10px;">
 			<div class="input-group col-lg-2 ">
-				<span class="input-group-addon">查询属性</span> <select
-					id="queryTypeStone" class="form-control">
-
+				<span class="input-group-addon">查询属性</span>
+                <select id="queryTypeStone" class="form-control">
 					<option value="stone_purchdate">日期查询</option>
 					<option value="stone_mainStoneNo">主石编</option>
 					<option value="stone_substoNo">副石编</option>

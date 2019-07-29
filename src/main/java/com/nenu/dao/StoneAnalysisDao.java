@@ -13,6 +13,7 @@ import com.nenu.domain.StoneAnalysis;
 public interface StoneAnalysisDao {
 	List<StoneAnalysis> findAllStone();
 	List<StoneAnalysis> findStoneByTableInfo(Map<String, Object> params);
+	List<StoneAnalysis> findStoneForTableInfo(Map<String, Object> params);
 	
 	List<StoneAnalysis> findSell();
 	List<StoneAnalysis> findRoom();

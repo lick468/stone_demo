@@ -109,8 +109,62 @@
 	<select id="findAllStone" parameterType="String" resultMap="userAnalysisMap">
 		select * from stone 
 	</select>
+	<select id="findStoneForTableInfo" parameterType="java.util.Map" resultMap="userAnalysisMap">
+		select * from stone
+		where 1=1
+		<if test="start!=null">
+			and date <![CDATA[ >= ]]>#{start}
+		</if>
+		<if test="end!=null">
+			and date <![CDATA[ <= ]]>#{end}
+		</if>
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="orderNo!=null">
+			and orderNo = #{orderNo}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		<if test="barcode!=null">
+			and barcode = #{barcode}
+		</if>
+		<if test="supplier!=null">
+			and supplier = #{supplier}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+	</select>
 	<select id="findStoneByTableInfo" parameterType="java.util.Map" resultMap="userAnalysisMap">
-		select * from stone limit #{sEcho},#{len}
+		select * from stone
+		where 1=1
+		<if test="start!=null">
+			and date <![CDATA[ >= ]]>#{start}
+		</if>
+		<if test="end!=null">
+			and date <![CDATA[ <= ]]>#{end}
+		</if>
+		<if test="counter!=null">
+			and counter = #{counter}
+		</if>
+		<if test="orderNo!=null">
+			and orderNo = #{orderNo}
+		</if>
+		<if test="room!=null">
+			and room = #{room}
+		</if>
+		<if test="barcode!=null">
+			and barcode = #{barcode}
+		</if>
+		<if test="supplier!=null">
+			and supplier = #{supplier}
+		</if>
+		<if test="product!=null">
+			and product = #{product}
+		</if>
+		limit #{sEcho},#{len}
 	</select>
 	<select id="findProductOfIndex814" parameterType="java.util.Map" resultMap="userAnalysisMap">
 		select product,COUNT(*) as numberSum,SUM(settlementprice) AS settlementpriceSum,
