@@ -1,6 +1,9 @@
 package com.nenu.controller;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -8,13 +11,23 @@ import java.util.regex.Pattern;
 public class Regex {
    public static void main(String[] args) {
 
-       double d = 123.4;
-       System.out.println(d);
-       System.out.println(String.valueOf(d).hashCode());
+        String starttime = "2019-12-12";
+       String endtime = "2019-12-13";
+       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+       ParsePosition pos = new ParsePosition(0);
+       Date start = sdf.parse(starttime, pos);
+       pos = new ParsePosition(0);
+       Date end = sdf.parse(endtime, pos);
+       System.out.println(start);
+       System.out.println(end);
 
-       List list = new ArrayList();
-       list.add(123.4);
-       System.out.println(list.get(0).toString().equals("123.4"));
+//       double d = 123.4;
+//       System.out.println(d);
+//       System.out.println(String.valueOf(d).hashCode());
+//
+//       List list = new ArrayList();
+//       list.add(123.4);
+//       System.out.println(list.get(0).toString().equals("123.4"));
 
 
 

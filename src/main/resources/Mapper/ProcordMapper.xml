@@ -126,8 +126,45 @@
 		where 
 		procord_no=#{procord_no}
 	</update>
+	<select id="findProcordForTableInfo" parameterType="java.util.Map" resultMap="BaseResultMapprocord">
+		select * from tb_procord
+		where 1=1
+		<if test="procord_supplier!=null">
+			and procord_supplier = #{procord_supplier}
+		</if>
+		<if test="procord_batch!=null">
+			and procord_batch = #{procord_batch}
+		</if>
+		<if test="procord_no!=null">
+			and procord_no = #{procord_no}
+		</if>
+		<if test="procord_date!=null">
+			and procord_date = #{procord_date}
+		</if>
+		<if test="procord_delydate!=null">
+			and procord_delydate = #{procord_delydate}
+		</if>
+		ORDER BY procord_ID DESC
+	</select>
 	<select id="findProcordByTableInfo" parameterType="java.util.Map" resultMap="BaseResultMapprocord">
-		select * from tb_procord ORDER BY procord_ID DESC limit #{sEcho},#{len}
+		select * from tb_procord
+		where 1=1
+		<if test="procord_supplier!=null">
+			and procord_supplier = #{procord_supplier}
+		</if>
+		<if test="procord_batch!=null">
+			and procord_batch = #{procord_batch}
+		</if>
+		<if test="procord_no!=null">
+			and procord_no = #{procord_no}
+		</if>
+		<if test="procord_date!=null">
+			and procord_date = #{procord_date}
+		</if>
+		<if test="procord_delydate!=null">
+			and procord_delydate = #{procord_delydate}
+		</if>
+		ORDER BY procord_ID DESC limit #{sEcho},#{len}
 	</select>
 
 </mapper>

@@ -17,4 +17,5 @@ public interface ProcordDao {
 	int updateProcordPay(Procord procord);//退石后修改货款金额
 	int updateProcordState(Procord procord );//根据订单号更新订单状态
 	List<Procord> findProcordByTableInfo(Map<String, Object> params);
+	List<Procord> findProcordForTableInfo(Map<String, Object> params);
 }

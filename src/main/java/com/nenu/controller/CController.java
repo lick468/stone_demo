@@ -1,12 +1,9 @@
 package com.nenu.controller;
 
-import java.text.Collator;
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +33,6 @@ import com.nenu.domain.Procord;
 import com.nenu.domain.RoleUserOfIn;
 import com.nenu.domain.Stone;
 import com.nenu.domain.Stoninproc;
-import com.nenu.domain.Supplier;
 import com.nenu.service.StoneService;
 import com.nenu.service.StoninprocService;
 import com.nenu.service.SupplierService;
@@ -990,29 +986,41 @@ public class CController {
 	@ApiOperation(value="动态加载表格数据（按页获取）",notes="动态加载表格数据（按页获取）")
 	@RequestMapping(value="/getFinpordTableData",method=RequestMethod.POST)
 	@ResponseBody
-	public DatatablesViewPage<Finpord> getFinpordTableData(@RequestParam String aoData, HttpServletRequest request )  {
-		Map<String, Object> map = new HashMap<String, Object>();
-		System.out.println("这里");
+	public DatatablesViewPage<Finpord> getFinpordManageTableData(@RequestParam String aoData,@RequestParam String finpordManageStartTime,
+																 @RequestParam String finpordManageSupplier,@RequestParam String finpordManageProcoedNo,
+																 @RequestParam String finpordManageBarcode,@RequestParam String finpordManageEndTime)  {
+
 		Map<String, Object> params = new HashMap<String, Object>();			
-		 System.out.println(aoData);
+		// System.out.println(aoData);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		ParsePosition pos = new ParsePosition(0);
+		Date start = sdf.parse(finpordManageStartTime, pos);
+		pos = new ParsePosition(0);
+		Date end = sdf.parse(finpordManageEndTime, pos);
 		
 		int sEcho =Integer.parseInt(aoData.split(":")[2].split("}")[0]); 
 		int iDisplayStart = Integer.parseInt(aoData.split(":")[8].split("}")[0]);
-		 System.out.println(sEcho);
 		 sEcho = (sEcho-1)*10;
 		 params.put("sEcho",iDisplayStart);
 		 params.put("len", 10);
-		 List<Finpord> finpordList = new ArrayList<Finpord>();
-		 List<Finpord> finpordNum = finpordService.findAllFinpord();
-		 finpordList = finpordService.findFinpordByTableInfo(params);
-		 
-		//获取分页控件的信息
-	    String start = request.getParameter("start");
-	    //System.out.println(start);
-	    String length = request.getParameter("length");
-	    //System.out.println(length);
-	 //获取前台额外传递过来的查询条件
-	    String extra_search = request.getParameter("extra_search");
+		if(finpordManageBarcode.length() > 0) {
+			params.put("finpord_barcode",finpordManageBarcode);
+		}
+		if(finpordManageProcoedNo.length() > 0) {
+			params.put("finpord_procordNo",finpordManageProcoedNo);
+		}
+		if(finpordManageSupplier.length() > 0) {
+			params.put("finpord_supplier",finpordManageSupplier);
+		}
+		if(finpordManageStartTime.length() > 4) {
+			params.put("start",start);
+		}
+		if(finpordManageEndTime.length() > 4) {
+			params.put("end",end);
+		}
+		 List<Finpord> finpordList = finpordService.findFinpordByTableInfo(params);
+		 List<Finpord> finpordNum = finpordService.findFinpordForTableInfo(params);
+
 
 	    DatatablesViewPage<Finpord> view = new DatatablesViewPage<Finpord>();
 	    view.setiTotalDisplayRecords(finpordNum.size());
@@ -1040,14 +1048,7 @@ public class CController {
 		 List<FinpordCopy> finpordList = new ArrayList<FinpordCopy>();
 		 List<FinpordCopy> finpordNum = finpordService.findAllFinpordCopy();
 		 finpordList = finpordService.findFinpordCopyByTableInfo(params);
-		 
-		//获取分页控件的信息
-	    String start = request.getParameter("start");
-	    //System.out.println(start);
-	    String length = request.getParameter("length");
-	    //System.out.println(length);
-	 //获取前台额外传递过来的查询条件
-	    String extra_search = request.getParameter("extra_search");
+
 
 	    DatatablesViewPage<FinpordCopy> view = new DatatablesViewPage<FinpordCopy>();
 	    view.setiTotalDisplayRecords(finpordNum.size());

@@ -1,6 +1,8 @@
 package com.nenu.controller;
 
 import java.text.ParseException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -233,29 +235,43 @@ public class DController {
 	@ApiOperation(value="获取数据库表数据",notes="获取数据库表数据")
 	@RequestMapping(value="/getProcordTableData",method=RequestMethod.POST)
 	@ResponseBody
-	public DatatablesViewPage<Procord> getProcordTableData(@RequestParam String aoData, HttpServletRequest request )  {
+	public DatatablesViewPage<Procord> getProcordTableData(@RequestParam String aoData,@RequestParam String procordNo,
+														   @RequestParam String procordBatch,@RequestParam String procordSupplier,
+														   @RequestParam String procordDate,@RequestParam String procordDelyDate )  {
 		Map<String, Object> map = new HashMap<String, Object>();
-		System.out.println("这里");
+		// System.out.println("这里");
 		Map<String, Object> params = new HashMap<String, Object>();			
-		 System.out.println(aoData);
+		// System.out.println(aoData);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		ParsePosition pos = new ParsePosition(0);
+		Date delydate = sdf.parse(procordDelyDate, pos);
+		pos = new ParsePosition(0);
+		Date date = sdf.parse(procordDate, pos);
 		
 		int sEcho =Integer.parseInt(aoData.split(":")[2].split("}")[0]); 
 		int iDisplayStart = Integer.parseInt(aoData.split(":")[8].split("}")[0]);
-		 System.out.println(sEcho);
+		// System.out.println(sEcho);
 		 sEcho = (sEcho-1)*10;
 		 params.put("sEcho",iDisplayStart);
 		 params.put("len", 10);
-		 List<Procord> procordList = new ArrayList<Procord>();
-		 List<Procord> procordNum = procordService.findAllProcord();
-		 procordList = procordService.findProcordByTableInfo(params);
-		 
-		//获取分页控件的信息
-	    String start = request.getParameter("start");
-	    //System.out.println(start);
-	    String length = request.getParameter("length");
-	    //System.out.println(length);
-	 //获取前台额外传递过来的查询条件
-	    String extra_search = request.getParameter("extra_search");
+		if(procordNo.length() > 0) {
+			params.put("procord_no",procordNo);
+		}
+		if(procordBatch.length() > 0) {
+			params.put("procord_batch",procordBatch);
+		}
+		if(procordSupplier.length() > 0) {
+			params.put("procord_supplier",procordSupplier);
+		}
+		if(procordDelyDate.length() > 4) {
+			params.put("procord_delydate",delydate);
+		}
+		if(procordDate.length() > 4) {
+			params.put("procord_date",date);
+		}
+		 List<Procord> procordList =procordService.findProcordByTableInfo(params);
+		 List<Procord> procordNum = procordService.findProcordForTableInfo(params);
+
 	    //System.out.println(extra_search);
 	    DatatablesViewPage<Procord> view = new DatatablesViewPage<Procord>();
 	    view.setiTotalDisplayRecords(procordNum.size());

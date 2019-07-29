@@ -360,7 +360,7 @@ public class AdminAnalysisController {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         ParsePosition pos = new ParsePosition(0);
         Date start = sdf.parse(starttime, pos);
-
+        pos = new ParsePosition(0);
         Date end = sdf.parse(endtime, pos);
 
 		//System.out.println("这里");
@@ -390,6 +390,14 @@ public class AdminAnalysisController {
         if(supplier.length() > 0) {
             params.put("supplier",supplier);
         }
+		if(starttime.length() > 4) {
+			params.put("start",start);
+		}
+		if(endtime.length() > 4) {
+			params.put("end",end);
+		}
+
+        System.out.println("starttime="+starttime.length());
 
 
 
@@ -926,17 +934,39 @@ public class AdminAnalysisController {
 	/**
 	 * 获取数据库表数据	
 	 * @param aoData
-	 * @param request
 	 * @return
 	 */
 	@ApiOperation(value="获取数据库表数据",notes="获取数据库表数据")
 	@RequestMapping(value="/getPlanTableData",method=RequestMethod.POST)
 	@ResponseBody
-	public DatatablesViewPage<Plan> getPlanTableData(@RequestParam String aoData, HttpServletRequest request )  {
+	public DatatablesViewPage<Plan> getPlanTableData(@RequestParam String aoData,@RequestParam String room,
+                                                     @RequestParam String belong,@RequestParam String index,
+                                                     @RequestParam String starttime,@RequestParam String endtime)  {
 		Map<String, Object> map = new HashMap<String, Object>();
 		//System.out.println("这里");
 		Map<String, Object> params = new HashMap<String, Object>();			
 		//System.out.println(aoData);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        ParsePosition pos = new ParsePosition(0);
+        Date start = sdf.parse(starttime, pos);
+        pos = new ParsePosition(0);
+        Date end = sdf.parse(endtime, pos);
+
+        if(room.length() > 0) {
+            params.put("plan_room",room);
+        }
+        if(index.length() > 0) {
+            params.put("plan_index",index);
+        }
+        if(belong.length() > 0) {
+            params.put("plan_belong",belong);
+        }
+        if(starttime.length() > 4) {
+            params.put("plan_start",start);
+        }
+        if(endtime.length() > 4) {
+            params.put("plan_end",end);
+        }
 				
 		int sEcho =Integer.parseInt(aoData.split(":")[2].split("}")[0]); 
 		int iDisplayStart = Integer.parseInt(aoData.split(":")[8].split("}")[0]);
@@ -944,17 +974,9 @@ public class AdminAnalysisController {
 		sEcho = (sEcho-1)*10;
 		params.put("sEcho",iDisplayStart);
 		params.put("len", 10);
-		List<Plan> planList = new ArrayList<Plan>();
-		List<Plan> planNum = planService.findAllPlan();
-		planList = planService.findPlanByTableInfo(params);
-				 
-		//获取分页控件的信息
-		String start = request.getParameter("start");
-				   
-		String length = request.getParameter("length");
-				    
-	   //获取前台额外传递过来的查询条件
-		String extra_search = request.getParameter("extra_search");
+		List<Plan> planList = planService.findPlanByTableInfo(params);
+		List<Plan> planNum = planService.findPlanForTableInfo(params);
+
 			   
 		DatatablesViewPage<Plan> view = new DatatablesViewPage<Plan>();
 	    view.setiTotalDisplayRecords(planNum.size());

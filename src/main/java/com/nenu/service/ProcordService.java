@@ -19,5 +19,6 @@ public interface ProcordService {
 	int updateProcordState(Procord procord );
 	int updateProcordPay(Procord procord);
 	List<Procord> findProcordByTableInfo(Map<String, Object> params);
+	List<Procord> findProcordForTableInfo(Map<String, Object> params);
 	int downloadExcel(List<Procord> list, HttpServletResponse response);
 }

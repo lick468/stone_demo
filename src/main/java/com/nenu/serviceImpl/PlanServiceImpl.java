@@ -265,6 +265,12 @@ public class PlanServiceImpl implements PlanService {
 		LOGGER.info("查找计划任务");
 		return planDao.findPlanByTableInfo(params);
 	}
+
+	@Override
+	public List<Plan> findPlanForTableInfo(Map<String, Object> params) {
+		return planDao.findPlanForTableInfo(params);
+	}
+
 	@Override
 	public int deleteOneData(int id) {
 		// TODO Auto-generated method stub

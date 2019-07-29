@@ -25,9 +25,9 @@
 	</select>
 	<select id="findPlanByParams"   resultMap="PlanMap" parameterType="java.util.Map">
 		select * from tb_plan 
-		where 
+		where 1=1
 		<if test="plan_start != null  " >
-		  plan_start = #{plan_start}
+		  and plan_start = #{plan_start}
 		</if>
 		<if test="plan_end != null  " >
 		  and  plan_end = #{plan_end}
@@ -69,8 +69,46 @@
 		</foreach>
 	</insert>
 	
+	<select id="findPlanForTableInfo" parameterType="java.util.Map" resultMap="PlanMap">
+		select * from tb_plan
+		where 1=1
+		<if test="plan_start != null  " >
+			and plan_start = #{plan_start}
+		</if>
+		<if test="plan_end != null  " >
+			and  plan_end = #{plan_end}
+		</if>
+		<if test="plan_room != null  " >
+			and  plan_room = #{plan_room}
+		</if>
+		<if test="plan_belong != null  " >
+			and  plan_belong = #{plan_belong}
+		</if>
+		<if test="plan_index != null  " >
+			and  plan_index = #{plan_index}
+		</if>
+		order by plan_ID DESC
+
+	</select>
 	<select id="findPlanByTableInfo" parameterType="java.util.Map" resultMap="PlanMap">
-		select * from tb_plan order by plan_ID DESC limit #{sEcho},#{len}
+		select * from tb_plan
+		where 1=1
+		<if test="plan_start != null  " >
+			and plan_start = #{plan_start}
+		</if>
+		<if test="plan_end != null  " >
+			and  plan_end = #{plan_end}
+		</if>
+		<if test="plan_room != null  " >
+			and  plan_room = #{plan_room}
+		</if>
+		<if test="plan_belong != null  " >
+			and  plan_belong = #{plan_belong}
+		</if>
+		<if test="plan_index != null  " >
+			and  plan_index = #{plan_index}
+		</if>
+		order by plan_ID DESC limit #{sEcho},#{len}
 	</select>
 	<!-- 单条删除 -->
 	<delete id="deleteOneData" parameterType="java.lang.Integer">

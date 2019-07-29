@@ -1234,12 +1234,19 @@ public class FinpordServiceImpl implements FinpordService {
 		return finpordDao.findFinpordByTableInfo(params);
 	}
 
+	@Override
+	public List<Finpord> findFinpordForTableInfo(Map<String, Object> params) {
+		// TODO Auto-generated method stub
+		return finpordDao.findFinpordForTableInfo(params);
+	}
+
 
 	@Override
 	public List<FinpordCopy> findFinpordCopyByTableInfo(Map<String, Object> params) {
 		// TODO Auto-generated method stub
 		return finpordCopyDao.findFinpordCopyByTableInfo(params);
 	}
+
 
 	@Override
 	public List<Finpord> findDistinctBarcode() {

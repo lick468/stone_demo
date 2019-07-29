@@ -94,6 +94,11 @@ public class ProcordServiceImpl implements ProcordService {
 	}
 
 	@Override
+	public List<Procord> findProcordForTableInfo(Map<String, Object> params) {
+		return procordDao.findProcordForTableInfo(params);
+	}
+
+	@Override
 	public int downloadExcel(List<Procord> list, HttpServletResponse response) {
 		LOGGER.info("导出加工订单表");
         String sheetName = "加工订单表表单";

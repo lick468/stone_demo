@@ -37,6 +37,7 @@ public interface FinpordService {
 	int deleteFinpordCopy(String finprod_ID);
 	int deleteAllData();
 	List<Finpord> findFinpordByTableInfo(Map<String, Object> params);
+	List<Finpord> findFinpordForTableInfo(Map<String, Object> params);
 	List<FinpordCopy> findFinpordCopyByTableInfo(Map<String, Object> params);
 
 	List<Finpord> findDistinctBarcode();

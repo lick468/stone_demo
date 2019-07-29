@@ -12,6 +12,7 @@ public interface PlanService {
 	int insertPlanByExcel(Plan plan);//把excel文件里的数据导入数据库
 	int batchInsertPlan(List<Plan> planList);//批量插入
 	List<Plan> findPlanByTableInfo(Map<String, Object> params);//查找数据库里数据
+	List<Plan> findPlanForTableInfo(Map<String, Object> params);//查找数据库里数据
 	int deleteOneData(int id); //删除一条
 	int deleteAllData();//清空
 	List<Plan> findPlanByParams(Map<String, Object> params);//根据参数查找
