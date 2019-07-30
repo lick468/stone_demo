@@ -45,8 +45,51 @@
 		where 
 		fediff_time=#{fediff_time} 
 	</select>
+	<select id="findFediffForTableInfo" parameterType="java.util.Map" resultMap="BaseResultMapfediff">
+		select * from tb_fediff
+        where 1=1
+        <if test="start!=null">
+            and fediff_time <![CDATA[ >= ]]>#{start}
+        </if>
+        <if test="end!=null">
+            and fediff_time <![CDATA[ <= ]]>#{end}
+        </if>
+        <if test="fediff_procordNo!=null">
+            and fediff_procordNo = #{fediff_procordNo}
+        </if>
+        <if test="fediff_stoneNo!=null">
+            and fediff_stoneNo = #{fediff_stoneNo}
+        </if>
+        <if test="fediff_batch!=null">
+            and fediff_batch = #{fediff_batch}
+        </if>
+        <if test="finpord_procordNo!=null">
+            and finpord_procordNo = #{finpord_procordNo}
+        </if>
+		ORDER BY fediff_ID DESC
+	</select>
 	<select id="findFediffByTableInfo" parameterType="java.util.Map" resultMap="BaseResultMapfediff">
-		select * from tb_fediff  ORDER BY fediff_ID DESC limit #{sEcho},#{len}
+		select * from tb_fediff
+        where 1=1
+        <if test="start!=null">
+            and fediff_time <![CDATA[ >= ]]>#{start}
+        </if>
+        <if test="end!=null">
+            and fediff_time <![CDATA[ <= ]]>#{end}
+        </if>
+        <if test="fediff_procordNo!=null">
+            and fediff_procordNo = #{fediff_procordNo}
+        </if>
+        <if test="fediff_stoneNo!=null">
+            and fediff_stoneNo = #{fediff_stoneNo}
+        </if>
+        <if test="fediff_batch!=null">
+            and fediff_batch = #{fediff_batch}
+        </if>
+        <if test="finpord_procordNo!=null">
+            and finpord_procordNo = #{finpord_procordNo}
+        </if>
+		ORDER BY fediff_ID DESC limit #{sEcho},#{len}
 	</select>
 
 	<select id="findDistinctFediffTime"  resultMap="BaseResultMapfediff">

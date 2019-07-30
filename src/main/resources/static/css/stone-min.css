@@ -52,7 +52,7 @@
 	border-radius: 20px 20px 0px 0px;
 	background-color: cornflowerblue;
 	text-align: center;
-	font-family: "ËÎÌå";
+	font-family: "ï¿½ï¿½ï¿½ï¿½";
 	font-size: 40px;
 }
 
@@ -82,7 +82,7 @@
 	background-color: #C0C0C0;
 	text-align: center;
 	height: 50px;
-	font-family: "ËÎÌå";
+	font-family: "ï¿½ï¿½ï¿½ï¿½";
 	font-size: 40px;
 	font-style: oblique;
 }
@@ -137,14 +137,14 @@ table tr:nth-child(2n+2){
   background-color: #FF0000;
   border: none;
   border-radius: 15px;
-  box-shadow: 0 3px #999;
+  box-shadow: 0 3px #FF0000;
 
 }
 .btn_delete:hover {background-color: #B00000}
 
 .btn_delete:active {
   background-color: #B00000;
-  box-shadow: 0 1px #666;
+  box-shadow: 0 1px #FF0000;
   transform: translateY(4px);
 }
 
@@ -160,16 +160,40 @@ table tr:nth-child(2n+2){
   background-color: #3385FF;
   border: none;
   border-radius: 15px;
-  box-shadow: 0 3px #999;
+  box-shadow: 0 3px #0033CC;
 
 }
 .btn_search:hover {background-color: #3366FF}
 
 .btn_search:active {
   background-color: #3366FF;
-  box-shadow: 0 1px #666;
+  box-shadow: 0 1px #0033CC;
   transform: translateY(4px);
 }
+
+.btn_reset{
+    display: inline-block;
+    padding: 9px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: #FF9966;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 3px #FF0033;
+
+}
+.btn_reset:hover {background-color: #FF9900}
+
+.btn_reset:active {
+    background-color: #FF6633;
+    box-shadow: 0 1px #FF0033;
+    transform: translateY(4px);
+}
+
 .btn_title_1{
   display: inline-block;
   padding: 9px 20px;

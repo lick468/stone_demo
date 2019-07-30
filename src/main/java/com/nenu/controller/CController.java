@@ -1061,11 +1061,19 @@ public class CController {
 	@ApiOperation(value="动态加载表格数据（按页获取）",notes="动态加载表格数据（按页获取）")
 	@RequestMapping(value="/getFediffTableData",method=RequestMethod.POST)
 	@ResponseBody
-	public DatatablesViewPage<Fediff> getFediffTableData(@RequestParam String aoData, HttpServletRequest request )  {
+	public DatatablesViewPage<Fediff> getFediffTableData(@RequestParam String aoData,@RequestParam String fediffListStoneNo,
+														 @RequestParam String fediffListEndTime,@RequestParam String fediffListStartTime,
+														 @RequestParam String fediffListProcoedNo,@RequestParam String fediffListFinpordNo,
+														 @RequestParam String fediffListBatch)  {
 		Map<String, Object> map = new HashMap<String, Object>();
 		//System.out.println("这里");
 		Map<String, Object> params = new HashMap<String, Object>();			
 		 //System.out.println(aoData);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        ParsePosition pos = new ParsePosition(0);
+        Date start = sdf.parse(fediffListStartTime, pos);
+        pos = new ParsePosition(0);
+        Date end = sdf.parse(fediffListEndTime, pos);
 		
 		int sEcho =Integer.parseInt(aoData.split(":")[2].split("}")[0]); 
 		int iDisplayStart = Integer.parseInt(aoData.split(":")[8].split("}")[0]);
@@ -1073,17 +1081,27 @@ public class CController {
 		 sEcho = (sEcho-1)*10;
 		 params.put("sEcho",iDisplayStart);
 		 params.put("len", 10);
-		 List<Fediff> fediffList = new ArrayList<Fediff>();
-		 List<Fediff> fediffNum = fediffService.findAllFediff();
-		 fediffList = fediffService.findFediffByTableInfo(params);
-		 
-		//获取分页控件的信息
-	    String start = request.getParameter("start");
-	    //System.out.println(start);
-	    String length = request.getParameter("length");
-	    //System.out.println(length);
-	 //获取前台额外传递过来的查询条件
-	    String extra_search = request.getParameter("extra_search");
+        if(fediffListStoneNo.length() > 0) {
+            params.put("fediff_stoneNo",fediffListStoneNo);
+        }
+        if(fediffListProcoedNo.length() > 0) {
+            params.put("fediff_procordNo",fediffListProcoedNo);
+        }
+        if(fediffListFinpordNo.length() > 0) {
+            params.put("finpord_procordNo",fediffListFinpordNo);
+        }
+        if(fediffListBatch.length() > 0) {
+            params.put("fediff_batch",fediffListBatch);
+        }
+        if(fediffListStartTime.length() > 4) {
+            params.put("start",start);
+        }
+        if(fediffListEndTime.length() > 4) {
+            params.put("end",end);
+        }
+		 List<Fediff> fediffList = fediffService.findFediffByTableInfo(params);
+		 List<Fediff> fediffNum = fediffService.findFediffForTableInfo(params);
+
 
 	    DatatablesViewPage<Fediff> view = new DatatablesViewPage<Fediff>();
 	    view.setiTotalDisplayRecords(fediffNum.size());

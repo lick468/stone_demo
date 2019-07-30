@@ -11,7 +11,30 @@
 <link href="/css/dataTables.bootstrap.min.css" rel="stylesheet"/>
 <link href="/css/stone-min.css" rel="stylesheet" />
 <title>数据管理</title>
+<style>
+    .btn_reset{
+        display: inline-block;
+        padding: 9px 20px;
+        font-size: 14px;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        outline: none;
+        color: #fff;
+        background-color: #FFCC00;
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 3px #FFCC33;
 
+    }
+    .btn_reset:hover {background-color: #FF9900}
+
+    .btn_reset:active {
+        background-color: #FF6633;
+        box-shadow: 0 1px #FFCC33;
+        transform: translateY(4px);
+    }
+</style>
 </head>
 <body  >
 
@@ -20,80 +43,91 @@
 <h1>数据管理</h1>
 </div>
 
-
-<div>
-<button class="btn_delete" onclick="return all_delete();">全部删除</button>	
-</div>
 <div class="container">
     <div class="row clearfix">
-        <div class="col-md-4 column">
-            <div class="input-group">
-                <span class="input-group-addon" >库房</span>
-                <input type="text" class="form-control" placeholder="请输入库房" id="room">
+        <div class="col-md-12 column">
+            <div class="row clearfix" style="text-align:center;margin-top:10px;">
+                <div class="col-md-4 column">
+                    <div class="input-group">
+                        <span class="input-group-addon" >库房</span>
+                        <input type="text" class="form-control" placeholder="请输入库房" id="room">
+                    </div>
+                </div>
+                <div class="col-md-4 column">
+                    <div class="input-group">
+                        <span class="input-group-addon" >单号</span>
+                        <input type="text" class="form-control" placeholder="请输入单号" id="orderNo">
+                    </div>
+                </div>
+                <div class="col-md-4 column">
+                    <div class="input-group">
+                        <span class="input-group-addon" >条码</span>
+                        <input type="text" class="form-control" placeholder="请输入条码" id="barcode">
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-md-4 column">
-            <div class="input-group">
-                <span class="input-group-addon" >单号</span>
-                <input type="text" class="form-control" placeholder="请输入单号" id="orderNo">
+        <div class="col-md-12 column">
+            <div class="row clearfix" style="text-align:center;margin-top:10px;">
+                <div class="col-md-4 column">
+                    <div class="input-group">
+                        <span class="input-group-addon" >名称</span>
+                        <input type="text" class="form-control" placeholder="请输入名称" id="product">
+                    </div>
+                </div>
+                <div class="col-md-4 column">
+                    <div class="input-group">
+                        <span class="input-group-addon" >柜台</span>
+                        <input type="text" class="form-control" placeholder="请输入柜台" id="counter">
+                    </div>
+                </div>
+                <div class="col-md-4 column">
+                    <div class="input-group">
+                        <span class="input-group-addon" >供应商</span>
+                        <input type="text" class="form-control" placeholder="请输入供应商" id="supplier">
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-md-4 column">
-            <div class="input-group">
-                <span class="input-group-addon" >条码</span>
-                <input type="text" class="form-control" placeholder="请输入条码" id="barcode">
+        <div class="col-md-12 column">
+            <div class="row clearfix" style="text-align:center;margin-top:10px;">
+                <div class="col-md-4 column">
+                    <div class="input-group">
+                        <span class="input-group-addon" >开始时间</span>
+                        <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="starttime">
+                    </div>
+                </div>
+                <div class="col-md-4 column">
+                    <div class="input-group">
+                        <span class="input-group-addon" >结束时间</span>
+                        <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="endtime">
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="row clearfix">
-        <div class="col-md-4 column">
-            <div class="input-group">
-                <span class="input-group-addon" >名称</span>
-                <input type="text" class="form-control" placeholder="请输入名称" id="product">
+
+        <div class="col-md-12 column">
+            <div class="row clearfix" style="text-align:center;margin-top:10px;">
+                <div class="col-md-12 column" style="text-align:center;">
+                    <button type="button" class="btn btn_search" onclick="search()">查询</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn_reset" onclick="reset()">重置</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn_delete" onclick="return all_delete();">全部删除</button>
+                </div>
             </div>
-        </div>
-        <div class="col-md-4 column">
-            <div class="input-group">
-                <span class="input-group-addon" >柜台</span>
-                <input type="text" class="form-control" placeholder="请输入柜台" id="counter">
-            </div>
-        </div>
-        <div class="col-md-4 column">
-            <div class="input-group">
-                <span class="input-group-addon" >供应商</span>
-                <input type="text" class="form-control" placeholder="请输入供应商" id="supplier">
-            </div>
-        </div>
-    </div>
-    <div class="row clearfix">
-        <div class="col-md-6 column">
-            <div class="input-group">
-                <span class="input-group-addon" >开始时间</span>
-                <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="starttime">
-            </div>
-        </div>
-        <div class="col-md-6 column">
-            <div class="input-group">
-                <span class="input-group-addon" >结束时间</span>
-                <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="endtime">
-            </div>
-        </div>
-    </div>
-    <div class="row clearfix">
-        <div class="col-md-6 column">
-            <button class="btn_delete" onclick="search()">查询</button>
-        </div>
-        <div class="col-md-6 column">
-            <button class="btn_delete" onclick="reset()">重置</button>
         </div>
     </div>
 </div>
-
-<br>
-<div style="border:1px solid #00BFFF;padding: 10px 10px 10px;">
-<table id="example" class="table table-striped table-bordered" style="width:100%">
-        <thead>
-           <tr>
+<div class="col-md-12 column">
+    <div class="row clearfix" style="text-align:center;margin-top:10px;">
+        <table id="example" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+            <tr>
+                <th colspan="12" style="text-align:center;"></th>
+            </tr>
+            <tr>
+                <th colspan="12" style="text-align:center;font-size: 30px;">销售数据</th>
+            </tr>
+            <tr>
                 <th>序号</th>
                 <th>来源</th>
                 <th>库房</th>
@@ -106,14 +140,12 @@
                 <th>销售人</th>
                 <th>供应商</th>
                 <th>操作</th>
-                
+
             </tr>
-        </thead>
-        <tbody>
-           
-           
-        </tbody>
-        <tfoot>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot>
             <tr>
                 <th>序号</th>
                 <th>来源</th>
@@ -128,8 +160,9 @@
                 <th>供应商</th>
                 <th>操作</th>
             </tr>
-        </tfoot>
-    </table>
+            </tfoot>
+        </table>
+    </div>
 </div>
     <!-- 全局js -->
     <script src="/js/jquery.min.js?v=2.1.4" type="text/javascript"></script>

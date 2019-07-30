@@ -17,6 +17,7 @@ public interface FediffDao {
 	int downloadFediff(List<Fediff> list,HttpServletResponse response);
 	List<Fediff> findFediffByTime(Date fediff_time);
 	List<Fediff> findFediffByTableInfo(Map<String, Object> params);
+	List<Fediff> findFediffForTableInfo(Map<String, Object> params);
 
 	List<Fediff> findDistinctFediffTime();
 
