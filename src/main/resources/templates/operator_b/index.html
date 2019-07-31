@@ -553,43 +553,45 @@ text-align: center;
                                 <div class="col-md-12 column" style="text-align:center;">
                                     <button type="button" class="btn btn_search" onclick="searchSupplierListStone()">查询</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     <button type="button" class="btn btn_reset" onclick="resetSupplierListStone()">重置</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <button type="button" class="btn btn_delete" onclick="return all_delete();">全部删除</button>
+                                    <button type="button" class="btn btn_search" onclick="downloadSupplierStone();">Excel下载</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <button type="button" class="btn btn_search" onclick="downloadExcelAllSupplier();">供应商库存汇总下载</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div id="showstonebysupplier" style="margin-top: 60px;">
-                    <div class="input-group col-lg-2 "  >
-                        <span class="input-group-addon"   >主石数</span>
-                        <input type="text" class="form-control"  id="mainNumberSupplier" disabled="disabled" th:value="${session.supplierStoneMainNumber}" />
-                    </div>
-                    <div class="input-group col-lg-2 "  >
-                        <span class="input-group-addon"   >主石重</span>
-                        <input type="text" class="form-control"  id="mainWeightSupplier" disabled="disabled" th:value="${#numbers.formatDecimal(session.supplierStoneMainWeight,0,3)}"/>
-                    </div>
-                    <div class="input-group col-lg-2 "  >
-                        <span class="input-group-addon"   >副石数</span>
-                        <input type="text" class="form-control"  id="subNumberSupplier" disabled="disabled" th:value="${session.supplierStoneSubNumber}"/>
-                    </div>
-                    <div class="input-group col-lg-2 "  >
-                        <span class="input-group-addon"   >副石重</span>
-                        <input type="text" class="form-control"  id="subWeightSupplier" disabled="disabled" th:value="${#numbers.formatDecimal(session.supplierStoneSubWeight,0,3)}"/>
-                    </div>
-                    <form action="/b/downloadExcelSupplier" method="post" style="margin-left: 1000px;">
-                        <input type="hidden"  value="" name="result" id="contextSupplierForOne"/>
-                        <input type="submit" class = "btn_search" value="Excel下载">
-                    </form>
+
                     <table id="stonelistBySupplier"
-                           class="table table-striped table-bordered table-hover " style="width: 100%;border:1px solid black;">
+                           class="table table-striped table-bordered table-hover " style="width: 100%;">
                         <thead>
                         <tr>
-                            <tr>
-                                <th colspan="14" style="text-align:center;"></th>
-                            </tr>
-                            <tr>
-                                <th colspan="14" style="text-align:center;font-size: 30px;">供应商库存</th>
-                            </tr>
+                            <th colspan="14" style="text-align:center;"></th>
+                        </tr>
+                        <tr>
+                            <th colspan="14" style="text-align:center;font-size: 30px;">供应商库存</th>
+                        </tr>
+                        <tr>
+                            <th colspan="14" style="text-align:center;">
+                                <div class="input-group col-lg-2 "  >
+                                    <span class="input-group-addon"   >主石数</span>
+                                    <input type="text" class="form-control"  id="mainNumberSupplier" disabled="disabled" th:value="${session.supplierStoneMainNumber}" />
+                                </div>
+                                <div class="input-group col-lg-2 "  >
+                                    <span class="input-group-addon"   >主石重</span>
+                                    <input type="text" class="form-control"  id="mainWeightSupplier" disabled="disabled" th:value="${#numbers.formatDecimal(session.supplierStoneMainWeight,0,3)}"/>
+                                </div>
+                                <div class="input-group col-lg-2 "  >
+                                    <span class="input-group-addon"   >副石数</span>
+                                    <input type="text" class="form-control"  id="subNumberSupplier" disabled="disabled" th:value="${session.supplierStoneSubNumber}"/>
+                                </div>
+                                <div class="input-group col-lg-2 "  >
+                                    <span class="input-group-addon"   >副石重</span>
+                                    <input type="text" class="form-control"  id="subWeightSupplier" disabled="disabled" th:value="${#numbers.formatDecimal(session.supplierStoneSubWeight,0,3)}"/>
+                                </div>
+                            </th>
+                        </tr>
+                        <tr>
                             <th>序号</th>
                             <th>采购日期</th>
                             <th>供应商</th>
@@ -676,45 +678,43 @@ text-align: center;
                                 <div class="col-md-12 column" style="text-align:center;">
                                     <button type="button" class="btn btn_search" onclick="searchListStone()">查询</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     <button type="button" class="btn btn_reset" onclick="resetListStone()">重置</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <button type="button" class="btn btn_search" onclick="return all_delete();">Excel下载</button>
+                                    <button type="button" class="btn btn_search" onclick="downloadLocalStone();">Excel下载</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div id="stoneallListaaa" style="margin-top: 60px;">
-                    <div class="input-group col-lg-2 "  >
-                        <span class="input-group-addon"   >主石数</span>
-                        <input type="text" class="form-control"   disabled="disabled" th:value="${mainNumber}"/>
-                    </div>
-                    <div class="input-group col-lg-2 "  >
-                        <span class="input-group-addon"   >主石重</span>
-                        <input type="text" class="form-control"   disabled="disabled" th:value="${#numbers.formatDecimal(mainWeight,0,3)}"/>
-                    </div>
-                    <div class="input-group col-lg-2 "  >
-                        <span class="input-group-addon"   >副石数</span>
-                        <input type="text" class="form-control"   disabled="disabled" th:value="${subNumber}"/>
-                    </div>
-                    <div class="input-group col-lg-2 "  >
-                        <span class="input-group-addon"   >副石重</span>
-                        <input type="text" class="form-control"   disabled="disabled" th:value="${#numbers.formatDecimal(subWeight,0,3)}"/>
-                    </div>
-                    <form action="/b/downloadExcel" method="post" style="margin-left: 1000px;">
-                        <input type="hidden"  value="all" name="result" id="resultAll"/>
-                        <input type="submit" class = "btn_search" value="Excel下载">
-                    </form>
-
-
                     <table id="listAllStone" class="table table-striped table-bordered"
                            style="width: 100%;">
                         <thead>
                         <tr>
-                            <tr>
-                                <th colspan="16" style="text-align:center;"></th>
-                            </tr>
-                            <tr>
-                                <th colspan="16" style="text-align:center;font-size: 30px;">石库库存</th>
-                            </tr>
+                            <th colspan="16" style="text-align:center;"></th>
+                        </tr>
+                        <tr>
+                            <th colspan="16" style="text-align:center;font-size: 30px;">石库库存</th>
+                        </tr>
+                        <tr>
+                            <th colspan="16" style="text-align:center;">
+                                <div class="input-group col-lg-2 "  >
+                                    <span class="input-group-addon"   >主石数</span>
+                                    <input type="text" class="form-control"   disabled="disabled" th:value="${mainNumber}"/>
+                                </div>
+                                <div class="input-group col-lg-2 "  >
+                                    <span class="input-group-addon"   >主石重</span>
+                                    <input type="text" class="form-control"   disabled="disabled" th:value="${#numbers.formatDecimal(mainWeight,0,3)}"/>
+                                </div>
+                                <div class="input-group col-lg-2 "  >
+                                    <span class="input-group-addon"   >副石数</span>
+                                    <input type="text" class="form-control"   disabled="disabled" th:value="${subNumber}"/>
+                                </div>
+                                <div class="input-group col-lg-2 "  >
+                                    <span class="input-group-addon"   >副石重</span>
+                                    <input type="text" class="form-control"   disabled="disabled" th:value="${#numbers.formatDecimal(subWeight,0,3)}"/>
+                                </div>
+                            </th>
+                        </tr>
+                        <tr>
                             <th>序号</th>
                             <th>采购日期</th>
                             <th>裸石厂</th>
@@ -761,94 +761,89 @@ text-align: center;
 	</div>
 	<!-- 石库管理 -->
 	<div id="manage"
-		style="display: none; border: 0px solid #00BFFF; height: 90px;">
-		<div style="height: 10px;"></div>
-		<div class="input-group col-lg-2 "  >
-				<span class="input-group-addon"  >石编</span>
-				<input type="text" class="form-control"  placeholder="请输入石编"  id="manage_stoneNo"/>
-			</div>
-			<div class="input-group col-lg-2"> 
-				<button  class="btn_search" onclick="manageStoneNoSearch();" >	查找</button>		
-			</div>
-			<form action="/b/downloadAllStoneExcel" method="post" style="margin-left: 1000px;">
-					<input type="submit" class = "btn_search" value="Excel下载">
-			</form> 
-			<div class="space"></div>
-        <div class="container">
-            <div class="row clearfix">
-                <div class="col-md-12 column">
-                    <div class="row clearfix" style="text-align:center;margin-top:10px;">
-                        <div class="col-md-4 column">
-                            <div class="input-group">
-                                <span class="input-group-addon" >主石编</span>
-                                <input type="text" class="form-control" placeholder="请输入主石编" id="manageStoneMainNo">
+		style="display: none; border: 1px solid #00BFFF; ">
+		<div id="stoneShowList" >
+            <div class="container">
+                <div class="row clearfix">
+                    <div class="col-md-12 column">
+                        <div class="row clearfix" style="text-align:center;height: 10px;">
+                            <div class="col-md-4 column">
+                                <div class="input-group">
+                                    <span class="input-group-addon" >主石编</span>
+                                    <input type="text" class="form-control" placeholder="请输入主石编" id="manageStoneMainNo">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-4 column">
-                            <div class="input-group">
-                                <span class="input-group-addon" >副石编</span>
-                                <input type="text" class="form-control" placeholder="请输入副石编" id="manageStoneSubNo">
+                            <div class="col-md-4 column">
+                                <div class="input-group">
+                                    <span class="input-group-addon" >副石编</span>
+                                    <input type="text" class="form-control" placeholder="请输入副石编" id="manageStoneSubNo">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-4 column">
-                            <div class="input-group">
-                                <span class="input-group-addon" >裸石厂</span>
-                                <input type="text" class="form-control" placeholder="请输入裸石厂" id="manageStoneLoosdofty">
+                            <div class="col-md-4 column">
+                                <div class="input-group">
+                                    <span class="input-group-addon" >裸石厂</span>
+                                    <input type="text" class="form-control" placeholder="请输入裸石厂" id="manageStoneLoosdofty">
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-12 column">
-                    <div class="row clearfix" style="text-align:center;margin-top:10px;">
-                        <div class="col-md-4 column">
-                            <div class="input-group">
-                                <span class="input-group-addon" >开始时间</span>
-                                <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="manageStoneStartTime">
+                    <div class="col-md-12 column">
+                        <div class="row clearfix" style="text-align:center;margin-top:10px;">
+                            <div class="col-md-4 column">
+                                <div class="input-group">
+                                    <span class="input-group-addon" >开始时间</span>
+                                    <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="manageStoneStartTime">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-4 column">
-                            <div class="input-group">
-                                <span class="input-group-addon" >结束时间</span>
-                                <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="manageStoneEndTime">
+                            <div class="col-md-4 column">
+                                <div class="input-group">
+                                    <span class="input-group-addon" >结束时间</span>
+                                    <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="manageStoneEndTime">
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="col-md-12 column">
-                    <div class="row clearfix" style="text-align:center;margin-top:10px;">
-                        <div class="col-md-12 column" style="text-align:center;">
-                            <button type="button" class="btn btn_search" onclick="searchManageStone()">查询</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <button type="button" class="btn btn_reset" onclick="resetManageStone()">重置</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <button type="button" class="btn btn_search" onclick="return all_delete();">Excel下载</button>
+                    <div class="col-md-12 column">
+                        <div class="row clearfix" style="text-align:center;margin-top:10px;">
+                            <div class="col-md-12 column" style="text-align:center;">
+                                <button type="button" class="btn btn_search" onclick="searchManageStone()">查询</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <button type="button" class="btn btn_reset" onclick="resetManageStone()">重置</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-		<div id="stoneShowList" style="border: 0px solid; margin-top: 10px;">
-			<div class="head">数据显示列表
-				<div class="input-group col-lg-2 "  >
-					<span class="input-group-addon"   >主石数</span>
-					<input type="text" class="form-control"  id="mainNumber" disabled="disabled" th:value="${mainNumber}"/>
-				</div>
-				<div class="input-group col-lg-2 "  >
-					<span class="input-group-addon"   >主石重</span>
-					<input type="text" class="form-control"  id="mainWeight" disabled="disabled" th:value="${#numbers.formatDecimal(mainWeight,0,3)}"/>
-				</div>
-				<div class="input-group col-lg-2 "  >
-					<span class="input-group-addon"   >副石数</span>
-					<input type="text" class="form-control"  id="subNumber" disabled="disabled" th:value="${subNumber}"/>
-				</div>
-				<div class="input-group col-lg-2 "  >
-					<span class="input-group-addon"   >副石重</span>
-					<input type="text" class="form-control"  id="subWeight" disabled="disabled" th:value="${#numbers.formatDecimal(subWeight,1,3)}"/>
-				</div>
-			</div>
 			<div id="manage_all">
 			<table id="exampletableshowList"
 				class="table table-striped table-bordered" style="width: 100%;">
 				<thead>
+                    <tr>
+                        <th colspan="16" style="text-align:center;"></th>
+                    </tr>
+                    <tr>
+                        <th colspan="16" style="text-align:center;font-size: 30px;">石库库存</th>
+                    </tr>
+                    <tr>
+                        <th colspan="16" style="text-align:center;">
+                            <div class="input-group col-lg-2 "  >
+                                <span class="input-group-addon"   >主石数</span>
+                                <input type="text" class="form-control"  id="mainNumber" disabled="disabled" th:value="${mainNumber}"/>
+                            </div>
+                            <div class="input-group col-lg-2 "  >
+                                <span class="input-group-addon"   >主石重</span>
+                                <input type="text" class="form-control"  id="mainWeight" disabled="disabled" th:value="${#numbers.formatDecimal(mainWeight,0,3)}"/>
+                            </div>
+                            <div class="input-group col-lg-2 "  >
+                                <span class="input-group-addon"   >副石数</span>
+                                <input type="text" class="form-control"  id="subNumber" disabled="disabled" th:value="${subNumber}"/>
+                            </div>
+                            <div class="input-group col-lg-2 "  >
+                                <span class="input-group-addon"   >副石重</span>
+                                <input type="text" class="form-control"  id="subWeight" disabled="disabled" th:value="${#numbers.formatDecimal(subWeight,1,3)}"/>
+                            </div>
+                        </th>
+                    </tr>
 					<tr>
 						<th>序号</th>
 						<th>采购日期</th>
@@ -892,55 +887,7 @@ text-align: center;
 				</tfoot>
 			</table>
 		</div>
-		<div id="manage_search" style="display: none;">
-		 
-			<table id="manage_search_table"
-				class="table table-striped table-bordered" style="width: 100%;">
-				<thead>
-					<tr>
-						<th>序号</th>
-						<th>采购日期</th>
-						<th>裸石厂</th>
-						<th>主石名</th>
-						<th>主石编</th>
-						<th>主石</th>
-						<th>主石数</th>
-						<th>副石编</th>
-						<th>副石名</th>
-						<th>副石</th>
-						<th>副石数</th>
-						<th>经手人</th>
-						<th>接货人</th>
-						<th>备注</th>
-						<th>来源</th>
-						<th>操作</th>
-					</tr>
-				</thead>
-				
-				<tfoot>
-					<tr>
-						
-						<th>序号</th>
-						<th>采购日期</th>
-						<th>裸石厂</th>
-						<th>主石名</th>
-						<th>主石编</th>
-						<th>主石</th>
-						<th>主石数</th>
-						<th>副石编</th>
-						<th>副石名</th>
-						<th>副石</th>
-						<th>副石数</th>
-						<th>经手人</th>
-						<th>接货人</th>
-						<th>备注</th>
-						<th>来源</th>
-						<th>操作</th>
-					</tr>
-				</tfoot>
-			</table>
-		</div>
-		</div>
+        </div>
 
 		<div id="stoneEdit" class="contentDiv"
 			style="border: 3px solid; margin-top: 100px; display: none;">
@@ -1136,7 +1083,7 @@ text-align: center;
 	</div>
 	<!-- 选石 -->
 	<div id="xuanshi" class="container"
-		style="width: 100%; border: 2px solid #00BFFF; display: none;">
+		style="width: 100%; border: 1px solid #00BFFF; display: none;">
 
 		<div
 			style="padding: 10px 10px 10px; width: 50%; float: left; border-right: solid 1px gray;">
@@ -1319,63 +1266,60 @@ text-align: center;
 	</div>
 	<!-- 加工订单出库 -->
 	<div id="songshichuku" class="container"
-		style="width: 100%;  display: none;">
-		<div style="height: 10px;"></div>
-		<div id="ProcordShowList" style="padding: 10px 10px 10px;">
-			<div class="container">
-				<div class="row clearfix">
-					<div class="col-md-12 column">
-						<div class="row clearfix" style="text-align:center;margin-top:10px;">
-							<div class="col-md-4 column">
-								<div class="input-group">
-									<span class="input-group-addon" >批次</span>
-									<input type="text" class="form-control" placeholder="请输入批次" id="procordBatch">
-								</div>
-							</div>
-							<div class="col-md-4 column">
-								<div class="input-group">
-									<span class="input-group-addon" >订单号</span>
-									<input type="text" class="form-control" placeholder="请输入订单号" id="procordNo">
-								</div>
-							</div>
-							<div class="col-md-4 column">
-								<div class="input-group">
-									<span class="input-group-addon" >加工厂</span>
-									<input type="text" class="form-control" placeholder="请输入加工厂" id="procordSupplier">
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-12 column">
-						<div class="row clearfix" style="text-align:center;margin-top:10px;">
-							<div class="col-md-4 column">
-								<div class="input-group">
-									<span class="input-group-addon" >订单日期</span>
-									<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="procordDate">
-								</div>
-							</div>
-							<div class="col-md-4 column">
-								<div class="input-group">
-									<span class="input-group-addon" >出货日期</span>
-									<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="procordDelyDate">
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-12 column">
-						<div class="row clearfix" style="text-align:center;margin-top:10px;">
-							<div class="col-md-12 column" style="text-align:center;">
-								<button type="button" class="btn btn_search" onclick="searchProcord()">查询</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								<button type="button" class="btn btn_reset" onclick="resetProcord()">重置</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		style="width: 100%;display: none;border: 1px solid #00FFFF;">
+
+		<div id="ProcordShowList" >
+            <div class="container">
+                <div class="row clearfix">
+                    <div class="col-md-12 column">
+                        <div class="row clearfix" style="text-align:center;height: 10px;">
+                            <div class="col-md-4 column">
+                                <div class="input-group">
+                                    <span class="input-group-addon" >批次</span>
+                                    <input type="text" class="form-control" placeholder="请输入批次" id="procordBatch">
+                                </div>
+                            </div>
+                            <div class="col-md-4 column">
+                                <div class="input-group">
+                                    <span class="input-group-addon" >订单号</span>
+                                    <input type="text" class="form-control" placeholder="请输入订单号" id="procordNo">
+                                </div>
+                            </div>
+                            <div class="col-md-4 column">
+                                <div class="input-group">
+                                    <span class="input-group-addon" >加工厂</span>
+                                    <input type="text" class="form-control" placeholder="请输入加工厂" id="procordSupplier">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 column">
+                        <div class="row clearfix" style="text-align:center;margin-top:10px;">
+                            <div class="col-md-4 column">
+                                <div class="input-group">
+                                    <span class="input-group-addon" >订单日期</span>
+                                    <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="procordDate">
+                                </div>
+                            </div>
+                            <div class="col-md-4 column">
+                                <div class="input-group">
+                                    <span class="input-group-addon" >出货日期</span>
+                                    <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="procordDelyDate">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 column">
+                        <div class="row clearfix" style="text-align:center;margin-top:10px;">
+                            <div class="col-md-12 column" style="text-align:center;">
+                                <button type="button" class="btn btn_search" onclick="searchProcord()">查询</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <button type="button" class="btn btn_reset" onclick="resetProcord()">重置</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 <button type="button" class="btn btn_search" onclick="downloadProcord()">Excel下载</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="head">加工订单表<small>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="btn_download" href="/b/downloadProcord">Excel下载</a> </small>
-			</div>
-			<br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 			<table id="exampleorderout"
 				class="table table-striped table-bordered table-hover " style="width: 100%;">
 				<thead>
@@ -3906,6 +3850,7 @@ function retrieveSupplierStoneData(sSource, aoData, fnCallback ) {
             async : false,
             success : function(result) {
                 fnCallback(result);//把返回的数据传给这个方法就可以了,datatable会自动绑定数据的
+
             },
             error : function(msg) {
                 alert(msg);
@@ -3945,7 +3890,7 @@ function retrieveSupplierStoneData(sSource, aoData, fnCallback ) {
         $("#manageStoneSubNo").val("");
         $("#manageStoneLoosdofty").val("");
         $("#manageStoneStartTime").val("");
-        $("#manageStoneSubTime").val("");
+        $("#manageStoneEndTime").val("");
         dataTableManageStone.ajax.reload();
     }
     function resetListStone() {
@@ -3953,16 +3898,112 @@ function retrieveSupplierStoneData(sSource, aoData, fnCallback ) {
         $("#listStoneSubNo").val("");
         $("#listStoneLoosdofty").val("");
         $("#listStoneStartTime").val("");
-        $("#listStoneSubTime").val("");
+        $("#listStoneEndTime").val("");
         dataTableListStone.ajax.reload();
     }
     function downloadProcord() {
-        $("#procordBatch").val("");
-        $("#procordDate").val("");
-        $("#procordDelyDate").val("");
-        $("#procordNo").val("");
-        $("#procordSupplier").val("");
-        dataTable.ajax.reload();
+        var urlStrl ="/b/downloadProcord";
+        var procordBatch = $("#procordBatch").val();
+        var procordDate = $("#procordDate").val();
+        var  procordDelyDate =$("#procordDelyDate").val();
+        var  procordNo = $("#procordNo").val();
+        var   procordSupplier =$("#procordSupplier").val();
+        var form = $('<form></form>');
+        form.attr('style', 'display:none');
+        form.attr('target', '_blank');      //设置_blank后，下载会在新窗口打开，同时保留原来的窗口
+        form.attr('method', 'post');
+        form.attr('action', urlStrl);
+        var batch = $('<input type="text" name="procordBatch"  />'); // 可以使用input来提交数据
+        var start = $('<input type="text" name="procordDate"  />'); // 可以使用input来提交数据
+        var end = $('<input type="text" name="procordDelyDate"  />'); // 可以使用input来提交数据
+        var procodeNo = $('<input type="text" name="procordNo"  />'); // 可以使用input来提交数据
+        var supplier = $('<input type="text" name="procordSupplier"  />'); // 可以使用input来提交数据
+        batch.attr('value', procordBatch);  //在input中放入需要传入的数据
+        start.attr('value', procordDate);  //在input中放入需要传入的数据
+        end.attr('value', procordDelyDate);  //在input中放入需要传入的数据
+        procodeNo.attr('value', procordNo);  //在input中放入需要传入的数据
+        supplier.attr('value', procordSupplier);  //在input中放入需要传入的数据
+        form.append(procodeNo);
+        form.append(batch);
+        form.append(supplier);
+        form.append(start);
+        form.append(end);
+        $(document.body).append(form);
+        form.submit();
+    }
+    //  石库库存下载
+    function downloadLocalStone() {
+        var urlStrl ="/b/downloadLocalStone";
+        var listStoneMainNo = $("#listStoneMainNo").val();
+        var listStoneSubNo = $("#listStoneSubNo").val();
+        var  listStoneLoosdofty =$("#listStoneLoosdofty").val();
+        var  listStoneStartTime = $("#listStoneStartTime").val();
+        var   listStoneEndTime =$("#listStoneEndTime").val();
+        var form = $('<form></form>');
+        form.attr('style', 'display:none');
+        form.attr('target', '_blank');      //设置_blank后，下载会在新窗口打开，同时保留原来的窗口
+        form.attr('method', 'post');
+        form.attr('action', urlStrl);
+        var mainNo = $('<input type="text" name="listStoneMainNo"  />'); // 可以使用input来提交数据
+        var subNo = $('<input type="text" name="listStoneSubNo"  />'); // 可以使用input来提交数据
+        var loosdofty = $('<input type="text" name="listStoneLoosdofty"  />'); // 可以使用input来提交数据
+        var start = $('<input type="text" name="listStoneStartTime"  />'); // 可以使用input来提交数据
+        var end = $('<input type="text" name="listStoneEndTime"  />'); // 可以使用input来提交数据
+        mainNo.attr('value', listStoneMainNo);  //在input中放入需要传入的数据
+        subNo.attr('value', listStoneSubNo);  //在input中放入需要传入的数据
+        loosdofty.attr('value', listStoneLoosdofty);  //在input中放入需要传入的数据
+        start.attr('value', listStoneStartTime);  //在input中放入需要传入的数据
+        end.attr('value', listStoneEndTime);  //在input中放入需要传入的数据
+        form.append(mainNo);
+        form.append(subNo);
+        form.append(loosdofty);
+        form.append(start);
+        form.append(end);
+        $(document.body).append(form);
+        form.submit();
+    }
+
+    //  供应商库存下载
+    function downloadSupplierStone() {
+        var urlStrl ="/b/downloadSupplierStone";
+        var supplierListStoneMainNo = $("#supplierListStoneMainNo").val();
+        var supplierListStoneSubNo = $("#supplierListStoneSubNo").val();
+        var  supplierListStoneSupplier =$("#supplierListStoneSupplier").val();
+        var  supplierListStoneStartTime = $("#supplierListStoneStartTime").val();
+        var   supplierListStoneEndTime =$("#supplierListStoneEndTime").val();
+        var form = $('<form></form>');
+        form.attr('style', 'display:none');
+        form.attr('target', '_blank');      //设置_blank后，下载会在新窗口打开，同时保留原来的窗口
+        form.attr('method', 'post');
+        form.attr('action', urlStrl);
+        var mainNo = $('<input type="text" name="supplierListStoneMainNo"  />'); // 可以使用input来提交数据
+        var subNo = $('<input type="text" name="supplierListStoneSubNo"  />'); // 可以使用input来提交数据
+        var supplier = $('<input type="text" name="supplierListStoneSupplier"  />'); // 可以使用input来提交数据
+        var start = $('<input type="text" name="supplierListStoneStartTime"  />'); // 可以使用input来提交数据
+        var end = $('<input type="text" name="supplierListStoneEndTime"  />'); // 可以使用input来提交数据
+        mainNo.attr('value', supplierListStoneMainNo);  //在input中放入需要传入的数据
+        subNo.attr('value', supplierListStoneSubNo);  //在input中放入需要传入的数据
+        supplier.attr('value', supplierListStoneSupplier);  //在input中放入需要传入的数据
+        start.attr('value', supplierListStoneStartTime);  //在input中放入需要传入的数据
+        end.attr('value', supplierListStoneEndTime);  //在input中放入需要传入的数据
+        form.append(mainNo);
+        form.append(subNo);
+        form.append(supplier);
+        form.append(start);
+        form.append(end);
+        $(document.body).append(form);
+        form.submit();
+    }
+    //  供应商库存汇总下载
+    function downloadExcelAllSupplier() {
+        var urlStrl ="/b/downloadExcelAllSupplier";
+        var form = $('<form></form>');
+        form.attr('style', 'display:none');
+        form.attr('target', '_blank');      //设置_blank后，下载会在新窗口打开，同时保留原来的窗口
+        form.attr('method', 'post');
+        form.attr('action', urlStrl);
+        $(document.body).append(form);
+        form.submit();
     }
 
 

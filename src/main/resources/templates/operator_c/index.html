@@ -121,12 +121,17 @@
 	  </form>
 	  </div>
  <!-- 显示列表 -->		
- <div id="FinpordList" style="border:1px solid green;margin-top: 120px;">
-	<legend style="text-align: center;">成品库临时表</legend>
+ <div id="FinpordList" style="border:1px solid black;margin-top: 120px;">
 
 			<table id="listAllFinpordCopy"
 				class="table table-striped table-bordered" style="width: 100%;">
 				<thead>
+                    <tr>
+                        <th colspan="21" style="text-align:center;"></th>
+                    </tr>
+                    <tr>
+                        <th colspan="21" style="text-align:center;font-size: 30px;">成品库临时表</th>
+                    </tr>
 					<tr>
 
 						<th>序号</th>
@@ -187,70 +192,71 @@
 </div>
 
 <!-- 查询与统计 -->
-<div id="finprodrukusearchAndsum" style="display:none;border:1px solid #00BFFF;height:90px;">
+<div id="finprodrukusearchAndsum" style="display:none;border:1px solid #00BFFF;height:150px;">
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <div class="row clearfix" style="text-align:center;margin-top:10px;">
+                    <div class="col-md-4 column">
+                        <div class="input-group">
+                            <span class="input-group-addon" >条码</span>
+                            <input type="text" class="form-control" placeholder="请输入条码" id="finpordListBarcode">
+                        </div>
+                    </div>
+                    <div class="col-md-4 column">
+                        <div class="input-group">
+                            <span class="input-group-addon" >单号</span>
+                            <input type="text" class="form-control" placeholder="请输入单号" id="finpordListProcoedNo">
+                        </div>
+                    </div>
+                    <div class="col-md-4 column">
+                        <div class="input-group">
+                            <span class="input-group-addon" >供应商</span>
+                            <input type="text" class="form-control" placeholder="请输入供应商" id="finpordListSupplier">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 column">
+                <div class="row clearfix" style="text-align:center;margin-top:10px;">
+                    <div class="col-md-4 column">
+                        <div class="input-group">
+                            <span class="input-group-addon" >开始日期</span>
+                            <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="finpordListStartTime">
+                        </div>
+                    </div>
+                    <div class="col-md-4 column">
+                        <div class="input-group">
+                            <span class="input-group-addon" >结束日期</span>
+                            <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="finpordListEndTime">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 column">
+                <div class="row clearfix" style="text-align:center;margin-top:10px;">
+                    <div class="col-md-12 column" style="text-align:center;">
+                        <button type="button" class="btn btn_search" onclick="searchList()">查询</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button type="button" class="btn btn_reset" onclick="resetList()">重置</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button type="button" class="btn btn_search" onclick="downloadExcelFinpord();">Excel下载</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 	<!-- 显示列表 -->		
- <div id="FinpordAllList" style="border:1px solid green;margin-top: 60px;">
-     <div class="container">
-         <div class="row clearfix">
-             <div class="col-md-12 column">
-                 <div class="row clearfix" style="text-align:center;margin-top:10px;">
-                     <div class="col-md-4 column">
-                         <div class="input-group">
-                             <span class="input-group-addon" >条码</span>
-                             <input type="text" class="form-control" placeholder="请输入条码" id="finpordListBarcode">
-                         </div>
-                     </div>
-                     <div class="col-md-4 column">
-                         <div class="input-group">
-                             <span class="input-group-addon" >单号</span>
-                             <input type="text" class="form-control" placeholder="请输入单号" id="finpordListProcoedNo">
-                         </div>
-                     </div>
-                     <div class="col-md-4 column">
-                         <div class="input-group">
-                             <span class="input-group-addon" >供应商</span>
-                             <input type="text" class="form-control" placeholder="请输入供应商" id="finpordListSupplier">
-                         </div>
-                     </div>
-                 </div>
-             </div>
-             <div class="col-md-12 column">
-                 <div class="row clearfix" style="text-align:center;margin-top:10px;">
-                     <div class="col-md-4 column">
-                         <div class="input-group">
-                             <span class="input-group-addon" >开始日期</span>
-                             <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="finpordListStartTime">
-                         </div>
-                     </div>
-                     <div class="col-md-4 column">
-                         <div class="input-group">
-                             <span class="input-group-addon" >结束日期</span>
-                             <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="finpordListEndTime">
-                         </div>
-                     </div>
-                 </div>
-             </div>
-             <div class="col-md-12 column">
-                 <div class="row clearfix" style="text-align:center;margin-top:10px;">
-                     <div class="col-md-12 column" style="text-align:center;">
-                         <button type="button" class="btn btn_search" onclick="searchList()">查询</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                         <button type="button" class="btn btn_reset" onclick="resetList()">重置</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                         <button type="button" class="btn btn_search" onclick="return all_delete();">Excel下载</button>
-                     </div>
-                 </div>
-             </div>
-         </div>
-     </div>
-	<form action="/c/downloadFinprodExcel" method="post" style="margin-left: 1000px;">
-		<input type="hidden"  value="all" name="result" id="resultAll"/>
-		<input type="hidden"   name="level" th:value="${session.level}" id="levelAll"/>
-		<input type="submit" class = "btn_search" value="Excel下载">
-	</form> 
+ <div id="FinpordAllList" >
+
 	<div><input id="result" type="text"  value="all" class="nnnnn"></div>
 	<table id="listAllFinpord" class="table table-striped table-bordered" style="width:100%;">
         <thead>
             <tr>
-
+                <th colspan="21" style="text-align:center;"></th>
+            </tr>
+            <tr>
+                <th colspan="21" style="text-align:center;font-size: 30px;">成品数据表</th>
+            </tr>
+            <tr>
                 <th>序号</th>
                 <th>入库日期</th>
                 <th>条码</th>
@@ -304,12 +310,13 @@
 </div>
 
 <!-- 成品库管理 -->
-<div id="finprodmanage" style="display:none;border:1px solid #00BFFF;height:0px;">
-	<div id="finpordShowList"  style="border:1px solid black;margin-top: 100px;">
-		<div class="container">
-			<div class="row clearfix">
-				<div class="col-md-12 column">
-					<div class="row clearfix" style="text-align:center;margin-top:10px;">
+<div id="finprodmanage" style="display:none;">
+
+	<div id="finpordShowList" >
+        <div class="container">
+            <div class="row clearfix">
+                <div class="col-md-12 column">
+                    <div class="row clearfix" style="text-align:center;margin-top:10px;">
                         <div class="col-md-4 column">
                             <div class="input-group">
                                 <span class="input-group-addon" >条码</span>
@@ -328,10 +335,10 @@
                                 <input type="text" class="form-control" placeholder="请输入供应商" id="finpordManageSupplier">
                             </div>
                         </div>
-					</div>
-				</div>
-				<div class="col-md-12 column">
-					<div class="row clearfix" style="text-align:center;margin-top:10px;">
+                    </div>
+                </div>
+                <div class="col-md-12 column">
+                    <div class="row clearfix" style="text-align:center;margin-top:10px;">
                         <div class="col-md-4 column">
                             <div class="input-group">
                                 <span class="input-group-addon" >开始日期</span>
@@ -344,21 +351,27 @@
                                 <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="finpordManageEndTime">
                             </div>
                         </div>
-					</div>
-				</div>
-				<div class="col-md-12 column">
-					<div class="row clearfix" style="text-align:center;margin-top:10px;">
-						<div class="col-md-12 column" style="text-align:center;">
-							<button type="button" class="btn btn_search" onclick="searchManage()">查询</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<button type="button" class="btn btn_reset" onclick="resetManage()">重置</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<button type="button" class="btn btn_delete" onclick="return all_delete();">全部删除</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+                    </div>
+                </div>
+                <div class="col-md-12 column">
+                    <div class="row clearfix" style="text-align:center;margin-top:10px;">
+                        <div class="col-md-12 column" style="text-align:center;">
+                            <button type="button" class="btn btn_search" onclick="searchManage()">查询</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button type="button" class="btn btn_reset" onclick="resetManage()">重置</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 	<table id="exampletableshowList" class="table table-striped table-bordered" style="width:100%;">
 	        <thead>
+                <tr>
+                    <th colspan="21" style="text-align:center;"></th>
+                </tr>
+                <tr>
+                    <th colspan="21" style="text-align:center;font-size: 30px;">成品数据表</th>
+                </tr>
 	            <tr>
 				<th>序号</th>
 	            <th>入库日期</th>
@@ -414,7 +427,7 @@
 	
     </div>
    
-    <div id="finpordEdit" class="contentDiv" style="display:none;border:1px solid #00BFFF;height:90px;">
+    <div id="finpordEdit" class="contentDiv" style="display:none;">
 		<div  class="container" style="text-align: center;">
 			 <h1>成品管理</h1>
 		</div>
@@ -716,71 +729,73 @@
 </div>
 
 <!-- 入料差管理 -->
-<div id="fedifflist" style="display:none;border:0px solid #00BFFF;">
-	<div id="fediffSSShow" style="margin-top: 90px;">
-        <div class="container">
-            <div class="row clearfix">
-                <div class="col-md-12 column">
-                    <div class="row clearfix" style="text-align:center;margin-top:10px;">
-                        <div class="col-md-4 column">
-                            <div class="input-group">
-                                <span class="input-group-addon" >订单号</span>
-                                <input type="text" class="form-control" placeholder="请输入订单号" id="fediffListProcoedNo">
-                            </div>
-                        </div>
-                        <div class="col-md-4 column">
-                            <div class="input-group">
-                                <span class="input-group-addon" >成品单号</span>
-                                <input type="text" class="form-control" placeholder="请输入成品单号" id="fediffListFinpordNo">
-                            </div>
-                        </div>
-                        <div class="col-md-4 column">
-                            <div class="input-group">
-                                <span class="input-group-addon" >批次</span>
-                                <input type="text" class="form-control" placeholder="请输入批次" id="fediffListBatch">
-                            </div>
+<div id="fedifflist" style="display:none;border:1px solid #00BFFF;height: 150px;">
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <div class="row clearfix" style="text-align:center;margin-top:10px;">
+                    <div class="col-md-4 column">
+                        <div class="input-group">
+                            <span class="input-group-addon" >订单号</span>
+                            <input type="text" class="form-control" placeholder="请输入订单号" id="fediffListProcoedNo">
                         </div>
                     </div>
-                </div>
-                <div class="col-md-12 column">
-                    <div class="row clearfix" style="text-align:center;margin-top:10px;">
-                        <div class="col-md-4 column">
-                            <div class="input-group">
-                                <span class="input-group-addon" >石编</span>
-                                <input type="text" class="form-control" placeholder="请输入石编" id="fediffListStoneNo">
-                            </div>
-                        </div>
-                        <div class="col-md-4 column">
-                            <div class="input-group">
-                                <span class="input-group-addon" >开始时间</span>
-                                <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="fediffListStartTime">
-                            </div>
-                        </div>
-                        <div class="col-md-4 column">
-                            <div class="input-group">
-                                <span class="input-group-addon" >结束结束</span>
-                                <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="fediffListEndTime">
-                            </div>
+                    <div class="col-md-4 column">
+                        <div class="input-group">
+                            <span class="input-group-addon" >成品单号</span>
+                            <input type="text" class="form-control" placeholder="请输入成品单号" id="fediffListFinpordNo">
                         </div>
                     </div>
-                </div>
-                <div class="col-md-12 column">
-                    <div class="row clearfix" style="text-align:center;margin-top:10px;">
-                        <div class="col-md-12 column" style="text-align:center;">
-                            <button type="button" class="btn btn_search" onclick="searchFediff()">查询</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <button type="button" class="btn btn_reset" onclick="resetFediff()">重置</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <button type="button" class="btn btn_search" onclick="downloadFediff();">Excel下载</button>
+                    <div class="col-md-4 column">
+                        <div class="input-group">
+                            <span class="input-group-addon" >批次</span>
+                            <input type="text" class="form-control" placeholder="请输入批次" id="fediffListBatch">
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="col-md-12 column">
+                <div class="row clearfix" style="text-align:center;margin-top:10px;">
+                    <div class="col-md-4 column">
+                        <div class="input-group">
+                            <span class="input-group-addon" >石编</span>
+                            <input type="text" class="form-control" placeholder="请输入石编" id="fediffListStoneNo">
+                        </div>
+                    </div>
+                    <div class="col-md-4 column">
+                        <div class="input-group">
+                            <span class="input-group-addon" >开始时间</span>
+                            <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="fediffListStartTime">
+                        </div>
+                    </div>
+                    <div class="col-md-4 column">
+                        <div class="input-group">
+                            <span class="input-group-addon" >结束结束</span>
+                            <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="fediffListEndTime">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 column">
+                <div class="row clearfix" style="text-align:center;margin-top:10px;">
+                    <div class="col-md-12 column" style="text-align:center;">
+                        <button type="button" class="btn btn_search" onclick="searchFediff()">查询</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button type="button" class="btn btn_reset" onclick="resetFediff()">重置</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button type="button" class="btn btn_search" onclick="downloadFediff();">Excel下载</button>
+                    </div>
+                </div>
+            </div>
         </div>
-		<form action="/c/downloadExcelFediff" method="post" style="margin-left: 1000px;">
-			<input type="hidden"  value="all" name="type" id="fediff_type"/>
-			<input type="submit" class = "btn_search" value="Excel下载">
-		</form>	
+    </div>
+	<div id="fediffSSShow" >
 	<table id="fediffShowList" class="table table-striped table-bordered" style="width: 100%;">
         <thead>
+            <tr>
+                <th colspan="10" style="text-align:center;"></th>
+            </tr>
+            <tr>
+                <th colspan="10" style="text-align:center;font-size: 30px;">入料差数据表</th>
+            </tr>
             <tr>	     
 	            <th>序号</th>
 	            <th>时间</th>
@@ -792,7 +807,6 @@
 				<th>现石重</th>
 	            <th>操作</th>
 	            <th>入料差</th>
-	             
             </tr>
         </thead>
         <tfoot>
@@ -814,7 +828,7 @@
 </div>
 
 <!-- 利润核算 -->
-<div id="profitslist" style="display:none;height:90px;">
+<div id="profitslist" style="display:none;height:10px;">
 	
    <div style="height:10px;"></div>
 	<div  style="border:1px solid black;margin-top: 90px;">
@@ -860,6 +874,12 @@
 	<div id="profitsLLLLL" style="height: 700px;display: none;">	
 	<table id="profitsShowListAll" class="table table-striped table-bordered table-hover" style="width: 100%;">
         <thead>
+        <tr>
+            <th colspan="12" style="text-align:center;"></th>
+        </tr>
+        <tr>
+            <th colspan="12" style="text-align:center;font-size: 30px;">利润核算数据表</th>
+        </tr>
             <tr>	     
 	            <th>单号</th>
 	            <th>款号</th>
@@ -2294,27 +2314,72 @@ function retrieveData(sSource, aoData, fnCallback ) {
         dataTableFediff.ajax.reload();
     }
     function downloadFediff() {
-        $.ajax({
-            url : "/c/downloadExcelFediff",//这个就是请求地址对应sAjaxSource
-            data : {
-                fediffListBatch:$("#fediffListBatch").val(),
-                fediffListFinpordNo:$("#fediffListFinpordNo").val(),
-                fediffListProcoedNo:$("#fediffListProcoedNo").val(),
-                fediffListStoneNo:$("#fediffListStoneNo").val(),
-                fediffListStartTime:$("#fediffListStartTime").val(),
-                fediffListEndTime:$("#fediffListEndTime").val()
-            },
-            type : 'post',
-            dataType : 'json',
-            async : false,
-            success : function(result) {
-                // fnCallback(result);//把返回的数据传给这个方法就可以了,datatable会自动绑定数据的
-            },
-            error : function(msg) {
-                // alert(msg);
-            }
-        });
+        var urlStrl ="/c/downloadExcelFediff";
+        var fediffListBatch = $("#fediffListBatch").val();
+        var fediffListFinpordNo = $("#fediffListFinpordNo").val();
+        var   fediffListProcoedNo =$("#fediffListProcoedNo").val();
+        var   fediffListStoneNo = $("#fediffListStoneNo").val();
+        var   fediffListStartTime =$("#fediffListStartTime").val();
+        var   fediffListEndTime =$("#fediffListEndTime").val();
+        var form = $('<form></form>');
+        form.attr('style', 'display:none');
+        form.attr('target', '_blank');      //设置_blank后，下载会在新窗口打开，同时保留原来的窗口
+        form.attr('method', 'post');
+        form.attr('action', urlStrl);
+        var batch = $('<input type="text" name="fediffListBatch"  />'); // 可以使用input来提交数据
+        var finpordNo = $('<input type="text" name="fediffListFinpordNo"  />'); // 可以使用input来提交数据
+        var procodeNo = $('<input type="text" name="fediffListProcoedNo"  />'); // 可以使用input来提交数据
+        var stoneNo = $('<input type="text" name="fediffListStoneNo"  />'); // 可以使用input来提交数据
+        var start = $('<input type="text" name="fediffListStartTime"  />'); // 可以使用input来提交数据
+        var end = $('<input type="text" name="fediffListEndTime"  />'); // 可以使用input来提交数据
+        batch.attr('value', fediffListBatch);  //在input中放入需要传入的数据
+        finpordNo.attr('value', fediffListFinpordNo);  //在input中放入需要传入的数据
+        procodeNo.attr('value', fediffListProcoedNo);  //在input中放入需要传入的数据
+        stoneNo.attr('value', fediffListStoneNo);  //在input中放入需要传入的数据
+        start.attr('value', fediffListStartTime);  //在input中放入需要传入的数据
+        end.attr('value', fediffListEndTime);  //在input中放入需要传入的数据
+        form.append(batch);
+        form.append(procodeNo);
+        form.append(stoneNo);
+        form.append(finpordNo);
+        form.append(start);
+        form.append(end);
+        $(document.body).append(form);
+        form.submit();
     }
+    function downloadExcelFinpord() {
+        var urlStrl ="/c/downloadExcelFinpord";
+        var finpordListProcoedNo = $("#finpordListProcoedNo").val();
+        var finpordListStartTime = $("#finpordListStartTime").val();
+        var  finpordListEndTime =$("#finpordListEndTime").val();
+        var  finpordListBarcode = $("#finpordListBarcode").val();
+        var   finpordListSupplier =$("#finpordListSupplier").val();
+        var form = $('<form></form>');
+        form.attr('style', 'display:none');
+        form.attr('target', '_blank');      //设置_blank后，下载会在新窗口打开，同时保留原来的窗口
+        form.attr('method', 'post');
+        form.attr('action', urlStrl);
+        var start = $('<input type="text" name="finpordListStartTime"  />'); // 可以使用input来提交数据
+        var procodeNo = $('<input type="text" name="finpordListProcoedNo"  />'); // 可以使用input来提交数据
+        var end = $('<input type="text" name="finpordListEndTime"  />'); // 可以使用input来提交数据
+        var barcode = $('<input type="text" name="finpordListBarcode"  />'); // 可以使用input来提交数据
+        var supplier = $('<input type="text" name="finpordListSupplier"  />'); // 可以使用input来提交数据
+        start.attr('value', finpordListStartTime);  //在input中放入需要传入的数据
+        end.attr('value', finpordListEndTime);  //在input中放入需要传入的数据
+        procodeNo.attr('value', finpordListProcoedNo);  //在input中放入需要传入的数据
+        barcode.attr('value', finpordListBarcode);  //在input中放入需要传入的数据
+        supplier.attr('value', finpordListSupplier);  //在input中放入需要传入的数据
+        form.append(procodeNo);
+        form.append(barcode);
+        form.append(supplier);
+        form.append(start);
+        form.append(end);
+        $(document.body).append(form);
+        form.submit();
+    }
+
+
+
 $(document).ready(function() {
 	//$('#order_value').editableSelect({ effects: 'slide' });//可输入的选择框
 	// $('#barcode_value').editableSelect({ effects: 'slide' });//可输入的选择框
@@ -2575,7 +2640,7 @@ $(document).ready(function() {
  	   	 "bProcessing": false, //打开数据加载时的等待效果  
  	   	 'bStateSave': false,//配置好这个,刷新页面会让页面停留在之前的页码
  	   	 "bServerSide": true,//这个用来指明是通过服务端来取数据
- 	     "sAjaxSource": "/c/getFinpordTableData",//这个是请求的地址，Rest API or JSP的action
+ 	     "sAjaxSource": "/c/getFinpordListTableData",//这个是请求的地址，Rest API or JSP的action
  	   	 "fnServerData":retrieveListData,// 获取数据的处理函数
  	   	 "oLanguage": {  
  	    		"sLengthMenu": "每页显示 _MENU_ 条记录",  
@@ -2717,7 +2782,7 @@ $(document).ready(function() {
  	   	 "bProcessing": false, //打开数据加载时的等待效果  
  	   	 'bStateSave': false,//配置好这个,刷新页面会让页面停留在之前的页码
  	   	 "bServerSide": true,//这个用来指明是通过服务端来取数据
- 	     "sAjaxSource": "/c/getFinpordTableData",//这个是请求的地址，Rest API or JSP的action
+ 	     "sAjaxSource": "/c/getFinpordManageTableData",//这个是请求的地址，Rest API or JSP的action
  	   	 "fnServerData":retrieveManageData,// 获取数据的处理函数
  	   	 "oLanguage": {  
  	    		"sLengthMenu": "每页显示 _MENU_ 条记录",  
@@ -3029,24 +3094,7 @@ function ajaxSearchFinpordSecond() {
 
 
 
-function downloadExcelFinpord() {
-	
-	var level = document.getElementById("level").value;
-	var result = document.getElementById("result").value;
-	$.ajax({
-		 url:"/c/downloadFinprodExcel",
-		 type:"post",
-		 data:{
-			 level:level,
-			 result:result,
-		 },
-	 	 dateType:"json",
-	 	 success:function(result) {
-	 		 alert(result);
-	 		
-	 	 } 
-	 });
-}
+
 
  
  

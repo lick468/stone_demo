@@ -496,8 +496,10 @@ public class CController {
         if(fediffListEndTime.length() > 4) {
             params.put("end",end);
         }
-        fediffService.downloadFediff(fediffService.findFediffForTableInfo(params),response);
-		String result = "";
+        String result = "";
+		List<Fediff> fediffForTableInfo = fediffService.findFediffForTableInfo(params);
+		fediffService.downloadFediff(fediffForTableInfo,response);
+
 		return result;
 	}
 	/**

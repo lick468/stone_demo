@@ -32,7 +32,7 @@ width:100px;
 	border-radius: 20px 20px 0px 0px;
 	background-color: cornflowerblue;
 	text-align: center;
-	font-family: "ËÎÌå";
+	font-family: "ï¿½ï¿½ï¿½ï¿½";
 	font-size: 40px;
 }
 .nnnnn{
@@ -65,7 +65,7 @@ display: none;
 	background-color: #C0C0C0;
 	text-align: center;
 	height: 50px;
-	font-family: "ËÎÌå";
+	font-family: "ï¿½ï¿½ï¿½ï¿½";
 	font-size: 40px;
 	font-style: oblique;
 }
@@ -83,9 +83,7 @@ table tr:nth-child(2n+3){
 table tr:nth-child(2n+2){  
     background-color:#D0D0D0;  
 }
-.table {
-	border:1px solid pink;
-}
+
 table tr:hover{
 	background-color: grey;
 }

@@ -231,14 +231,45 @@ public class BController {
 	 * @param request
 	 * @param response
 	 * @return
-	 * @throws ParseException
 	 */
 	@ApiOperation(value="生成excel文件",notes="生成excel文件")
-	@RequestMapping(value = "/downloadAllStoneExcel", method = RequestMethod.POST)
+	@RequestMapping(value = "/downloadLocalStone", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadAllStoneExcel(HttpServletRequest request,HttpServletResponse response) throws ParseException {
-		List<Stone> list = stoneService.findAllStone();
-		stoneService.downloadExcel(list,response);
+	public String downloadLocalStone(HttpServletRequest request,HttpServletResponse response) {
+	    String listStoneStartTime = request.getParameter("listStoneStartTime");
+        String listStoneEndTime = request.getParameter("listStoneEndTime");
+        String listStoneMainNo = request.getParameter("listStoneMainNo");
+        String listStoneSubNo = request.getParameter("listStoneSubNo");
+        String listStoneLoosdofty = request.getParameter("listStoneLoosdofty");
+
+
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        ParsePosition pos = new ParsePosition(0);
+        Date start = sdf.parse(listStoneStartTime, pos);
+        pos = new ParsePosition(0);
+        Date end = sdf.parse(listStoneEndTime, pos);
+
+        if(listStoneMainNo.length() > 0) {
+            params.put("mainNo",listStoneMainNo);
+        }
+        if(listStoneSubNo.length() > 0) {
+            params.put("subNo",listStoneSubNo);
+        }
+        if(listStoneLoosdofty.length() > 0) {
+            params.put("loosdofty",listStoneLoosdofty);
+        }
+        if(listStoneStartTime.length() > 4) {
+            params.put("start",start);
+        }
+        if(listStoneEndTime.length() > 4) {
+            params.put("end",end);
+        }
+
+        List<Stone> stoneNum = stoneService.findStoneForTableInfo(params);
+
+		stoneService.downloadExcel(stoneNum,response);
 		String result1="";
 		return result1;
 	}
@@ -247,24 +278,82 @@ public class BController {
 	 * @param request
 	 * @param response
 	 * @return
-	 * @throws ParseException
 	 */
 	@ApiOperation(value="生成excel文件",notes="生成excel文件")
 	@RequestMapping(value = "/downloadProcord", method = RequestMethod.GET)
 	@ResponseBody
-	public String downloadProcord(HttpServletRequest request,HttpServletResponse response) throws ParseException {
-        List<Procord> list = procordService.findAllProcord();
-        procordService.downloadExcel(list,response);
+	public String downloadProcord(HttpServletRequest request,HttpServletResponse response) {
+        String procordNo = request.getParameter("procordNo");
+        String procordDelyDate = request.getParameter("procordDelyDate");
+        String procordDate = request.getParameter("procordDate");
+        String procordBatch = request.getParameter("procordBatch");
+        String procordSupplier = request.getParameter("procordSupplier");
+
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        ParsePosition pos = new ParsePosition(0);
+        Date delydate = sdf.parse(procordDelyDate, pos);
+        pos = new ParsePosition(0);
+        Date date = sdf.parse(procordDate, pos);
+
+        if(procordNo.length() > 0) {
+            params.put("procord_no",procordNo);
+        }
+        if(procordBatch.length() > 0) {
+            params.put("procord_batch",procordBatch);
+        }
+        if(procordSupplier.length() > 0) {
+            params.put("procord_supplier",procordSupplier);
+        }
+        if(procordDelyDate.length() > 4) {
+            params.put("procord_delydate",delydate);
+        }
+        if(procordDate.length() > 4) {
+            params.put("procord_date",date);
+        }
+
+        List<Procord> procordNum = procordService.findProcordForTableInfo(params);
+
+        procordService.downloadExcel(procordNum,response);
 		String result1="";
 		return result1;
 	}
 	@ApiOperation(value="生成excel文件",notes="生成excel文件")
-	@RequestMapping(value = "/downloadExcelSupplier", method = RequestMethod.POST)
+	@RequestMapping(value = "/downloadSupplierStone", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadExcelSupplier(HttpSession session,HttpServletResponse response) throws ParseException {
-		List<SupplierStone> supplierStoneList = (List<SupplierStone>) session.getAttribute("supplierStoneList");
+	public String downloadSupplierStone(HttpServletRequest request,HttpServletResponse response)  {
+        String supplierListStoneStartTime = request.getParameter("supplierListStoneStartTime");
+        String supplierListStoneMainNo = request.getParameter("supplierListStoneMainNo");
+        String supplierListStoneEndTime = request.getParameter("supplierListStoneEndTime");
+        String supplierListStoneSubNo = request.getParameter("supplierListStoneSubNo");
+        String supplierListStoneSupplier = request.getParameter("supplierListStoneSupplier");
+        Map<String, Object> params = new HashMap<String, Object>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        ParsePosition pos = new ParsePosition(0);
+        Date start = sdf.parse(supplierListStoneStartTime, pos);
+        pos = new ParsePosition(0);
+        Date end = sdf.parse(supplierListStoneEndTime, pos);
+
+        if(supplierListStoneMainNo.length() > 0) {
+            params.put("mainNo",supplierListStoneMainNo);
+        }
+        if(supplierListStoneSubNo.length() > 0) {
+            params.put("subNo",supplierListStoneSubNo);
+        }
+        if(supplierListStoneSupplier.length() > 0) {
+            params.put("supplier",supplierListStoneSupplier);
+        }
+        if(supplierListStoneStartTime.length() > 4) {
+            params.put("start",start);
+        }
+        if(supplierListStoneEndTime.length() > 4) {
+            params.put("end",end);
+        }
+
+        List<SupplierStone> supplierStoneNum = supplierStoneService.findSupplierStoneForTableInfo(params);
 		
-		stoneService.downloadExcelSupplier(supplierStoneList,response);
+		stoneService.downloadExcelSupplier(supplierStoneNum,response);
 		String result1="";
 		return result1;
 	}
@@ -273,16 +362,14 @@ public class BController {
 	 *
 	 * com.nenu.controller
 	 * @param request
-	 * @param session
 	 * @param response
 	 * @return
-	 * @throws ParseException String
 	 * created  at 2018年12月19日
 	 */
 	@ApiOperation(value="供应商库存汇总下载",notes="供应商库存汇总下载")
 	@RequestMapping(value = "/downloadExcelAllSupplier", method = RequestMethod.POST)
 	@ResponseBody
-	public String downloadExcelAllSupplier(HttpServletRequest request,HttpSession session,HttpServletResponse response) throws ParseException {
+	public String downloadExcelAllSupplier(HttpServletResponse response) {
 		List listSupplier = new ArrayList<>();
 		int i;
 		List<Stoninproc> list = new ArrayList<Stoninproc>();
@@ -326,8 +413,7 @@ public class BController {
 		}
 		
 		List<SupplierStone> supplierStoneList = supplierStoneService.findSupplierStoneCountWithSupplierName();
-		System.out.println(supplierStoneList);
-		
+
 		stoneService.downloadExcelAllSupplier(list_supplier,response);
 		String result1="result";
 		return result1;
