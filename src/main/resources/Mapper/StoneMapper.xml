@@ -327,8 +327,42 @@
 	
 	</update>
 	
+	<select id="findStoneForTableInfo" parameterType="java.util.Map" resultMap="BaseResultMapStone">
+		select * from tb_stone where (stone_mainNumber <![CDATA[ > ]]> 0 || stone_substoNumber <![CDATA[ > ]]> 0) and stone_reserved1=0
+        <if test="start != null  " >
+            and stone_purchdate <![CDATA[ >= ]]>  #{start}
+        </if>
+        <if test="end != null  " >
+            and stone_purchdate <![CDATA[ <= ]]>  #{end}
+        </if>
+        <if test="mainNo!=null">
+            and stone_mainStoneNo = #{mainNo}
+        </if>
+        <if test="subNo!=null">
+            and stone_substoNo = #{subNo}
+        </if>
+        <if test="loosdofty!=null">
+            and stone_loosdofty = #{loosdofty}
+        </if>
+		ORDER BY stone_purchdate DESC,stone_seqno DESC
+	</select>
 	<select id="findStoneByTableInfo" parameterType="java.util.Map" resultMap="BaseResultMapStone">
-		select * from tb_stone where (stone_mainNumber <![CDATA[ > ]]> 0 || stone_substoNumber <![CDATA[ > ]]> 0) and stone_reserved1=0 
+		select * from tb_stone where (stone_mainNumber <![CDATA[ > ]]> 0 || stone_substoNumber <![CDATA[ > ]]> 0) and stone_reserved1=0
+        <if test="start != null  " >
+            and stone_purchdate <![CDATA[ >= ]]>  #{start}
+        </if>
+        <if test="end != null  " >
+            and stone_purchdate <![CDATA[ <= ]]>  #{end}
+        </if>
+        <if test="mainNo!=null">
+            and stone_mainStoneNo = #{mainNo}
+        </if>
+        <if test="subNo!=null">
+            and stone_substoNo = #{subNo}
+        </if>
+        <if test="loosdofty!=null">
+            and stone_loosdofty = #{loosdofty}
+        </if>
 		ORDER BY stone_purchdate DESC,stone_seqno DESC limit #{sEcho},#{len}
 	</select>
 

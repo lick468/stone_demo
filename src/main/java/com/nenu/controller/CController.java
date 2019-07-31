@@ -462,20 +462,42 @@ public class CController {
 	@ApiOperation(value="下载入料差excel",notes="下载入料差excel")
 	@RequestMapping(value="/downloadExcelFediff",method = RequestMethod.POST)
 	@ResponseBody
-	public String downFediff(HttpServletRequest request,HttpSession session,HttpServletResponse response) {
-		String type = request.getParameter("type");
-		int re =0;
-		List<Fediff> fediffList = new ArrayList<Fediff>();
-		if(type.contains("all")) {
-			fediffList = fediffService.findAllFediff();
-			fediffService.downloadFediff(fediffList,response);	
-		}else {
-			fediffList = (List<Fediff>) session.getAttribute("fediffListByTime");
-			fediffService.downloadFediff(fediffList,response);
-			
-		}
+	public String downFediff(HttpServletRequest request,HttpServletResponse response) {
+
+         String fediffListStoneNo  = request.getParameter("fediffListStoneNo");
+         String fediffListEndTime = request.getParameter("fediffListEndTime");
+         String fediffListStartTime = request.getParameter("fediffListStartTime");
+         String fediffListProcoedNo  = request.getParameter("fediffListProcoedNo");
+         String fediffListFinpordNo  = request.getParameter("fediffListFinpordNo");
+         String fediffListBatch  = request.getParameter("fediffListBatch");
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        ParsePosition pos = new ParsePosition(0);
+        Date start = sdf.parse(fediffListStartTime, pos);
+        pos = new ParsePosition(0);
+        Date end = sdf.parse(fediffListEndTime, pos);
+
+        if(fediffListStoneNo.length() > 0) {
+            params.put("fediff_stoneNo",fediffListStoneNo);
+        }
+        if(fediffListProcoedNo.length() > 0) {
+            params.put("fediff_procordNo",fediffListProcoedNo);
+        }
+        if(fediffListFinpordNo.length() > 0) {
+            params.put("finpord_procordNo",fediffListFinpordNo);
+        }
+        if(fediffListBatch.length() > 0) {
+            params.put("fediff_batch",fediffListBatch);
+        }
+        if(fediffListStartTime.length() > 4) {
+            params.put("start",start);
+        }
+        if(fediffListEndTime.length() > 4) {
+            params.put("end",end);
+        }
+        fediffService.downloadFediff(fediffService.findFediffForTableInfo(params),response);
 		String result = "";
-		
 		return result;
 	}
 	/**
@@ -984,25 +1006,73 @@ public class CController {
 		
 	}
 	@ApiOperation(value="动态加载表格数据（按页获取）",notes="动态加载表格数据（按页获取）")
-	@RequestMapping(value="/getFinpordTableData",method=RequestMethod.POST)
+	@RequestMapping(value="/getFinpordListTableData",method=RequestMethod.POST)
 	@ResponseBody
-	public DatatablesViewPage<Finpord> getFinpordManageTableData(@RequestParam String aoData,@RequestParam String finpordManageStartTime,
-																 @RequestParam String finpordManageSupplier,@RequestParam String finpordManageProcoedNo,
-																 @RequestParam String finpordManageBarcode,@RequestParam String finpordManageEndTime)  {
+	public DatatablesViewPage<Finpord> getFinpordListTableData(@RequestParam String aoData,@RequestParam String finpordListStartTime,
+																 @RequestParam String finpordListSupplier,@RequestParam String finpordListProcoedNo,
+																 @RequestParam String finpordListBarcode,@RequestParam String finpordListEndTime)  {
 
 		Map<String, Object> params = new HashMap<String, Object>();			
 		// System.out.println(aoData);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		ParsePosition pos = new ParsePosition(0);
-		Date start = sdf.parse(finpordManageStartTime, pos);
+		Date start = sdf.parse(finpordListStartTime, pos);
 		pos = new ParsePosition(0);
-		Date end = sdf.parse(finpordManageEndTime, pos);
+		Date end = sdf.parse(finpordListEndTime, pos);
 		
 		int sEcho =Integer.parseInt(aoData.split(":")[2].split("}")[0]); 
 		int iDisplayStart = Integer.parseInt(aoData.split(":")[8].split("}")[0]);
 		 sEcho = (sEcho-1)*10;
 		 params.put("sEcho",iDisplayStart);
 		 params.put("len", 10);
+		if(finpordListBarcode.length() > 0) {
+			params.put("finpord_barcode",finpordListBarcode);
+		}
+		if(finpordListProcoedNo.length() > 0) {
+			params.put("finpord_procordNo",finpordListProcoedNo);
+		}
+		if(finpordListSupplier.length() > 0) {
+			params.put("finpord_supplier",finpordListSupplier);
+		}
+		if(finpordListStartTime.length() > 4) {
+			params.put("start",start);
+		}
+		if(finpordListEndTime.length() > 4) {
+			params.put("end",end);
+		}
+		 List<Finpord> finpordList = finpordService.findFinpordByTableInfo(params);
+		 List<Finpord> finpordNum = finpordService.findFinpordForTableInfo(params);
+
+
+	    DatatablesViewPage<Finpord> view = new DatatablesViewPage<Finpord>();
+	    view.setiTotalDisplayRecords(finpordNum.size());
+	    view.setiTotalRecords(finpordNum.size());
+
+	    view.setAaData(finpordList);
+	    return view;
+	
+	}
+
+	@ApiOperation(value="动态加载表格数据（按页获取）",notes="动态加载表格数据（按页获取）")
+	@RequestMapping(value="/getFinpordManageTableData",method=RequestMethod.POST)
+	@ResponseBody
+	public DatatablesViewPage<Finpord> getFinpordManageTableData(@RequestParam String aoData,@RequestParam String finpordManageStartTime,
+																 @RequestParam String finpordManageSupplier,@RequestParam String finpordManageProcoedNo,
+																 @RequestParam String finpordManageBarcode,@RequestParam String finpordManageEndTime)  {
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		// System.out.println(aoData);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		ParsePosition pos = new ParsePosition(0);
+		Date start = sdf.parse(finpordManageStartTime, pos);
+		pos = new ParsePosition(0);
+		Date end = sdf.parse(finpordManageEndTime, pos);
+
+		int sEcho =Integer.parseInt(aoData.split(":")[2].split("}")[0]);
+		int iDisplayStart = Integer.parseInt(aoData.split(":")[8].split("}")[0]);
+		sEcho = (sEcho-1)*10;
+		params.put("sEcho",iDisplayStart);
+		params.put("len", 10);
 		if(finpordManageBarcode.length() > 0) {
 			params.put("finpord_barcode",finpordManageBarcode);
 		}
@@ -1018,17 +1088,17 @@ public class CController {
 		if(finpordManageEndTime.length() > 4) {
 			params.put("end",end);
 		}
-		 List<Finpord> finpordList = finpordService.findFinpordByTableInfo(params);
-		 List<Finpord> finpordNum = finpordService.findFinpordForTableInfo(params);
+		List<Finpord> finpordList = finpordService.findFinpordByTableInfo(params);
+		List<Finpord> finpordNum = finpordService.findFinpordForTableInfo(params);
 
 
-	    DatatablesViewPage<Finpord> view = new DatatablesViewPage<Finpord>();
-	    view.setiTotalDisplayRecords(finpordNum.size());
-	    view.setiTotalRecords(finpordNum.size());
+		DatatablesViewPage<Finpord> view = new DatatablesViewPage<Finpord>();
+		view.setiTotalDisplayRecords(finpordNum.size());
+		view.setiTotalRecords(finpordNum.size());
 
-	    view.setAaData(finpordList);
-	    return view;
-	
+		view.setAaData(finpordList);
+		return view;
+
 	}
 	@ApiOperation(value="动态加载表格数据（按页获取）",notes="动态加载表格数据（按页获取）")
 	@RequestMapping(value="/getFinpordCopyTableData",method=RequestMethod.POST)

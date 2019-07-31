@@ -63,6 +63,7 @@ public interface StoneDao {
 	int downloadExcelAllSupplier(List<Stoninproc> list_supplier, HttpServletResponse response);//生成供应商库存汇总记录
 	
 	List<Stone> findStoneByTableInfo(Map<String, Object> params);
+	List<Stone> findStoneForTableInfo(Map<String, Object> params);  //不分页
 
 	List<Stone> findDistinctMainStoneNo();
     List<Stone> findDistinctSubStoneNo();

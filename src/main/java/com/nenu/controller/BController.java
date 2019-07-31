@@ -2,6 +2,7 @@
 
 import java.text.Collator;
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1055,22 +1056,28 @@ public class BController {
 		return slist;
 	}
 	/**
-	 * 获取表格数据（分页）
+	 * 获取石库库存表格数据（分页）
 	 *
 	 * com.nenu.controller
 	 * @param aoData
-	 * @param request
 	 * @return DatatablesViewPage<Plan>
 	 * created  at 2018年12月20日
 	 */
-	@ApiOperation(value="获取表格数据（分页）",notes="获取表格数据（分页）")
-	@RequestMapping(value="/getTableData",method=RequestMethod.POST)
+	@ApiOperation(value="获取石库库存表格数据（分页）",notes="获取石库库存表格数据（分页）")
+	@RequestMapping(value="/getTableListStoneData",method=RequestMethod.POST)
 	@ResponseBody
-	public DatatablesViewPage<Stone> getStoneTableData(@RequestParam String aoData, HttpServletRequest request )  {
+	public DatatablesViewPage<Stone> getStoneTableData(@RequestParam String aoData, @RequestParam String listStoneMainNo,
+													   @RequestParam String listStoneSubNo,@RequestParam String listStoneLoosdofty,
+													   @RequestParam String listStoneStartTime,@RequestParam String listStoneEndTime)  {
 		Map<String, Object> map = new HashMap<String, Object>();
 		//System.out.println("这里");
 		Map<String, Object> params = new HashMap<String, Object>();			
 		// System.out.println(aoData);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        ParsePosition pos = new ParsePosition(0);
+        Date start = sdf.parse(listStoneStartTime, pos);
+        pos = new ParsePosition(0);
+        Date end = sdf.parse(listStoneEndTime, pos);
 		
 		int sEcho =Integer.parseInt(aoData.split(":")[2].split("}")[0]); 
 		int iDisplayStart = Integer.parseInt(aoData.split(":")[8].split("}")[0]);
@@ -1078,18 +1085,24 @@ public class BController {
 		 sEcho = (sEcho-1)*10;
 		 params.put("sEcho",iDisplayStart);
 		 params.put("len", 10);
-		 List<Stone> stoneList = new ArrayList<Stone>();
-		 List<Stone> stoneNum = stoneService.findAllStone();
-		 stoneList = stoneService.findStoneByTableInfo(params);
-		 
-		//获取分页控件的信息
-	    String start = request.getParameter("start");
-	    //System.out.println(start);
-	    String length = request.getParameter("length");
-	   // System.out.println(length);
-	 //获取前台额外传递过来的查询条件
-	    String extra_search = request.getParameter("extra_search");
-	   // System.out.println(extra_search);
+        if(listStoneMainNo.length() > 0) {
+            params.put("mainNo",listStoneMainNo);
+        }
+        if(listStoneSubNo.length() > 0) {
+            params.put("subNo",listStoneSubNo);
+        }
+        if(listStoneLoosdofty.length() > 0) {
+            params.put("loosdofty",listStoneLoosdofty);
+        }
+        if(listStoneStartTime.length() > 4) {
+            params.put("start",start);
+        }
+        if(listStoneEndTime.length() > 4) {
+            params.put("end",end);
+        }
+		 List<Stone> stoneList =stoneService.findStoneByTableInfo(params);
+		 List<Stone> stoneNum = stoneService.findStoneForTableInfo(params);
+
 	    DatatablesViewPage<Stone> view = new DatatablesViewPage<Stone>();
 	    view.setiTotalDisplayRecords(stoneNum.size());
 	    view.setiTotalRecords(stoneNum.size());
@@ -1099,6 +1112,63 @@ public class BController {
 	    return view;
 	
 	}
+    /**
+     * 获取石库库存表格数据（分页）
+     *
+     * com.nenu.controller
+     * @param aoData
+     * @return DatatablesViewPage<Plan>
+     * created  at 2018年12月20日
+     */
+    @ApiOperation(value="获取石库库存表格数据（分页）",notes="获取石库库存表格数据（分页）")
+    @RequestMapping(value="/getTableManageStoneData",method=RequestMethod.POST)
+    @ResponseBody
+    public DatatablesViewPage<Stone> getTableManageStoneData(@RequestParam String aoData, @RequestParam String manageStoneMainNo,
+                                                       @RequestParam String manageStoneSubNo,@RequestParam String manageStoneLoosdofty,
+                                                       @RequestParam String manageStoneStartTime,@RequestParam String manageStoneEndTime)  {
+        Map<String, Object> map = new HashMap<String, Object>();
+        //System.out.println("这里");
+        Map<String, Object> params = new HashMap<String, Object>();
+        // System.out.println(aoData);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        ParsePosition pos = new ParsePosition(0);
+        Date start = sdf.parse(manageStoneStartTime, pos);
+        pos = new ParsePosition(0);
+        Date end = sdf.parse(manageStoneEndTime, pos);
+
+        int sEcho =Integer.parseInt(aoData.split(":")[2].split("}")[0]);
+        int iDisplayStart = Integer.parseInt(aoData.split(":")[8].split("}")[0]);
+        //System.out.println(sEcho);
+        sEcho = (sEcho-1)*10;
+        params.put("sEcho",iDisplayStart);
+        params.put("len", 10);
+        if(manageStoneMainNo.length() > 0) {
+            params.put("mainNo",manageStoneMainNo);
+        }
+        if(manageStoneSubNo.length() > 0) {
+            params.put("subNo",manageStoneSubNo);
+        }
+        if(manageStoneLoosdofty.length() > 0) {
+            params.put("loosdofty",manageStoneLoosdofty);
+        }
+        if(manageStoneStartTime.length() > 4) {
+            params.put("start",start);
+        }
+        if(manageStoneEndTime.length() > 4) {
+            params.put("end",end);
+        }
+        List<Stone> stoneList =stoneService.findStoneByTableInfo(params);
+        List<Stone> stoneNum = stoneService.findStoneForTableInfo(params);
+
+        DatatablesViewPage<Stone> view = new DatatablesViewPage<Stone>();
+        view.setiTotalDisplayRecords(stoneNum.size());
+        view.setiTotalRecords(stoneNum.size());
+
+        view.setAaData(stoneList);
+        // System.out.println(view);
+        return view;
+
+    }
 	/**
 	 * 获取表格数据（分页）
 	 *
@@ -1121,6 +1191,7 @@ public class BController {
 		 sEcho = (sEcho-1)*10;
 		 params.put("sEcho",iDisplayStart);
 		 params.put("len", 10);
+
 		 List<StoneCopy> stoneList = new ArrayList<StoneCopy>();
 		 List<StoneCopy> stoneNum = stoneService.findAllStoneCopy();
 		 stoneList = stoneService.findStoneCopyByTableInfo(params);
@@ -1142,71 +1213,89 @@ public class BController {
 	    return view;
 	
 	}
-	@ApiOperation(value="获取表格数据（分页）",notes="获取表格数据（分页）")
-	@RequestMapping(value="/getProcordTableData",method=RequestMethod.POST)
-	@ResponseBody
-	public DatatablesViewPage<Procord> getProcordTableData(@RequestParam String aoData, HttpServletRequest request )  {
-		Map<String, Object> params = new HashMap<String, Object>();			
-		// System.out.println(aoData);
-		
-		int sEcho =Integer.parseInt(aoData.split(":")[2].split("}")[0]); 
-		int iDisplayStart = Integer.parseInt(aoData.split(":")[8].split("}")[0]);
-		// System.out.println(sEcho);
-		 sEcho = (sEcho-1)*10;
-		 params.put("sEcho",iDisplayStart);
-		 params.put("len", 10);
-		 List<Procord> procordList = new ArrayList<Procord>();
-		 List<Procord> procordNum = procordService.findAllProcord();
-		 procordList = procordService.findProcordByTableInfo(params);
-		 
-		//获取分页控件的信息
-	    String start = request.getParameter("start");
-	    //System.out.println(start);
-	    String length = request.getParameter("length");
-	    //System.out.println(length);
-	 //获取前台额外传递过来的查询条件
-	    String extra_search = request.getParameter("extra_search");
-	    //System.out.println(extra_search);
-	    DatatablesViewPage<Procord> view = new DatatablesViewPage<Procord>();
-	    view.setiTotalDisplayRecords(procordNum.size());
-	    view.setiTotalRecords(procordNum.size());
 
-	    view.setAaData(procordList);
-	    //System.out.println(view);
-	    return view;
-	
-	}
+    /**
+     * 获取表格数据（分页）
+     *
+     * com.nenu.controller
+     * @param aoData
+     * @param request
+     * @return DatatablesViewPage<Plan>
+     * created  at 2018年12月20日
+     */
+    @ApiOperation(value="获取表格数据（分页）",notes="获取表格数据（分页）")
+    @RequestMapping(value="/getTableData",method=RequestMethod.POST)
+    @ResponseBody
+    public DatatablesViewPage<Stone> getStoneTableData(@RequestParam String aoData, HttpServletRequest request )  {
+        Map<String, Object> params = new HashMap<String, Object>();
+        // System.out.println(aoData);
+
+        int sEcho =Integer.parseInt(aoData.split(":")[2].split("}")[0]);
+        int iDisplayStart = Integer.parseInt(aoData.split(":")[8].split("}")[0]);
+        //System.out.println(sEcho);
+        sEcho = (sEcho-1)*10;
+        params.put("sEcho",iDisplayStart);
+        params.put("len", 10);
+
+        List<Stone> stoneList = new ArrayList<Stone>();
+        List<Stone> stoneNum = stoneService.findAllStone();
+        stoneList = stoneService.findStoneByTableInfo(params);
+
+
+        DatatablesViewPage<Stone> view = new DatatablesViewPage<Stone>();
+        view.setiTotalDisplayRecords(stoneNum.size());
+        view.setiTotalRecords(stoneNum.size());
+
+        view.setAaData(stoneList);
+        //System.out.println(view);
+        return view;
+
+    }
+
 	@ApiOperation(value="获取表格数据（分页）",notes="获取表格数据（分页）")
 	@RequestMapping(value="/getSupplierStoneTableData",method=RequestMethod.POST)
 	@ResponseBody
-	public DatatablesViewPage<SupplierStone> getSupplierStoneTableData(@RequestParam String aoData, @RequestParam String supplierName,HttpServletRequest request,HttpSession session )  {
+	public DatatablesViewPage<SupplierStone> getSupplierStoneTableData(@RequestParam String aoData, @RequestParam String supplierListStoneMainNo,
+                                                                       @RequestParam String supplierListStoneSubNo, @RequestParam String supplierListStoneSupplier,
+                                                                       @RequestParam String supplierListStoneStartTime, @RequestParam String supplierListStoneEndTime,
+                                                                       HttpSession session )  {
 		
-		System.out.println("supplierName====="+supplierName);
-		Map<String, Object> params = new HashMap<String, Object>();			
-		System.out.println(aoData);
+
+		Map<String, Object> params = new HashMap<String, Object>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        ParsePosition pos = new ParsePosition(0);
+        Date start = sdf.parse(supplierListStoneStartTime, pos);
+        pos = new ParsePosition(0);
+        Date end = sdf.parse(supplierListStoneEndTime, pos);
 		
 		int sEcho =Integer.parseInt(aoData.split(":")[2].split("}")[0]); 
 		int iDisplayStart = Integer.parseInt(aoData.split(":")[8].split("}")[0]);
 		sEcho = (sEcho-1)*10;
 		params.put("sEcho",iDisplayStart);
 		params.put("len", 10);
-		 
+        if(supplierListStoneMainNo.length() > 0) {
+            params.put("mainNo",supplierListStoneMainNo);
+        }
+        if(supplierListStoneSubNo.length() > 0) {
+            params.put("subNo",supplierListStoneSubNo);
+        }
+        if(supplierListStoneSupplier.length() > 0) {
+            params.put("supplier",supplierListStoneSupplier);
+        }
+        if(supplierListStoneStartTime.length() > 4) {
+            params.put("start",start);
+        }
+        if(supplierListStoneEndTime.length() > 4) {
+            params.put("end",end);
+        }
 		//查询与统计   供应商库存显示
 		int supplierStoneMainNumber=0;
 		int supplierStoneSubNumber=0;
 		double supplierStoneMainWeight=0;
 	    double supplierStoneSubWeight=0;
 		
-		List<SupplierStone> supplierStoneList = new ArrayList<SupplierStone>();
-		List<SupplierStone> supplierStoneNum = new ArrayList<SupplierStone>();
-		if(supplierName.equals("none")) {
-			 supplierStoneNum = supplierStoneService.findAllSupplierStone();
-			 supplierStoneList = supplierStoneService.findSupplierStoneByTableInfo(params); 
-		}else {
-			 params.put("supplier_name", supplierName);
-			 supplierStoneNum = supplierStoneService.findAllSupplierStoneWithSupplierName(supplierName);
-			 supplierStoneList = supplierStoneService.findSupplierStoneByTableInfoWithSupplierName(params);
-		}
+		List<SupplierStone> supplierStoneList =supplierStoneService.findSupplierStoneByTableInfo(params);
+		List<SupplierStone> supplierStoneNum = supplierStoneService.findSupplierStoneForTableInfo(params);
 		if(supplierStoneNum.size() > 0) {
 			for (int j = 0; j < supplierStoneNum.size(); j++) {		
 				if(supplierStoneNum.get(j).getSupplier_mainStoneNo().length()>0) {//主石

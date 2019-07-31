@@ -48,6 +48,12 @@ public class SupplierStoneServiceImpl implements SupplierStoneService {
 	}
 
 	@Override
+	public List<SupplierStone> findSupplierStoneForTableInfo(Map<String, Object> params) {
+		// TODO Auto-generated method stub
+		return supplierStoneDao.findSupplierStoneForTableInfo(params);
+	}
+
+	@Override
 	public List<SupplierStone> findAllSupplierStoneWithSupplierName(String supplier_name) {
 		// TODO Auto-generated method stub
 		return supplierStoneDao.findAllSupplierStoneWithSupplierName(supplier_name);

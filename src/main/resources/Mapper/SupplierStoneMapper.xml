@@ -28,8 +28,44 @@
 	<select id="getSupplierStoneByID"   resultMap="SupplierStoneMap" parameterType="int">
 		select * from tb_supplierStone where id=#{id}
 	</select>
+	<select id="findSupplierStoneForTableInfo" parameterType="java.util.Map" resultMap="SupplierStoneMap">
+		select * from tb_supplierStone
+		where 1=1
+        <if test="start != null  " >
+            and supplier_purchdate <![CDATA[ >= ]]>  #{start}
+        </if>
+        <if test="end != null  " >
+            and supplier_purchdate <![CDATA[ <= ]]>  #{end}
+        </if>
+        <if test="mainNo!=null">
+            and supplier_mainStoneNo = #{mainNo}
+        </if>
+        <if test="subNo!=null">
+            and supplier_subStoneNo = #{subNo}
+        </if>
+        <if test="supplier!=null">
+            and supplier_name = #{supplier}
+        </if>
+    </select>
 	<select id="findSupplierStoneByTableInfo" parameterType="java.util.Map" resultMap="SupplierStoneMap">
-		select * from tb_supplierStone limit #{sEcho},#{len}
+		select * from tb_supplierStone
+        where 1=1
+        <if test="start != null  " >
+            and supplier_purchdate <![CDATA[ >= ]]>  #{start}
+        </if>
+        <if test="end != null  " >
+            and supplier_purchdate <![CDATA[ <= ]]>  #{end}
+        </if>
+        <if test="mainNo!=null">
+            and supplier_mainStoneNo = #{mainNo}
+        </if>
+        <if test="subNo!=null">
+            and supplier_subStoneNo = #{subNo}
+        </if>
+        <if test="supplier!=null">
+            and supplier_name = #{supplier}
+        </if>
+		 limit #{sEcho},#{len}
 	</select>
 	<select id="findAllSupplierStoneWithSupplierName"   resultMap="SupplierStoneMap" parameterType="string">
 		select * from tb_supplierStone where supplier_name = #{supplier_name}

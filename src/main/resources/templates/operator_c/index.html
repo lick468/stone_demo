@@ -769,7 +769,7 @@
                         <div class="col-md-12 column" style="text-align:center;">
                             <button type="button" class="btn btn_search" onclick="searchFediff()">查询</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <button type="button" class="btn btn_reset" onclick="resetFediff()">重置</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <button type="button" class="btn btn_search" onclick=" downloadFediff();">Excel下载</button>
+                            <button type="button" class="btn btn_search" onclick="downloadFediff();">Excel下载</button>
                         </div>
                     </div>
                 </div>
@@ -2260,7 +2260,7 @@ function retrieveData(sSource, aoData, fnCallback ) {
     }
 
     function searchManage() {
-    dataTableManage.ajax.reload();
+    	dataTableManage.ajax.reload();
     }
     function searchList() {
         dataTableList.ajax.reload();
@@ -2292,6 +2292,28 @@ function retrieveData(sSource, aoData, fnCallback ) {
         $("#fediffListFinpordNo").val("");
         $("#fediffListBatch").val("");
         dataTableFediff.ajax.reload();
+    }
+    function downloadFediff() {
+        $.ajax({
+            url : "/c/downloadExcelFediff",//这个就是请求地址对应sAjaxSource
+            data : {
+                fediffListBatch:$("#fediffListBatch").val(),
+                fediffListFinpordNo:$("#fediffListFinpordNo").val(),
+                fediffListProcoedNo:$("#fediffListProcoedNo").val(),
+                fediffListStoneNo:$("#fediffListStoneNo").val(),
+                fediffListStartTime:$("#fediffListStartTime").val(),
+                fediffListEndTime:$("#fediffListEndTime").val()
+            },
+            type : 'post',
+            dataType : 'json',
+            async : false,
+            success : function(result) {
+                // fnCallback(result);//把返回的数据传给这个方法就可以了,datatable会自动绑定数据的
+            },
+            error : function(msg) {
+                // alert(msg);
+            }
+        });
     }
 $(document).ready(function() {
 	//$('#order_value').editableSelect({ effects: 'slide' });//可输入的选择框
