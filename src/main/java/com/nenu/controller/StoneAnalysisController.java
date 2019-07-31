@@ -6296,7 +6296,9 @@ public class StoneAnalysisController {
 						group.setGroupper("100%");
 					}else {
 						if(selectType.contains("销量")) {
-							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
+							float thisyear = ((Integer)listThisYearX.get(i)).floatValue();
+							float lastyear = ((Integer)listLastYearX.get(i)).floatValue();
+							double diff = (thisyear-lastyear)/lastyear;
 							listDiffX.add(diff+"%");
 							group.setGroupper(""+diff+"%");
 						}else {
@@ -6423,9 +6425,11 @@ public class StoneAnalysisController {
                         group.setGroupper("100%");
                     }else {
 						if(selectType.contains("销量")) {
-							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
-							listDiffX.add(diff+"%");
-							group.setGroupper(""+diff+"%");
+                            float thisyear = ((Integer)listThisYearX.get(i)).floatValue();
+                            float lastyear = ((Integer)listLastYearX.get(i)).floatValue();
+                            double diff = (thisyear-lastyear)/lastyear;
+                            listDiffX.add(diff+"%");
+                            group.setGroupper(""+diff+"%");
 						}else {
 							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
 							listDiffX.add(diff+"%");
@@ -6550,9 +6554,11 @@ public class StoneAnalysisController {
                         group.setGroupper("100%");
                     }else {
 						if(selectType.contains("销量")) {
-							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
-							listDiffX.add(diff+"%");
-							group.setGroupper(""+diff+"%");
+                            float thisyear = ((Integer)listThisYearX.get(i)).floatValue();
+                            float lastyear = ((Integer)listLastYearX.get(i)).floatValue();
+                            double diff = (thisyear-lastyear)/lastyear;
+                            listDiffX.add(diff+"%");
+                            group.setGroupper(""+diff+"%");
 						}else {
 							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
 							listDiffX.add(diff+"%");
@@ -6677,9 +6683,11 @@ public class StoneAnalysisController {
                         group.setGroupper("100%");
                     }else {
 						if(selectType.contains("销量")) {
-							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
-							listDiffX.add(diff+"%");
-							group.setGroupper(""+diff+"%");
+                            float thisyear = ((Integer)listThisYearX.get(i)).floatValue();
+                            float lastyear = ((Integer)listLastYearX.get(i)).floatValue();
+                            double diff = (thisyear-lastyear)/lastyear;
+                            listDiffX.add(diff+"%");
+                            group.setGroupper(""+diff+"%");
 						}else {
 							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
 							listDiffX.add(diff+"%");
@@ -6908,9 +6916,11 @@ public class StoneAnalysisController {
                         group.setGroupper("100%");
                     }else {
 						if(selectType.contains("销量")) {
-							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
-							listDiffX.add(diff+"%");
-							group.setGroupper(""+diff+"%");
+                            float thisyear = ((Integer)listThisYearX.get(i)).floatValue();
+                            float lastyear = ((Integer)listLastYearX.get(i)).floatValue();
+                            double diff = (thisyear-lastyear)/lastyear;
+                            listDiffX.add(diff+"%");
+                            group.setGroupper(""+diff+"%");
 						}else {
 							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
 							listDiffX.add(diff+"%");
@@ -7035,9 +7045,11 @@ public class StoneAnalysisController {
                         group.setGroupper("100%");
                     }else {
 						if(selectType.contains("销量")) {
-							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
-							listDiffX.add(diff+"%");
-							group.setGroupper(""+diff+"%");
+                            float thisyear = ((Integer)listThisYearX.get(i)).floatValue();
+                            float lastyear = ((Integer)listLastYearX.get(i)).floatValue();
+                            double diff = (thisyear-lastyear)/lastyear;
+                            listDiffX.add(diff+"%");
+                            group.setGroupper(""+diff+"%");
 						}else {
 							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
 							listDiffX.add(diff+"%");
@@ -7162,9 +7174,11 @@ public class StoneAnalysisController {
                         group.setGroupper("100%");
                     }else {
 						if(selectType.contains("销量")) {
-							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
-							listDiffX.add(diff+"%");
-							group.setGroupper(""+diff+"%");
+                            float thisyear = ((Integer)listThisYearX.get(i)).floatValue();
+                            float lastyear = ((Integer)listLastYearX.get(i)).floatValue();
+                            double diff = (thisyear-lastyear)/lastyear;
+                            listDiffX.add(diff+"%");
+                            group.setGroupper(""+diff+"%");
 						}else {
 							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
 							listDiffX.add(diff+"%");
@@ -7289,9 +7303,11 @@ public class StoneAnalysisController {
                         group.setGroupper("100%");
                     }else {
 						if(selectType.contains("销量")) {
-							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
-							listDiffX.add(diff+"%");
-							group.setGroupper(""+diff+"%");
+                            float thisyear = ((Integer)listThisYearX.get(i)).floatValue();
+                            float lastyear = ((Integer)listLastYearX.get(i)).floatValue();
+                            double diff = (thisyear-lastyear)/lastyear;
+                            listDiffX.add(diff+"%");
+                            group.setGroupper(""+diff+"%");
 						}else {
 							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
 							listDiffX.add(diff+"%");
@@ -7520,9 +7536,11 @@ public class StoneAnalysisController {
                         group.setGroupper("100%");
                     }else {
 						if(selectType.contains("销量")) {
-							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
-							listDiffX.add(diff+"%");
-							group.setGroupper(""+diff+"%");
+                            float thisyear = ((Integer)listThisYearX.get(i)).floatValue();
+                            float lastyear = ((Integer)listLastYearX.get(i)).floatValue();
+                            double diff = (thisyear-lastyear)/lastyear;
+                            listDiffX.add(diff+"%");
+                            group.setGroupper(""+diff+"%");
 						}else {
 							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
 							listDiffX.add(diff+"%");
@@ -7647,9 +7665,11 @@ public class StoneAnalysisController {
                         group.setGroupper("100%");
                     }else {
 						if(selectType.contains("销量")) {
-							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
-							listDiffX.add(diff+"%");
-							group.setGroupper(""+diff+"%");
+                            float thisyear = ((Integer)listThisYearX.get(i)).floatValue();
+                            float lastyear = ((Integer)listLastYearX.get(i)).floatValue();
+                            double diff = (thisyear-lastyear)/lastyear;
+                            listDiffX.add(diff+"%");
+                            group.setGroupper(""+diff+"%");
 						}else {
 							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
 							listDiffX.add(diff+"%");
@@ -7774,9 +7794,11 @@ public class StoneAnalysisController {
                         group.setGroupper("100%");
                     }else {
 						if(selectType.contains("销量")) {
-							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
-							listDiffX.add(diff+"%");
-							group.setGroupper(""+diff+"%");
+                            float thisyear = ((Integer)listThisYearX.get(i)).floatValue();
+                            float lastyear = ((Integer)listLastYearX.get(i)).floatValue();
+                            double diff = (thisyear-lastyear)/lastyear;
+                            listDiffX.add(diff+"%");
+                            group.setGroupper(""+diff+"%");
 						}else {
 							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
 							listDiffX.add(diff+"%");
@@ -7901,9 +7923,11 @@ public class StoneAnalysisController {
                         group.setGroupper("100%");
                     }else {
 						if(selectType.contains("销量")) {
-							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
-							listDiffX.add(diff+"%");
-							group.setGroupper(""+diff+"%");
+                            float thisyear = ((Integer)listThisYearX.get(i)).floatValue();
+                            float lastyear = ((Integer)listLastYearX.get(i)).floatValue();
+                            double diff = (thisyear-lastyear)/lastyear;
+                            listDiffX.add(diff+"%");
+                            group.setGroupper(""+diff+"%");
 						}else {
 							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
 							listDiffX.add(diff+"%");
@@ -8104,9 +8128,11 @@ public class StoneAnalysisController {
                         group.setGroupper("100%");
                     }else {
 						if(selectType.contains("销量")) {
-							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
-							listDiffX.add(diff+"%");
-							group.setGroupper(""+diff+"%");
+                            float thisyear = ((Integer)listThisYearX.get(i)).floatValue();
+                            float lastyear = ((Integer)listLastYearX.get(i)).floatValue();
+                            double diff = (thisyear-lastyear)/lastyear;
+                            listDiffX.add(diff+"%");
+                            group.setGroupper(""+diff+"%");
 						}else {
 							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
 							listDiffX.add(diff+"%");
@@ -8231,9 +8257,11 @@ public class StoneAnalysisController {
                         group.setGroupper("100%");
                     }else {
 						if(selectType.contains("销量")) {
-							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
-							listDiffX.add(diff+"%");
-							group.setGroupper(""+diff+"%");
+                            float thisyear = ((Integer)listThisYearX.get(i)).floatValue();
+                            float lastyear = ((Integer)listLastYearX.get(i)).floatValue();
+                            double diff = (thisyear-lastyear)/lastyear;
+                            listDiffX.add(diff+"%");
+                            group.setGroupper(""+diff+"%");
 						}else {
 							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
 							listDiffX.add(diff+"%");
@@ -8358,9 +8386,11 @@ public class StoneAnalysisController {
                         group.setGroupper("100%");
                     }else {
 						if(selectType.contains("销量")) {
-							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
-							listDiffX.add(diff+"%");
-							group.setGroupper(""+diff+"%");
+                            float thisyear = ((Integer)listThisYearX.get(i)).floatValue();
+                            float lastyear = ((Integer)listLastYearX.get(i)).floatValue();
+                            double diff = (thisyear-lastyear)/lastyear;
+                            listDiffX.add(diff+"%");
+                            group.setGroupper(""+diff+"%");
 						}else {
 							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
 							listDiffX.add(diff+"%");
@@ -8485,9 +8515,11 @@ public class StoneAnalysisController {
                         group.setGroupper("100%");
                     }else {
 						if(selectType.contains("销量")) {
-							double diff = ((Integer)listThisYearX.get(i)-((Integer)listLastYearX.get(i)))/(Integer)listLastYearX.get(i);
-							listDiffX.add(diff+"%");
-							group.setGroupper(""+diff+"%");
+                            float thisyear = ((Integer)listThisYearX.get(i)).floatValue();
+                            float lastyear = ((Integer)listLastYearX.get(i)).floatValue();
+                            double diff = (thisyear-lastyear)/lastyear;
+                            listDiffX.add(diff+"%");
+                            group.setGroupper(""+diff+"%");
 						}else {
 							double diff = ((Float)listThisYearX.get(i)-((Float)listLastYearX.get(i)))/(Float)listLastYearX.get(i);
 							listDiffX.add(diff+"%");
