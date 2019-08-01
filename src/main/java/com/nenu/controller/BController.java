@@ -1584,8 +1584,6 @@ public class BController {
         if(manageStoneEndTime.length() > 4) {
             params.put("end",end);
         }
-        List<Stone> stoneList =stoneService.findStoneByTableInfo(params);
-        List<Stone> stoneNum = stoneService.findStoneForTableInfo(params);
 
         //查询与统计   石库管理显示
         int supplierStoneMainNumber=0;

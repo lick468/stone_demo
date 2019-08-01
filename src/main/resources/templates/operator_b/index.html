@@ -3840,9 +3840,45 @@ function retrieveSupplierStoneData(sSource, aoData, fnCallback ) {
     }
     function searchManageStone() {
         dataTableManageStone.ajax.reload();
+        $.ajax({
+            url : '/b/manageStoneCount',//这个就是请求地址对应sAjaxSource
+            data : {
+                "manageStoneMainNo":$("#manageStoneMainNo").val(),
+                "manageStoneSubNo":$("#manageStoneSubNo").val(),
+                "manageStoneLoosdofty":$("#manageStoneLoosdofty").val(),
+                "manageStoneStartTime":$("#manageStoneStartTime").val(),
+                "manageStoneEndTime":$("#manageStoneEndTime").val()
+            },//这个是把datatable的一些基本数据传给后台,比如起始位置,每页显示的行数
+            type : 'post',
+            dataType : 'json',
+            success : function(result) {
+                $("#ManageStoneMainNumber").val(result.manageStoneMainNumber);
+                $("#ManageStoneMainWeight").val(result.manageStoneMainWeight);
+                $("#ManageStoneSubNumber").val(result.manageStoneSubNumber);
+                $("#ManageStoneSubWeight").val(result.manageStoneSubWeight);
+            }
+        });
     }
     function searchListStone() {
         dataTableListStone.ajax.reload();
+        $.ajax({
+            url : '/b/listStoneCount',//这个就是请求地址对应sAjaxSource
+            data : {
+                "listStoneMainNo":$("#listStoneMainNo").val(),
+                "listStoneSubNo":$("#listStoneSubNo").val(),
+                "listStoneLoosdofty":$("#listStoneLoosdofty").val(),
+                "listStoneStartTime":$("#listStoneStartTime").val(),
+                "listStoneEndTime":$("#listStoneEndTime").val()
+            },//这个是把datatable的一些基本数据传给后台,比如起始位置,每页显示的行数
+            type : 'post',
+            dataType : 'json',
+            success : function(result) {
+                $("#ListStoneMainNumber").val(result.listStoneMainNumber);
+                $("#ListStoneMainWeight").val(result.listStoneMainWeight);
+                $("#ListStoneSubNumber").val(result.listStoneSubNumber);
+                $("#ListStoneSubWeight").val(result.listStoneSubWeight);
+            }
+        });
     }
     function searchSupplierListStone() {
         dataTableSupplier.ajax.reload();
@@ -3859,6 +3895,10 @@ function retrieveSupplierStoneData(sSource, aoData, fnCallback ) {
             dataType : 'json',
             success : function(result) {
                 console.log(result)
+                $("#mainNumberSupplier").val(result.supplierStoneMainNumber);
+                $("#mainWeightSupplier").val(result.supplierStoneMainWeight);
+                $("#subNumberSupplier").val(result.supplierStoneSubNumber);
+                $("#subWeightSupplier").val(result.supplierStoneSubWeight);
             }
         });
     }
@@ -3889,7 +3929,10 @@ function retrieveSupplierStoneData(sSource, aoData, fnCallback ) {
             type : 'post',
             dataType : 'json',
             success : function(result) {
-
+                $("#mainNumberSupplier").val(result.supplierStoneMainNumber);
+                $("#mainWeightSupplier").val(result.supplierStoneMainWeight);
+                $("#subNumberSupplier").val(result.supplierStoneSubNumber);
+                $("#subWeightSupplier").val(result.supplierStoneSubWeight);
             }
         });
     }
@@ -3900,6 +3943,24 @@ function retrieveSupplierStoneData(sSource, aoData, fnCallback ) {
         $("#manageStoneStartTime").val("");
         $("#manageStoneEndTime").val("");
         dataTableManageStone.ajax.reload();
+        $.ajax({
+            url : '/b/manageStoneCount',//这个就是请求地址对应sAjaxSource
+            data : {
+                "manageStoneMainNo":$("#manageStoneMainNo").val(),
+                "manageStoneSubNo":$("#manageStoneSubNo").val(),
+                "manageStoneLoosdofty":$("#manageStoneLoosdofty").val(),
+                "manageStoneStartTime":$("#manageStoneStartTime").val(),
+                "manageStoneEndTime":$("#manageStoneEndTime").val()
+            },//这个是把datatable的一些基本数据传给后台,比如起始位置,每页显示的行数
+            type : 'post',
+            dataType : 'json',
+            success : function(result) {
+                $("#ManageStoneMainNumber").val(result.manageStoneMainNumber);
+                $("#ManageStoneMainWeight").val(result.manageStoneMainWeight);
+                $("#ManageStoneSubNumber").val(result.manageStoneSubNumber);
+                $("#ManageStoneSubWeight").val(result.manageStoneSubWeight);
+            }
+        });
     }
     function resetListStone() {
         $("#listStoneMainNo").val("");
@@ -3908,6 +3969,24 @@ function retrieveSupplierStoneData(sSource, aoData, fnCallback ) {
         $("#listStoneStartTime").val("");
         $("#listStoneEndTime").val("");
         dataTableListStone.ajax.reload();
+        $.ajax({
+            url : '/b/listStoneCount',//这个就是请求地址对应sAjaxSource
+            data : {
+                "listStoneMainNo":$("#listStoneMainNo").val(),
+                "listStoneSubNo":$("#listStoneSubNo").val(),
+                "listStoneLoosdofty":$("#listStoneLoosdofty").val(),
+                "listStoneStartTime":$("#listStoneStartTime").val(),
+                "listStoneEndTime":$("#listStoneEndTime").val()
+            },//这个是把datatable的一些基本数据传给后台,比如起始位置,每页显示的行数
+            type : 'post',
+            dataType : 'json',
+            success : function(result) {
+                $("#ListStoneMainNumber").val(result.listStoneMainNumber);
+                $("#ListStoneMainWeight").val(result.listStoneMainWeight);
+                $("#ListStoneSubNumber").val(result.listStoneSubNumber);
+                $("#ListStoneSubWeight").val(result.listStoneSubWeight);
+            }
+        });
     }
     function downloadProcord() {
         var urlStrl ="/b/downloadProcord";
