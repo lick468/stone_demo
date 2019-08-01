@@ -2323,7 +2323,7 @@ function retrieveData(sSource, aoData, fnCallback ) {
         var   fediffListEndTime =$("#fediffListEndTime").val();
         var form = $('<form></form>');
         form.attr('style', 'display:none');
-        form.attr('target', '_blank');      //设置_blank后，下载会在新窗口打开，同时保留原来的窗口
+       // form.attr('target', '_blank');      //设置_blank后，下载会在新窗口打开，同时保留原来的窗口
         form.attr('method', 'post');
         form.attr('action', urlStrl);
         var batch = $('<input type="text" name="fediffListBatch"  />'); // 可以使用input来提交数据
@@ -2348,7 +2348,7 @@ function retrieveData(sSource, aoData, fnCallback ) {
         form.submit();
     }
     function downloadExcelFinpord() {
-        var urlStrl ="/c/downloadExcelFinpord";
+        var urlStrl ="/c/downloadFinprodExcel";
         var finpordListProcoedNo = $("#finpordListProcoedNo").val();
         var finpordListStartTime = $("#finpordListStartTime").val();
         var  finpordListEndTime =$("#finpordListEndTime").val();
@@ -2356,7 +2356,7 @@ function retrieveData(sSource, aoData, fnCallback ) {
         var   finpordListSupplier =$("#finpordListSupplier").val();
         var form = $('<form></form>');
         form.attr('style', 'display:none');
-        form.attr('target', '_blank');      //设置_blank后，下载会在新窗口打开，同时保留原来的窗口
+        // form.attr('target', '_blank');      //设置_blank后，下载会在新窗口打开，同时保留原来的窗口
         form.attr('method', 'post');
         form.attr('action', urlStrl);
         var start = $('<input type="text" name="finpordListStartTime"  />'); // 可以使用input来提交数据

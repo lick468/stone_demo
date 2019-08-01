@@ -380,12 +380,44 @@
        select DISTINCT stone_purchdate from tb_stone where stone_purchdate != '' ORDER BY stone_purchdate asc
     </select>
 
-    <select id="findMainStoneInfo"  resultMap="BaseResultMapStone">
-       select COUNT(stone_mainStoneNo) as stone_mainNumber,sum(stone_mainWeight) as stone_mainWeight from tb_stone where stone_mainStoneNo != '' and stone_reserved1=0
+    <select id="findMainStoneInfo" parameterType="java.util.Map" resultMap="BaseResultMapStone">
+       select COUNT(stone_mainStoneNo) as stone_mainNumber,sum(stone_mainWeight) as stone_mainWeight from tb_stone
+       where stone_mainStoneNo != '' and stone_reserved1=0
+		<if test="start != null  " >
+			and stone_purchdate <![CDATA[ >= ]]>  #{start}
+		</if>
+		<if test="end != null  " >
+			and stone_purchdate <![CDATA[ <= ]]>  #{end}
+		</if>
+		<if test="mainNo!=null">
+			and stone_mainStoneNo = #{mainNo}
+		</if>
+		<if test="subNo!=null">
+			and stone_substoNo = #{subNo}
+		</if>
+		<if test="loosdofty!=null">
+			and stone_loosdofty = #{loosdofty}
+		</if>
     </select>
 
-    <select id="findSubStoneInfo"  resultMap="BaseResultMapStone">
-       select COUNT(stone_substoNo) as stone_substoNumber,sum(stone_substoWgt) as stone_substoWgt from tb_stone where stone_substoNo != '' and stone_reserved1=0
+    <select id="findSubStoneInfo" parameterType="java.util.Map" resultMap="BaseResultMapStone">
+       select COUNT(stone_substoNo) as stone_substoNumber,sum(stone_substoWgt) as stone_substoWgt from tb_stone
+       where stone_substoNo != '' and stone_reserved1=0
+		<if test="start != null  " >
+			and stone_purchdate <![CDATA[ >= ]]>  #{start}
+		</if>
+		<if test="end != null  " >
+			and stone_purchdate <![CDATA[ <= ]]>  #{end}
+		</if>
+		<if test="mainNo!=null">
+			and stone_mainStoneNo = #{mainNo}
+		</if>
+		<if test="subNo!=null">
+			and stone_substoNo = #{subNo}
+		</if>
+		<if test="loosdofty!=null">
+			and stone_loosdofty = #{loosdofty}
+		</if>
     </select>
 
 </mapper>

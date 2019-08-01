@@ -957,13 +957,13 @@ public class StoneServiceImpl implements StoneService {
 	}
 
 	@Override
-	public List<Stone> findMainStoneInfo() {
-		return stoneDao.findMainStoneInfo();
+	public List<Stone> findMainStoneInfo(Map<String, Object> params) {
+		return stoneDao.findMainStoneInfo(params);
 	}
 
 	@Override
-	public List<Stone> findSubStoneInfo() {
-		return stoneDao.findSubStoneInfo();
+	public List<Stone> findSubStoneInfo(Map<String, Object> params) {
+		return stoneDao.findSubStoneInfo(params);
 	}
 
 	@Override

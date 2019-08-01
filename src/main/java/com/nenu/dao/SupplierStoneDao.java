@@ -20,4 +20,7 @@ public interface SupplierStoneDao {
 	void deleteSupplierStoneByMainNo(String mainNo);
 	void deleteSupplierStoneBySubNo(String subNo);
 
+	List<SupplierStone> findMainStoneInfo(Map<String, Object> params);
+	List<SupplierStone> findSubStoneInfo(Map<String, Object> params);
+
 }

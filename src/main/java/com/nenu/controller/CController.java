@@ -416,44 +416,44 @@ public class CController {
 	@RequestMapping(value="/downloadFinprodExcel",method = RequestMethod.POST)
 	@ResponseBody
 	public String downloadFinprod(HttpServletRequest request,HttpSession session,HttpServletResponse response) {
+
+        Integer level = (Integer) session.getAttribute("level");
+
+        String finpordListStartTime  = request.getParameter("finpordListStartTime");
+        String finpordListEndTime = request.getParameter("finpordListEndTime");
+        String finpordListProcoedNo = request.getParameter("finpordListProcoedNo");
+        String finpordListBarcode  = request.getParameter("finpordListBarcode");
+        String finpordListSupplier  = request.getParameter("finpordListSupplier");
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        ParsePosition pos = new ParsePosition(0);
+        Date start = sdf.parse(finpordListStartTime, pos);
+        pos = new ParsePosition(0);
+        Date end = sdf.parse(finpordListEndTime, pos);
+
+        if(finpordListBarcode.length() > 0) {
+            params.put("finpord_barcode",finpordListBarcode);
+        }
+        if(finpordListProcoedNo.length() > 0) {
+            params.put("finpord_procordNo",finpordListProcoedNo);
+        }
+        if(finpordListSupplier.length() > 0) {
+            params.put("finpord_supplier",finpordListSupplier);
+        }
+        if(finpordListStartTime.length() > 4) {
+            params.put("start",start);
+        }
+        if(finpordListEndTime.length() > 4) {
+            params.put("end",end);
+        }
+        List<Finpord> finpordNum = finpordService.findFinpordForTableInfo(params);
+
+
+		finpordService.downloadfinprod2sql(finpordNum, level,response);
 		
-		String levele = request.getParameter("level");
-		int level = Integer.parseInt(levele);
-		List<Finpord> list = new ArrayList<Finpord>();
-		int i=1;
-		String result =request.getParameter("result");
-		System.out.println(level+"==========="+result);
-		
-		if(result.contains("first")) {
-			list = (List<Finpord>) session.getAttribute("firstSearchFinpordListBYC");
-			if(list==null) {//没有数据
-				i=0;
-			}else {//开始下载excel表格
-				finpordService.downloadfinprod2sql(list, level,response);
-				
-			}
-		}else if(result.contains("second")) {
-			list = (List<Finpord>) session.getAttribute("secondSearchFinpordListBYC");
-			if(list==null) {//没有数据
-				i=0;
-			}else {//开始下载excel表格
-				finpordService.downloadfinprod2sql(list, level,response);
-			}
-		}else if(result.contains("all")) {
-			list= finpordService.findAllFinpord();
-			if(list==null) {//没有数据
-				i=0;
-			}else {//开始下载excel表格
-				finpordService.downloadfinprod2sql(list, level,response);
-			}
-		}
-		
-		String result1;
-		if (i == 0) {
-			result1 = "没有数据，下载失败！";
-		} else {
-			result1 = "下载成功，文件在 D:/finpordFile 目录下";
-		}
+		String result1="";
+
 		return result1;
 	}
 	/**
@@ -605,136 +605,7 @@ public class CController {
 	}
 	
 	
-	/**
-	 * 一次查询
-	 *
-	 * com.nenu.controller
-	 * @param request
-	 * @param map
-	 * @param session
-	 * @return
-	 * @throws ParseException List<Finpord>
-	 * created  at 2018年6月20日
-	 */
-	@ApiOperation(value="一次查询",notes="一次查询")
-	@RequestMapping(value = "/firstSearch", method = RequestMethod.POST)
-	@ResponseBody
-	public List<Finpord> test(HttpServletRequest request, ModelMap map,HttpSession session) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String queryType = request.getParameter("type");
-		//System.out.println(queryType+"=="+request.getParameter("purchDateStart")+"====="+request.getParameter("purchdateEnd"));
-		
-		List<Finpord> list = new ArrayList<Finpord>();
-		
-		if( request.getParameter("procordNo")!=null) { //按订单号查找
-			String procordNo = request.getParameter("procordNo");
-			long finpord_procordNo = 0;
-			finpord_procordNo =Long.parseLong(procordNo);
-			if (queryType.equals("sel_order")) {
-				list = finpordService.findFinpordByProcordNo(finpord_procordNo);
-			}
-		}
-		if( request.getParameter("barcodeNo")!=null) { //按条码查找
-			String barcodeNo = request.getParameter("barcodeNo");
-			if (queryType.equals("sel_barcode")) {
-				list = finpordService.findFinpordByBarcodeNo(barcodeNo);
-			}
-		}
-		
-		if( request.getParameter("start")!=null) {//按入库日期查找
-			if(request.getParameter("end")!=null) {
-				String sstart = request.getParameter("start");
-				String send = request.getParameter("end");
-				Date start = new Date();
-				Date end = new Date();
-				start = sdf.parse(sstart);
-				end = sdf.parse(send);
-				System.out.println("日期"+start+"-===="+end);
-				Map<String, Object> params = new HashMap<String, Object>();
-				params.put("start", start);
-				params.put("end", end);
-				if (queryType.equals("sel_date")) {
-					System.out.println("开始日期查询");
-					list = finpordService.findFinpordByInboundate(params);
-				}
-			}
-		}
-		session.setAttribute("firstSearchFinpordListBYC", list);
-		
-		System.out.println(list);
-		return list;
-	}
-	/**
-	 * 二次查询
-	 *
-	 * com.nenu.controller
-	 * @param request
-	 * @param map
-	 * @param session
-	 * @return
-	 * @throws ParseException List<Finpord>
-	 * created  at 2018年6月20日
-	 */
-	@ApiOperation(value="二次查询",notes="二次查询")
-	@RequestMapping(value = "/secondSearch", method = RequestMethod.POST)
-	@ResponseBody
-	public List<Finpord> secondSearch(HttpServletRequest request, ModelMap map,HttpSession session) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String queryType = request.getParameter("type");
-		//System.out.println(queryType+"=="+request.getParameter("purchDateStart")+"====="+request.getParameter("purchdateEnd"));
-		
-		List<Finpord> list = new ArrayList<Finpord>();
-		
-		if( request.getParameter("procordNo")!=null) { //按订单号查找
-			String procordNo = request.getParameter("procordNo");
-			long finpord_procordNo = 0;
-			finpord_procordNo =Long.parseLong(procordNo);
-			if (queryType.equals("sel_order")) {
-				list = finpordService.findFinpordByProcordNo(finpord_procordNo);
-			}
-		}
-		if( request.getParameter("barcodeNo")!=null) { //按条码查找
-			String barcodeNo = request.getParameter("barcodeNo");
-			if (queryType.equals("sel_barcode")) {
-				list = finpordService.findFinpordByBarcodeNo(barcodeNo);
-			}
-		}
 
-		if( request.getParameter("start")!=null) {//按入库日期查找
-			if(request.getParameter("end")!=null) {
-				String sstart = request.getParameter("start");
-				String send = request.getParameter("end");
-				Date start = new Date();
-				Date end = new Date();
-				start = sdf.parse(sstart);
-				end = sdf.parse(send);
-				System.out.println("日期"+start+"-===="+end);
-				Map<String, Object> params = new HashMap<String, Object>();
-				params.put("start", start);
-				params.put("end", end);
-				if (queryType.equals("sel_date")) {
-					System.out.println("开始日期查询");
-					list = finpordService.findFinpordByInboundate(params);
-				}
-			}
-		}
-		
-		List<Finpord> result = new ArrayList<Finpord>();
-		List<Finpord>  firstSearchFinpordList = (List<Finpord>) session.getAttribute("firstSearchFinpordListBYC");
-		if(firstSearchFinpordList!=null) {
-			for (int i = 0; i <list.size() ; i++) {
-				for (int j = 0; j < firstSearchFinpordList.size(); j++) {
-					if(list.get(i).getFinpord_ID().equals(firstSearchFinpordList.get(j).getFinpord_ID())) {
-						result.add(list.get(i));
-					}
-				}
-			}
-			
-		}
-		session.setAttribute("secondSearchFinpordListBYC", result);
-		System.out.println(result);
-		return result;
-	}
 	/**
 	 * 更新临时表成品
 	 *
@@ -873,22 +744,7 @@ public class CController {
 		String ss="";
 		return ss;
 	}
-	@ApiOperation(value="根据时间查找入料差",notes="根据时间查找入料差")
-	@RequestMapping(value = "/findFediffByTime", method = RequestMethod.POST)
-	@ResponseBody
-	public List<Fediff> findFediffByTime(HttpServletRequest request,HttpSession session) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-		List<Fediff> list = new ArrayList<Fediff>();
-		if(request.getParameter("time").length()!=0) {
-			String time = request.getParameter("time");
-			Date ftime = new Date();
-			ftime = sdf.parse(time);
-			list = fediffService.findFediffByTime(ftime);
-		}
-		session.setAttribute("fediffListByTime", list);
-		return list;
-	}
 	/**
 	 * 删除临时表中全部数据
 	 *

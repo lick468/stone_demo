@@ -431,7 +431,7 @@ text-align: center;
 				</div>
 				<div class="input-group col-lg-2 "  >
 					<span class="input-group-addon"   >主石重</span>
-					<input type="text" class="form-control"  id="mainWeightCopy" disabled="disabled" th:value="${#numbers.formatDecimal(mainWeightCopy,0,3)}" />
+					<input type="text" class="form-control"  id="mainWeightCopy" disabled="disabled" th:value="${#numbers.formatDecimal(mainWeightCopy,1,3)}" />
 				</div>
 				<div class="input-group col-lg-2 "  >
 					<span class="input-group-addon"   >副石数</span>
@@ -439,7 +439,7 @@ text-align: center;
 				</div>
 				<div class="input-group col-lg-2 "  >
 					<span class="input-group-addon"   >副石重</span>
-					<input type="text" class="form-control"  id="subWeightCopy" disabled="disabled" th:value="${#numbers.formatDecimal(subWeightCopy,0,3)}"/>
+					<input type="text" class="form-control"  id="subWeightCopy" disabled="disabled" th:value="${#numbers.formatDecimal(subWeightCopy,1,3)}"/>
 				</div> 
 			</div>    
 			<table id="listAllStoneCopy" class="table table-striped table-bordered"
@@ -575,19 +575,19 @@ text-align: center;
                             <th colspan="14" style="text-align:center;">
                                 <div class="input-group col-lg-2 "  >
                                     <span class="input-group-addon"   >主石数</span>
-                                    <input type="text" class="form-control"  id="mainNumberSupplier" disabled="disabled" th:value="${session.supplierStoneMainNumber}" />
+                                    <input type="text" class="form-control"  id="mainNumberSupplier" disabled="disabled"  th:value="${mainNumberSupplier}"/>
                                 </div>
                                 <div class="input-group col-lg-2 "  >
                                     <span class="input-group-addon"   >主石重</span>
-                                    <input type="text" class="form-control"  id="mainWeightSupplier" disabled="disabled" th:value="${#numbers.formatDecimal(session.supplierStoneMainWeight,0,3)}"/>
+                                    <input type="text" class="form-control"  id="mainWeightSupplier" disabled="disabled" th:value="${#numbers.formatDecimal(mainWeightSupplier,1,3)}"/>
                                 </div>
                                 <div class="input-group col-lg-2 "  >
                                     <span class="input-group-addon"   >副石数</span>
-                                    <input type="text" class="form-control"  id="subNumberSupplier" disabled="disabled" th:value="${session.supplierStoneSubNumber}"/>
+                                    <input type="text" class="form-control"  id="subNumberSupplier" disabled="disabled" th:value="${subNumberSupplier}"/>
                                 </div>
                                 <div class="input-group col-lg-2 "  >
                                     <span class="input-group-addon"   >副石重</span>
-                                    <input type="text" class="form-control"  id="subWeightSupplier" disabled="disabled" th:value="${#numbers.formatDecimal(session.supplierStoneSubWeight,0,3)}"/>
+                                    <input type="text" class="form-control"  id="subWeightSupplier" disabled="disabled" th:value="${#numbers.formatDecimal(subWeightSupplier,1,3)}"/>
                                 </div>
                             </th>
                         </tr>
@@ -698,19 +698,19 @@ text-align: center;
                             <th colspan="16" style="text-align:center;">
                                 <div class="input-group col-lg-2 "  >
                                     <span class="input-group-addon"   >主石数</span>
-                                    <input type="text" class="form-control"   disabled="disabled" th:value="${mainNumber}"/>
+                                    <input type="text" class="form-control"  id="ListStoneMainNumber"  disabled="disabled" th:value="${mainNumberStone}"/>
                                 </div>
                                 <div class="input-group col-lg-2 "  >
                                     <span class="input-group-addon"   >主石重</span>
-                                    <input type="text" class="form-control"   disabled="disabled" th:value="${#numbers.formatDecimal(mainWeight,0,3)}"/>
+                                    <input type="text" class="form-control"  id="ListStoneMainWeight" disabled="disabled" th:value="${#numbers.formatDecimal(mainWeightStone,1,3)}"/>
                                 </div>
                                 <div class="input-group col-lg-2 "  >
                                     <span class="input-group-addon"   >副石数</span>
-                                    <input type="text" class="form-control"   disabled="disabled" th:value="${subNumber}"/>
+                                    <input type="text" class="form-control"  id="ListStoneSubNumber" disabled="disabled" th:value="${subNumberStone}"/>
                                 </div>
                                 <div class="input-group col-lg-2 "  >
                                     <span class="input-group-addon"   >副石重</span>
-                                    <input type="text" class="form-control"   disabled="disabled" th:value="${#numbers.formatDecimal(subWeight,0,3)}"/>
+                                    <input type="text" class="form-control"  id="ListStoneSubWeight"  disabled="disabled" th:value="${#numbers.formatDecimal(subWeightStone,1,3)}"/>
                                 </div>
                             </th>
                         </tr>
@@ -828,19 +828,19 @@ text-align: center;
                         <th colspan="16" style="text-align:center;">
                             <div class="input-group col-lg-2 "  >
                                 <span class="input-group-addon"   >主石数</span>
-                                <input type="text" class="form-control"  id="mainNumber" disabled="disabled" th:value="${mainNumber}"/>
+                                <input type="text" class="form-control"  id="ManageStoneMainNumber" disabled="disabled" th:value="${mainNumberStone}"/>
                             </div>
                             <div class="input-group col-lg-2 "  >
                                 <span class="input-group-addon"   >主石重</span>
-                                <input type="text" class="form-control"  id="mainWeight" disabled="disabled" th:value="${#numbers.formatDecimal(mainWeight,0,3)}"/>
+                                <input type="text" class="form-control"  id="ManageStoneMainWeight" disabled="disabled" th:value="${#numbers.formatDecimal(mainWeightStone,1,3)}"/>
                             </div>
                             <div class="input-group col-lg-2 "  >
                                 <span class="input-group-addon"   >副石数</span>
-                                <input type="text" class="form-control"  id="subNumber" disabled="disabled" th:value="${subNumber}"/>
+                                <input type="text" class="form-control"  id="ManageStoneSubNumber" disabled="disabled" th:value="${subNumberStone}"/>
                             </div>
                             <div class="input-group col-lg-2 "  >
                                 <span class="input-group-addon"   >副石重</span>
-                                <input type="text" class="form-control"  id="subWeight" disabled="disabled" th:value="${#numbers.formatDecimal(subWeight,1,3)}"/>
+                                <input type="text" class="form-control"  id="ManageStoneSubWeight" disabled="disabled" th:value="${#numbers.formatDecimal(subWeightStone,1,3)}"/>
                             </div>
                         </th>
                     </tr>
@@ -2306,7 +2306,7 @@ function manageStoneNoSearch() {
 		 		    	 stoneList[i].stone_porter,
 		 		    	 stoneList[i].stone_comments,
 		 		    	 stoneList[i].stone_channelNo,
-		 		    	 '<form action="/b/deleteStoneByStoneIDAJAX" method="post" onsubmit="return deleteStoneByStoneIDAJAX();"><input type="button" class="btn_edit" id="b3@'+stoneList[i].stone_ID+'" onclick="findStoneByStoneIDAJAXEdit(this);" value="编辑">|  <input type="hidden" value="'+stoneList[i].stone_ID+'" name="delete_ID"><input type="submit" value="退石" class="btn_delete"></form>',  
+		 		    	 '<form action="/b/deleteStoneByStoneIDAJAX" method="post" onsubmit="return deleteStoneByStoneIDAJAX();"><input type="button" class="btn_edit" id="b3@'+stoneList[i].stone_ID+'" onclick="findStoneByStoneIDAJAXEdit(this);" value="编辑">|  <input type="hidden" value="'+stoneList[i].stone_ID+'" name="delete_ID"><input type="submit" value="退石" class="btn_delete"></form>',
 					      ] ).draw( );
 	 		    }
 	 		    if(stoneList[i].stone_substoNo.toString().length>2) {
@@ -2328,16 +2328,16 @@ function manageStoneNoSearch() {
 				    	 stoneList[i].stone_porter,
 				    	 stoneList[i].stone_comments,
 				    	 stoneList[i].stone_channelNo,
-				    	 '<form action="/b/deleteStoneByStoneIDAJAX" method="post" onsubmit="return deleteStoneByStoneIDAJAX();"><input type="button" class="btn_edit" id="b3@'+stoneList[i].stone_ID+'" onclick="findStoneByStoneIDAJAXEdit(this);" value="编辑">|  <input type="hidden" value="'+stoneList[i].stone_ID+'" name="delete_ID"><input type="submit" value="退石" class="btn_delete"></form>',  
+				    	 '<form action="/b/deleteStoneByStoneIDAJAX" method="post" onsubmit="return deleteStoneByStoneIDAJAX();"><input type="button" class="btn_edit" id="b3@'+stoneList[i].stone_ID+'" onclick="findStoneByStoneIDAJAXEdit(this);" value="编辑">|  <input type="hidden" value="'+stoneList[i].stone_ID+'" name="delete_ID"><input type="submit" value="退石" class="btn_delete"></form>',
 				        ] ).draw( );
 	 		    }
-	 		      
+
 	 		}
 	 		document.getElementById("subNumber").value=subNumber;
 	 		document.getElementById("mainNumber").value=mainNumber;
 	 		document.getElementById("subWeight").value=subWeight.toFixed(3);
 	 		document.getElementById("mainWeight").value=mainWeight.toFixed(3);
-	 		
+
 
 	 	}
 	 });
@@ -2586,16 +2586,16 @@ function ajaxSearchStone() {
 	var purchDateEnd = document.getElementById("purchDateEnd").value;
 	var loosdofty = document.getElementById("loosdofty").value;
 	var supplier = document.getElementById("supplier").value;
-	
+
 	//alert(type+"||"+mainNo+"||"+substoNo+"||"+purchDateStart+"||"+purchDateEnd+"||"+loosdofty);
 	if(type=="stone_supplier") {
 		var datatable = $("#stonelistBySupplier").dataTable();
-		if (datatable) {  
+		if (datatable) { 
 		   
 		    datatable.fnDestroy();         //销毁datatable
-		} 
+		}
 		initTable();
-	
+
 	}else {
 	 $.ajax({
 		 url:"/b/test",
@@ -2615,7 +2615,7 @@ function ajaxSearchStone() {
 	 		document.getElementById("resultSearch").value = "first";
 	 		var stoneSearchList = document.getElementById("stoneSearchList");
 	 		stoneSearchList.style.display="block";
-	 		
+
 	 		var stoneallList = document.getElementById("stoneallListaaa");
 	 		stoneallList.style.display="none";
 	 		var showstonebysupplier = document.getElementById("showstonebysupplier");
@@ -2635,7 +2635,7 @@ function ajaxSearchStone() {
 	 		    	mainNumber = mainNumber + 1;
 	 		    	mainWeight = mainWeight +stoneList[i].stone_mainWeight;
 	 		    	t.row.add( [
-		 		    	 
+
 		 		    	 stoneList[i].stone_seqno,
 		 		    	 format(now),
 		 		    	 stoneList[i].stone_loosdofty,
@@ -2651,14 +2651,14 @@ function ajaxSearchStone() {
 		 		    	 stoneList[i].stone_porter,
 		 		    	 stoneList[i].stone_comments,
 		 		    	 stoneList[i].stone_channelNo,
-		 		    	"<button class='btn_edit' value="+stoneList[i].stone_ID+" onclick='findStoneByStoneIDAJAXShow(this);'>查看详情</button>" 
+		 		    	"<button class='btn_edit' value="+stoneList[i].stone_ID+" onclick='findStoneByStoneIDAJAXShow(this);'>查看详情</button>"
 		 		        ] ).draw( );
 	 		    }
 	 		    if(stoneList[i].stone_substoNo.toString().length>2) {
 	 		    	subNumber = subNumber + stoneList[i].stone_substoNumber;
 	 		    	subWeight = subWeight + stoneList[i].stone_substoWgt;
 				 	t.row.add( [
-				    	 
+
 				    	 stoneList[i].stone_seqno,
 				    	 format(now),
 				    	 stoneList[i].stone_loosdofty,
@@ -2674,21 +2674,21 @@ function ajaxSearchStone() {
 				    	 stoneList[i].stone_porter,
 				    	 stoneList[i].stone_comments,
 				    	 stoneList[i].stone_channelNo,
-				    	 "<button class='btn_edit' value="+stoneList[i].stone_ID+" onclick='findStoneByStoneIDAJAXShow(this);'>查看详情</button>"  
+				    	 "<button class='btn_edit' value="+stoneList[i].stone_ID+" onclick='findStoneByStoneIDAJAXShow(this);'>查看详情</button>"
 				        ] ).draw( );
 	 		    }
-	 		      
+
 	 		}
 	 		document.getElementById("subNumberSearch").value=subNumber;
 	 		document.getElementById("mainNumberSearch").value=mainNumber;
 	 		document.getElementById("subWeightSearch").value=subWeight.toFixed(3);
 	 		document.getElementById("mainWeightSearch").value=mainWeight.toFixed(3);
-	 		
+
 
 	 	}
 	 });
-	} 
-	 
+	}
+
 }
 
 function ajaxSearchStoneSecond() {
@@ -2699,9 +2699,9 @@ function ajaxSearchStoneSecond() {
 	var purchDateEnd = document.getElementById("purchDateEnd").value;
 	var loosdofty = document.getElementById("loosdofty").value;
 	var supplier = document.getElementById("supplier").value;
-	
+
 	//alert(type+"||"+mainNo+"||"+substoNo+"||"+purchDateStart+"||"+purchDateEnd+"||"+supplierName);
-	
+
 	 $.ajax({
 		 url:"/b/second",
 		 type:"post",
@@ -2737,7 +2737,7 @@ function ajaxSearchStoneSecond() {
 	 		    	mainNumber = mainNumber + 1;
 	 		    	mainWeight = mainWeight +stoneList[i].stone_mainWeight;
 	 		    	t.row.add( [
-		 		    	
+
 		 		    	 stoneList[i].stone_seqno,
 		 		    	 format(now),
 		 		    	 stoneList[i].stone_loosdofty,
@@ -2753,14 +2753,14 @@ function ajaxSearchStoneSecond() {
 		 		    	 stoneList[i].stone_porter,
 		 		    	 stoneList[i].stone_comments,
 		 		    	 stoneList[i].stone_channelNo,
-		 		    	"<button class='btn_edit' value="+stoneList[i].stone_ID+" onclick='findStoneByStoneIDAJAXShow(this);'>查看详情</button>" 
+		 		    	"<button class='btn_edit' value="+stoneList[i].stone_ID+" onclick='findStoneByStoneIDAJAXShow(this);'>查看详情</button>"
 		 		        ] ).draw( );
 	 		    }
 	 		    if(stoneList[i].stone_substoNo.toString().length>2) {
 	 		    	subNumber = subNumber + stoneList[i].stone_substoNumber;
 	 		    	subWeight = subWeight + stoneList[i].stone_substoWgt;
 				 	t.row.add( [
-				    	
+
 				    	 stoneList[i].stone_seqno,
 				    	 format(now),
 				    	 stoneList[i].stone_loosdofty,
@@ -2776,7 +2776,7 @@ function ajaxSearchStoneSecond() {
 				    	 stoneList[i].stone_porter,
 				    	 stoneList[i].stone_comments,
 				    	 stoneList[i].stone_channelNo,
-				    	 "<button class='btn_edit' value="+stoneList[i].stone_ID+" onclick='findStoneByStoneIDAJAXShow(this);'>查看详情</button>"  
+				    	 "<button class='btn_edit' value="+stoneList[i].stone_ID+" onclick='findStoneByStoneIDAJAXShow(this);'>查看详情</button>"
 				        ] ).draw( );
 	 		    }
 	 		}
@@ -2784,9 +2784,9 @@ function ajaxSearchStoneSecond() {
 	 		document.getElementById("mainNumberSearch").value=mainNumber;
 	 		document.getElementById("subWeightSearch").value=subWeight.toFixed(3);
 	 		document.getElementById("mainWeightSearch").value=mainWeight.toFixed(3);
-	 		
+
 		 }
- 
+
 	 });
 }
 
@@ -2806,7 +2806,7 @@ function downloadExcel() {
 	 	 dateType:"json",
 	 	 success:function(result) {
 	 		alert(result);
-	 	 } 
+	 	 }
 	 });
 
 }
@@ -2823,9 +2823,9 @@ function downloadExcelSupplier() {
 	 	 dateType:"json",
 	 	 success:function(result) {
 	 		alert(result);
-	 	 } 
+	 	 }
 	 });
-	
+
 
 }
 
@@ -3834,29 +3834,7 @@ function retrieveSupplierStoneData(sSource, aoData, fnCallback ) {
             }
         });
     }
-    function retrieveListSupplierStoneData(sSource, aoData, fnCallback ) {
-        $.ajax({
-            url : sSource,//这个就是请求地址对应sAjaxSource
-            data : {
-                "aoData":JSON.stringify(aoData),
-                "supplierListStoneMainNo":$("#supplierListStoneMainNo").val(),
-                "supplierListStoneSubNo":$("#supplierListStoneSubNo").val(),
-                "supplierListStoneSupplier":$("#supplierListStoneSupplier").val(),
-                "supplierListStoneStartTime":$("#supplierListStoneStartTime").val(),
-                "supplierListStoneEndTime":$("#supplierListStoneEndTime").val()
-            },//这个是把datatable的一些基本数据传给后台,比如起始位置,每页显示的行数
-            type : 'post',
-            dataType : 'json',
-            async : false,
-            success : function(result) {
-                fnCallback(result);//把返回的数据传给这个方法就可以了,datatable会自动绑定数据的
 
-            },
-            error : function(msg) {
-                alert(msg);
-            }
-        });
-    }
     function searchProcord() {
         dataTableProcord.ajax.reload();
     }
@@ -3868,6 +3846,21 @@ function retrieveSupplierStoneData(sSource, aoData, fnCallback ) {
     }
     function searchSupplierListStone() {
         dataTableSupplier.ajax.reload();
+        $.ajax({
+            url : '/b/supplierStoneCount',//这个就是请求地址对应sAjaxSource
+            data : {
+                "supplierListStoneEndTime":$("#supplierListStoneEndTime").val(),
+                "supplierListStoneStartTime":$("#supplierListStoneStartTime").val(),
+                "supplierListStoneSubNo":$("#supplierListStoneSubNo").val(),
+                "supplierListStoneSupplier":$("#supplierListStoneSupplier").val(),
+                "supplierListStoneMainNo":$("#supplierListStoneMainNo").val()
+            },//这个是把datatable的一些基本数据传给后台,比如起始位置,每页显示的行数
+            type : 'post',
+            dataType : 'json',
+            success : function(result) {
+                console.log(result)
+            }
+        });
     }
     function resetProcord() {
         $("#procordBatch").val("");
@@ -3884,6 +3877,21 @@ function retrieveSupplierStoneData(sSource, aoData, fnCallback ) {
         $("#supplierListStoneStartTime").val("");
         $("#supplierListStoneEndTime").val("");
         dataTableSupplier.ajax.reload();
+        $.ajax({
+            url : '/b/supplierStoneCount',//这个就是请求地址对应sAjaxSource
+            data : {
+                "supplierListStoneEndTime":$("#supplierListStoneEndTime").val(),
+                "supplierListStoneStartTime":$("#supplierListStoneStartTime").val(),
+                "supplierListStoneSubNo":$("#supplierListStoneSubNo").val(),
+                "supplierListStoneSupplier":$("#supplierListStoneSupplier").val(),
+                "supplierListStoneMainNo":$("#supplierListStoneMainNo").val()
+            },//这个是把datatable的一些基本数据传给后台,比如起始位置,每页显示的行数
+            type : 'post',
+            dataType : 'json',
+            success : function(result) {
+
+            }
+        });
     }
     function resetManageStone() {
         $("#manageStoneMainNo").val("");
@@ -3910,7 +3918,7 @@ function retrieveSupplierStoneData(sSource, aoData, fnCallback ) {
         var   procordSupplier =$("#procordSupplier").val();
         var form = $('<form></form>');
         form.attr('style', 'display:none');
-        form.attr('target', '_blank');      //设置_blank后，下载会在新窗口打开，同时保留原来的窗口
+       // form.attr('target', '_blank');      //设置_blank后，下载会在新窗口打开，同时保留原来的窗口
         form.attr('method', 'post');
         form.attr('action', urlStrl);
         var batch = $('<input type="text" name="procordBatch"  />'); // 可以使用input来提交数据
@@ -3941,7 +3949,7 @@ function retrieveSupplierStoneData(sSource, aoData, fnCallback ) {
         var   listStoneEndTime =$("#listStoneEndTime").val();
         var form = $('<form></form>');
         form.attr('style', 'display:none');
-        form.attr('target', '_blank');      //设置_blank后，下载会在新窗口打开，同时保留原来的窗口
+        //form.attr('target', '_blank');      //设置_blank后，下载会在新窗口打开，同时保留原来的窗口
         form.attr('method', 'post');
         form.attr('action', urlStrl);
         var mainNo = $('<input type="text" name="listStoneMainNo"  />'); // 可以使用input来提交数据
@@ -3973,7 +3981,7 @@ function retrieveSupplierStoneData(sSource, aoData, fnCallback ) {
         var   supplierListStoneEndTime =$("#supplierListStoneEndTime").val();
         var form = $('<form></form>');
         form.attr('style', 'display:none');
-        form.attr('target', '_blank');      //设置_blank后，下载会在新窗口打开，同时保留原来的窗口
+       // form.attr('target', '_blank');      //设置_blank后，下载会在新窗口打开，同时保留原来的窗口
         form.attr('method', 'post');
         form.attr('action', urlStrl);
         var mainNo = $('<input type="text" name="supplierListStoneMainNo"  />'); // 可以使用input来提交数据
@@ -3999,7 +4007,7 @@ function retrieveSupplierStoneData(sSource, aoData, fnCallback ) {
         var urlStrl ="/b/downloadExcelAllSupplier";
         var form = $('<form></form>');
         form.attr('style', 'display:none');
-        form.attr('target', '_blank');      //设置_blank后，下载会在新窗口打开，同时保留原来的窗口
+       // form.attr('target', '_blank');      //设置_blank后，下载会在新窗口打开，同时保留原来的窗口
         form.attr('method', 'post');
         form.attr('action', urlStrl);
         $(document.body).append(form);

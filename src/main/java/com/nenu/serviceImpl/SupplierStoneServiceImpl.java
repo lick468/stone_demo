@@ -42,6 +42,16 @@ public class SupplierStoneServiceImpl implements SupplierStoneService {
 	}
 
 	@Override
+	public List<SupplierStone> findMainStoneInfo(Map<String, Object> params) {
+		return supplierStoneDao.findMainStoneInfo(params);
+	}
+
+	@Override
+	public List<SupplierStone> findSubStoneInfo(Map<String, Object> params) {
+		return supplierStoneDao.findSubStoneInfo(params);
+	}
+
+	@Override
 	public List<SupplierStone> findSupplierStoneByTableInfo(Map<String, Object> params) {
 		// TODO Auto-generated method stub
 		return supplierStoneDao.findSupplierStoneByTableInfo(params);

@@ -103,5 +103,44 @@
 		where
 		supplier_mainStoneNo=#{supplier_mainStoneNo}
 	</delete>
+	<select id="findMainStoneInfo" parameterType="java.util.Map" resultMap="SupplierStoneMap">
+		select COUNT(supplier_mainStoneNo) as supplier_mainNumber,sum(supplier_mainWeight) as supplier_mainWeight from tb_supplierStone
+		where supplier_mainStoneNo != ''
+        <if test="start != null  " >
+            and supplier_purchdate <![CDATA[ >= ]]>  #{start}
+        </if>
+        <if test="end != null  " >
+            and supplier_purchdate <![CDATA[ <= ]]>  #{end}
+        </if>
+        <if test="mainNo!=null">
+            and supplier_mainStoneNo = #{mainNo}
+        </if>
+        <if test="subNo!=null">
+            and supplier_subStoneNo = #{subNo}
+        </if>
+        <if test="supplier!=null">
+            and supplier_name = #{supplier}
+        </if>
+	</select>
+
+	<select id="findSubStoneInfo" parameterType="java.util.Map" resultMap="SupplierStoneMap">
+		select COUNT(supplier_subStoneNo) as supplier_subNumber,sum(supplier_subWeight) as supplier_subWeight from tb_supplierStone
+		where supplier_subStoneNo != ''
+        <if test="start != null  " >
+            and supplier_purchdate <![CDATA[ >= ]]>  #{start}
+        </if>
+        <if test="end != null  " >
+            and supplier_purchdate <![CDATA[ <= ]]>  #{end}
+        </if>
+        <if test="mainNo!=null">
+            and supplier_mainStoneNo = #{mainNo}
+        </if>
+        <if test="subNo!=null">
+            and supplier_subStoneNo = #{subNo}
+        </if>
+        <if test="supplier!=null">
+            and supplier_name = #{supplier}
+        </if>
+	</select>
 
 </mapper>

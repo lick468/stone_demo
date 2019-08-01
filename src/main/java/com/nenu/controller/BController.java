@@ -114,18 +114,41 @@ public class BController {
 		map.addAttribute("loosdoftyList", stoneService.findDistinctLoosdofty());// 获取石头库里所有裸石厂
 		map.addAttribute("procordList", procordService.findAllProcord());//获取所有订单信息
 		map.addAttribute("staffList", staffService.findAllStaff());//获取所有员工
+        Map<String, Object> params = new HashMap<String, Object>();
+        List<StoneCopy> mainStoneInfoCopy = stoneService.findMainStoneInfoCopy();
+        List<StoneCopy> subStoneInfoCopy = stoneService.findSubStoneInfoCopy();
+        if(mainStoneInfoCopy.size() > 0) {
+            map.addAttribute("mainNumberCopy", mainStoneInfoCopy.get(0).getStone_mainNumber());// 主石数
+            map.addAttribute("mainWeightCopy", mainStoneInfoCopy.get(0).getStone_mainWeight());// 主石重
+        }
+        if(subStoneInfoCopy.size() > 0) {
+            map.addAttribute("subNumberCopy", mainStoneInfoCopy.get(0).getStone_substoNumber());// 副石数
+            map.addAttribute("subWeightCopy", mainStoneInfoCopy.get(0).getStone_substoWgt());// 副石重
+        }
 
-		
-		map.addAttribute("mainNumber", stoneService.findMainStoneInfo().iterator().next().getStone_mainNumber());// 主石数
-		map.addAttribute("subNumber", stoneService.findSubStoneInfo().iterator().next().getStone_substoNumber());// 副石数
-		map.addAttribute("mainWeight", stoneService.findMainStoneInfo().iterator().next().getStone_mainWeight());// 主石重
-		map.addAttribute("subWeight", stoneService.findSubStoneInfo().iterator().next().getStone_substoWgt());// 副石重
-		
-		map.addAttribute("mainNumberCopy", stoneService.findMainStoneInfoCopy().iterator().next().getStone_mainNumber());// 主石数
-		map.addAttribute("subNumberCopy", stoneService.findSubStoneInfoCopy().iterator().next().getStone_substoNumber());// 副石数
-		map.addAttribute("mainWeightCopy", stoneService.findMainStoneInfoCopy().iterator().next().getStone_mainWeight());// 主石重
-		map.addAttribute("subWeightCopy", stoneService.findSubStoneInfoCopy().iterator().next().getStone_substoWgt());// 副石重
-		
+        List<Stone> subStoneInfo = stoneService.findSubStoneInfo(params);
+        List<Stone> mainStoneInfo = stoneService.findMainStoneInfo(params);
+
+        if(mainStoneInfo.size() > 0) {
+            map.addAttribute("mainNumberStone", mainStoneInfo.get(0).getStone_mainNumber());// 主石数
+            map.addAttribute("mainWeightStone", mainStoneInfo.get(0).getStone_mainWeight());// 主石重
+        }
+        if(subStoneInfo.size() > 0) {
+            map.addAttribute("subNumberStone", subStoneInfo.get(0).getStone_substoNumber());// 副石数
+            map.addAttribute("subWeightStone", subStoneInfo.get(0).getStone_substoWgt());// 副石重
+        }
+
+        List<SupplierStone> mainStoneInfo1 = supplierStoneService.findMainStoneInfo(params);
+        List<SupplierStone> subStoneInfo1 = supplierStoneService.findSubStoneInfo(params);
+        if(mainStoneInfo1.size() > 0) {
+            map.addAttribute("mainNumberSupplier", mainStoneInfo1.get(0).getSupplier_mainNumber());// 主石数
+            map.addAttribute("mainWeightSupplier", mainStoneInfo1.get(0).getSupplier_mainWeight());// 主石重
+        }
+        if(subStoneInfo1.size() > 0) {
+            map.addAttribute("subNumberSupplier", subStoneInfo1.get(0).getSupplier_subNumber());// 副石数
+            map.addAttribute("subWeightSupplier", subStoneInfo1.get(0).getSupplier_subWeight());// 副石重
+        }
+
 
 		session = request.getSession();
 		String user = (String) session.getAttribute("user_name");
@@ -195,37 +218,7 @@ public class BController {
 
 		return "redirect:/b/index";
 	}
-	/**
-	 * 根据条件生成excel文件，文件放在D：/stoneFile目录下
-	 *
-	 * com.nenu.controller
-	 * @param request
-	 * @return
-	 * @throws ParseException String
-	 * created  at 2018年6月4日
-	 */
-	@ApiOperation(value="生成excel文件",notes="生成excel文件")
-	@RequestMapping(value = "/downloadExcel", method = RequestMethod.POST)
-	@ResponseBody
-	public String downloadExcel(HttpServletRequest request,HttpSession session,HttpServletResponse response) throws ParseException {
-		List<Stone> list = new ArrayList<Stone>();
-		int i=1;
-		String result =request.getParameter("result");
-		System.out.println("==========="+result);
-		if(result.contains("first")) {
-			list = (List<Stone>) session.getAttribute("firstSearchList");
-			stoneService.downloadExcel(list,response);
-		}else if(result.contains("second")) {
-			list = (List<Stone>) session.getAttribute("secondSearchList");
-			stoneService.downloadExcel(list,response);
-		}else if(result.contains("all")) {
-			list = stoneService.findAllStone();
-			stoneService.downloadExcel(list,response);
-		}
-		
-		String result1="";
-		return result1;
-	}
+
 	/**
 	 * 下载所有石头库存
 	 * @param request
@@ -280,7 +273,7 @@ public class BController {
 	 * @return
 	 */
 	@ApiOperation(value="生成excel文件",notes="生成excel文件")
-	@RequestMapping(value = "/downloadProcord", method = RequestMethod.GET)
+	@RequestMapping(value = "/downloadProcord", method = RequestMethod.POST)
 	@ResponseBody
 	public String downloadProcord(HttpServletRequest request,HttpServletResponse response) {
         String procordNo = request.getParameter("procordNo");
@@ -361,7 +354,6 @@ public class BController {
 	 * 供应商库存汇总下载
 	 *
 	 * com.nenu.controller
-	 * @param request
 	 * @param response
 	 * @return
 	 * created  at 2018年12月19日
@@ -1154,7 +1146,8 @@ public class BController {
 	@ResponseBody
 	public DatatablesViewPage<Stone> getStoneTableData(@RequestParam String aoData, @RequestParam String listStoneMainNo,
 													   @RequestParam String listStoneSubNo,@RequestParam String listStoneLoosdofty,
-													   @RequestParam String listStoneStartTime,@RequestParam String listStoneEndTime)  {
+													   @RequestParam String listStoneStartTime,@RequestParam String listStoneEndTime,
+                                                       HttpSession session)  {
 		Map<String, Object> map = new HashMap<String, Object>();
 		//System.out.println("这里");
 		Map<String, Object> params = new HashMap<String, Object>();			
@@ -1189,6 +1182,28 @@ public class BController {
 		 List<Stone> stoneList =stoneService.findStoneByTableInfo(params);
 		 List<Stone> stoneNum = stoneService.findStoneForTableInfo(params);
 
+        //查询与统计   石库管理显示
+        int supplierStoneMainNumber=0;
+        int supplierStoneSubNumber=0;
+        double supplierStoneMainWeight=0;
+        double supplierStoneSubWeight=0;
+
+        List<Stone> mainStoneInfo = stoneService.findMainStoneInfo(params);
+        List<Stone> subStoneInfo = stoneService.findSubStoneInfo(params);
+        if(mainStoneInfo.size() > 0) {
+            supplierStoneMainNumber = mainStoneInfo.get(0).getStone_mainNumber();
+            supplierStoneMainWeight = mainStoneInfo.get(0).getStone_mainWeight();
+        }
+        if(subStoneInfo.size() > 0) {
+            supplierStoneSubNumber = subStoneInfo.get(0).getStone_substoNumber();
+            supplierStoneSubWeight = subStoneInfo.get(0).getStone_substoWgt();
+        }
+
+        session.setAttribute("ListStoneMainNumber", supplierStoneMainNumber);
+        session.setAttribute("ListStoneSubNumber", supplierStoneSubNumber);
+        session.setAttribute("ListStoneMainWeight", supplierStoneMainWeight);
+        session.setAttribute("ListStoneSubWeight", supplierStoneSubWeight);
+
 	    DatatablesViewPage<Stone> view = new DatatablesViewPage<Stone>();
 	    view.setiTotalDisplayRecords(stoneNum.size());
 	    view.setiTotalRecords(stoneNum.size());
@@ -1211,7 +1226,8 @@ public class BController {
     @ResponseBody
     public DatatablesViewPage<Stone> getTableManageStoneData(@RequestParam String aoData, @RequestParam String manageStoneMainNo,
                                                        @RequestParam String manageStoneSubNo,@RequestParam String manageStoneLoosdofty,
-                                                       @RequestParam String manageStoneStartTime,@RequestParam String manageStoneEndTime)  {
+                                                       @RequestParam String manageStoneStartTime,@RequestParam String manageStoneEndTime,
+                                                             HttpSession session)  {
         Map<String, Object> map = new HashMap<String, Object>();
         //System.out.println("这里");
         Map<String, Object> params = new HashMap<String, Object>();
@@ -1245,6 +1261,29 @@ public class BController {
         }
         List<Stone> stoneList =stoneService.findStoneByTableInfo(params);
         List<Stone> stoneNum = stoneService.findStoneForTableInfo(params);
+
+        //查询与统计   石库管理显示
+        int supplierStoneMainNumber=0;
+        int supplierStoneSubNumber=0;
+        double supplierStoneMainWeight=0;
+        double supplierStoneSubWeight=0;
+
+        List<Stone> mainStoneInfo = stoneService.findMainStoneInfo(params);
+        List<Stone> subStoneInfo = stoneService.findSubStoneInfo(params);
+        if(mainStoneInfo.size() > 0) {
+            supplierStoneMainNumber = mainStoneInfo.get(0).getStone_mainNumber();
+            supplierStoneMainWeight = mainStoneInfo.get(0).getStone_mainWeight();
+        }
+        if(subStoneInfo.size() > 0) {
+            supplierStoneSubNumber = subStoneInfo.get(0).getStone_substoNumber();
+            supplierStoneSubWeight = subStoneInfo.get(0).getStone_substoWgt();
+        }
+
+        session.setAttribute("ManageStoneMainNumber", supplierStoneMainNumber);
+        session.setAttribute("ManageStoneSubNumber", supplierStoneSubNumber);
+        session.setAttribute("ManageStoneMainWeight", supplierStoneMainWeight);
+        session.setAttribute("ManageStoneSubWeight", supplierStoneSubWeight);
+
 
         DatatablesViewPage<Stone> view = new DatatablesViewPage<Stone>();
         view.setiTotalDisplayRecords(stoneNum.size());
@@ -1343,8 +1382,8 @@ public class BController {
 	@ResponseBody
 	public DatatablesViewPage<SupplierStone> getSupplierStoneTableData(@RequestParam String aoData, @RequestParam String supplierListStoneMainNo,
                                                                        @RequestParam String supplierListStoneSubNo, @RequestParam String supplierListStoneSupplier,
-                                                                       @RequestParam String supplierListStoneStartTime, @RequestParam String supplierListStoneEndTime,
-                                                                       HttpSession session )  {
+                                                                       @RequestParam String supplierListStoneStartTime, @RequestParam String supplierListStoneEndTime
+                                                                        ,HttpServletRequest request)  {
 		
 
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -1374,36 +1413,203 @@ public class BController {
         if(supplierListStoneEndTime.length() > 4) {
             params.put("end",end);
         }
-		//查询与统计   供应商库存显示
-		int supplierStoneMainNumber=0;
-		int supplierStoneSubNumber=0;
-		double supplierStoneMainWeight=0;
-	    double supplierStoneSubWeight=0;
+
 		
 		List<SupplierStone> supplierStoneList =supplierStoneService.findSupplierStoneByTableInfo(params);
 		List<SupplierStone> supplierStoneNum = supplierStoneService.findSupplierStoneForTableInfo(params);
-		if(supplierStoneNum.size() > 0) {
-			for (int j = 0; j < supplierStoneNum.size(); j++) {		
-				if(supplierStoneNum.get(j).getSupplier_mainStoneNo().length()>0) {//主石
-					supplierStoneMainNumber += supplierStoneNum.get(j).getSupplier_mainNumber();
-					supplierStoneMainWeight += supplierStoneNum.get(j).getSupplier_mainWeight();
-				}else {
-					supplierStoneSubNumber += 1;
-					supplierStoneSubWeight += supplierStoneNum.get(j).getSupplier_subWeight();
-				}
-			}
-		}
-		session.setAttribute("supplierStoneMainNumber", supplierStoneMainNumber);
-		session.setAttribute("supplierStoneSubNumber", supplierStoneSubNumber);
-		session.setAttribute("supplierStoneMainWeight", supplierStoneMainWeight);
-		session.setAttribute("supplierStoneSubWeight", supplierStoneSubWeight);
-		session.setAttribute("supplierStoneList", supplierStoneNum);
+
 	    DatatablesViewPage<SupplierStone> view = new DatatablesViewPage<SupplierStone>();
 	    view.setiTotalDisplayRecords(supplierStoneNum.size());
 	    view.setiTotalRecords(supplierStoneNum.size());
 
 	    view.setAaData(supplierStoneList);
 	    return view;
-	
 	}
+
+    @ApiOperation(value="获取统计表格数据",notes="获取统计表格数据")
+    @RequestMapping(value="/supplierStoneCount",method=RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> supplierStoneCount(@RequestParam String supplierListStoneMainNo,
+                                                                @RequestParam String supplierListStoneSubNo, @RequestParam String supplierListStoneSupplier,
+                                                                @RequestParam String supplierListStoneStartTime, @RequestParam String supplierListStoneEndTime
+                                                                )  {
+
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        ParsePosition pos = new ParsePosition(0);
+        Date start = sdf.parse(supplierListStoneStartTime, pos);
+        pos = new ParsePosition(0);
+        Date end = sdf.parse(supplierListStoneEndTime, pos);
+
+        if(supplierListStoneMainNo.length() > 0) {
+            params.put("mainNo",supplierListStoneMainNo);
+        }
+        if(supplierListStoneSubNo.length() > 0) {
+            params.put("subNo",supplierListStoneSubNo);
+        }
+        if(supplierListStoneSupplier.length() > 0) {
+            params.put("supplier",supplierListStoneSupplier);
+        }
+        if(supplierListStoneStartTime.length() > 4) {
+            params.put("start",start);
+        }
+        if(supplierListStoneEndTime.length() > 4) {
+            params.put("end",end);
+        }
+
+        //查询与统计   供应商库存显示
+        int supplierStoneMainNumber=0;
+        int supplierStoneSubNumber=0;
+        double supplierStoneMainWeight=0.0;
+        double supplierStoneSubWeight=0.0;
+
+        List<SupplierStone> mainStoneInfo = supplierStoneService.findMainStoneInfo(params);
+        List<SupplierStone> subStoneInfo = supplierStoneService.findSubStoneInfo(params);
+        if(mainStoneInfo.size() > 0) {
+            supplierStoneMainNumber = mainStoneInfo.get(0).getSupplier_mainNumber();
+            supplierStoneMainWeight = mainStoneInfo.get(0).getSupplier_mainWeight();
+        }
+        if(subStoneInfo.size() > 0) {
+            supplierStoneSubNumber = subStoneInfo.get(0).getSupplier_subNumber();
+            supplierStoneSubWeight = subStoneInfo.get(0).getSupplier_subWeight();
+        }
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        map.put("supplierStoneMainNumber",supplierStoneMainNumber);
+        map.put("supplierStoneMainWeight",supplierStoneMainWeight);
+        map.put("supplierStoneSubNumber",supplierStoneSubNumber);
+        map.put("supplierStoneSubWeight",supplierStoneSubWeight);
+
+        return map;
+    }
+
+    /**
+     * 获取石库库存表格数据（分页）
+     *
+     * com.nenu.controller
+     * created  at 2018年12月20日
+     */
+    @ApiOperation(value="获取统计表格数据",notes="获取统计表格数据")
+    @RequestMapping(value="/listStoneCount",method=RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> listStoneCount(@RequestParam String listStoneMainNo,
+                                                       @RequestParam String listStoneSubNo,@RequestParam String listStoneLoosdofty,
+                                                       @RequestParam String listStoneStartTime,@RequestParam String listStoneEndTime
+                                                       )  {
+        Map<String, Object> params = new HashMap<String, Object>();
+        // System.out.println(aoData);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        ParsePosition pos = new ParsePosition(0);
+        Date start = sdf.parse(listStoneStartTime, pos);
+        pos = new ParsePosition(0);
+        Date end = sdf.parse(listStoneEndTime, pos);
+
+        if(listStoneMainNo.length() > 0) {
+            params.put("mainNo",listStoneMainNo);
+        }
+        if(listStoneSubNo.length() > 0) {
+            params.put("subNo",listStoneSubNo);
+        }
+        if(listStoneLoosdofty.length() > 0) {
+            params.put("loosdofty",listStoneLoosdofty);
+        }
+        if(listStoneStartTime.length() > 4) {
+            params.put("start",start);
+        }
+        if(listStoneEndTime.length() > 4) {
+            params.put("end",end);
+        }
+
+        //查询与统计   石库管理显示
+        int supplierStoneMainNumber=0;
+        int supplierStoneSubNumber=0;
+        double supplierStoneMainWeight=0.0;
+        double supplierStoneSubWeight=0.0;
+
+        List<Stone> mainStoneInfo = stoneService.findMainStoneInfo(params);
+        List<Stone> subStoneInfo = stoneService.findSubStoneInfo(params);
+        if(mainStoneInfo.size() > 0) {
+            supplierStoneMainNumber = mainStoneInfo.get(0).getStone_mainNumber();
+            supplierStoneMainWeight = mainStoneInfo.get(0).getStone_mainWeight();
+        }
+        if(subStoneInfo.size() > 0) {
+            supplierStoneSubNumber = subStoneInfo.get(0).getStone_substoNumber();
+            supplierStoneSubWeight = subStoneInfo.get(0).getStone_substoWgt();
+        }
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        map.put("listStoneMainNumber",supplierStoneMainNumber);
+        map.put("listStoneMainWeight",supplierStoneMainWeight);
+        map.put("listStoneSubNumber",supplierStoneSubNumber);
+        map.put("listStoneSubWeight",supplierStoneSubWeight);
+
+        return map;
+
+    }
+    /**
+     * 获取石库库存表格数据（分页）
+     *
+     * com.nenu.controller
+     * created  at 2018年12月20日
+     */
+    @ApiOperation(value="获取统计表格数据",notes="获取统计表格数据")
+    @RequestMapping(value="/manageStoneCount",method=RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> manageStoneCount(@RequestParam String manageStoneMainNo,
+                                                    @RequestParam String manageStoneSubNo,@RequestParam String manageStoneLoosdofty,
+                                                    @RequestParam String manageStoneStartTime,@RequestParam String manageStoneEndTime)  {
+
+        //System.out.println("这里");
+        Map<String, Object> params = new HashMap<String, Object>();
+        // System.out.println(aoData);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        ParsePosition pos = new ParsePosition(0);
+        Date start = sdf.parse(manageStoneStartTime, pos);
+        pos = new ParsePosition(0);
+        Date end = sdf.parse(manageStoneEndTime, pos);
+
+        if(manageStoneMainNo.length() > 0) {
+            params.put("mainNo",manageStoneMainNo);
+        }
+        if(manageStoneSubNo.length() > 0) {
+            params.put("subNo",manageStoneSubNo);
+        }
+        if(manageStoneLoosdofty.length() > 0) {
+            params.put("loosdofty",manageStoneLoosdofty);
+        }
+        if(manageStoneStartTime.length() > 4) {
+            params.put("start",start);
+        }
+        if(manageStoneEndTime.length() > 4) {
+            params.put("end",end);
+        }
+        List<Stone> stoneList =stoneService.findStoneByTableInfo(params);
+        List<Stone> stoneNum = stoneService.findStoneForTableInfo(params);
+
+        //查询与统计   石库管理显示
+        int supplierStoneMainNumber=0;
+        int supplierStoneSubNumber=0;
+        double supplierStoneMainWeight=0;
+        double supplierStoneSubWeight=0;
+
+        List<Stone> mainStoneInfo = stoneService.findMainStoneInfo(params);
+        List<Stone> subStoneInfo = stoneService.findSubStoneInfo(params);
+        if(mainStoneInfo.size() > 0) {
+            supplierStoneMainNumber = mainStoneInfo.get(0).getStone_mainNumber();
+            supplierStoneMainWeight = mainStoneInfo.get(0).getStone_mainWeight();
+        }
+        if(subStoneInfo.size() > 0) {
+            supplierStoneSubNumber = subStoneInfo.get(0).getStone_substoNumber();
+            supplierStoneSubWeight = subStoneInfo.get(0).getStone_substoWgt();
+        }
+
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        map.put("manageStoneMainNumber",supplierStoneMainNumber);
+        map.put("manageStoneMainWeight",supplierStoneMainWeight);
+        map.put("manageStoneSubNumber",supplierStoneSubNumber);
+        map.put("manageStoneSubWeight",supplierStoneSubWeight);
+        return map;
+    }
 }

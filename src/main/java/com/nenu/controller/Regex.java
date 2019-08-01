@@ -20,6 +20,12 @@ public class Regex {
        Date end = sdf.parse(endtime, pos);
        System.out.println(start);
        System.out.println(end);
+       List<Integer> list = new ArrayList<>();
+       list.add(123);
+       Integer integer = list.get(0);
+
+       System.out.println(integer.floatValue());
+
 
 //       double d = 123.4;
 //       System.out.println(d);
