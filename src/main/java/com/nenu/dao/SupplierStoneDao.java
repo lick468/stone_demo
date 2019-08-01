@@ -11,6 +11,7 @@ public interface SupplierStoneDao {
 	
 	List<SupplierStone> findAllSupplierStoneWithSupplierName(String supplier_name);
 	List<SupplierStone> findSupplierStoneByTableInfo(Map<String, Object> params);
+	List<SupplierStone> findSupplierStoneForTableInfo(Map<String, Object> params);
 	List<SupplierStone> findSupplierStoneByTableInfoWithSupplierName(Map<String, Object> params);
 	
 	SupplierStone getSupplierStoneByID(int id);

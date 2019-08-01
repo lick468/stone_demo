@@ -914,6 +914,11 @@ public class StoneServiceImpl implements StoneService {
 		// TODO Auto-generated method stub
 		return stoneDao.findStoneByTableInfo(params);
 	}
+	@Override
+	public List<Stone> findStoneForTableInfo(Map<String, Object> params) {
+		// TODO Auto-generated method stub
+		return stoneDao.findStoneForTableInfo(params);
+	}
 
 	@Override
 	public List<StoneCopy> findStoneCopyByTableInfo(Map<String, Object> params) {

@@ -76,6 +76,7 @@ public interface StoneService {
 	List<Stone> findAllStoneNumWithTime(Map<String, Object> params);
 	int downloadExcelAllSupplier(List<Stoninproc> list_supplier, HttpServletResponse response);
 	List<Stone> findStoneByTableInfo(Map<String, Object> params);
+	List<Stone> findStoneForTableInfo(Map<String, Object> params);
 	List<StoneCopy> findStoneCopyByTableInfo(Map<String, Object> params);
 
 	List<StoneCopy> findMainStoneInfoCopy();
