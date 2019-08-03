@@ -1,10 +1,9 @@
 package com.nenu.controller;
 
-
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +33,6 @@ import com.nenu.domain.Procord;
 import com.nenu.domain.RoleUserOfIn;
 import com.nenu.domain.Stone;
 import com.nenu.domain.Stoninproc;
-import com.nenu.domain.Supplier;
 import com.nenu.service.StoneService;
 import com.nenu.service.StoninprocService;
 import com.nenu.service.SupplierService;
@@ -58,7 +56,7 @@ public class AController {
 	@Autowired
 	private StoneService stoneService;
 	@Autowired
-	private FinpordService finpordService;	
+	private FinpordService finpordService;
 	@Autowired
 	private FediffService fediffService;
 	@Autowired
@@ -67,7 +65,7 @@ public class AController {
 	private SupplierService supplierService;
 	@Autowired
 	private StoninprocService stoninprocService;
-	
+
 	/**
 	 * 显示主页面
 	 *
@@ -115,13 +113,14 @@ public class AController {
 	 * created  at 2018年6月20日
 	 */
 	@ApiOperation(value="提交入库",notes="从临时表拷贝到成品表")
-	@RequestMapping(value = "/copyToFinpord", method = RequestMethod.POST)
+	@RequestMapping(value = "copyToFinpord", method = RequestMethod.POST)
 	@ResponseBody
 	public String copyToFinpord(HttpServletRequest request) {
-		
+
 		List<FinpordCopy> finpordList =finpordService.findAllFinpordCopy();
 		List<FinpordCopy> finpordCopyList_right = new ArrayList<>();
 		List<FinpordCopy> finpordCopyList_wrong = new ArrayList<>();
+
 
 		List<Stoninproc>   stoninprocList = stoninprocService.findAllStoninproc();
 		List stoninprocMainList = new ArrayList<>();
@@ -130,231 +129,236 @@ public class AController {
 				stoninprocMainList.add(stoninprocList.get(i).getStoninproc_stoneNo());
 			}
 		}
-		
+
 		int flag=0;
 		String res = "";
 		List<Long> list = new ArrayList<>();
 		if(finpordList!=null) {
-				for(int i=0;i<finpordList.size();i++) {
-					if(finpordList.get(i).getFinpord_mainstono().matches(".*[a-zA-Z].*") && finpordList.get(i).getFinpord_mainstowgt()!=0) {
-							Stoninproc stoninp  = stoninprocService.findStoninprocByStoneNo(finpordList.get(i).getFinpord_mainstono());
-							if(stoninp!=null) {
-								
-								System.out.println("1:"+finpordList.get(i).getFinpord_mainstono());
-								System.out.println("2:"+stoninp.getStoninproc_batch() +"||" +stoninp.getStoninproc_procordNo());
-								//1.生成入料差
-								Fediff fediff = new Fediff();
-								fediff.setFediff_time(new Date());//时间
-								fediff.setFediff_procordNo(stoninp.getStoninproc_procordNo());//订单号
-								fediff.setFediff_batch(stoninp.getStoninproc_batch());//批次
-								fediff.setFediff_stoneNo(finpordList.get(i).getFinpord_mainstono());//石编
-								fediff.setFinpord_weight(finpordList.get(i).getFinpord_mainstowgt());
-								fediff.setFinpord_procordNo(finpordList.get(i).getFinpord_procordNo());//成品入库时的单号
-								double ediff = 0;
-								List<Stone> stoneList =  stoneService.findStoneByMainNo(finpordList.get(i).getFinpord_mainstono());
-								if(stoneList.size()>0) {
-									double weight = stoneList.get(0).getStone_mainWeight();//石头库里的石重
-									fediff.setStone_weight(weight);
-									double weight1 = finpordList.get(i).getFinpord_mainstowgt();//成品库的石重
-									ediff = weight-weight1;
+			for(int i=0;i<finpordList.size();i++) {
+				if(finpordList.get(i).getFinpord_mainstono().matches(".*[a-zA-Z].*") && finpordList.get(i).getFinpord_mainstowgt()!=0) {
+					Stoninproc stoninp  = stoninprocService.findStoninprocByStoneNo(finpordList.get(i).getFinpord_mainstono());
+					if(stoninp!=null) {
+
+//								System.out.println("1:"+finpordList.get(i).getFinpord_mainstono());
+//								System.out.println("2:"+stoninp.getStoninproc_batch() +"||" +stoninp.getStoninproc_procordNo());
+						//1.生成入料差
+						Fediff fediff = new Fediff();
+						fediff.setFediff_time(new Date());//时间
+						fediff.setFediff_procordNo(stoninp.getStoninproc_procordNo());//订单号
+						fediff.setFediff_batch(stoninp.getStoninproc_batch());//批次
+						fediff.setFediff_stoneNo(finpordList.get(i).getFinpord_mainstono());//石编
+
+
+						fediff.setFinpord_procordNo(finpordList.get(i).getFinpord_procordNo());//成品入库时的单号
+						double ediff = 0;
+						List<Stone> stoneList =  stoneService.findStoneByMainNo(finpordList.get(i).getFinpord_mainstono());
+						if(stoneList.size()>0) {
+							double weight = stoneList.get(0).getStone_mainWeight();//石头库里的石重
+							fediff.setStone_weight(weight);
+							double weight1 = finpordList.get(i).getFinpord_mainstowgt();//成品库的石重
+							ediff = weight-weight1;
+						}
+						fediff.setFinpord_weight(finpordList.get(i).getFinpord_mainstowgt()); //现石重
+						fediff.setFediff_weightDiff(ediff);
+						fediffService.insertFediff(fediff);//添加进入料差表
+						//2.更新订单状态
+						Procord procord = procordService.findProcordByProcordNo(stoninp.getStoninproc_procordNo());
+						if(procord!=null) {
+							int before = procord.getProcord_backcount();
+							int after = before+1;
+							procord.setProcord_backcount(after);
+							if(after==procord.getProcord_goodscount()) {
+								procord.setProcord_status(1);
+							}else {
+								procord.setProcord_status(0);
+							}
+							procordService.updateProcordState(procord);//更新订单状态
+						}
+						//3.更改订单详细石头表中石头的状态和成品入库的单号
+						Stoninproc stoninproc = new Stoninproc();
+						stoninproc.setStoninproc_procordNo(stoninp.getStoninproc_procordNo());
+						stoninproc.setStoninproc_stoneNo(String.valueOf(finpordList.get(i).getFinpord_mainstono()));
+						stoninproc.setStoninproc_stoneState(1);
+						stoninproc.setFinpord_procordNo(finpordList.get(i).getFinpord_procordNo());
+						stoninprocService.updateStoninprocState(stoninproc);
+					}
+
+
+				}
+				if(finpordList.get(i).getFinpord_substo1no().length()>1 && finpordList.get(i).getFinpord_substo1wgt()!=0) {
+					List<Stoninproc> stoninpList  = stoninprocService.findStoninprocBySubStoneNo(String.valueOf(finpordList.get(i).getFinpord_substo1no()));
+					if(stoninpList.size()>0) {
+						Stoninproc stoninp = stoninpList.get(0);
+						if(stoninp!=null) {
+							Fediff fediff = new Fediff();
+							fediff.setFediff_time(new Date());//时间
+							fediff.setFediff_procordNo(stoninp.getStoninproc_procordNo());//订单号
+							fediff.setFediff_batch(stoninp.getStoninproc_batch());//批次
+							fediff.setFinpord_weight(finpordList.get(i).getFinpord_substo1wgt());
+							fediff.setFediff_stoneNo(String.valueOf(finpordList.get(i).getFinpord_substo1no()));//石编
+							fediff.setFinpord_procordNo(finpordList.get(i).getFinpord_procordNo());//成品入库时的单号
+							double ediff = 0;
+							List<Stone> stoneList =  stoneService.findStoneBySubNo(finpordList.get(i).getFinpord_substo1no());
+							if(stoneList.size()>0) {
+								double weight = stoneList.get(0).getStone_substoWgt();//石头库里的石重
+								fediff.setStone_weight(weight);
+								double weight1 = finpordList.get(i).getFinpord_substo1wgt();//成品库的石重
+								ediff = weight-weight1;
+							}
+							fediff.setFediff_weightDiff(ediff);
+							fediffService.insertFediff(fediff);
+							Procord procord = procordService.findProcordByProcordNo(stoninp.getStoninproc_procordNo());
+							if(procord!=null) {
+								int before = procord.getProcord_backcount();
+								int after = before+1;
+								procord.setProcord_backcount(after);
+								if(after==procord.getProcord_goodscount()) {
+									procord.setProcord_status(1);
+								}else {
+									procord.setProcord_status(0);
 								}
-								fediff.setFediff_weightDiff(ediff);
-								fediffService.insertFediff(fediff);//添加进入料差表
-								//2.更新订单状态
-								Procord procord = procordService.findProcordByProcordNo(stoninp.getStoninproc_procordNo());
-								if(procord!=null) {
-									int before = procord.getProcord_backcount();
-									int after = before+1;
-									procord.setProcord_backcount(after);
-									if(after==procord.getProcord_goodscount()) {
-										procord.setProcord_status(1);
-									}else {
-										procord.setProcord_status(0);
-									}
-									procordService.updateProcordState(procord);//更新订单状态
-								}
-								//3.更改订单详细石头表中石头的状态
-								Stoninproc stoninproc = new Stoninproc();
-								stoninproc.setStoninproc_procordNo(stoninp.getStoninproc_procordNo());
-								stoninproc.setStoninproc_stoneNo(String.valueOf(finpordList.get(i).getFinpord_mainstono()));
-								stoninproc.setStoninproc_stoneState(1);
-								stoninproc.setFinpord_procordNo(finpordList.get(i).getFinpord_procordNo());
-								stoninprocService.updateStoninprocState(stoninproc);
+								procordService.updateProcordState(procord);//更新订单状态
 							}
 
-							
-					}
-					if(finpordList.get(i).getFinpord_substo1no().length()>1 && finpordList.get(i).getFinpord_substo1wgt()!=0) {
-						List<Stoninproc> stoninpList  = stoninprocService.findStoninprocBySubStoneNo(String.valueOf(finpordList.get(i).getFinpord_substo1no()));
-						if(stoninpList.size()>0) {
-							Stoninproc stoninp = stoninpList.get(0);
-							if(stoninp!=null) {
-								Fediff fediff = new Fediff();
-								fediff.setFediff_time(new Date());//时间
-								fediff.setFediff_procordNo(stoninp.getStoninproc_procordNo());//订单号
-								fediff.setFediff_batch(stoninp.getStoninproc_batch());//批次
-                                fediff.setFinpord_weight(finpordList.get(i).getFinpord_substo1wgt());
-								fediff.setFediff_stoneNo(String.valueOf(finpordList.get(i).getFinpord_substo1no()));//石编
-								fediff.setFinpord_procordNo(finpordList.get(i).getFinpord_procordNo());//成品入库时的单号
-								double ediff = 0;
-								List<Stone> stoneList =  stoneService.findStoneBySubNo(finpordList.get(i).getFinpord_substo1no());
-								if(stoneList.size()>0) {
-									double weight = stoneList.get(0).getStone_substoWgt();//石头库里的石重
-                                    fediff.setStone_weight(weight);
-									double weight1 = finpordList.get(i).getFinpord_substo1wgt();//成品库的石重
-									ediff = weight-weight1;
-								}
-								fediff.setFediff_weightDiff(ediff);
-								fediffService.insertFediff(fediff);
-								Procord procord = procordService.findProcordByProcordNo(stoninp.getStoninproc_procordNo());
-								if(procord!=null) {
-									int before = procord.getProcord_backcount();
-									int after = before+1;
-									procord.setProcord_backcount(after);
-									if(after==procord.getProcord_goodscount()) {
-										procord.setProcord_status(1);
-									}else {
-										procord.setProcord_status(0);
-									}
-									procordService.updateProcordState(procord);//更新订单状态
-								}
-								
-								Stoninproc stoninproc = new Stoninproc();
-								stoninproc.setStoninproc_procordNo(stoninp.getStoninproc_procordNo());
-								stoninproc.setStoninproc_stoneNo(String.valueOf(finpordList.get(i).getFinpord_substo1no()));
-								stoninproc.setStoninproc_stoneState(1);
-								stoninproc.setFinpord_procordNo(finpordList.get(i).getFinpord_procordNo());
-								stoninprocService.updateStoninprocState(stoninproc);
-							}
-						}	
-					}
-					if(finpordList.get(i).getFinpord_substo2no().length()>1 && finpordList.get(i).getFinpord_substo2wgt()!=0) {
-						List<Stoninproc> stoninpList  = stoninprocService.findStoninprocBySubStoneNo(String.valueOf(finpordList.get(i).getFinpord_substo2no()));
-						if(stoninpList.size()>0) {
-							Stoninproc stoninp = stoninpList.get(0);
-							if(stoninp!=null) {
-								Fediff fediff = new Fediff();
-								fediff.setFediff_time(new Date());//时间
-								fediff.setFediff_procordNo(stoninp.getStoninproc_procordNo());//订单号
-								fediff.setFediff_batch(stoninp.getStoninproc_batch());//批次
-                                fediff.setFinpord_weight(finpordList.get(i).getFinpord_substo2wgt());
-								fediff.setFediff_stoneNo(String.valueOf(finpordList.get(i).getFinpord_substo2no()));//石编
-								fediff.setFinpord_procordNo(finpordList.get(i).getFinpord_procordNo());//成品入库时的单号
-								double ediff = 0;
-								List<Stone> stoneList =  stoneService.findStoneBySubNo(finpordList.get(i).getFinpord_substo2no());
-								if(stoneList.size()>0) {
-									double weight = stoneList.get(0).getStone_substoWgt();//石头库里的石重
-                                    fediff.setStone_weight(weight);
-									double weight1 = finpordList.get(i).getFinpord_substo2wgt();//成品库的石重
-									ediff = weight-weight1;
-								}
-								fediff.setFediff_weightDiff(ediff);
-								fediffService.insertFediff(fediff);
-								Procord procord = procordService.findProcordByProcordNo(stoninp.getStoninproc_procordNo());
-								if(procord!=null) {
-									int before = procord.getProcord_backcount();
-									int after = before+1;
-									procord.setProcord_backcount(after);
-									if(after==procord.getProcord_goodscount()) {
-										procord.setProcord_status(1);
-									}else {
-										procord.setProcord_status(0);
-									}
-									procordService.updateProcordState(procord);//更新订单状态
-								}
-								
-								Stoninproc stoninproc = new Stoninproc();
-								stoninproc.setStoninproc_procordNo(stoninp.getStoninproc_procordNo());
-								stoninproc.setStoninproc_stoneNo(String.valueOf(finpordList.get(i).getFinpord_substo2no()));
-								stoninproc.setStoninproc_stoneState(1);
-								stoninproc.setFinpord_procordNo(finpordList.get(i).getFinpord_procordNo());
-								stoninprocService.updateStoninprocState(stoninproc);
-							}
+							Stoninproc stoninproc = new Stoninproc();
+							stoninproc.setStoninproc_procordNo(stoninp.getStoninproc_procordNo());
+							stoninproc.setStoninproc_stoneNo(String.valueOf(finpordList.get(i).getFinpord_substo1no()));
+							stoninproc.setStoninproc_stoneState(1);
+							stoninproc.setFinpord_procordNo(finpordList.get(i).getFinpord_procordNo());
+							stoninprocService.updateStoninprocState(stoninproc);
 						}
 					}
-					if(finpordList.get(i).getFinpord_substo3no().length()>1 && finpordList.get(i).getFinpord_substo3wgt()!=0) {
-						
-						List<Stoninproc> stoninpList  = stoninprocService.findStoninprocBySubStoneNo(String.valueOf(finpordList.get(i).getFinpord_substo3no()));
-						if(stoninpList.size()>0) {
-							Stoninproc stoninp = stoninpList.get(0);
-							if(stoninp!=null) {
-								Fediff fediff = new Fediff();
-								fediff.setFediff_time(new Date());//时间
-								fediff.setFediff_procordNo(stoninp.getStoninproc_procordNo());//订单号
-								fediff.setFediff_batch(stoninp.getStoninproc_batch());//批次
-                                fediff.setFinpord_weight(finpordList.get(i).getFinpord_substo3wgt());
-								fediff.setFediff_stoneNo(String.valueOf(finpordList.get(i).getFinpord_substo3no()));//石编
-								fediff.setFinpord_procordNo(finpordList.get(i).getFinpord_procordNo());//成品入库时的单号
-								double ediff = 0;
-								List<Stone> stoneList =  stoneService.findStoneBySubNo(finpordList.get(i).getFinpord_substo3no());
-								if(stoneList.size()>0) {
-									double weight = stoneList.get(0).getStone_substoWgt();//石头库里的石重
-                                    fediff.setStone_weight(weight);
-									double weight1 = finpordList.get(i).getFinpord_substo3wgt();//成品库的石重
-									ediff = weight-weight1;
-								}
-								fediff.setFediff_weightDiff(ediff);
-								fediffService.insertFediff(fediff);
-								Procord procord = procordService.findProcordByProcordNo(stoninp.getStoninproc_procordNo());
-								if(procord!=null) {
-									int before = procord.getProcord_backcount();
-									int after = before+1;
-									procord.setProcord_backcount(after);
-									if(after==procord.getProcord_goodscount()) {
-										procord.setProcord_status(1);
-									}else {
-										procord.setProcord_status(0);
-									}
-									procordService.updateProcordState(procord);//更新订单状态
-								}
-								
-								Stoninproc stoninproc = new Stoninproc();
-								stoninproc.setStoninproc_procordNo(stoninp.getStoninproc_procordNo());
-								stoninproc.setStoninproc_stoneNo(String.valueOf(finpordList.get(i).getFinpord_substo3no()));
-								stoninproc.setStoninproc_stoneState(1);
-								stoninproc.setFinpord_procordNo(finpordList.get(i).getFinpord_procordNo());
-								stoninprocService.updateStoninprocState(stoninproc);
+				}
+				if(finpordList.get(i).getFinpord_substo2no().length()>1 && finpordList.get(i).getFinpord_substo2wgt()!=0) {
+					List<Stoninproc> stoninpList  = stoninprocService.findStoninprocBySubStoneNo(String.valueOf(finpordList.get(i).getFinpord_substo2no()));
+					if(stoninpList.size()>0) {
+						Stoninproc stoninp = stoninpList.get(0);
+						if(stoninp!=null) {
+							Fediff fediff = new Fediff();
+							fediff.setFediff_time(new Date());//时间
+							fediff.setFediff_procordNo(stoninp.getStoninproc_procordNo());//订单号
+							fediff.setFediff_batch(stoninp.getStoninproc_batch());//批次
+							fediff.setFediff_stoneNo(String.valueOf(finpordList.get(i).getFinpord_substo2no()));//石编
+							fediff.setFinpord_weight(finpordList.get(i).getFinpord_substo2wgt());
+							fediff.setFinpord_procordNo(finpordList.get(i).getFinpord_procordNo());//成品入库时的单号
+							double ediff = 0;
+							List<Stone> stoneList =  stoneService.findStoneBySubNo(finpordList.get(i).getFinpord_substo2no());
+							if(stoneList.size()>0) {
+								double weight = stoneList.get(0).getStone_substoWgt();//石头库里的石重
+								fediff.setStone_weight(weight);
+								double weight1 = finpordList.get(i).getFinpord_substo2wgt();//成品库的石重
+								ediff = weight-weight1;
 							}
+							fediff.setFediff_weightDiff(ediff);
+							fediffService.insertFediff(fediff);
+							Procord procord = procordService.findProcordByProcordNo(stoninp.getStoninproc_procordNo());
+							if(procord!=null) {
+								int before = procord.getProcord_backcount();
+								int after = before+1;
+								procord.setProcord_backcount(after);
+								if(after==procord.getProcord_goodscount()) {
+									procord.setProcord_status(1);
+								}else {
+									procord.setProcord_status(0);
+								}
+								procordService.updateProcordState(procord);//更新订单状态
+							}
+
+							Stoninproc stoninproc = new Stoninproc();
+							stoninproc.setStoninproc_procordNo(stoninp.getStoninproc_procordNo());
+							stoninproc.setStoninproc_stoneNo(String.valueOf(finpordList.get(i).getFinpord_substo2no()));
+							stoninproc.setStoninproc_stoneState(1);
+							stoninproc.setFinpord_procordNo(finpordList.get(i).getFinpord_procordNo());
+							stoninprocService.updateStoninprocState(stoninproc);
 						}
 					}
+				}
+				if(finpordList.get(i).getFinpord_substo3no().length()>1 && finpordList.get(i).getFinpord_substo3wgt()!=0) {
+
+					List<Stoninproc> stoninpList  = stoninprocService.findStoninprocBySubStoneNo(String.valueOf(finpordList.get(i).getFinpord_substo3no()));
+					if(stoninpList.size()>0) {
+						Stoninproc stoninp = stoninpList.get(0);
+						if(stoninp!=null) {
+							Fediff fediff = new Fediff();
+							fediff.setFediff_time(new Date());//时间
+							fediff.setFediff_procordNo(stoninp.getStoninproc_procordNo());//订单号
+							fediff.setFediff_batch(stoninp.getStoninproc_batch());//批次
+							fediff.setFinpord_weight(finpordList.get(i).getFinpord_substo3wgt());
+							fediff.setFediff_stoneNo(String.valueOf(finpordList.get(i).getFinpord_substo3no()));//石编
+							fediff.setFinpord_procordNo(finpordList.get(i).getFinpord_procordNo());//成品入库时的单号
+							double ediff = 0;
+							List<Stone> stoneList =  stoneService.findStoneBySubNo(finpordList.get(i).getFinpord_substo3no());
+							if(stoneList.size()>0) {
+								double weight = stoneList.get(0).getStone_substoWgt();//石头库里的石重
+								fediff.setStone_weight(weight);
+								double weight1 = finpordList.get(i).getFinpord_substo3wgt();//成品库的石重
+								ediff = weight-weight1;
+							}
+							fediff.setFediff_weightDiff(ediff);
+							fediffService.insertFediff(fediff);
+							Procord procord = procordService.findProcordByProcordNo(stoninp.getStoninproc_procordNo());
+							if(procord!=null) {
+								int before = procord.getProcord_backcount();
+								int after = before+1;
+								procord.setProcord_backcount(after);
+								if(after==procord.getProcord_goodscount()) {
+									procord.setProcord_status(1);
+								}else {
+									procord.setProcord_status(0);
+								}
+								procordService.updateProcordState(procord);//更新订单状态
+							}
+
+							Stoninproc stoninproc = new Stoninproc();
+							stoninproc.setStoninproc_procordNo(stoninp.getStoninproc_procordNo());
+							stoninproc.setStoninproc_stoneNo(String.valueOf(finpordList.get(i).getFinpord_substo3no()));
+							stoninproc.setStoninproc_stoneState(1);
+							stoninproc.setFinpord_procordNo(finpordList.get(i).getFinpord_procordNo());
+							stoninprocService.updateStoninprocState(stoninproc);
+						}
+					}
+				}
 			}
-				int j2,addFlag;
-				for (int j = 0; j < finpordList.size(); j++) {
-					addFlag=0;
-					for (j2 = 0; j2 < stoninprocMainList.size(); j2++) {
-						if(finpordList.get(j).getFinpord_mainstono().contains(stoninprocMainList.get(j2).toString())) {
-							finpordCopyList_right.add(finpordList.get(j));
-							addFlag=1;
-						}
+			int j2,addFlag;
+			for (int j = 0; j < finpordList.size(); j++) {
+				addFlag=0;
+				for (j2 = 0; j2 < stoninprocMainList.size(); j2++) {
+					if(finpordList.get(j).getFinpord_mainstono().contains(stoninprocMainList.get(j2).toString())) {
+						finpordCopyList_right.add(finpordList.get(j));
+						addFlag=1;
 					}
-					if(addFlag==0) {
-						finpordCopyList_wrong.add(finpordList.get(j));
+				}
+				if(addFlag==0) {
+					finpordCopyList_wrong.add(finpordList.get(j));
+				}
+			}
+//			System.out.println(finpordCopyList_right);
+//			System.out.println(finpordCopyList_wrong);
+
+			//1.清空临时表
+			finpordService.clearCopy();//清空临时表
+			//2.临时表重新插入正确的记录
+			if(finpordCopyList_right.size() > 0) {
+				finpordService.batchInsertFinpordCopy(finpordCopyList_right);
+				//3.从临时表拷贝到成品表
+				flag = 	finpordService.copyToFinpord();//从临时表拷贝到成品表
+			}
+			//4.清空临时表
+			finpordService.clearCopy();//清空临时表
+			//5.临时表重新插入错误的记录
+			if(finpordCopyList_wrong.size() > 0) {
+				finpordService.batchInsertFinpordCopy(finpordCopyList_wrong);
+				for (int i=0;i<finpordCopyList_wrong.size();i++) {
+					if(finpordCopyList_wrong.get(i).getFinpord_procordNo() != 0) {
+						list.add(finpordCopyList_wrong.get(i).getFinpord_procordNo());
 					}
-					
 				}
-				//System.out.println(finpordCopyList_right);
-				//
-				System.out.println(finpordCopyList_wrong.size());
-				
-				//1.清空临时表
-				finpordService.clearCopy();//清空临时表
-				//2.临时表重新插入正确的记录
-				if(finpordCopyList_right.size() > 0) {
-					finpordService.batchInsertFinpordCopy(finpordCopyList_right);
-					//3.从临时表拷贝到成品表
-					flag = 	finpordService.copyToFinpord();//从临时表拷贝到成品表
-				}
-				//4.清空临时表
-				finpordService.clearCopy();//清空临时表
-				//5.临时表重新插入错误的记录
-				if(finpordCopyList_wrong.size() > 0) {
-					finpordService.batchInsertFinpordCopy(finpordCopyList_wrong);
-				}
-					
-	
+			}
 		}
-		
+
 		System.out.println("flag======"+flag);
+		// flag  表示成功提交的条数
+
 		if(flag==0) {
 			if(finpordCopyList_wrong.size()>0) {
 				if(finpordCopyList_right.size()>0) {
@@ -376,7 +380,7 @@ public class AController {
 		}
 		return res;
 	}
-	
+
 	/**
 	 * 导入excel数据进入临时表
 	 *
@@ -394,10 +398,9 @@ public class AController {
 		System.out.println("fileName=============="+fileName);
 		String levele = request.getParameter("level");
 		int level = Integer.parseInt(levele);
-        List<FinpordCopy> finpordCopyList = new ArrayList<FinpordCopy>();
-		
-		finpordCopyList = finpordService.finprodexcel2sql(fileName, file,level);
-		
+
+		finpordService.finprodexcel2sql(fileName, file,level);
+
 		return "redirect:/a/index";
 	}
 	/**
@@ -413,29 +416,44 @@ public class AController {
 	@RequestMapping(value="/downloadFinprodExcel",method = RequestMethod.POST)
 	@ResponseBody
 	public String downloadFinprod(HttpServletRequest request,HttpSession session,HttpServletResponse response) {
-		
-		String levele = request.getParameter("level");
-		int level = Integer.parseInt(levele);
-		List<Finpord> list = new ArrayList<Finpord>();
-		String result =request.getParameter("result");
-		System.out.println(level+"==========="+result);
-		
-		if(result.contains("first")) {
-			list = (List<Finpord>) session.getAttribute("firstSearchFinpordListBYA");
-			finpordService.downloadfinprod2sql(list, level,response);
 
-		}else if(result.contains("second")) {
-			list = (List<Finpord>) session.getAttribute("secondSearchFinpordListBYA");
-		    finpordService.downloadfinprod2sql(list, level,response);
-			
-		}else if(result.contains("all")) {
-			list= finpordService.findAllFinpord();
-			finpordService.downloadfinprod2sql(list, level,response);
+		Integer level = (Integer) session.getAttribute("level");
 
+		String finpordListStartTime  = request.getParameter("finpordListStartTime");
+		String finpordListEndTime = request.getParameter("finpordListEndTime");
+		String finpordListProcoedNo = request.getParameter("finpordListProcoedNo");
+		String finpordListBarcode  = request.getParameter("finpordListBarcode");
+		String finpordListSupplier  = request.getParameter("finpordListSupplier");
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		ParsePosition pos = new ParsePosition(0);
+		Date start = sdf.parse(finpordListStartTime, pos);
+		pos = new ParsePosition(0);
+		Date end = sdf.parse(finpordListEndTime, pos);
+
+		if(finpordListBarcode.length() > 0) {
+			params.put("finpord_barcode",finpordListBarcode);
 		}
-		
+		if(finpordListProcoedNo.length() > 0) {
+			params.put("finpord_procordNo",finpordListProcoedNo);
+		}
+		if(finpordListSupplier.length() > 0) {
+			params.put("finpord_supplier",finpordListSupplier);
+		}
+		if(finpordListStartTime.length() > 4) {
+			params.put("start",start);
+		}
+		if(finpordListEndTime.length() > 4) {
+			params.put("end",end);
+		}
+		List<Finpord> finpordNum = finpordService.findFinpordForTableInfo(params);
+
+
+		finpordService.downloadfinprod2sql(finpordNum, level,response);
+
 		String result1="";
-		
+
 		return result1;
 	}
 	/**
@@ -444,20 +462,44 @@ public class AController {
 	@ApiOperation(value="下载入料差excel",notes="下载入料差excel")
 	@RequestMapping(value="/downloadExcelFediff",method = RequestMethod.POST)
 	@ResponseBody
-	public String downFediff(HttpServletRequest request,HttpSession session,HttpServletResponse response) {
-		String type = request.getParameter("type");
-		int re =0;
-		List<Fediff> fediffList = new ArrayList<Fediff>();
-		if(type.contains("all")) {
-			fediffList = fediffService.findAllFediff();
-			fediffService.downloadFediff(fediffList,response);	
-		}else {
-			fediffList = (List<Fediff>) session.getAttribute("fediffListByTime");
-			fediffService.downloadFediff(fediffList,response);
-			
+	public String downFediff(HttpServletRequest request,HttpServletResponse response) {
+
+		String fediffListStoneNo  = request.getParameter("fediffListStoneNo");
+		String fediffListEndTime = request.getParameter("fediffListEndTime");
+		String fediffListStartTime = request.getParameter("fediffListStartTime");
+		String fediffListProcoedNo  = request.getParameter("fediffListProcoedNo");
+		String fediffListFinpordNo  = request.getParameter("fediffListFinpordNo");
+		String fediffListBatch  = request.getParameter("fediffListBatch");
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		ParsePosition pos = new ParsePosition(0);
+		Date start = sdf.parse(fediffListStartTime, pos);
+		pos = new ParsePosition(0);
+		Date end = sdf.parse(fediffListEndTime, pos);
+
+		if(fediffListStoneNo.length() > 0) {
+			params.put("fediff_stoneNo",fediffListStoneNo);
+		}
+		if(fediffListProcoedNo.length() > 0) {
+			params.put("fediff_procordNo",fediffListProcoedNo);
+		}
+		if(fediffListFinpordNo.length() > 0) {
+			params.put("finpord_procordNo",fediffListFinpordNo);
+		}
+		if(fediffListBatch.length() > 0) {
+			params.put("fediff_batch",fediffListBatch);
+		}
+		if(fediffListStartTime.length() > 4) {
+			params.put("start",start);
+		}
+		if(fediffListEndTime.length() > 4) {
+			params.put("end",end);
 		}
 		String result = "";
-		
+		List<Fediff> fediffForTableInfo = fediffService.findFediffForTableInfo(params);
+		fediffService.downloadFediff(fediffForTableInfo,response);
+
 		return result;
 	}
 	/**
@@ -477,10 +519,10 @@ public class AController {
 		//String time = request.getParameter("findprod_inboundate");
 		Date now = new Date();
 		String dd = request.getParameter("finpord_procordNo");
-		System.out.println(finpordCopy.getFinpord_procordNo()+"wwwwwwwwwwwwwwwwwww"+dd);
+		//System.out.println(finpordCopy.getFinpord_procordNo()+"wwwwwwwwwwwwwwwwwww"+dd);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String ss = sdf.format(now).replaceAll("-", "").trim().substring(2, 6);
-		System.out.println(ss);
+		//System.out.println(ss);
 		String supplier = request.getParameter("finpord_supplier");
 		FinpordCopy lastone = finpordService.findLastFinpordCopy();
 		String finpord_barcode="";
@@ -506,9 +548,9 @@ public class AController {
 		finpordCopy.setFinpord_barcode(finpord_barcode);
 		finpordCopy.setFinpord_seqno(finpord_seqno);
 		finpordService.insertFinpordByExcel(finpordCopy);
-		
-		
-		
+
+
+
 		return "redirect:/a/index";
 	}
 	/**
@@ -524,7 +566,7 @@ public class AController {
 	@ResponseBody
 	public Finpord findfinpordByfinpordIDAJAX(HttpServletRequest request) {
 		String finprod_ID = request.getParameter("sid");
-		Finpord finpord =finpordService.findfinpordByfinpordIDAJAX(finprod_ID); 
+		Finpord finpord =finpordService.findfinpordByfinpordIDAJAX(finprod_ID);
 		return finpord;
 	}
 	/**
@@ -540,7 +582,7 @@ public class AController {
 	@ResponseBody
 	public FinpordCopy findfinpordCopyByfinpordIDAJAX(HttpServletRequest request) {
 		String finprod_ID = request.getParameter("sid");
-		FinpordCopy finpord =finpordService.findfinpordCopyByfinpordIDAJAX(finprod_ID); 
+		FinpordCopy finpord =finpordService.findfinpordCopyByfinpordIDAJAX(finprod_ID);
 		return finpord;
 	}
 	/**
@@ -557,142 +599,13 @@ public class AController {
 	public String deletefinpordCopy(HttpServletRequest request) {
 		String finprod_ID = request.getParameter("sid");
 		finpordService.deleteFinpordCopy(finprod_ID);
-		
-		return "删除成功";
-		
-	}
-	
-	
-	/**
-	 * 一次查询
-	 *
-	 * com.nenu.controller
-	 * @param request
-	 * @param map
-	 * @param session
-	 * @return
-	 * @throws ParseException List<Finpord>
-	 * created  at 2018年6月20日
-	 */
-	@ApiOperation(value="一次查询",notes="一次查询")
-	@RequestMapping(value = "/firstSearch", method = RequestMethod.POST)
-	@ResponseBody
-	public List<Finpord> test(HttpServletRequest request, ModelMap map,HttpSession session) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String queryType = request.getParameter("type");
-		//System.out.println(queryType+"=="+request.getParameter("purchDateStart")+"====="+request.getParameter("purchdateEnd"));
-		
-		List<Finpord> list = new ArrayList<Finpord>();
-		
-		if( request.getParameter("procordNo")!=null) { //按订单号查找
-			String procordNo = request.getParameter("procordNo");
-			long finpord_procordNo = 0;
-			finpord_procordNo =Long.parseLong(procordNo);
-			if (queryType.equals("sel_order")) {
-				list = finpordService.findFinpordByProcordNo(finpord_procordNo);
-			}
-		}
-		if( request.getParameter("barcodeNo")!=null) { //按条码查找
-			String barcodeNo = request.getParameter("barcodeNo");
-			if (queryType.equals("sel_barcode")) {
-				list = finpordService.findFinpordByBarcodeNo(barcodeNo);
-			}
-		}
-		
-		if( request.getParameter("start")!=null) {//按入库日期查找
-			if(request.getParameter("end")!=null) {
-				String sstart = request.getParameter("start");
-				String send = request.getParameter("end");
-				Date start = new Date();
-				Date end = new Date();
-				start = sdf.parse(sstart);
-				end = sdf.parse(send);
-				System.out.println("日期"+start+"-===="+end);
-				Map<String, Object> params = new HashMap<String, Object>();
-				params.put("start", start);
-				params.put("end", end);
-				if (queryType.equals("sel_date")) {
-					System.out.println("开始日期查询");
-					list = finpordService.findFinpordByInboundate(params);
-				}
-			}
-		}
-		session.setAttribute("firstSearchFinpordListBYA", list);
-		
-		System.out.println(list);
-		return list;
-	}
-	/**
-	 * 二次查询
-	 *
-	 * com.nenu.controller
-	 * @param request
-	 * @param map
-	 * @param session
-	 * @return
-	 * @throws ParseException List<Finpord>
-	 * created  at 2018年6月20日
-	 */
-	@ApiOperation(value="二次查询",notes="二次查询")
-	@RequestMapping(value = "/secondSearch", method = RequestMethod.POST)
-	@ResponseBody
-	public List<Finpord> secondSearch(HttpServletRequest request, ModelMap map,HttpSession session) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String queryType = request.getParameter("type");
-		//System.out.println(queryType+"=="+request.getParameter("purchDateStart")+"====="+request.getParameter("purchdateEnd"));
-		
-		List<Finpord> list = new ArrayList<Finpord>();
-		
-		if( request.getParameter("procordNo")!=null) { //按订单号查找
-			String procordNo = request.getParameter("procordNo");
-			long finpord_procordNo = 0;
-			finpord_procordNo =Long.parseLong(procordNo);
-			if (queryType.equals("sel_order")) {
-				list = finpordService.findFinpordByProcordNo(finpord_procordNo);
-			}
-		}
-		if( request.getParameter("barcodeNo")!=null) { //按条码查找
-			String barcodeNo = request.getParameter("barcodeNo");
-			if (queryType.equals("sel_barcode")) {
-				list = finpordService.findFinpordByBarcodeNo(barcodeNo);
-			}
-		}
 
-		if( request.getParameter("start")!=null) {//按入库日期查找
-			if(request.getParameter("end")!=null) {
-				String sstart = request.getParameter("start");
-				String send = request.getParameter("end");
-				Date start = new Date();
-				Date end = new Date();
-				start = sdf.parse(sstart);
-				end = sdf.parse(send);
-				System.out.println("日期"+start+"-===="+end);
-				Map<String, Object> params = new HashMap<String, Object>();
-				params.put("start", start);
-				params.put("end", end);
-				if (queryType.equals("sel_date")) {
-					System.out.println("开始日期查询");
-					list = finpordService.findFinpordByInboundate(params);
-				}
-			}
-		}
-		
-		List<Finpord> result = new ArrayList<Finpord>();
-		List<Finpord>  firstSearchFinpordList = (List<Finpord>) session.getAttribute("firstSearchFinpordListBYA");
-		if(firstSearchFinpordList!=null) {
-			for (int i = 0; i <list.size() ; i++) {
-				for (int j = 0; j < firstSearchFinpordList.size(); j++) {
-					if(list.get(i).getFinpord_ID().equals(firstSearchFinpordList.get(j).getFinpord_ID())) {
-						result.add(list.get(i));
-					}
-				}
-			}
-			
-		}
-		session.setAttribute("secondSearchFinpordListBYA", result);
-		System.out.println(result);
-		return result;
+		return "删除成功";
+
 	}
+
+
+
 	/**
 	 * 更新临时表成品
 	 *
@@ -708,6 +621,7 @@ public class AController {
 	@ApiOperation(value="更新临时表成品",notes="更新临时表成品")
 	@RequestMapping(value = "/updateFinpordCopy", method = RequestMethod.POST)
 	public String finpordCopyUpdate(FinpordCopy finpordCopy,BindingResult bin, HttpServletRequest request,ModelMap map) throws ParseException {
+
 		//更新成品的同时，查看订单号是否存在，不存在的话，同时更新订单号
 		String stone_main_no = finpordCopy.getFinpord_mainstono();
 		if(stone_main_no!=null) {
@@ -722,11 +636,12 @@ public class AController {
 			}
 		}
 		finpordService.updateFinpordCopy(finpordCopy);
-		
+
+
 		return "redirect:/a/index";
 	}
 	/**
-	 * 
+	 *
 	 * 更新成品
 	 *
 	 * com.nenu.controller
@@ -767,26 +682,26 @@ public class AController {
 			finpordList = finpordService.findFinpordByProcordNo(Long.parseLong(order));
 		}else {
 			finpordList = finpordService.findFinpordByBarcodeNo(barcode);
-		}	
-		 if(finpordList!=null) {
-			 for (int i = 0; i < finpordList.size(); i++) {
+		}
+		if(finpordList!=null) {
+			for (int i = 0; i < finpordList.size(); i++) {
 				double biaojia = finpordList.get(i).getFinpord_tagedpr();
 				double fushi = finpordList.get(i).getFinpord_substo1pr()*finpordList.get(i).getFinpord_substo1wgt()
 						+finpordList.get(i).getFinpord_substo2pr()*finpordList.get(i).getFinpord_substo2wgt()
 						+finpordList.get(i).getFinpord_substo3pr()*finpordList.get(i).getFinpord_substo3wgt();
 				double zhushi = finpordList.get(i).getFinpord_mainstopr()*finpordList.get(i).getFinpord_mainstowgt();
-				
+
 				double jiagong = finpordList.get(i).getFinpord_baslabcost();
 				double wuliao = finpordList.get(i).getFinpord_goldwgt()*finpordList.get(i).getFinpord_goldlos()*finpordList.get(i).getFinpord_goldpr();
 				double qita = finpordList.get(i).getFinpord_othrcost();
-				
+
 				double lirun = biaojia*discount-zhushi-fushi-jiagong-qita;
 				finpordList.get(i).setProfit(lirun);
 				finpordList.get(i).setMaterialCost(wuliao);
 				finpordList.get(i).setMainStoneCost(zhushi);
 				finpordList.get(i).setSubStoneCost(fushi);
-			} 
-		 }
+			}
+		}
 		return finpordList;
 	}
 	/**
@@ -806,52 +721,30 @@ public class AController {
 		String s[] =str.split("&");
 		//System.out.println(s+"@@@@@@@@"+dis);
 		String[][] dataList = new String[s.length/12][12];
-		
-			int j=0;
-			for(int i=0;i<s.length;i++) {
-				if(i%12==11) {
-					dataList[j][0]=s[i-11];
-					dataList[j][1]=s[i-10];
-					dataList[j][2]=s[i-9];
-					dataList[j][3]=s[i-8];
-					dataList[j][4]=s[i-7];
-					dataList[j][5]=s[i-6];
-					dataList[j][6]=s[i-5];
-					dataList[j][7]=s[i-4];
-					dataList[j][8]=s[i-3];
-					dataList[j][9]=s[i-2];
-					dataList[j][10]=s[i-1];
-					dataList[j][11]=s[i-0];
-					j++;			
+
+		int j=0;
+		for(int i=0;i<s.length;i++) {
+			if(i%12==11) {
+				dataList[j][0]=s[i-11];
+				dataList[j][1]=s[i-10];
+				dataList[j][2]=s[i-9];
+				dataList[j][3]=s[i-8];
+				dataList[j][4]=s[i-7];
+				dataList[j][5]=s[i-6];
+				dataList[j][6]=s[i-5];
+				dataList[j][7]=s[i-4];
+				dataList[j][8]=s[i-3];
+				dataList[j][9]=s[i-2];
+				dataList[j][10]=s[i-1];
+				dataList[j][11]=s[i-0];
+				j++;
 			}
 		}
 		finpordService.downloadprofit(dataList,response);
 		String ss="";
 		return ss;
 	}
-	/**
-	 * 根据时间查找入料差
-	 * @param request
-	 * @param session
-	 * @return
-	 * @throws ParseException
-	 */
-	@ApiOperation(value="根据时间查找入料差",notes="根据时间查找入料差")
-	@RequestMapping(value = "/findFediffByTime", method = RequestMethod.POST)
-	@ResponseBody
-	public List<Fediff> findFediffByTime(HttpServletRequest request,HttpSession session) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-		List<Fediff> list = new ArrayList<Fediff>();
-		if(request.getParameter("time").length()!=0) {
-			String time = request.getParameter("time");
-			Date ftime = new Date();
-			ftime = sdf.parse(time);
-			list = fediffService.findFediffByTime(ftime);
-		}
-		session.setAttribute("fediffListByTime", list);
-		return list;
-	}
 	/**
 	 * 删除临时表中全部数据
 	 *
@@ -866,7 +759,7 @@ public class AController {
 		finpordService.deleteAllData();
 		return "删除成功";
 	}
-	
+
 	/**
 	 * 查看入料差详情
 	 *
@@ -882,19 +775,19 @@ public class AController {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String sno = request.getParameter("sno");
 		String pno = request.getParameter("pno");
-		System.out.println(sno+"==="+pno);
-		List<Stone> s = new ArrayList<>(); 
-		List<Finpord> f = new ArrayList<>(); 
+		List<Stone> s = new ArrayList<>();
+		List<Finpord> f = new ArrayList<>();
 		List result=new ArrayList<>();
 		long finpord_procordNo = Long.parseLong(pno);
 		f = finpordService.findFinpordByProcordNo(finpord_procordNo);
-		if(!sno.matches(".*[a-zA-Z].*")) {//包含字母 的是 主石编
+
+		if(!sno.matches(".*[a-zA-Z].*")) {//不包含字母 的是 副石编
 			s = stoneService.findStoneBySubNo(sno);
 			if(s.size()>0) {
 				result.add(sdf.format(s.get(0).getStone_purchdate()));
 				result.add(s.get(0).getStone_substoName());
 				result.add(s.get(0).getStone_substoNo());
-				result.add(s.get(0).getStone_substoWgt());	
+				result.add(s.get(0).getStone_substoWgt());
 			}else {
 				result.add("");
 				result.add("");
@@ -943,154 +836,209 @@ public class AController {
 				result.add("");
 				result.add("");
 			}
-			System.out.println(f.size());
 			if(f.size()>0) {
-				if(sno.contains(f.get(0).getFinpord_mainstono())) {
-					System.out.println("zheli ");
+				if(sno.contains(f.get(0).getFinpord_mainstono().trim())) {
+
 					result.add(sdf.format(f.get(0).getFinpord_inboundate()));
 					result.add(f.get(0).getFinpord_mainstoname());
 					result.add(f.get(0).getFinpord_mainstono());
 					result.add(f.get(0).getFinpord_mainstowgt());
 				}else {
-						result.add("");
-						result.add("");
-						result.add("");
-						result.add("");
-					}
+
+					result.add("");
+					result.add("");
+					result.add("");
+					result.add("");
+				}
 			}else {
+
 				result.add("");
 				result.add("");
 				result.add("");
 				result.add("");
 			}
-			
+
 		}
-		//System.out.println(result);
+		System.out.println(result);
 		return result;
-		
+
 	}
-	/**
-	 * 动态加载表格数据（按页获取）
-	 * @param aoData
-	 * @param request
-	 * @return
-	 */
 	@ApiOperation(value="动态加载表格数据（按页获取）",notes="动态加载表格数据（按页获取）")
-	@RequestMapping(value="/getFinpordTableData",method=RequestMethod.POST)
+	@RequestMapping(value="/getFinpordListTableData",method=RequestMethod.POST)
 	@ResponseBody
-	public DatatablesViewPage<Finpord> getFinpordTableData(@RequestParam String aoData, HttpServletRequest request )  {
-		Map<String, Object> map = new HashMap<String, Object>();
-		//System.out.println("这里");
-		Map<String, Object> params = new HashMap<String, Object>();			
+	public DatatablesViewPage<Finpord> getFinpordListTableData(@RequestParam String aoData,@RequestParam String finpordListStartTime,
+															   @RequestParam String finpordListSupplier,@RequestParam String finpordListProcoedNo,
+															   @RequestParam String finpordListBarcode,@RequestParam String finpordListEndTime)  {
+
+		Map<String, Object> params = new HashMap<String, Object>();
 		// System.out.println(aoData);
-		
-		int sEcho =Integer.parseInt(aoData.split(":")[2].split("}")[0]); 
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		ParsePosition pos = new ParsePosition(0);
+		Date start = sdf.parse(finpordListStartTime, pos);
+		pos = new ParsePosition(0);
+		Date end = sdf.parse(finpordListEndTime, pos);
+
+		int sEcho =Integer.parseInt(aoData.split(":")[2].split("}")[0]);
 		int iDisplayStart = Integer.parseInt(aoData.split(":")[8].split("}")[0]);
-		// System.out.println(sEcho);
-		 sEcho = (sEcho-1)*10;
-		 params.put("sEcho",iDisplayStart);
-		 params.put("len", 10);
-		 List<Finpord> finpordList = new ArrayList<Finpord>();
-		 List<Finpord> finpordNum = finpordService.findAllFinpord();
-		 finpordList = finpordService.findFinpordByTableInfo(params);
-		 
-		//获取分页控件的信息
-	    String start = request.getParameter("start");
-	    //System.out.println(start);
-	    String length = request.getParameter("length");
-	    //System.out.println(length);
-	 //获取前台额外传递过来的查询条件
-	    String extra_search = request.getParameter("extra_search");
+		sEcho = (sEcho-1)*10;
+		params.put("sEcho",iDisplayStart);
+		params.put("len", 10);
+		if(finpordListBarcode.length() > 0) {
+			params.put("finpord_barcode",finpordListBarcode);
+		}
+		if(finpordListProcoedNo.length() > 0) {
+			params.put("finpord_procordNo",finpordListProcoedNo);
+		}
+		if(finpordListSupplier.length() > 0) {
+			params.put("finpord_supplier",finpordListSupplier);
+		}
+		if(finpordListStartTime.length() > 4) {
+			params.put("start",start);
+		}
+		if(finpordListEndTime.length() > 4) {
+			params.put("end",end);
+		}
+		List<Finpord> finpordList = finpordService.findFinpordByTableInfo(params);
+		List<Finpord> finpordNum = finpordService.findFinpordForTableInfo(params);
 
-	    DatatablesViewPage<Finpord> view = new DatatablesViewPage<Finpord>();
-	    view.setiTotalDisplayRecords(finpordNum.size());
-	    view.setiTotalRecords(finpordNum.size());
 
-	    view.setAaData(finpordList);
-	    return view;
-	
+		DatatablesViewPage<Finpord> view = new DatatablesViewPage<Finpord>();
+		view.setiTotalDisplayRecords(finpordNum.size());
+		view.setiTotalRecords(finpordNum.size());
+
+		view.setAaData(finpordList);
+		return view;
+
 	}
-	/**
-	 * 动态加载表格数据（按页获取）
-	 * @param aoData
-	 * @param request
-	 * @return
-	 */
+
+	@ApiOperation(value="动态加载表格数据（按页获取）",notes="动态加载表格数据（按页获取）")
+	@RequestMapping(value="/getFinpordManageTableData",method=RequestMethod.POST)
+	@ResponseBody
+	public DatatablesViewPage<Finpord> getFinpordManageTableData(@RequestParam String aoData,@RequestParam String finpordManageStartTime,
+																 @RequestParam String finpordManageSupplier,@RequestParam String finpordManageProcoedNo,
+																 @RequestParam String finpordManageBarcode,@RequestParam String finpordManageEndTime)  {
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		// System.out.println(aoData);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		ParsePosition pos = new ParsePosition(0);
+		Date start = sdf.parse(finpordManageStartTime, pos);
+		pos = new ParsePosition(0);
+		Date end = sdf.parse(finpordManageEndTime, pos);
+
+		int sEcho =Integer.parseInt(aoData.split(":")[2].split("}")[0]);
+		int iDisplayStart = Integer.parseInt(aoData.split(":")[8].split("}")[0]);
+		sEcho = (sEcho-1)*10;
+		params.put("sEcho",iDisplayStart);
+		params.put("len", 10);
+		if(finpordManageBarcode.length() > 0) {
+			params.put("finpord_barcode",finpordManageBarcode);
+		}
+		if(finpordManageProcoedNo.length() > 0) {
+			params.put("finpord_procordNo",finpordManageProcoedNo);
+		}
+		if(finpordManageSupplier.length() > 0) {
+			params.put("finpord_supplier",finpordManageSupplier);
+		}
+		if(finpordManageStartTime.length() > 4) {
+			params.put("start",start);
+		}
+		if(finpordManageEndTime.length() > 4) {
+			params.put("end",end);
+		}
+		List<Finpord> finpordList = finpordService.findFinpordByTableInfo(params);
+		List<Finpord> finpordNum = finpordService.findFinpordForTableInfo(params);
+
+
+		DatatablesViewPage<Finpord> view = new DatatablesViewPage<Finpord>();
+		view.setiTotalDisplayRecords(finpordNum.size());
+		view.setiTotalRecords(finpordNum.size());
+
+		view.setAaData(finpordList);
+		return view;
+
+	}
 	@ApiOperation(value="动态加载表格数据（按页获取）",notes="动态加载表格数据（按页获取）")
 	@RequestMapping(value="/getFinpordCopyTableData",method=RequestMethod.POST)
 	@ResponseBody
 	public DatatablesViewPage<FinpordCopy> getFinpordCopyTableData(@RequestParam String aoData, HttpServletRequest request )  {
 		Map<String, Object> map = new HashMap<String, Object>();
 		//System.out.println("这里");
-		Map<String, Object> params = new HashMap<String, Object>();			
+		Map<String, Object> params = new HashMap<String, Object>();
 		// System.out.println(aoData);
-		
-		int sEcho =Integer.parseInt(aoData.split(":")[2].split("}")[0]); 
+
+		int sEcho =Integer.parseInt(aoData.split(":")[2].split("}")[0]);
 		int iDisplayStart = Integer.parseInt(aoData.split(":")[8].split("}")[0]);
-		 //System.out.println(sEcho);
-		 sEcho = (sEcho-1)*10;
-		 params.put("sEcho",iDisplayStart);
-		 params.put("len", 10);
-		 List<FinpordCopy> finpordList = new ArrayList<FinpordCopy>();
-		 List<FinpordCopy> finpordNum = finpordService.findAllFinpordCopy();
-		 finpordList = finpordService.findFinpordCopyByTableInfo(params);
-		 
-		//获取分页控件的信息
-	    String start = request.getParameter("start");
-	    //System.out.println(start);
-	    String length = request.getParameter("length");
-	    //System.out.println(length);
-	 //获取前台额外传递过来的查询条件
-	    String extra_search = request.getParameter("extra_search");
+		// System.out.println(sEcho);
+		sEcho = (sEcho-1)*10;
+		params.put("sEcho",iDisplayStart);
+		params.put("len", 10);
+		List<FinpordCopy> finpordList = new ArrayList<FinpordCopy>();
+		List<FinpordCopy> finpordNum = finpordService.findAllFinpordCopy();
+		finpordList = finpordService.findFinpordCopyByTableInfo(params);
 
-	    DatatablesViewPage<FinpordCopy> view = new DatatablesViewPage<FinpordCopy>();
-	    view.setiTotalDisplayRecords(finpordNum.size());
-	    view.setiTotalRecords(finpordNum.size());
 
-	    view.setAaData(finpordList);
-	    return view;
-	
+		DatatablesViewPage<FinpordCopy> view = new DatatablesViewPage<FinpordCopy>();
+		view.setiTotalDisplayRecords(finpordNum.size());
+		view.setiTotalRecords(finpordNum.size());
+
+		view.setAaData(finpordList);
+		return view;
+
 	}
-	/**
-	 * 动态加载表格数据（按页获取）
-	 * @param aoData
-	 * @param request
-	 * @return
-	 */
 	@ApiOperation(value="动态加载表格数据（按页获取）",notes="动态加载表格数据（按页获取）")
 	@RequestMapping(value="/getFediffTableData",method=RequestMethod.POST)
 	@ResponseBody
-	public DatatablesViewPage<Fediff> getFediffTableData(@RequestParam String aoData, HttpServletRequest request )  {
+	public DatatablesViewPage<Fediff> getFediffTableData(@RequestParam String aoData,@RequestParam String fediffListStoneNo,
+														 @RequestParam String fediffListEndTime,@RequestParam String fediffListStartTime,
+														 @RequestParam String fediffListProcoedNo,@RequestParam String fediffListFinpordNo,
+														 @RequestParam String fediffListBatch)  {
 		Map<String, Object> map = new HashMap<String, Object>();
 		//System.out.println("这里");
-		Map<String, Object> params = new HashMap<String, Object>();			
-		// System.out.println(aoData);
-		
-		int sEcho =Integer.parseInt(aoData.split(":")[2].split("}")[0]); 
+		Map<String, Object> params = new HashMap<String, Object>();
+		//System.out.println(aoData);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		ParsePosition pos = new ParsePosition(0);
+		Date start = sdf.parse(fediffListStartTime, pos);
+		pos = new ParsePosition(0);
+		Date end = sdf.parse(fediffListEndTime, pos);
+
+		int sEcho =Integer.parseInt(aoData.split(":")[2].split("}")[0]);
 		int iDisplayStart = Integer.parseInt(aoData.split(":")[8].split("}")[0]);
 		// System.out.println(sEcho);
-		 sEcho = (sEcho-1)*10;
-		 params.put("sEcho",iDisplayStart);
-		 params.put("len", 10);
-		 List<Fediff> fediffList = new ArrayList<Fediff>();
-		 List<Fediff> fediffNum = fediffService.findAllFediff();
-		 fediffList = fediffService.findFediffByTableInfo(params);
-		 
-		//获取分页控件的信息
-	    String start = request.getParameter("start");
-	    //System.out.println(start);
-	    String length = request.getParameter("length");
-	    //System.out.println(length);
-	 //获取前台额外传递过来的查询条件
-	    String extra_search = request.getParameter("extra_search");
+		sEcho = (sEcho-1)*10;
+		params.put("sEcho",iDisplayStart);
+		params.put("len", 10);
+		if(fediffListStoneNo.length() > 0) {
+			params.put("fediff_stoneNo",fediffListStoneNo);
+		}
+		if(fediffListProcoedNo.length() > 0) {
+			params.put("fediff_procordNo",fediffListProcoedNo);
+		}
+		if(fediffListFinpordNo.length() > 0) {
+			params.put("finpord_procordNo",fediffListFinpordNo);
+		}
+		if(fediffListBatch.length() > 0) {
+			params.put("fediff_batch",fediffListBatch);
+		}
+		if(fediffListStartTime.length() > 4) {
+			params.put("start",start);
+		}
+		if(fediffListEndTime.length() > 4) {
+			params.put("end",end);
+		}
+		List<Fediff> fediffList = fediffService.findFediffByTableInfo(params);
+		List<Fediff> fediffNum = fediffService.findFediffForTableInfo(params);
 
-	    DatatablesViewPage<Fediff> view = new DatatablesViewPage<Fediff>();
-	    view.setiTotalDisplayRecords(fediffNum.size());
-	    view.setiTotalRecords(fediffNum.size());
 
-	    view.setAaData(fediffList);
-	    return view;
-	
+		DatatablesViewPage<Fediff> view = new DatatablesViewPage<Fediff>();
+		view.setiTotalDisplayRecords(fediffNum.size());
+		view.setiTotalRecords(fediffNum.size());
+
+		view.setAaData(fediffList);
+		return view;
+
 	}
+
 
 }

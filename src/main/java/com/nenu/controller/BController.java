@@ -714,6 +714,7 @@ public class BController {
 		String procord_preparer = request.getParameter("procord_preparer");//经手人
 		String procord_porter = request.getParameter("procord_porter");//接货人
 		String qqq = request.getParameter("table_body");
+		List<Stone> list = new ArrayList<>();
 		//System.out.println("qqq="+qqq);
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");		
@@ -763,8 +764,8 @@ public class BController {
 				supplierStone.setSupplier_procorNo(stoninproc_procordNo);
 				
 				if(!rr[i-3].matches(".*[a-zA-Z].*")) {//不包含字母 的是 副石编
-					List<Stone> list = stoneService.findStoneBySubNo(rr[i-3]);//根据副石编获取副石信息
-					if(!list.isEmpty()) {
+					list = stoneService.findStoneBySubNo(rr[i-3]);//根据副石编获取副石信息
+					if(list.size() > 0) {
 						total_weight += list.get(0).getStone_substoWgt();
 						stoninpro.setStoninproc_stoneClarity( list.get(0).getStone_clarity());
 						stoninpro.setStoninproc_stoneColor(list.get(0).getStone_color());
@@ -801,8 +802,8 @@ public class BController {
 					
 					stoneService.updateSubStoneNumber(stone);//更新副石数量
 				}else {
-					List<Stone> list = stoneService.findStoneByMainNo(rr[i-3]);//根据主石编获取主石信息
-					if(!list.isEmpty()) {
+					list = stoneService.findStoneByMainNo(rr[i-3]);//根据主石编获取主石信息
+					if(list.size() > 0) {
 						total_weight +=list.get(0).getStone_mainWeight();
 						stoninpro.setStoninproc_stoneClarity( list.get(0).getStone_clarity());
 						stoninpro.setStoninproc_stoneColor(list.get(0).getStone_color());
@@ -886,18 +887,18 @@ public class BController {
             SupplierStone supplierStone = supplierStoneService.getSupplierStoneByID(Integer.parseInt(stone_ID));
             if(supplierStone!=null) {
                 String mainNo = supplierStone.getSupplier_mainStoneNo();
-                if(!mainNo.isEmpty()) {
+                if(mainNo != null) {
                     List<Stone> sList =  stoneService.findStoneByMainNo(mainNo);
-                    if(!sList.isEmpty()) {
+                    if(sList.size() > 0) {
                         stone = sList.get(0);
                     }
                 }
                 String subNo = supplierStone.getSupplier_subStoneNo();
-                if(subNo.length()>1) {
+                if(subNo != null) {
                     List<Stone> sList = stoneService.findStoneBySubNo(subNo);
-                    if(!sList.isEmpty()) {
-                        stone = sList.get(0);
-                    }
+					if(sList.size() > 0) {
+						stone = sList.get(0);
+					}
                 }
             }
         }else {
@@ -1046,26 +1047,30 @@ public class BController {
 	@ApiOperation(value="选石  一键选石",notes="选石  一键选石")
 	@RequestMapping(value = "/xuanshiForAll", method = RequestMethod.POST)
 	@ResponseBody
-	public List<Stone> xuanshiForAll(HttpServletRequest request) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	public List<Stone> xuanshiForAll(@RequestParam String selectNo,
+									 @RequestParam String selectTime,HttpServletRequest request) {
+
 		Map<String, Object> params = new HashMap<String, Object>();
 		List<Stone> slist = new ArrayList<>();
-		String type = request.getParameter("type");
-		System.out.println("type="+type);
-		if(type.contains("all")) {
-			slist = stoneService.findAllStone();
-		}else if(type.contains("time")){
-			String stone_purchdate = request.getParameter("selectTime");
-			params.put("stone_purchdate", stone_purchdate);
-			slist = stoneService.findAllStoneNumWithTime(params);
-		}else if(type.contains("no")){
-			String stone_no = request.getParameter("selectNo");
-			if(stone_no.matches(".*[a-zA-Z].*")) {//主石
-				slist = stoneService.findStoneByMainNoForManage(stone_no);
-			}else {
-				slist = stoneService.findStoneBySubNoForManage(stone_no);
-			}
+		// System.out.println(aoData);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		ParsePosition pos = new ParsePosition(0);
+		Date start = sdf.parse(selectTime, pos);
+		pos = new ParsePosition(0);
+		Date end = sdf.parse(selectTime, pos);
+
+		if(selectNo.length()> 0  && selectNo.matches(".*[a-zA-Z].*")) {//主石
+			params.put("mainNo", selectNo);
+		}else if(selectNo.length() > 0){
+			params.put("subNo",selectNo);
 		}
+		if(selectTime.length() > 4) {
+			params.put("start",start);
+		}
+		if(selectTime.length() > 4) {
+			params.put("end",end);
+		}
+		slist = stoneService.findStoneForTableInfo(params);
 		return slist;
 	}
 	/**
@@ -1089,50 +1094,62 @@ public class BController {
 		s =  stoneService.findStoneByStoneID(sid);
 		slist.add(s);
 		
-		System.out.println(slist.size()+"=="+slist);
+		//System.out.println(slist.size()+"=="+slist);
 		return slist;
 	}
-	/**
-	 * 根据采购日期查找显示
-	 *
-	 * com.nenu.controller
-	 * @param request
-	 * @return List<Stone>
-	 * created  at 2018年10月21日
-	 */
-	@ApiOperation(value="根据采购日期查找显示",notes="根据采购日期查找显示")
-	@RequestMapping(value = "/xuanshiForShow", method = RequestMethod.POST)
-	@ResponseBody
-	public List<Stone> xuanshiForShow(HttpServletRequest request) {
-		Map<String, Object> params = new HashMap<String, Object>();
-		List<Stone> slist = new ArrayList<>();
-		String stone_purchdate = request.getParameter("selectTime");
-		params.put("stone_purchdate", stone_purchdate);
-		slist = stoneService.findAllStoneNumWithTime(params);
-		return slist;
-	}
-	/**
-	 * 根据石编选石
-	 *
-	 * com.nenu.controller
-	 * @param request
-	 * @return List<Stone>
-	 * created  at 2018年12月21日
-	 */
-	@ApiOperation(value="根据石编选石",notes="根据石编选石")
-	@RequestMapping(value = "/xuanshiForShowForNo", method = RequestMethod.POST)
-	@ResponseBody
-	public List<Stone> xuanshiForShowForNo(HttpServletRequest request) {
-		Map<String, Object> params = new HashMap<String, Object>();
-		List<Stone> slist = new ArrayList<>();
-		String stone_no = request.getParameter("selectNo");
-		if(stone_no.matches(".*[a-zA-Z].*")) {//主石
-			slist = stoneService.findStoneByMainNoForManage(stone_no);
-		}else {
-			slist = stoneService.findStoneBySubNoForManage(stone_no);
-		}
-		return slist;
-	}
+
+    /**
+     * 获取石库库存表格数据（分页）
+     *
+     * com.nenu.controller
+     * @param aoData
+     * @return DatatablesViewPage<Plan>
+     * created  at 2018年12月20日
+     */
+    @ApiOperation(value="获取石库库存表格数据（分页）",notes="获取石库库存表格数据（分页）")
+    @RequestMapping(value="/getXuanShiTableData",method=RequestMethod.POST)
+    @ResponseBody
+    public DatatablesViewPage<Stone> getXuanShiTableData(@RequestParam String aoData, @RequestParam String selectNo,
+                                                       @RequestParam String selectTime)  {
+        Map<String, Object> map = new HashMap<String, Object>();
+        //System.out.println("这里");
+        Map<String, Object> params = new HashMap<String, Object>();
+        // System.out.println(aoData);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        ParsePosition pos = new ParsePosition(0);
+        Date start = sdf.parse(selectTime, pos);
+        pos = new ParsePosition(0);
+        Date end = sdf.parse(selectTime, pos);
+
+        int sEcho =Integer.parseInt(aoData.split(":")[2].split("}")[0]);
+        int iDisplayStart = Integer.parseInt(aoData.split(":")[8].split("}")[0]);
+        //System.out.println(sEcho);
+        sEcho = (sEcho-1)*10;
+        params.put("sEcho",iDisplayStart);
+        params.put("len", 10);
+        if(selectNo.length()> 0  && selectNo.matches(".*[a-zA-Z].*")) {//主石
+            params.put("mainNo", selectNo);
+        }else if(selectNo.length() > 0){
+            params.put("subNo",selectNo);
+        }
+        if(selectTime.length() > 4) {
+            params.put("start",start);
+        }
+        if(selectTime.length() > 4) {
+            params.put("end",end);
+        }
+        List<Stone> stoneList =stoneService.findStoneByTableInfo(params);
+        List<Stone> stoneNum = stoneService.findStoneForTableInfo(params);
+
+        DatatablesViewPage<Stone> view = new DatatablesViewPage<Stone>();
+        view.setiTotalDisplayRecords(stoneNum.size());
+        view.setiTotalRecords(stoneNum.size());
+
+        view.setAaData(stoneList);
+        return view;
+
+    }
+
 	/**
 	 * 获取石库库存表格数据（分页）
 	 *
@@ -1181,28 +1198,6 @@ public class BController {
         }
 		 List<Stone> stoneList =stoneService.findStoneByTableInfo(params);
 		 List<Stone> stoneNum = stoneService.findStoneForTableInfo(params);
-
-        //查询与统计   石库管理显示
-        int supplierStoneMainNumber=0;
-        int supplierStoneSubNumber=0;
-        double supplierStoneMainWeight=0;
-        double supplierStoneSubWeight=0;
-
-        List<Stone> mainStoneInfo = stoneService.findMainStoneInfo(params);
-        List<Stone> subStoneInfo = stoneService.findSubStoneInfo(params);
-        if(mainStoneInfo.size() > 0) {
-            supplierStoneMainNumber = mainStoneInfo.get(0).getStone_mainNumber();
-            supplierStoneMainWeight = mainStoneInfo.get(0).getStone_mainWeight();
-        }
-        if(subStoneInfo.size() > 0) {
-            supplierStoneSubNumber = subStoneInfo.get(0).getStone_substoNumber();
-            supplierStoneSubWeight = subStoneInfo.get(0).getStone_substoWgt();
-        }
-
-        session.setAttribute("ListStoneMainNumber", supplierStoneMainNumber);
-        session.setAttribute("ListStoneSubNumber", supplierStoneSubNumber);
-        session.setAttribute("ListStoneMainWeight", supplierStoneMainWeight);
-        session.setAttribute("ListStoneSubWeight", supplierStoneSubWeight);
 
 	    DatatablesViewPage<Stone> view = new DatatablesViewPage<Stone>();
 	    view.setiTotalDisplayRecords(stoneNum.size());
@@ -1261,28 +1256,6 @@ public class BController {
         }
         List<Stone> stoneList =stoneService.findStoneByTableInfo(params);
         List<Stone> stoneNum = stoneService.findStoneForTableInfo(params);
-
-        //查询与统计   石库管理显示
-        int supplierStoneMainNumber=0;
-        int supplierStoneSubNumber=0;
-        double supplierStoneMainWeight=0;
-        double supplierStoneSubWeight=0;
-
-        List<Stone> mainStoneInfo = stoneService.findMainStoneInfo(params);
-        List<Stone> subStoneInfo = stoneService.findSubStoneInfo(params);
-        if(mainStoneInfo.size() > 0) {
-            supplierStoneMainNumber = mainStoneInfo.get(0).getStone_mainNumber();
-            supplierStoneMainWeight = mainStoneInfo.get(0).getStone_mainWeight();
-        }
-        if(subStoneInfo.size() > 0) {
-            supplierStoneSubNumber = subStoneInfo.get(0).getStone_substoNumber();
-            supplierStoneSubWeight = subStoneInfo.get(0).getStone_substoWgt();
-        }
-
-        session.setAttribute("ManageStoneMainNumber", supplierStoneMainNumber);
-        session.setAttribute("ManageStoneSubNumber", supplierStoneSubNumber);
-        session.setAttribute("ManageStoneMainWeight", supplierStoneMainWeight);
-        session.setAttribute("ManageStoneSubWeight", supplierStoneSubWeight);
 
 
         DatatablesViewPage<Stone> view = new DatatablesViewPage<Stone>();

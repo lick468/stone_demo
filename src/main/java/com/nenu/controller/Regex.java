@@ -11,20 +11,25 @@ import java.util.regex.Pattern;
 public class Regex {
    public static void main(String[] args) {
 
-        String starttime = "2019-12-12";
-       String endtime = "2019-12-13";
-       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-       ParsePosition pos = new ParsePosition(0);
-       Date start = sdf.parse(starttime, pos);
-       pos = new ParsePosition(0);
-       Date end = sdf.parse(endtime, pos);
-       System.out.println(start);
-       System.out.println(end);
-       List<Integer> list = new ArrayList<>();
-       list.add(123);
-       Integer integer = list.get(0);
+//        String starttime = "2019-12-12";
+//       String endtime = "2019-12-13";
+//       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//       ParsePosition pos = new ParsePosition(0);
+//       Date start = sdf.parse(starttime, pos);
+//       pos = new ParsePosition(0);
+//       Date end = sdf.parse(endtime, pos);
+//       System.out.println(start);
+//       System.out.println(end);
+//       List<Integer> list = new ArrayList<>();
+//       list.add(123);
+//       Integer integer = list.get(0);
+//
+//       System.out.println(integer.floatValue());
 
-       System.out.println(integer.floatValue());
+
+       String s = "ss";
+       List<String> list = new ArrayList<>();
+       System.out.println(list.size());
 
 
 //       double d = 123.4;

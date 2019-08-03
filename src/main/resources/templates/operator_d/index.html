@@ -184,6 +184,9 @@
                                         </div>
                                     </div>
 
+
+
+
                                     <div class="vertical-timeline-block" id="path2">
                                         <div class="vertical-timeline-icon yellow-bg">
                                             <i class="fa fa-phone"></i>
@@ -271,13 +274,17 @@
                     <div class="col-md-4 column">
                         <div class="input-group">
                             <span class="input-group-addon" >订单日期</span>
-                            <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="procordDate">
+                            <input id="procordDate" class="form-control layer-date"  placeholder="YYYY-MM-DD "
+                                   onclick="laydate({istime: true, format: 'YYYY-MM-DD '})">
+                            <!--<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="procordDate">-->
                         </div>
                     </div>
                     <div class="col-md-4 column">
                         <div class="input-group">
                             <span class="input-group-addon" >出货日期</span>
-                            <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="procordDelyDate">
+                            <input id="procordDelyDate" class="form-control layer-date"  placeholder="YYYY-MM-DD "
+                                   onclick="laydate({istime: true, format: 'YYYY-MM-DD '})">
+                            <!--<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="procordDelyDate">-->
                         </div>
                     </div>
                 </div>

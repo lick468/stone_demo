@@ -13,6 +13,7 @@
      <script src="/js/movingwindow.js" type="text/javascript"></script>
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>石头管理</title>
+
 <link href="/css/bootstrap.min.css?v=3.3.6" rel="stylesheet"/>
 <link href="/css/bootstrap-theme.min.css?v=3.3.7" rel="stylesheet"/>
 <link href="/css/jquery-editable-select.min.css?v=2.2.4" rel="stylesheet"/>
@@ -536,13 +537,17 @@ text-align: center;
                                 <div class="col-md-4 column">
                                     <div class="input-group">
                                         <span class="input-group-addon" >开始时间</span>
-                                        <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="supplierListStoneStartTime">
+                                        <input id="supplierListStoneStartTime" class="form-control layer-date"  placeholder="YYYY-MM-DD " autocomplete="off"
+                                               onclick="laydate({istime: true, format: 'YYYY-MM-DD '})">
+                                        <!--<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="supplierListStoneStartTime">-->
                                     </div>
                                 </div>
                                 <div class="col-md-4 column">
                                     <div class="input-group">
                                         <span class="input-group-addon" >结束时间</span>
-                                        <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="supplierListStoneEndTime">
+                                        <input id="supplierListStoneEndTime" class="form-control layer-date"  placeholder="YYYY-MM-DD " autocomplete="off"
+                                               onclick="laydate({istime: true, format: 'YYYY-MM-DD '})">
+                                        <!--<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="supplierListStoneEndTime">-->
                                     </div>
                                 </div>
                             </div>
@@ -661,13 +666,17 @@ text-align: center;
                                 <div class="col-md-4 column">
                                     <div class="input-group">
                                         <span class="input-group-addon" >开始时间</span>
-                                        <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="listStoneStartTime">
+                                        <input id="listStoneStartTime" class="form-control layer-date"  placeholder="YYYY-MM-DD " autocomplete="off"
+                                               onclick="laydate({istime: true, format: 'YYYY-MM-DD '})">
+                                        <!--<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="listStoneStartTime">-->
                                     </div>
                                 </div>
                                 <div class="col-md-4 column">
                                     <div class="input-group">
                                         <span class="input-group-addon" >结束时间</span>
-                                        <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="listStoneEndTime">
+                                        <input id="listStoneEndTime" class="form-control layer-date"  placeholder="YYYY-MM-DD " autocomplete="off"
+                                               onclick="laydate({istime: true, format: 'YYYY-MM-DD '})">
+                                        <!--<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="listStoneEndTime">-->
                                     </div>
                                 </div>
                             </div>
@@ -766,7 +775,7 @@ text-align: center;
             <div class="container">
                 <div class="row clearfix">
                     <div class="col-md-12 column">
-                        <div class="row clearfix" style="text-align:center;height: 10px;">
+                        <div class="row clearfix" style="text-align:center;margin-top:10px;">
                             <div class="col-md-4 column">
                                 <div class="input-group">
                                     <span class="input-group-addon" >主石编</span>
@@ -792,13 +801,17 @@ text-align: center;
                             <div class="col-md-4 column">
                                 <div class="input-group">
                                     <span class="input-group-addon" >开始时间</span>
-                                    <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="manageStoneStartTime">
+                                    <input id="manageStoneStartTime" class="form-control layer-date"  placeholder="YYYY-MM-DD " autocomplete="off"
+                                           onclick="laydate({istime: true, format: 'YYYY-MM-DD '})">
+                                    <!--<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="manageStoneStartTime">-->
                                 </div>
                             </div>
                             <div class="col-md-4 column">
                                 <div class="input-group">
                                     <span class="input-group-addon" >结束时间</span>
-                                    <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="manageStoneEndTime">
+                                    <input id="manageStoneEndTime" class="form-control layer-date"  placeholder="YYYY-MM-DD " autocomplete="off"
+                                           onclick="laydate({istime: true, format: 'YYYY-MM-DD '})">
+                                    <!--<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="manageStoneEndTime">-->
                                 </div>
                             </div>
                         </div>
@@ -1098,7 +1111,7 @@ text-align: center;
 						onclick="laydate({istime: true, format: 'YYYY-MM-DD '})">
 				</div>
 				<div class="input-group col-lg-4"> 
-					<input type="button"  class="btn_search" onclick="xuanshiForShowByTime();" value="查找">	
+					<input type="button"  class="btn_search" onclick="xuanshiForShow();" value="查找">
 				</div>
 				
 				<div class="input-group col-lg-2"> 
@@ -1111,7 +1124,7 @@ text-align: center;
 					<input id="selectNo" class="form-control" placeholder="石编">
 				</div>
 				<div class="input-group col-lg-4"> 
-					<input type="button"  class="btn_search" onclick="xuanshiForShowByNo();" value="查找">	
+					<input type="button"  class="btn_search" onclick="xuanshiForShow();" value="查找">
 				</div>
 				
 				<div class="input-group col-lg-2"> 
@@ -1225,7 +1238,7 @@ text-align: center;
 				<div class="input-group col-lg-12 ">
 					<span class="input-group-addon">出货日期</span> <input
 						id="procord_delydate" class="form-control layer-date" type="text"
-						name="procord_delydate" placeholder="YYYY-MM-DD "
+						name="procord_delydate" placeholder="YYYY-MM-DD " autocomplete="off"
 						onclick="laydate({istime: true, format: 'YYYY-MM-DD '})">
 				</div>
 				<br>
@@ -1272,7 +1285,7 @@ text-align: center;
             <div class="container">
                 <div class="row clearfix">
                     <div class="col-md-12 column">
-                        <div class="row clearfix" style="text-align:center;height: 10px;">
+                        <div class="row clearfix" style="text-align:center;margin-top:10px;">
                             <div class="col-md-4 column">
                                 <div class="input-group">
                                     <span class="input-group-addon" >批次</span>
@@ -1298,13 +1311,17 @@ text-align: center;
                             <div class="col-md-4 column">
                                 <div class="input-group">
                                     <span class="input-group-addon" >订单日期</span>
-                                    <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="procordDate">
+                                    <input id="procordDate" class="form-control layer-date"  placeholder="YYYY-MM-DD " autocomplete="off"
+                                           onclick="laydate({istime: true, format: 'YYYY-MM-DD '})">
+                                    <!--<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="procordDate">-->
                                 </div>
                             </div>
                             <div class="col-md-4 column">
                                 <div class="input-group">
                                     <span class="input-group-addon" >出货日期</span>
-                                    <input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="procordDelyDate">
+                                    <input id="procordDelyDate" class="form-control layer-date"  placeholder="YYYY-MM-DD " autocomplete="off"
+                                           onclick="laydate({istime: true, format: 'YYYY-MM-DD '})">
+                                    <!--<input type="date" value="" placeholder="YYYY-MM-DD " class="form-control " id="procordDelyDate">-->
                                 </div>
                             </div>
                         </div>
@@ -1457,11 +1474,11 @@ text-align: center;
 				</select>
 			</div>
 			<div id="div_tdate" class="input-group col-lg-2">
-				<input id="tback_date_start" class="form-control layer-date"  placeholder="YYYY-MM-DD "
+				<input id="tback_date_start" class="form-control layer-date"  placeholder="YYYY-MM-DD " autocomplete="off"
 						onclick="laydate({istime: true, format: 'YYYY-MM-DD '})">
 			</div>
 			<div id="div_tdate2" class="input-group col-lg-2">
-				<input id="tback_date_end" class="form-control layer-date"  placeholder="YYYY-MM-DD "
+				<input id="tback_date_end" class="form-control layer-date"  placeholder="YYYY-MM-DD " autocomplete="off"
 						onclick="laydate({istime: true, format: 'YYYY-MM-DD '})">
 			</div>
 			<div id="div_tStoneNo" class="input-group col-lg-2" style="display: none;">
@@ -2019,6 +2036,7 @@ text-align: center;
 		var dataTableListStone;
         var dataTableManageStone;
 		var dataTableSupplier;
+		var dataTableXuanShi;
 
 	var result = [[${result}]];
     var stoneNoList = [[${stoneNoList}]];
@@ -2222,11 +2240,6 @@ function showDetails(node) {
 
 
 function deleteStoneCopyByStoneIDAJAX(node) {
-	//var tr1 = node.parentNode.parentNode;  
-	   // alert(tr1.rowIndex);  
-	    //alert(tr1.cells[0].innerText); 
-	// var sid = tr1.cells[0].innerText;
-	// alert(sid);
 	var sid = node.value;
 	 $.ajax({
 		 url:"/b/deleteStoneCopyByStoneIDAJAX",
@@ -2398,116 +2411,114 @@ function backkucun() {
 	document.getElementById("xuanshiTableForSearch").style.display="none";
 	document.getElementById("xuanshiTableAll").style.display="block";
 }
-function xuanshiForShowByTime() {//选石
-	var selectTime =  document.getElementById("selectTime").value;
-	$.ajax({
-		 url:"/b/xuanshiForShow",
-		 type:"post",
-		 data:{
-			 selectTime:selectTime,
-		 	},
-		dateType:"json",
-		success:function(result) {
-			document.getElementById("xuanshiListStone").value = "time";
-			document.getElementById("xuanshiTableForSearch").style.display="block";
-			document.getElementById("xuanshiTableAll").style.display="none";
-			var stoneList =[];
-	 		stoneList = result;
-			var tt = $('#xuanshiForSearch').DataTable();
-	 		 tt.clear();
-	 		$("#xuanshiForSearch tbody").empty();
-	 		for(var i=0;i<stoneList.length;i++) {
-	 			var now   = new Date(stoneList[i].stone_purchdate);
-	 			 var t = $('#xuanshiForSearch').DataTable();
-	 		    if(stoneList[i].stone_mainStoneNo.toString().length>2) {//主石	 		    	
-	 		    	t.row.add( [	    	
-		 		    	 format(now),
-		 		    	 stoneList[i].stone_mainStoneNo,
-		 		    	 stoneList[i].stone_mainWeight,
-		 		    	 stoneList[i].stone_mainNumber,
-		 		    	 "",
-		 		    	 "",
-		 		    	 "",
-		 		    	 "<button  value="+stoneList[i].stone_ID+" onclick='findStoneByStoneIDAJAXShow(this);'>查看详情</button> |<button  value="+stoneList[i].stone_ID+" onclick='chooseStone(this);'>选择</button> "
-		 		        ] ).draw( );
-	 		    }
-	 		    if(stoneList[i].stone_substoNo.toString().length>2) {	
-				 	t.row.add( [
-				    	 format(now),
-				    	 "",
-				    	 "",
-				    	 "",
-				    	 stoneList[i].stone_substoNo,
-				    	 stoneList[i].stone_substoWgt,
-				      	 stoneList[i].stone_substoNumber,
-				      	"<button  value="+stoneList[i].stone_ID+" onclick='findStoneByStoneIDAJAXShow(this);'>查看详情</button> |<button  value="+stoneList[i].stone_ID+" onclick='chooseStone(this);'>选择</button> "
-		 		    	 ] ).draw( );
-	 		    }
-	 		      
-	 		}
-	 	}
-	 });
-}
-function xuanshiForShowByNo() {//选石
-	var selectNo =  document.getElementById("selectNo").value;
-	$.ajax({
-		 url:"/b/xuanshiForShowForNo",
-		 type:"post",
-		 data:{
-			 selectNo:selectNo,
-		 	},
-		dateType:"json",
-		success:function(result) {
-			document.getElementById("xuanshiListStone").value = "no";
-			document.getElementById("xuanshiTableForSearch").style.display="block";
-			document.getElementById("xuanshiTableAll").style.display="none";
-			var stoneList =[];
-	 		stoneList = result;
-			var tt = $('#xuanshiForSearch').DataTable();
-	 		 tt.clear();
-	 		$("#xuanshiForSearch tbody").empty();
-	 		for(var i=0;i<stoneList.length;i++) {
-	 			var now   = new Date(stoneList[i].stone_purchdate);
-	 			 var t = $('#xuanshiForSearch').DataTable();
-	 		    if(stoneList[i].stone_mainStoneNo.toString().length>2) {//主石	 		    	
-	 		    	t.row.add( [	    	
-		 		    	 format(now),
-		 		    	 stoneList[i].stone_mainStoneNo,
-		 		    	 stoneList[i].stone_mainWeight,
-		 		    	 stoneList[i].stone_mainNumber,
-		 		    	 "",
-		 		    	 "",
-		 		    	 "",
-		 		    	 "<button  value="+stoneList[i].stone_ID+" onclick='findStoneByStoneIDAJAXShow(this);'>查看详情</button> |<button  value="+stoneList[i].stone_ID+" onclick='chooseStone(this);'>选择</button> "
-		 		        ] ).draw( );
-	 		    }
-	 		    if(stoneList[i].stone_substoNo.toString().length>2) {	
-				 	t.row.add( [
-				    	 format(now),
-				    	 "",
-				    	 "",
-				    	 "",
-				    	 stoneList[i].stone_substoNo,
-				    	 stoneList[i].stone_substoWgt,
-				      	 stoneList[i].stone_substoNumber,
-				      	"<button  value="+stoneList[i].stone_ID+" onclick='findStoneByStoneIDAJAXShow(this);'>查看详情</button> |<button  value="+stoneList[i].stone_ID+" onclick='chooseStone(this);'>选择</button> "
-		 		    	 ] ).draw( );
-	 		    }
-	 		      
-	 		}
-	 	}
-	 });
-}
+// function xuanshiForShowByTime() {//选石
+// 	var selectTime =  document.getElementById("selectTime").value;
+// 	$.ajax({
+// 		 url:"/b/xuanshiForShow",
+// 		 type:"post",
+// 		 data:{
+// 			 selectTime:selectTime,
+// 		 	},
+// 		dateType:"json",
+// 		success:function(result) {
+// 			document.getElementById("xuanshiListStone").value = "time";
+// 			document.getElementById("xuanshiTableForSearch").style.display="block";
+// 			document.getElementById("xuanshiTableAll").style.display="none";
+// 			var stoneList =[];
+// 	 		stoneList = result;
+// 			var tt = $('#xuanshiForSearch').DataTable();
+// 	 		 tt.clear();
+// 	 		$("#xuanshiForSearch tbody").empty();
+// 	 		for(var i=0;i<stoneList.length;i++) {
+// 	 			var now   = new Date(stoneList[i].stone_purchdate);
+// 	 			 var t = $('#xuanshiForSearch').DataTable();
+// 	 		    if(stoneList[i].stone_mainStoneNo.toString().length>2) {//主石
+// 	 		    	t.row.add( [
+// 		 		    	 format(now),
+// 		 		    	 stoneList[i].stone_mainStoneNo,
+// 		 		    	 stoneList[i].stone_mainWeight,
+// 		 		    	 stoneList[i].stone_mainNumber,
+// 		 		    	 "",
+// 		 		    	 "",
+// 		 		    	 "",
+// 		 		    	 "<button  value="+stoneList[i].stone_ID+" onclick='findStoneByStoneIDAJAXShow(this);'>查看详情</button> |<button  value="+stoneList[i].stone_ID+" onclick='chooseStone(this);'>选择</button> "
+// 		 		        ] ).draw( );
+// 	 		    }
+// 	 		    if(stoneList[i].stone_substoNo.toString().length>2) {
+// 				 	t.row.add( [
+// 				    	 format(now),
+// 				    	 "",
+// 				    	 "",
+// 				    	 "",
+// 				    	 stoneList[i].stone_substoNo,
+// 				    	 stoneList[i].stone_substoWgt,
+// 				      	 stoneList[i].stone_substoNumber,
+// 				      	"<button  value="+stoneList[i].stone_ID+" onclick='findStoneByStoneIDAJAXShow(this);'>查看详情</button> |<button  value="+stoneList[i].stone_ID+" onclick='chooseStone(this);'>选择</button> "
+// 		 		    	 ] ).draw( );
+// 	 		    }
+//
+// 	 		}
+// 	 	}
+// 	 });
+// }
+// function xuanshiForShowByNo() {//选石
+// 	var selectNo =  document.getElementById("selectNo").value;
+// 	$.ajax({
+// 		 url:"/b/xuanshiForShowForNo",
+// 		 type:"post",
+// 		 data:{
+// 			 selectNo:selectNo,
+// 		 	},
+// 		dateType:"json",
+// 		success:function(result) {
+// 			document.getElementById("xuanshiListStone").value = "no";
+// 			document.getElementById("xuanshiTableForSearch").style.display="block";
+// 			document.getElementById("xuanshiTableAll").style.display="none";
+// 			var stoneList =[];
+// 	 		stoneList = result;
+// 			var tt = $('#xuanshiForSearch').DataTable();
+// 	 		 tt.clear();
+// 	 		$("#xuanshiForSearch tbody").empty();
+// 	 		for(var i=0;i<stoneList.length;i++) {
+// 	 			var now   = new Date(stoneList[i].stone_purchdate);
+// 	 			 var t = $('#xuanshiForSearch').DataTable();
+// 	 		    if(stoneList[i].stone_mainStoneNo.toString().length>2) {//主石
+// 	 		    	t.row.add( [
+// 		 		    	 format(now),
+// 		 		    	 stoneList[i].stone_mainStoneNo,
+// 		 		    	 stoneList[i].stone_mainWeight,
+// 		 		    	 stoneList[i].stone_mainNumber,
+// 		 		    	 "",
+// 		 		    	 "",
+// 		 		    	 "",
+// 		 		    	 "<button  value="+stoneList[i].stone_ID+" onclick='findStoneByStoneIDAJAXShow(this);'>查看详情</button> |<button  value="+stoneList[i].stone_ID+" onclick='chooseStone(this);'>选择</button> "
+// 		 		        ] ).draw( );
+// 	 		    }
+// 	 		    if(stoneList[i].stone_substoNo.toString().length>2) {
+// 				 	t.row.add( [
+// 				    	 format(now),
+// 				    	 "",
+// 				    	 "",
+// 				    	 "",
+// 				    	 stoneList[i].stone_substoNo,
+// 				    	 stoneList[i].stone_substoWgt,
+// 				      	 stoneList[i].stone_substoNumber,
+// 				      	"<button  value="+stoneList[i].stone_ID+" onclick='findStoneByStoneIDAJAXShow(this);'>查看详情</button> |<button  value="+stoneList[i].stone_ID+" onclick='chooseStone(this);'>选择</button> "
+// 		 		    	 ] ).draw( );
+// 	 		    }
+//
+// 	 		}
+// 	 	}
+// 	 });
+// }
 
 $('#selectNo').on('keypress',function(event){ 
     
     
     if(event.keyCode == 13)      
 
-    {  
-    	xuanshiForShowByNo();
-    	document.getElementById("xuanshiListStone").value="no";
-    	pushAllStone();
+    {
+        xuanshiForShow();
     	
     }  
 
@@ -3834,7 +3845,29 @@ function retrieveSupplierStoneData(sSource, aoData, fnCallback ) {
             }
         });
     }
+    function retrieveXuanShiData(sSource, aoData, fnCallback ) {
+        $.ajax({
+            url : sSource,//这个就是请求地址对应sAjaxSource
+            data : {
+                "aoData":JSON.stringify(aoData),
+                "selectNo":$("#selectNo").val(),
+                "selectTime":$("#selectTime").val()
+            },//这个是把datatable的一些基本数据传给后台,比如起始位置,每页显示的行数
+            type : 'post',
+            dataType : 'json',
+            async : false,
+            success : function(result) {
+                fnCallback(result);//把返回的数据传给这个方法就可以了,datatable会自动绑定数据的
+            },
+            error : function(msg) {
+                alert(msg);
+            }
+        });
+    }
 
+    function xuanshiForShow() {
+        dataTableXuanShi.ajax.reload();
+    }
     function searchProcord() {
         dataTableProcord.ajax.reload();
     }
@@ -4597,14 +4630,14 @@ $(document).ready(function() {
     } );
     
     
-    $('#examplexuanshi').DataTable({ 
+     dataTableXuanShi = $('#examplexuanshi').DataTable({
     	"bFilter" : false,// 搜索栏 
         "bLengthChange": false, //开关，是否显示每页大小的下拉框
 	   	 "bProcessing": false, //打开数据加载时的等待效果  
-	   	 'bStateSave': true,//配置好这个,刷新页面会让页面停留在之前的页码
+	   	 'bStateSave': false,//配置好这个,刷新页面会让页面停留在之前的页码
 	   	 "bServerSide": true,//这个用来指明是通过服务端来取数据
-	      "sAjaxSource": "/b/getTableData",//这个是请求的地址，Rest API or JSP的action
-	   	 "fnServerData":retrieveData,// 获取数据的处理函数
+	      "sAjaxSource": "/b/getXuanShiTableData",//这个是请求的地址，Rest API or JSP的action
+	   	 "fnServerData":retrieveXuanShiData,// 获取数据的处理函数
 	   	 "oLanguage": {  
 	    		"sLengthMenu": "每页显示 _MENU_ 条记录",  
 	    		"sZeroRecords": "抱歉， 没有找到",  
