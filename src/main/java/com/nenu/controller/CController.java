@@ -135,7 +135,7 @@ public class CController {
         List<Long> list = new ArrayList<>();
 		if(finpordList!=null) {
 				for(int i=0;i<finpordList.size();i++) {
-					if(finpordList.get(i).getFinpord_mainstono().matches(".*[a-zA-Z].*") && finpordList.get(i).getFinpord_mainstowgt()!=0) {
+					if(finpordList.get(i).getFinpord_mainstono()!=null && finpordList.get(i).getFinpord_mainstono().matches(".*[a-zA-Z].*") && finpordList.get(i).getFinpord_mainstowgt()!=0) {
 							Stoninproc stoninp  = stoninprocService.findStoninprocByStoneNo(finpordList.get(i).getFinpord_mainstono());
 							if(stoninp!=null) {
 								
@@ -185,7 +185,7 @@ public class CController {
 
 							
 					}
-					if(finpordList.get(i).getFinpord_substo1no().length()>1 && finpordList.get(i).getFinpord_substo1wgt()!=0) {
+					if(finpordList.get(i).getFinpord_substo1no()!=null  &&  finpordList.get(i).getFinpord_substo1no().length()>1 && finpordList.get(i).getFinpord_substo1wgt()!=0) {
 						List<Stoninproc> stoninpList  = stoninprocService.findStoninprocBySubStoneNo(String.valueOf(finpordList.get(i).getFinpord_substo1no()));
 						if(stoninpList.size()>0) {
 							Stoninproc stoninp = stoninpList.get(0);
@@ -229,7 +229,7 @@ public class CController {
 							}
 						}	
 					}
-					if(finpordList.get(i).getFinpord_substo2no().length()>1 && finpordList.get(i).getFinpord_substo2wgt()!=0) {
+					if(finpordList.get(i).getFinpord_substo2no()!=null  && finpordList.get(i).getFinpord_substo2no().length()>1 && finpordList.get(i).getFinpord_substo2wgt()!=0) {
 						List<Stoninproc> stoninpList  = stoninprocService.findStoninprocBySubStoneNo(String.valueOf(finpordList.get(i).getFinpord_substo2no()));
 						if(stoninpList.size()>0) {
 							Stoninproc stoninp = stoninpList.get(0);
@@ -273,7 +273,7 @@ public class CController {
 							}
 						}
 					}
-					if(finpordList.get(i).getFinpord_substo3no().length()>1 && finpordList.get(i).getFinpord_substo3wgt()!=0) {
+					if(finpordList.get(i).getFinpord_substo3no()!=null  && finpordList.get(i).getFinpord_substo3no().length()>1 && finpordList.get(i).getFinpord_substo3wgt()!=0) {
 						
 						List<Stoninproc> stoninpList  = stoninprocService.findStoninprocBySubStoneNo(String.valueOf(finpordList.get(i).getFinpord_substo3no()));
 						if(stoninpList.size()>0) {
@@ -321,6 +321,9 @@ public class CController {
 			}
 			int j2,addFlag;
 			for (int j = 0; j < finpordList.size(); j++) {
+				if(finpordList.get(j).getFinpord_mainstono()==null) {
+					continue;
+				}
 				addFlag=0;
 				for (j2 = 0; j2 < stoninprocMainList.size(); j2++) {
 					if(finpordList.get(j).getFinpord_mainstono().contains(stoninprocMainList.get(j2).toString())) {

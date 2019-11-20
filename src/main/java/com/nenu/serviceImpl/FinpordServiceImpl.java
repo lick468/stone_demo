@@ -289,7 +289,7 @@ public class FinpordServiceImpl implements FinpordService {
 		
 		List<FinpordCopy> finpordList = new ArrayList<FinpordCopy>();
 		
-		System.out.println(map.size()+"：大小");
+		//System.out.println(map.size()+"：大小");
 
 		String br = "<br/>";
 		int finpord_seqno=0;//序号
@@ -378,7 +378,7 @@ public class FinpordServiceImpl implements FinpordService {
 			 
 			 for(int i=0;i<map.size()+1;i++) {//
 				 if("finpord_procordNo".equals(map.get(i))) {//单号
-	
+					 finpord_procordNo = (long)row.getCell(i).getNumericCellValue();
 				} else if("finpord_supplier".equals(map.get(i))) {
 						if(row.getCell(i)!=null) {
 							 int cell = row.getCell(i).getCellType(); // Cell类型 0 表示数字 1表示字符串
@@ -397,11 +397,11 @@ public class FinpordServiceImpl implements FinpordService {
 						 int cell = row.getCell(i).getCellType(); // Cell类型 0 表示数字 1表示字符串
 						 if (cell == 1) {
 							 finpord_barcode = row.getCell(i).getStringCellValue();// 条码	
-							} else if (cell == 0) {
-								long temp;
-								temp = (long) row.getCell(i).getNumericCellValue();// 条码
-								finpord_barcode = String.valueOf(temp);
-						    }
+						 } else if (cell == 0) {
+							long temp;
+							temp = (long) row.getCell(i).getNumericCellValue();// 条码
+							finpord_barcode = String.valueOf(temp);
+						 }
 					 } else {
 					    	 errorMsg += br + "第  " + (r + 1) + " 行第  "+i+" 列数据有问题，请仔细检查！";
 					 }       
@@ -468,10 +468,10 @@ public class FinpordServiceImpl implements FinpordService {
 			    }else if("finpord_mainstono".equals(map.get(i))) {
 					 if(row.getCell(i)!=null) {
 						 finpord_mainstono = row.getCell(i).getStringCellValue();// 主石编号
-						 Stoninproc s = stoninprocDao.findStoninprocByStoneNo(finpord_mainstono);
-						 if(s!=null ) {
-							 finpord_procordNo = s.getStoninproc_procordNo();//订单号
-						 }
+					//	 Stoninproc s = stoninprocDao.findStoninprocByStoneNo(finpord_mainstono);
+//						 if(s!=null ) {
+//							 finpord_procordNo = s.getStoninproc_procordNo();//订单号
+//						 }
 						 List<Stone> stoneList = stoneDao.findStoneByMainNo(finpord_mainstono);
 						 if(stoneList.size() > 0) {
 							 finpord_mainstopr = stoneList.get(0).getStone_mainPrperct();//主石价
@@ -646,7 +646,15 @@ public class FinpordServiceImpl implements FinpordService {
 					 }
 			    }else if("finpord_substo1no".equals(map.get(i))) {
 					 if(row.getCell(i)!=null) {
-						 finpord_substo1no =row.getCell(i).getStringCellValue();// 副石1编号
+						 int cell = row.getCell(i).getCellType(); // Cell类型 0 表示数字 1表示字符串
+						 if (cell == 1) {
+							 finpord_substo1no = row.getCell(i).getStringCellValue();// 副石1编号
+						 } else if (cell == 0) {
+							 long temp;
+							 temp = (long) row.getCell(i).getNumericCellValue();// 副石1编号
+							 finpord_substo1no = String.valueOf(temp);
+						 }
+						 //finpord_substo1no =row.getCell(i).getStringCellValue();// 副石1编号
 						 
 						List<Stone> listStone =  stoneDao.findStoneBySubNo(finpord_substo1no);
 						if(listStone.size() > 0) {
@@ -657,20 +665,35 @@ public class FinpordServiceImpl implements FinpordService {
 					 }
 			    }else if("finpord_substo2no".equals(map.get(i))) {
 					 if(row.getCell(i)!=null) {
-						 finpord_substo2no =row.getCell(i).getStringCellValue();// 副石2编号
-						 List<Stone> listStone =  stoneDao.findStoneBySubNo(finpord_substo1no);
+						 int cell = row.getCell(i).getCellType(); // Cell类型 0 表示数字 1表示字符串
+						 if (cell == 1) {
+							 finpord_substo2no = row.getCell(i).getStringCellValue();// 副石2编号
+						 } else if (cell == 0) {
+							 long temp;
+							 temp = (long) row.getCell(i).getNumericCellValue();// 副石2编号
+							 finpord_substo2no = String.valueOf(temp);
+						 }
+						 List<Stone> listStone =  stoneDao.findStoneBySubNo(finpord_substo2no);
 						 if(listStone.size() > 0) {
-							finpord_substo1pr = listStone.get(0).getStone_substoPrperct();// 副石2价格
+							finpord_substo2pr = listStone.get(0).getStone_substoPrperct();// 副石2价格
 						 }
 					 }else {
 						 errorMsg += br + "第  " + (r + 1) + " 行第  "+i+" 列数据有问题，请仔细检查！";
 					 }
 			    }else if("finpord_substo3no".equals(map.get(i))) {
 					 if(row.getCell(i)!=null) {
-						 finpord_substo3no =row.getCell(i).getStringCellValue();// 副石3编号
-						 List<Stone> listStone =  stoneDao.findStoneBySubNo(finpord_substo1no);
+						 //finpord_substo3no =row.getCell(i).getStringCellValue();// 副石3编号
+						 int cell = row.getCell(i).getCellType(); // Cell类型 0 表示数字 1表示字符串
+						 if (cell == 1) {
+							 finpord_substo3no = row.getCell(i).getStringCellValue();// 副石3编号
+						 } else if (cell == 0) {
+							 long temp;
+							 temp = (long) row.getCell(i).getNumericCellValue();// 副石3编号
+							 finpord_substo3no = String.valueOf(temp);
+						 }
+						 List<Stone> listStone =  stoneDao.findStoneBySubNo(finpord_substo3no);
 						 if(listStone.size() > 0) {
-							finpord_substo1pr = listStone.get(0).getStone_substoPrperct();// 副石3价格
+							finpord_substo3pr = listStone.get(0).getStone_substoPrperct();// 副石3价格
 						 }
 					 }else {
 						 errorMsg += br + "第  " + (r + 1) + " 行第  "+i+" 列数据有问题，请仔细检查！";
@@ -802,7 +825,7 @@ public class FinpordServiceImpl implements FinpordService {
 			 
 			 
 			
-			System.out.println(listNo.size()+"===========长度");
+			//System.out.println(listNo.size()+"===========长度");
 				
 			if (listNo.contains(finpord_mainstono) ) {
 				System.out.println("数据库里已有这条数据!");
@@ -829,7 +852,7 @@ public class FinpordServiceImpl implements FinpordService {
 		}
 		
 
-		System.out.println(errorMsg);
+		//System.out.println(errorMsg);
 		return finpordList;
 	}
 
