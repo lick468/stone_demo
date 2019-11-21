@@ -297,12 +297,12 @@ public class FinpordServiceImpl implements FinpordService {
 		for (int r = tit+1; r < totalRows; r++) {
 			//String rowMessage = "";
 			Row row = sheet.getRow(r);
-			System.out.println(row.getPhysicalNumberOfCells());
+			//System.out.println(row.getPhysicalNumberOfCells());
 			if (row == null ) {
 				errorMsg += br + "第" + (r + 1) + "行数据有问题，请仔细检查！";
 				continue;
 			}
-			 String finpord_ID;//ID
+			 String finpord_ID=null;//ID
 			 long finpord_procordNo = 0;//单号
 			 String finpord_barcode=null;//条码
 			 Date finpord_inboundate = new Date();//入库日期
@@ -375,7 +375,7 @@ public class FinpordServiceImpl implements FinpordService {
 			 String finpord_reserved2=null;//备注2
 			
 			 finpord_ID = UUID.randomUUID().toString().replaceAll("-", "");// UUID
-			 
+			 System.out.print("finpord_ID===="+finpord_ID);
 			 for(int i=0;i<map.size()+1;i++) {//
 				 if("finpord_procordNo".equals(map.get(i))) {//单号
 					 finpord_procordNo = (long)row.getCell(i).getNumericCellValue();
@@ -383,14 +383,14 @@ public class FinpordServiceImpl implements FinpordService {
 						if(row.getCell(i)!=null) {
 							 int cell = row.getCell(i).getCellType(); // Cell类型 0 表示数字 1表示字符串
 							 if (cell == 1) {
-									finpord_supplier = row.getCell(i).getStringCellValue();// 供应商	
-								} else if (cell == 0) {
-									int temp;
-									temp = (int) row.getCell(i).getNumericCellValue();// 供应商
-									finpord_supplier = String.valueOf(temp);
-							    }
+								finpord_supplier = row.getCell(i).getStringCellValue();// 供应商
+							 } else if (cell == 0) {
+								int temp;
+								temp = (int) row.getCell(i).getNumericCellValue();// 供应商
+								finpord_supplier = String.valueOf(temp);
+							 }
 						 } else {
-						    	 errorMsg += br + "第  " + (r + 1) + " 行第  "+i+" 列数据有问题，请仔细检查！";
+							 errorMsg += br + "第  " + (r + 1) + " 行第  "+i+" 列数据有问题，请仔细检查！";
 						 }       
 			  } else if("finpord_barcode".equals(map.get(i))) {//条码
 					if(row.getCell(i)!=null) {

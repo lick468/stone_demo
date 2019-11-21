@@ -326,7 +326,8 @@ public class CController {
 				}
 				addFlag=0;
 				for (j2 = 0; j2 < stoninprocMainList.size(); j2++) {
-					if(finpordList.get(j).getFinpord_mainstono().contains(stoninprocMainList.get(j2).toString())) {
+					if(finpordList.get(j).getFinpord_mainstono().contains(stoninprocMainList.get(j2).toString())
+							&& finpordList.get(j).getFinpord_mainstono().length()==stoninprocMainList.get(j2).toString().length() ) {
 						finpordCopyList_right.add(finpordList.get(j));
 						addFlag=1;
 					}
